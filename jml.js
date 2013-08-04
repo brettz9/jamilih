@@ -1,4 +1,4 @@
-/*globals exports, DOMParser, XMLSerializer, module*/
+/*globals DOMParser, XMLSerializer, module*/
 (function () {
 /*
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
@@ -65,8 +65,7 @@ Todos:
      * @param {DOMNode} child The element or other node to append to the parent
      */
     function _appendNode (parent, child) {
-        var ss,
-            parentName = _getHTMLNodeName(parent),
+        var parentName = _getHTMLNodeName(parent),
             childName = _getHTMLNodeName(child);
 
         if (document.createStyleSheet) {
@@ -163,7 +162,7 @@ Todos:
      * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
      */
     function jml () {
-        var i, arg, procValue, p, p2, attVal, replacer = '', xmlns, val, elContainer, textnode, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
+        var i, arg, procValue, p, p2, attVal, replacer = '', xmlns, val, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
             _getType = function (item) {
                 if (typeof item === 'string') {
                     return 'string';
@@ -229,7 +228,7 @@ Todos:
                             }
                             catch(e) { // Getting NotSupportedError in IE, so we try to imitate a processing instruction with a comment
                                 // innerHTML didn't work
-                                    // elContainer = document.createElement('div');
+                                    // var elContainer = document.createElement('div');
                                     // elContainer.innerHTML = '<?' + document.createTextNode(arg + ' ' + procValue).nodeValue + '?>';
                                     // nodes[nodes.length] = elContainer.innerHTML;
                                 // Todo: any other way to resolve? Just use XML?
