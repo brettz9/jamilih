@@ -1,4 +1,4 @@
-/*globals exports*/
+/*globals exports, DOMParser, XMLSerializer, module*/
 (function () {
 /*
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
@@ -163,7 +163,7 @@ Todos:
      * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
      */
     function jml () {
-        var i, arg, procValue, p, p2, attVal, replaceStr = '', xmlns, val, elContainer, textnode, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
+        var i, arg, procValue, p, p2, attVal, replacer = '', xmlns, val, elContainer, textnode, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
             _getType = function (item) {
                 if (typeof item === 'string') {
                     return 'string';
@@ -180,6 +180,21 @@ Todos:
                     }
                     return 'object';
                 }
+            },
+            fragReducer = function (frag, node) {
+                frag.appendChild(node);
+                return frag;
+            },
+            replaceDefiner = function (xmlnsObj) {
+                return function (n0) {
+                    var retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
+                    for (xmlns in xmlnsObj) {
+                        if (xmlns !== '') {
+                            retStr += ' xmlns:' + xmlns + '="' + xmlnsObj[xmlns] + '"';
+                        }
+                    }
+                    return retStr;
+                };
             };
         for (i = 0; i < argc; i++) {
             arg = argv[i];
@@ -188,10 +203,7 @@ Todos:
                     if (i === argc - 1) {
                         _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
                         // Todo: Fix to allow application of stylesheets of style tags within fragments?
-                        return nodes.length <= 1 ? nodes[0] : nodes.reduce(function (frag, node) {
-                            frag.appendChild(node);
-                            return frag;
-                        }, document.createDocumentFragment()); // nodes;
+                        return nodes.length <= 1 ? nodes[0] : nodes.reduce(fragReducer, document.createDocumentFragment()); // nodes;
                     }
                     break;
                 case 'string': // Strings indicate elements
@@ -241,7 +253,7 @@ Todos:
                             try {
                                 nodes[nodes.length] = document.createCDATASection(argv[++i]);
                             }
-                            catch (e) {
+                            catch (e2) {
                                 nodes[nodes.length] = document.createTextNode(argv[i]); // i already incremented
                             }
                             break;
@@ -269,27 +281,17 @@ Todos:
                         // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
                         // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
                         if (typeof atts.xmlns === 'object') {
-                            replaceStr = (function (xmlnsObj) {
-                                return function (n0) {
-                                    var retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
-                                    for (xmlns in xmlnsObj) {
-                                        if (xmlns !== '') {
-                                            retStr += ' xmlns:' + xmlns + '="' + xmlnsObj[xmlns] + '"';
-                                        }
-                                    }
-                                    return retStr;
-                                };
-                            }(atts.xmlns));
+                            replacer = replaceDefiner(atts.xmlns);
                         }
                         else {
-                            replaceStr = ' xmlns="' + atts.xmlns + '"';
+                            replacer = ' xmlns="' + atts.xmlns + '"';
                         }
 //try {
                         // Also fix DOMParser to work with text/html
                         elem = nodes[nodes.length - 1] = new DOMParser().parseFromString(
                             new XMLSerializer().serializeToString(elem).
                                 // Mozilla adds XHTML namespace
-                                replace(' xmlns="' + NS_HTML + '"', replaceStr),
+                                replace(' xmlns="' + NS_HTML + '"', replacer),
                             'application/xml'
                         ).documentElement;
 //}catch(e) {alert(elem.outerHTML);throw e;}
@@ -411,6 +413,11 @@ Todos:
     }
 
     // EXPORTS
-    (typeof exports === 'undefined' ? window : exports).jml = jml;
+    if (typeof module === 'undefined') {
+        module.exports = jml;
+    }
+    else {
+        window.jml = jml;
+    }
 
 }());
