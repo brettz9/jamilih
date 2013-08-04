@@ -412,7 +412,7 @@ Todos:
     }
 
     // EXPORTS
-    if (typeof module === 'undefined') {
+    if (typeof module !== 'undefined') {
         module.exports = jml;
     }
     else {
