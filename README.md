@@ -24,14 +24,6 @@ Rules (detailed)
 7. First item must be an element name (to create an element structure)
 8. Always returns first created element, unless null as last argument, in which case, it returns a fragment of all added elements
 
-Installation and Usage
-=================
-`npm install jamilih`
-
-```javascript
-var jml = require('jamilih');
-```
-
 
 Examples
 ========
