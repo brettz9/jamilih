@@ -1,0 +1,30 @@
+{
+    "name": "jamilih",
+    "version": "0.1.0",
+    "author": {
+        "name": "Brett Zamir",
+        "email": "brettz9@yahoo.com",
+        "url": "brett-zamir.me"
+    },
+    "description": "Provide round-trippable JSON/JavaScript serialization as with JsonML, but with all items at a given array level being the same type of item (unless marked with a deeper level of nesting) and with a slightly more template-friendly capacity to inline insert fragments or child nodes (e.g., as by function return).",
+    "main": "./jml",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/brettz9/jamilih.git"
+    },
+    "keywords": [
+        "json",
+        "javascript",
+        "template",
+        "templating",
+        "html"
+    ],
+    "license": "MIT",
+    "engine": {
+        "node": ">=0.10"
+    },
+    "readmeFilename": "README.md",
+    "bugs": {
+        "url": "https://github.com/brettz9/jamilih/issues"
+    }
+}
