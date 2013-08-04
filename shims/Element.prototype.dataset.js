@@ -1,4 +1,8 @@
-// Todo: add with require shim plugin
+// Todo: add with require shim plugin, and modularize es6-collections further?
+
+/**
+ * @requires shim: es6-collections (for Map)
+*/
 
 /**
  * Add dataset support to elements
@@ -177,62 +181,94 @@ if (!document.documentElement.dataset &&
         (!Object.getOwnPropertyDescriptor(Element.prototype, 'dataset')  ||
         !Object.getOwnPropertyDescriptor(Element.prototype, 'dataset').get)
     ) {
-    var propDescriptor = {
-        enumerable: true,
-        get: function () {
-            'use strict';
-            var i,
-                that = this,
-                HTML5_DOMStringMap,
-                attrVal, attrName, propName,
-                attribute,
-                attributes = this.attributes,
-                attsLength = attributes.length,
-                toUpperCase = function (n0) {
-                    return n0.charAt(1).toUpperCase();
-                },
-                getter = function () {
-                    return this;
-                },
-                setter = function (attrName, value) {
-                    return (typeof value !== 'undefined') ?
-                        this.setAttribute(attrName, value) :
-                        this.removeAttribute(attrName);
-                };
-            try { // Simulate DOMStringMap w/accessor support
-                // Test setting accessor on normal object
-                ({}).__defineGetter__('test', function () {});
-                HTML5_DOMStringMap = {};
-            }
-            catch (e1) { // Use a DOM object for IE8
-                HTML5_DOMStringMap = document.createElement('div');
-            }
-            for (i = 0; i < attsLength; i++) {
-                attribute = attributes[i];
-                // Fix: This test really should allow any XML Name without
-                //         colons (and non-uppercase for XHTML)
-                if (attribute && attribute.name &&
-                    (/^data-\w[\w\-]*$/).test(attribute.name)) {
-                    attrVal = attribute.value;
-                    attrName = attribute.name;
-                    // Change to CamelCase
-                    propName = attrName.substr(5).replace(/-./g, toUpperCase);
-                    try {
-                        Object.defineProperty(HTML5_DOMStringMap, propName, {
-                            enumerable: this.enumerable,
-                            get: getter.bind(attrVal || ''),
-                            set: setter.bind(that, attrName)
-                        });
+    var HTML5_Element_Map = new Map(),
+        NAME_START_CHAR = '[_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u0200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\ud800-\udbff][\udc00-\udfff]'; // The last two ranges are for surrogates that comprise #x10000-#xEFFFF; // colon and A-Z removed for sake of dataset
+        NAME_END_CHAR = '[.0-9\u00B7\u0300-\u036F\u203F-\u2040-]';
+        dataAttributeRegexp = new RegExp('^data-' +
+            '(?:' + NAME_START_CHAR + ')(?:' + NAME_START_CHAR + '|' + NAME_END_CHAR + ')*' + // XML Name minus ':' and A-Z
+            '$'
+        ),
+        propDescriptor = {
+            enumerable: true,
+            get: function () {
+                'use strict';
+                var i,
+                    that = this,
+                    HTML5_DOMStringMap,
+                    attrVal, attrName, propName,
+                    attribute,
+                    attributes = this.attributes,
+                    attsLength = attributes.length,
+                    toUpperCase = function (n0) {
+                        return n0.charAt(1).toUpperCase();
+                    },
+                    getter = function () {
+                        return this;
+                    },
+                    setter = function (attrName, value) {
+                        return (typeof value !== 'undefined') ?
+                            this.setAttribute(attrName, value) :
+                            this.removeAttribute(attrName);
+                    },
+                    defineProperty = function (attrName, attrVal) {
+                    // Todo: validate?
+                        // Change to CamelCase
+                        var propName = attrName.slice(5).replace(/-[a-z]?/g, toUpperCase);
+
+if (attrName === 'abcDefGh') {
+alert('a:'+attrVal + propName)
+}
+
+                        try {
+                            Object.defineProperty(HTML5_DOMStringMap, propName, {
+                                enumerable: that.enumerable,
+                                get: getter.bind(attrVal || ''),
+                                set: setter.bind(that, attrName)
+                            });
+                        }
+                        catch (e2) { // if accessors are not working
+                            HTML5_DOMStringMap[propName] = attrVal;
+                        }
+                    };
+
+                if (HTML5_Element_Map.has(this)) {
+                    HTML5_DOMStringMap = HTML5_Element_Map.get(this);
+                    var o = 0;
+                    for (attrName in HTML5_DOMStringMap) {
+                    o++;
+                    if (attrName === 'jklMnoPq') {
+                    alert(attrName);
                     }
-                    catch (e2) { // if accessors are not working
-                        HTML5_DOMStringMap[propName] = attrVal;
+                        attrVal = HTML5_DOMStringMap[attrName];
+                        defineProperty(attrName, attrVal);
+                    }
+//                    alert(o);
+                }
+                else {
+                    try { // Simulate DOMStringMap w/accessor support
+                        // Test setting accessor on normal object
+                        ({}).__defineGetter__('test', function () {});
+                        HTML5_DOMStringMap = {};
+                    }
+                    catch (e1) { // Use a DOM object for IE8
+                        HTML5_DOMStringMap = document.createElement(''); // createComment also works
                     }
                 }
+                // alert(HTML5_DOMStringMap['abcDefGh'] + '::' + HTML5_DOMStringMap['jklMnoPq']);
+
+                for (i = 0; i < attsLength; i++) {
+                    attribute = attributes[i];
+                    attrName = attribute && attribute.name;
+                    if (attrName &&
+                        dataAttributeRegexp.test(attrName)) {
+                        attrVal = attribute.value;
+                        defineProperty(attrName, attrVal);
+                    }
+                }
+                HTML5_Element_Map.set(this, HTML5_DOMStringMap);
+                return HTML5_DOMStringMap;
             }
-            // Todo: WeakMap to associate any element with properties?
-            return HTML5_DOMStringMap;
-        }
-    };
+        };
     try {
         // FF enumerates over element's dataset, but not
         //   Element.prototype.dataset; IE9 iterates over both

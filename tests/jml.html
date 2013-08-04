@@ -6,6 +6,7 @@
 <style>div {color:yellow;}</style>
     <!-- Shims needed by jml.js; todo: replace with require shim plugin calls -->
     <!--[if lte IE 8]><script> /* Testing in IE7-8!!!! This line needs to be in own tag; put after any stylesheets but before any scripts */ var _old$DocInfo$For$IE_ = [typeof HTMLDocument === 'undefined' ? {} : HTMLDocument, document]; </script><script src="html5shiv-ie.js"></script><![endif]-->
+    <script src="../node_modules/es6-collections/src/es6-collections.js"></script><!-- Needed by Element.prototype.dataset -->
     <script src="../shims/Element.prototype.dataset.js"></script><!-- Needed by jml -->
     <script src="../shims/Array.isArray.js"></script><!-- Needed by jml, XMLSerializer.js -->
     <script src="../shims/Array.prototype.every.js"></script><!-- Needed by XMLSerializer.js -->
