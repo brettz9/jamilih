@@ -2,7 +2,7 @@ NOTE: This project is currently incomplete and the API is not yet stable.
 
 Rationale
 ========
-Provide round-trippable JSON/JavaScript serialization as with JsonML, but with template-friendly capacity to insert fragments or child nodes.
+Provide round-trippable JSON/JavaScript serialization as with JsonML, but with all items at a given array level being the same type of item (unless marked with a deeper level of nesting) and with a slightly more template-friendly capacity to inline insert fragments or child nodes (e.g., as by function return).
 
 Rules (summary)
 ==============
@@ -17,12 +17,21 @@ Rules (detailed)
 
 1. Last element always the parent (put null if don't want but want to return) unless only attributes and children (no other elements)
 2. Individual elements (DOM elements or sequences of string[/object/array]) get added to parent first-in, first-added
-3. Arrays indicate children (containing nodes, text (to become text nodes) or arrays encapsulating another JML element structure)
+3. Arrays indicate children (containing nodes, text (to become text nodes) or arrays encapsulating another Jamilih element structure)
 4. Strings indicate elements unless they use special characters, in which case
 5. Non-DOM-element objects indicate attribute-value pairs
 6. null always indicates a place-holder (only needed in place of parent for last argument if want fragment returned)
 7. First item must be an element name (to create an element structure)
 8. Always returns first created element, unless null as last argument, in which case, it returns a fragment of all added elements
+
+Installation and Usage
+=================
+`npm install jamilih`
+
+```javascript
+var jml = require('jamilih');
+```
+
 
 Examples
 ========
@@ -184,9 +193,7 @@ Not yet implemented...
 Naming
 ======
 
-JML (for JavaScript or Json Markup Language), pronounced "Jamilih"
-for the Arabic word meaning "Beauty". It is named in honor of the Arabic name
-of my dear newly-born daughter.
+I originally named the project JML (for JavaScript or Json Markup Language) and have still kept the abbreviation when used as a global in a browser (and in the filename and examples), but as other projects have used the name or similar ones, I am renaming the project to "Jamilih" for the Arabic word meaning "Beauty". It is named in honor of the Arabic name of my family's newly-born daughter.
 
 Design goals
 ==========
@@ -212,6 +219,7 @@ Related work
 ===========
 
 The only work which comes close to meeting these goals as far as I have been able to find is JsonML. 
-JsonML even does a better job of goal #1 in terms of succinctness than my proposal for Jamilih. However, 
-for goal #3, I believe JML will be more flexible for regular usage in templates, and possibly also
-superior in goal #8 (and with a plan for goal #5 and #7?).
+JsonML even does a better job of goal #1 in terms of succinctness than my proposal for Jamilih
+(except that Jamilih can represent empty elements more succinctly). However,
+for goal #3, I believe Jamilih is slightly more flexible for regular usage in templates, and to
+my personal sensibilities, more clear in goal #8 (and with a plan for goal #5 and #7?).
