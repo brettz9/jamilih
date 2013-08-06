@@ -415,6 +415,11 @@ Todos:
     if (typeof module !== 'undefined') {
         module.exports = jml;
     }
+    else if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return jml;
+        });
+    }
     else {
         window.jml = jml;
     }
