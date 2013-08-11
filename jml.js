@@ -304,6 +304,9 @@ Todos:
                                 0. Accept array for any attribute with first item as prefix and second as value?
                                 0. add '$a' for array of ordered (prefix-)attribute-value arrays
                                 0. {$: ['xhtml', 'div']} for prefixed elements
+                                0. {$document: []} // document.implementation.createHTMLDocument
+                                0. {$xmlDocument: []} // document.implementation.createDocument
+                                0. {$documentType: []} // document.implementation.createDocumentType
 
                                 0. JSON mode to prevent event addition?
                                 */
