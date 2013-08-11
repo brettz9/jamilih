@@ -307,6 +307,7 @@ Todos:
                                 0. {$document: []} // document.implementation.createHTMLDocument
                                 0. {$xmlDocument: []} // document.implementation.createDocument
                                 0. {$documentType: []} // document.implementation.createDocumentType
+                                0. Way to create attribute nodes esp. if no element? Now deprecated
 
                                 0. JSON mode to prevent event addition?
                                 */
