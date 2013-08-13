@@ -7,7 +7,6 @@
 * @requires shim: Array.prototype.map
 * @requires shim: Node.prototype.lookupNamespaceURI
 * @todo NOT COMPLETE! Especially for namespaces
-* @todo Could implement as a TreeWalker
 */
 var XMLSerializer;
 (function () {
