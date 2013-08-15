@@ -104,7 +104,7 @@
     Object.defineProperty(Element.prototype, 'attributes', {
         enumerable: false,
         get: function () { // We need to check whether to add any missing dataset attributes
-            // We need a way to work with the original NamedNodeMap. NamedNodeMap() appears to work with an argument, but not sure what to supply; adding attribute nodes did not work; there is no original Element.prototype.attributes to store, so the best we might do is parse outerHTML for attributes! (Or, as per above with the Element.style, we could wrap elements whenever exposed to us from an API, e.g., document.getElementById(), by shimming document, as in
+            // We need a way to work with the original NamedNodeMap. NamedNodeMap() appears to work with an argument, but not sure what to supply; adding attribute nodes did not work; there is no original Element.prototype.attributes to store, so the best we might do is parse outerHTML for attributes (which itself may need a shim)! (Or, as per above with the Element.style, we could wrap elements whenever exposed to us from an API, e.g., document.getElementById(), by shimming document, as in
             https://gist.github.com/brettz9/6093483 )
         }
     });
