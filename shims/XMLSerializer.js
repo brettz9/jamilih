@@ -1,3 +1,4 @@
+/*globals DOMException*/
 /**
 * Currently applying not only as a shim for IE but for other browsers in order to ensure consistent serialization. For example,
 *  its serialization method is serializing attributes in alphabetical order despite Mozilla doing so in document order since
@@ -53,7 +54,7 @@ var XMLSerializer;
                 invalidStateError = function () { // These are probably only necessary if working with text/html
                     if (prohibitHTMLOnly) {
                         // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
-                        throw DOMException && DOMException.create ?
+                        throw window.DOMException && DOMException.create ?
                             DOMException.create(11) :
                             // If the shim-helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
                             {message: 'INVALID_STATE_ERR: DOM Exception 11', code: 11};
@@ -80,8 +81,8 @@ var XMLSerializer;
                 return nameVals.every(function (nameVal) {
                     var name = Array.isArray(nameVal) ? nameVal[0] : nameVal,
                         val = Array.isArray(nameVal) ? nameVal[1] : null;
-                    return att.nodeName !== name ||
-                        (val && att.nodeValue !== val) ||
+                    return att.name !== name ||
+                        (val && att.value !== val) ||
                         //(!node.outerHTML.match(new RegExp(' ' + name + '=')));
                         (node.outerHTML.match(new RegExp(' ' + name + '=' + val ? '"' + val + '"' : '')));
                 });
@@ -96,11 +97,16 @@ var XMLSerializer;
                     invalidStateError();
                 }
 
-                var type = node.nodeType, children, i = 0, tagName, tagAttributes, prefix, val, content,
+                var nodeValue = node.nodeValue,
+                    type = node.nodeType,
+                    i = 0,
+                    children, tagName, tagAttributes, prefix, val, content,
                     pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
 
-                if ((type === 2 || type === 3 || type === 4 || type === 7 || type === 8) &&
-                        !xmlChars.test(node.nodeValue)
+                if (
+                        ((type === 3 || type === 4 || type === 7 || type === 8) &&
+                            !xmlChars.test(nodeValue)) ||
+                        ((type === 2) && !xmlChars.test(node.value)) // Attr.nodeValue is now deprecated, so we use Attr.value
                     ) {
                     invalidStateError();
                 }
@@ -114,8 +120,9 @@ var XMLSerializer;
                         }
                         // Make this consistent, e.g., so browsers can be reliable in serialization
 
+                         // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, but we can safely use name and value
                         tagAttributes = [].slice.call(node.attributes).sort(function (attr1, attr2) {
-                            return attr1.nodeName > attr2.nodeName ? 1 : -1;
+                            return attr1.name > attr2.name ? 1 : -1;
                         });
 
                         prefix = node.prefix;
@@ -131,9 +138,9 @@ var XMLSerializer;
                         //*/
                         // Todo: optimize this by joining the for loops together but inserting into an array to sort
                         for (i = 0; i < tagAttributes.length; i++) {
-                            if (tagAttributes[i].nodeName.match(/^xmlns:\w*$/)) {
-                                string += ' ' + tagAttributes[i].nodeName + // .toLowerCase() +
-                                    '="' + entify(tagAttributes[i].nodeValue) + '"'; // .toLowerCase()
+                            if (tagAttributes[i].name.match(/^xmlns:\w*$/)) {
+                                string += ' ' + tagAttributes[i].name + // .toLowerCase() +
+                                    '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                             }
                         }
                         for (i = 0; i < tagAttributes.length; i++) {
@@ -147,13 +154,13 @@ var XMLSerializer;
                                     ['type', 'text'], 'colSpan', 'rowSpan', 'cssText', 'shape'
                                 ])
                             ) {
-                                if (!tagAttributes[i].nodeName.match(/^xmlns:?\w*$/)) { // Avoid adding these (e.g., from Firefox) as we add above
-                                    if (tagAttributes[i].nodeName === 'style') {
+                                if (!tagAttributes[i].name.match(/^xmlns:?\w*$/)) { // Avoid adding these (e.g., from Firefox) as we add above
+                                    if (tagAttributes[i].name === 'style') {
                                         // This doesn't work as we need to sort the rules in a predictable order as IE varies them
                                         /*
-                                        // Streamline serialization due to IE's upper-casing, stripping semi-colons and fixing post-proeprty whitespace to a single space
+                                        // Streamline serialization due to IE's upper-casing, stripping semi-colons and fixing post-property whitespace to a single space
                                         string += ' style="' +
-                                            entify(tagAttributes[i].nodeValue.
+                                            entify(tagAttributes[i].value.
                                                 replace(new RegExp('([\\w\\-]*:)\\s*', 'g'), lowerCaseCSSPropertiesForIE).
                                                 replace(/;$/, '') // also for IE
                                             ) + '"';
@@ -170,11 +177,11 @@ var XMLSerializer;
                                             return style.toLowerCase() + ': ' + node.style.getPropertyValue(style) + (priority ? ' !' + priority : '');
                                         }).join('; ') + '"';
                                         */
-//                                        tagAttributes[i].nodeValue = 'color:pink';
+//                                        tagAttributes[i].value = 'color:pink';
                                             string += ' style="' +
-                                                // Either of these works now that Attr.prototype has a style-harmonizing nodeValue getter as well as a getAttribute harmonizer
+                                                // Either of these works now that Attr.prototype has a style-harmonizing value getter as well as a getAttribute harmonizer
                                                 // node.getAttribute('style') +
-                                                tagAttributes[i].nodeValue +
+                                                tagAttributes[i].value +
                                                 '"';
                                         }
                                         catch(e) {
@@ -183,8 +190,8 @@ var XMLSerializer;
                                         }
                                     }
                                     else {
-                                        string += ' ' + tagAttributes[i].nodeName + // .toLowerCase() +
-                                            '="' + entify(tagAttributes[i].nodeValue) + '"'; // .toLowerCase()
+                                        string += ' ' + tagAttributes[i].name + // .toLowerCase() +
+                                            '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                                     }
                                 }
                             }
@@ -224,18 +231,18 @@ var XMLSerializer;
                                         '="' + entify(node.value) + '"'; // .toLowerCase()
                         break;
                     case 3: // TEXT
-                        string += entify(node.nodeValue); // Todo: only entify for XML
+                        string += entify(nodeValue); // Todo: only entify for XML
                         break;
                     case 4: // CDATA
-                        if (node.nodeValue.indexOf(']]'+'>') !== -1) {
+                        if (nodeValue.indexOf(']]'+'>') !== -1) {
                             invalidStateError();
                         }
-                        string += '<'+'![CDATA[';
-                        string += node.nodeValue;
-                        string += ']]'+'>';
+                        string += '<' + '![CDATA[';
+                        string += nodeValue;
+                        string += ']]' + '>';
                         break;
                     case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
-                        string += '&'+node.nodeName+';';
+                        string += '&' + node.nodeName+';';
                         break;
                     case 6: // ENTITY (would need to pass in directly)
                         val = '';
@@ -290,19 +297,19 @@ var XMLSerializer;
                         if (node.data.indexOf('?>') !== -1) {
                             invalidStateError();
                         }
-                        string += '<?' + node.target + ' ' + node.nodeValue + '?>';
+                        string += '<?' + node.target + ' ' + nodeValue + '?>';
                         break;
                     case 8: // COMMENT
-                        if (node.nodeValue.indexOf('--') !== -1 ||
-                                (node.nodeValue.length && node.nodeValue.lastIndexOf('-') === node.nodeValue.length-1)) {
+                        if (nodeValue.indexOf('--') !== -1 ||
+                                (nodeValue.length && nodeValue.lastIndexOf('-') === nodeValue.length-1)) {
                             invalidStateError();
                         }
-                        string += '<'+'!--' + node.nodeValue + '-->';
+                        string += '<'+'!--' + nodeValue + '-->';
                         break;
                     case 9: // DOCUMENT (handled earlier in script)
                         break;
                     case 10: // DOCUMENT TYPE
-                        string += '<'+'!DOCTYPE '+node.name;
+                        string += '<'+'!DOCTYPE ' + node.name;
                         if (!pubIdChar.test(node.publicId)) {
                             invalidStateError();
                         }

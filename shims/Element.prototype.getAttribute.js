@@ -111,7 +111,8 @@
     */
 
     // We override for the sake of ensuring we are getting the proper standardized "style" property object
-    Object.defineProperty(Attr.prototype, 'nodeValue', {
+    // Attr.nodeValue (as with Attr.nodeName) is now deprecated as of DOM4 as Attr no longer inherits from Node, but we can safely use name and value
+    Object.defineProperty(Attr.prototype, 'value', {
         enumerable: false,
         get: function () {
             // Get the overridden getAttribute() result
