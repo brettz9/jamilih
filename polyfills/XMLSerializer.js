@@ -1,12 +1,12 @@
 /*globals DOMException*/
 /**
-* Currently applying not only as a shim for IE but for other browsers in order to ensure consistent serialization. For example,
+* Currently applying not only as a polyfill for IE but for other browsers in order to ensure consistent serialization. For example,
 *  its serialization method is serializing attributes in alphabetical order despite Mozilla doing so in document order since
 * IE does not appear to otherwise give a readily determinable order
 * @license MIT, GPL, Do what you want
-* @requires shim: Array.from
-* @requires shim: Array.prototype.map
-* @requires shim: Node.prototype.lookupNamespaceURI
+* @requires polyfill: Array.from
+* @requires polyfill: Array.prototype.map
+* @requires polyfill: Node.prototype.lookupNamespaceURI
 * @todo NOT COMPLETE! Especially for namespaces
 */
 var XMLSerializer;
@@ -56,7 +56,7 @@ var XMLSerializer;
                         // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
                         throw window.DOMException && DOMException.create ?
                             DOMException.create(11) :
-                            // If the shim-helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
+                            // If the (nonstandard) polyfill plugin helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
                             {message: 'INVALID_STATE_ERR: DOM Exception 11', code: 11};
                     }
                 },
@@ -168,10 +168,10 @@ var XMLSerializer;
 
                                         try {
                                         /*
-                                        // This works but we instead choose the alternative approach which is to call a streamlining shim of node.getAttribute (for 'style') and thereby avoid a need for the CSSStyleDeclaration shimming
+                                        // This works but we instead choose the alternative approach which is to call a streamlining polyfill of node.getAttribute (for 'style') and thereby avoid a need for the CSSStyleDeclaration polyfilling
                                         string += ' style="' + Array.from(node.style).sort().map(function (style) {
-                                            // This approach not supported in IE (without a CSSStyleDeclaration shim); we can't get IE
-                                            //   to shim the style object to auto-return lower-cased values, however, since it is already defined
+                                            // This approach not supported in IE (without a CSSStyleDeclaration polyfill); we can't get IE
+                                            //   to polyfill the style object to auto-return lower-cased values, however, since it is already defined
                                             //   and IE does not allow redefining an existing method
                                             var priority = node.style.getPropertyPriority(style);
                                             return style.toLowerCase() + ': ' + node.style.getPropertyValue(style) + (priority ? ' !' + priority : '');
@@ -197,7 +197,7 @@ var XMLSerializer;
                             }
                         }
 
-                        // Todo: Faster to use array with Array.prototype.indexOf shim?
+                        // Todo: Faster to use array with Array.prototype.indexOf polyfill?
                         emptyElement = emptyElements.indexOf('|'+tagName+'|') > -1;
                         htmlMode = (nonEmptyElements.indexOf('|'+tagName+'|') > -1) || emptyElement;
 

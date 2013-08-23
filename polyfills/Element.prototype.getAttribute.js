@@ -13,7 +13,7 @@
     /**
     * @static
     * @param {RegExp} regex The regular expression to clone and optionally onto which to copy new values
-    * @param {String} [newFlags] A string combining any of 'g', 'i', 'm', or 'y'. Polymorphism would allow newFlags to be an array, but would need a shim
+    * @param {String} [newFlags] A string combining any of 'g', 'i', 'm', or 'y'. Polymorphism would allow newFlags to be an array, but would need an Array.prototype.indexOf polyfill
     * @param {Number} [newLastIndex] A different lastIndex to apply to the source RegExp. Defaults to the source's RegExp's lastIndex
     * @returns {RegExp}
     */
@@ -73,9 +73,9 @@
     * Assumes the style attribute is using well-formed CSS!
     * Unfortunately, we cannot override CSSStyleDeclaration.prototype.cssText nor Element.prototype.style to fix the
     *  upper-casing of property names there since it is already defined on the element itself in IE8.
-    *  We could override the property on individual elements, but shimming each element (and potentially added
+    *  We could override the property on individual elements, but polyfilling each element (and potentially added
     *  element) would be highly inefficient. Another approach would be to wrap the elements when obtained through other
-    *  APIs, e.g., with document methods such as getElementById(), within a shim like https://gist.github.com/brettz9/6093483
+    *  APIs, e.g., with document methods such as getElementById(), within a polyfill like https://gist.github.com/brettz9/6093483
     * @todo Use a genuine CSS parser or confirm regex is indeed covering all possible cases?
     * @todo Handle IE8's dropping of bad rules or the likes of "background"'s !important?
     */
@@ -89,8 +89,8 @@
                 return property.toLowerCase() + ': ' + propertyValue + (important ? ' !important' : '') + ';'; // Important may be undefined in Firefox instead of an empty string, so we need to default it here (and Firefox oddly adds a space after the exclamation mark when the element's style.cssText is used to set the attribute).
             }).sort().join(' ');
         }
-        /* dataset shim unfinished
-        if (attrName.match(/^data-/i) && this.dataset) { // In case a dataset shims exists and was used to set the dataset earlier but it has not yet been able to modify the attributes as it can only do so when done through the dataset property
+        /* dataset polyfill unfinished
+        if (attrName.match(/^data-/i) && this.dataset) { // In case a dataset polyfill exists and was used to set the dataset earlier but it has not yet been able to modify the attributes as it can only do so when done through the dataset property
             // Todo: Validate first (e.g., XML name without uppercase letters)
             return this.dataset[attrName.slice(5).replace(/-[a-z]?/g, _toUpperCase)];
         }
@@ -104,7 +104,7 @@
     Object.defineProperty(Element.prototype, 'attributes', {
         enumerable: false,
         get: function () { // We need to check whether to add any missing dataset attributes
-            // We need a way to work with the original NamedNodeMap. NamedNodeMap() appears to work with an argument, but not sure what to supply; adding attribute nodes did not work; there is no original Element.prototype.attributes to store, so the best we might do is parse outerHTML for attributes (which itself may need a shim)! (Or, as per above with the Element.style, we could wrap elements whenever exposed to us from an API, e.g., document.getElementById(), by shimming document, as in
+            // We need a way to work with the original NamedNodeMap. NamedNodeMap() appears to work with an argument, but not sure what to supply; adding attribute nodes did not work; there is no original Element.prototype.attributes to store, so the best we might do is parse outerHTML for attributes (which itself may need a polyfill)! (Or, as per above with the Element.style, we could wrap elements whenever exposed to us from an API, e.g., document.getElementById(), by polyfilling document, as in
             https://gist.github.com/brettz9/6093483 )
         }
     });

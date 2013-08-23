@@ -1,4 +1,4 @@
-// Todo: replace loading method with require shim plugin
+// Todo: replace loading method with require polyfill plugin
 
 // JSLinted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce
 

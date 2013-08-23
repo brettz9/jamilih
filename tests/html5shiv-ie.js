@@ -338,7 +338,7 @@ var document, Document;
  'attachEvent|close|createAttribute|createComment|createDocumentFragment|createElement|createEventObject|createStyleSheet|createTextNode|detachEvent|elementFromPoint|execCommand|execCommandShowHelp|focus|getElementById|getElementsByName|getElementsByTagName|hasFocus|normalize|open|queryCommandEnabled|queryCommandIndeterm|queryCommandState|queryCommandSupported|queryCommandText|queryCommandValue|querySelector|querySelectorAll|recalc|releaseCapture|updateSettings|write|writeln'.replace(/\w+/g, function (k) {
     document[k] = doc[k];
   });
-  // Todo: add a proper shim here for DOMContentLoaded
+  // Todo: add a proper polyfill here for DOMContentLoaded
   //window.attachEvent('onload', function () {
   setTimeout(function () {
     document.body = document.getElementsByTagName('body')[0];

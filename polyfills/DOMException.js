@@ -1,7 +1,7 @@
 /**
-* Shim for DOMException; original obtained from {@link https://github.com/inexorabletash/polyfill/blob/master/domexception.js}
-* @requires shim: Object.keys
-* @requires shim: Array.prototype.forEach
+* Polyfill for DOMException; original obtained from {@link https://github.com/inexorabletash/polyfill/blob/master/domexception.js}
+* @requires polyfill: Object.keys
+* @requires polyfill: Array.prototype.forEach
 * @license Public domain per https://github.com/inexorabletash/polyfill/blob/master/LICENSE.md
 */
 (function (global) {
@@ -72,7 +72,7 @@
     return funcs;
   }());
 
-  var DOMExceptionShim = (function () {
+  var DOMExceptionPolyfill = (function () {
     function DOMException(name) {
       this.name = name || 'UNKNOWN_ERR';
     }
@@ -95,7 +95,7 @@
     }
 
     var name = Object.prototype.hasOwnProperty.call(code_to_name, code) ? code_to_name[code] : null,
-          ex = new DOMExceptionShim(name);
+          ex = new DOMExceptionPolyfill(name);
     ex.code = code;
     ex.message = ex.name + ': DOM Exception ' + String(code);
     return ex;

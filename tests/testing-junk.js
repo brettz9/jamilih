@@ -2,7 +2,7 @@ Element.prototype.style = function () {
     return {cssText: 'eee'};
 };
 Object.defineProperty(document.getElementById('DOMChildrenMustBeInArray').style, 'cssText', { // the containing cssRule
-    enumerable: false, // Should be true, but IE won't allow (and we only need the shim for IE? If not, repeat after putting this in a try-catch)
+    enumerable: false, // Should be true, but IE won't allow (and we only need the polyfill for IE? If not, repeat after putting this in a try-catch)
     get: function () { // read-only
         alert('abc');
     }

@@ -1,5 +1,5 @@
-// Todo: allow IE to use shim for DOMImplementation.prototype.createDocument, etc.
-// Todo: replace with require shim plugin
+// Todo: allow IE to use polyfill for DOMImplementation.prototype.createDocument, etc.
+// Todo: replace with require polyfill plugin
 /*
  * DOMParser HTML extension
  * 2012-09-04

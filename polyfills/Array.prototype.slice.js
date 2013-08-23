@@ -1,5 +1,5 @@
 /**
- * Shim for "fixing" IE's lack of support (IE < 9) for applying slice
+ * Polyfill for "fixing" IE's lack of support (IE < 9) for applying slice
  * on host objects like NamedNodeMap, NodeList, and HTMLCollection
  * (technically, since host objects are implementation-dependent,
  * IE doesn't need to work this way). Also works on strings,
@@ -8,7 +8,7 @@
  * DOM objects.
  * @license MIT, GPL, do whatever you want
  * @see https://gist.github.com/brettz9/6093105
- * @todo Replace with shim loading requirejs plugin
+ * @todo Replace with polyfill-loading requirejs plugin
 */
 (function () {
     'use strict';

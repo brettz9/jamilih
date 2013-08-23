@@ -5,15 +5,15 @@
 * 2. (Any explicitly added) styles
 * 3. The following which are apparently always present even when not explicitly set: textDecorationBlink, textDecorationNone, textDecorationOverline, textDecorationLineThrough, textDecorationUnderline, posLeft, posBottom, posWidth, posTop, posHeight, posRight, accelerator
 * The only methods (or properties) on the IE < 9 version of CSSStyleDeclaration or its prototype (at least enumerable ones) are: setAttribute, getAttribute, removeAttribute, setExpression, getExpression, removeExpression (not working), and toString.
-* Given a lack of access per these available methods, the parentRule property would not be easy to shim (see parentRule below).
+* Given a lack of access per these available methods, the parentRule property would not be easy to polyfill (see parentRule below).
 * Mozilla also has getPropertyCSSValue for its version of window.computedStyle(), but CSSStyleDeclaration's is not cross-browser nor part of the latest CSSOM spec: http://dev.w3.org/csswg/cssom/
 * Unfortunately, we cannot override CSSStyleDeclaration.prototype.cssText (nor Element.prototype.style) to fix the
 *  upper-casing of property names there since it is already defined in IE8 and IE8 does not allow overriding here.
-*  IE does allow us to override the property on individual elements, but shimming each element (and potentially added 
+*  IE does allow us to override the property on individual elements, but polyfilling each element (and potentially added 
 *  element) would be highly inefficient.
-* It is possible, however, to shim Element.prototype.getAttribute() to harmonize at least in that context (and the latest DOM spec does not appear to require or disallow any particular serialization of the attribute value).
-* @requires shim: Object.defineProperty
-* @requires shim: DOMException
+* It is possible, however, to polyfill Element.prototype.getAttribute() to harmonize at least in that context (and the latest DOM spec does not appear to require or disallow any particular serialization of the attribute value).
+* @requires polyfill: Object.defineProperty
+* @requires polyfill: DOMException
 * @todo Use a genuine CSS parser or confirm regex is indeed covering all possible cases?
 * @todo Handle IE8's dropping of bad rules or the likes of "background"'s !important?
 */
@@ -26,17 +26,16 @@ if (!CSSStyleDeclaration.prototype.getPropertyValue) {
         var _ruleMatch = new RegExp('([\\w\\-]+)\\s*:\\s*([^\\(\\);\\s]+(?:\\([^\\)]*\\))?)\\s*(!\\s*important)?(?:\\s*;\\s*|$)', 'gi');
 
         function _notSupportedError () {
-            // We'll allow it to work with a full proper shim if the (non-standard) shim-helper method has been added
             throw DOMException && DOMException.create ?
                 DOMException.create(9) :
-                // If the shim-helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
+                // If the (nonstandard) polyfill plugin-helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
                 {message: 'NOT_SUPPORTED_ERR: DOM Exception 9', code: 9};
         }
 
         /**
         * @static
         * @param {RegExp} regex The regular expression to clone and optionally onto which to copy new values
-        * @param {String} [newFlags] A string combining any of 'g', 'i', 'm', or 'y'. Polymorphism would allow newFlags to be an array, but would need a shim
+        * @param {String} [newFlags] A string combining any of 'g', 'i', 'm', or 'y'. Polymorphism would allow newFlags to be an array, but would need an Array.prototype.indexOf polyfill
         * @param {Number} [newLastIndex] A different lastIndex to apply from the source RegExp. Defaults to the source's RegExp's lastIndex
         * @returns {RegExp}
         */
@@ -132,7 +131,7 @@ if (!CSSStyleDeclaration.prototype.getPropertyValue) {
             return this.removeAttribute(String(prop));
         };
         Object.defineProperty(CSSStyleDeclaration.prototype, 'length', {
-            enumerable: false, // Should be true, but IE won't allow (and we only need the shim for IE? If not, repeat after putting this in a try-catch)
+            enumerable: false, // Should be true, but IE won't allow (and we only need the polyfill for IE? If not, repeat after putting this in a try-catch)
             get: function () { // read-only
                 return _execCount(_ruleMatch, this.cssText);
             }
@@ -172,7 +171,7 @@ if (!CSSStyleDeclaration.prototype.getPropertyValue) {
         // it with the specific child rule (or rather, the child rule's style
         // property (CSSRuleStyleDeclaration))
         Object.defineProperty(CSSStyleDeclaration.prototype, 'parentRule', { // the containing cssRule
-            enumerable: false, // Should be true, but IE won't allow (and we only need the shim for IE? If not, repeat after putting this in a try-catch)
+            enumerable: false, // Should be true, but IE won't allow (and we only need the polyfill for IE? If not, repeat after putting this in a try-catch)
             get: function () { // read-only
                 _notSupportedError();
             }

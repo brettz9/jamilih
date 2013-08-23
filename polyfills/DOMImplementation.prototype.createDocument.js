@@ -26,12 +26,12 @@ if (DOMImplementation === undefined || !DOMImplementation.prototype.createDocume
     }
 
     /**
-    * This shim implementation does not provide any support for doctype, nor does it wrap the resulting
+    * This polyfill implementation does not provide any support for doctype, nor does it wrap the resulting
     * document so as to support all current DOM methods and properties
     */
     DOMImplementation.prototype.createDocument = function (namespace, qualifiedName, doctype) {
         if (doctype) {
-            throw 'This is not a complete shim for ' +
+            throw 'This is not a complete polyfill for ' +
                             'DOMImplementation.prototype.createDocument.';
         }
         if (!docObjType) {

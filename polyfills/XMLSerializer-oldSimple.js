@@ -1,4 +1,4 @@
-// Todo: replace with require shim plugin
+// Todo: replace with require polyfill plugin
 if (!window.XMLSerializer) {
     window.XMLSerializer = function () {};
     window.XMLSerializer.prototype.serializeToString = function (dom) {

@@ -1,4 +1,4 @@
-// Todo: add with require shim plugin
+// Todo: add with require polyfill plugin
 
 /**
  * Add dataset support to elements
@@ -8,7 +8,7 @@
  *   falls back to native implementation when existing
  * Inspired by http://code.eligrey.com/html5/dataset/
  *   (via {@link https://github.com/adalgiso/html5-dataset/blob/master/html5-dataset.js})
- * Depends on Function.bind and Object.defineProperty/Object.getOwnPropertyDescriptor (shims below)
+ * Depends on Function.bind and Object.defineProperty/Object.getOwnPropertyDescriptor (polyfills below)
  * Licensed under the X11/MIT License
 */
 
@@ -46,7 +46,7 @@ if (!Function.prototype.bind) {
  *
  * By Eli Grey, http://eligrey.com
  *
- * A shim that partially implements Object.defineProperty,
+ * A polyfill that partially implements Object.defineProperty,
  * Object.getOwnPropertyDescriptor, and Object.defineProperties in browsers that have
  * legacy __(define|lookup)[GS]etter__ support.
  *
