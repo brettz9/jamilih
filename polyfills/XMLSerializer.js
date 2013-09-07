@@ -194,23 +194,19 @@ var XMLSerializer;
                         }
                         break;
                     case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
-                        string += ' ' + node.name + // .toLowerCase() +
+                        return ' ' + node.name + // .toLowerCase() +
                                         '="' + entify(node.value) + '"'; // .toLowerCase()
-                        break;
                     case 3: // TEXT
-                        string += entify(nodeValue); // Todo: only entify for XML
-                        break;
+                        return entify(nodeValue); // Todo: only entify for XML
                     case 4: // CDATA
                         if (nodeValue.indexOf(']]'+'>') !== -1) {
                             invalidStateError();
                         }
-                        string += '<' + '![CDATA[' +
+                        return '<' + '![CDATA[' +
                                         nodeValue +
                                         ']]' + '>';
-                        break;
                     case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
-                        string += '&' + node.nodeName+';';
-                        break;
+                        return '&' + node.nodeName+';';
                     case 6: // ENTITY (would need to pass in directly)
                         val = '';
                         content = node.firstChild;
@@ -264,15 +260,14 @@ var XMLSerializer;
                         if (node.data.indexOf('?>') !== -1) {
                             invalidStateError();
                         }
-                        string += '<?' + node.target + ' ' + nodeValue + '?>';
-                        break;
+                        return '<?' + node.target + ' ' + nodeValue + '?>';
                     case 8: // COMMENT
                         if (nodeValue.indexOf('--') !== -1 ||
-                                (nodeValue.length && nodeValue.lastIndexOf('-') === nodeValue.length-1)) {
+                            (nodeValue.length && nodeValue.lastIndexOf('-') === nodeValue.length-1)
+                        ) {
                             invalidStateError();
                         }
-                        string += '<'+'!--' + nodeValue + '-->';
-                        break;
+                        return '<'+'!--' + nodeValue + '-->';
                     case 9: // DOCUMENT (handled earlier in script)
                         break;
                     case 10: // DOCUMENT TYPE
@@ -296,10 +291,9 @@ var XMLSerializer;
                     case 11: // DOCUMENT FRAGMENT (handled earlier in script)
                         break;
                     case 12: // NOTATION (would need to be passed in directly)
-                        string += '<'+'!NOTATION '+node.nodeName +
+                        return '<'+'!NOTATION '+node.nodeName +
                                         addExternalID(node, true) +
                                         '>';
-                        break;
                     default:
                         throw 'Not an XML type';
                 }
