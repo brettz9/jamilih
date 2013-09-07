@@ -90,7 +90,8 @@ var XMLSerializer;
             function lowerCaseCSSPropertiesForIE (n0, n1) {
                 return n1.toLowerCase() + ' ';
             }
-            function parseDOM(node, namespaces) {
+            function serializeDOM(node, namespaces) {
+                var string = '';
                 namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
 
                 if ((node.prefix && node.prefix.indexOf(':') !== -1) || (node.localName && node.localName.indexOf(':') !== -1)) {
@@ -211,16 +212,16 @@ var XMLSerializer;
                             if (tagName === 'script' || tagName === 'style') {
                                 if (tagName === 'script' && (node.type === '' || node.type === 'text/javascript')) {
                                     string += document.createStyleSheet ? node.text : node.textContent;
-                                    // parseDOM(document.createTextNode(node.text), namespaces);
+                                    // serializeDOM(document.createTextNode(node.text), namespaces);
                                 }
                                 else if (tagName === 'style') {
-                                    // parseDOM(document.createTextNode(node.cssText), namespaces);
+                                    // serializeDOM(document.createTextNode(node.cssText), namespaces);
                                     string += document.createStyleSheet ? node.cssText : node.textContent;
                                 }
                             }
                             else {
                                 for (i = 0; i < children.length; i++) {
-                                    parseDOM(children[i], namespaces);
+                                    string += serializeDOM(children[i], namespaces);
                                 }
                             }
                             string += '<\/' + tagName + '>';
@@ -320,7 +321,7 @@ var XMLSerializer;
                         var notations = node.notations;
                         if (notations) {
                             for (i=0; i < notations.length; i++) {
-                                parseDOM(notations[0], namespaces);
+                                serializeDOM(notations[0], namespaces);
                             }
                         }
                         */
@@ -338,7 +339,8 @@ var XMLSerializer;
                 }
                 return string;
             }
-            if (nodeArg.nodeType === 9) { // DOCUMENT - Faster to do it here without first calling parseDOM
+
+            if (nodeArg.nodeType === 9) { // DOCUMENT - Faster to do it here without first calling serializeDOM
                 if (xmlDeclaration) {
                     if (document.xmlVersion) {
                         string += '<?xml version="'+document.xmlVersion+'"';
@@ -356,20 +358,18 @@ var XMLSerializer;
                     invalidStateError();
                 }
                 for (i = 0; i < children.length; i++) { // Can't just do documentElement as there may be doctype, comments, etc.
-                    parseDOM(children[i], namespaces);
+                    string += serializeDOM(children[i], namespaces);
                 }
                 return string;
             }
-            if (nodeArg.nodeType === 11) { // DOCUMENT FRAGMENT - Faster to do it here without first calling parseDOM
+            if (nodeArg.nodeType === 11) { // DOCUMENT FRAGMENT - Faster to do it here without first calling serializeDOM
                 children = nodeArg.childNodes;
                 for (i = 0; i < children.length; i++) {
-                    parseDOM(children[i], namespaces);
+                    string += serializeDOM(children[i], namespaces);
                 }
                 return string;
             }
-            if (nodeArg.nodeType === 1) { // ELEMENT
-                return parseDOM(nodeArg, namespaces);
-            }
+            return serializeDOM(nodeArg, namespaces);
         };
     }
 }());
