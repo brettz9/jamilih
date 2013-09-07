@@ -226,9 +226,9 @@ var XMLSerializer;
                                 val += content.nodeValue; // FIX: allow for other entity types
                                 content = content.nextSibling;
                             }
-                            return string+content; // reconstruct external entity file, if this is that
+                            return string + content; // reconstruct external entity file, if this is that
                         }
-                        string += '<'+'!ENTITY '+node.nodeName+' ';
+                        string += '<' + '!ENTITY ' + node.nodeName + ' ';
                         if (node.publicId || node.systemId) { // External Entity?
                             string += addExternalID(node);
                             if (node.notationName) {
@@ -291,7 +291,7 @@ var XMLSerializer;
                     case 11: // DOCUMENT FRAGMENT (handled earlier in script)
                         break;
                     case 12: // NOTATION (would need to be passed in directly)
-                        return '<'+'!NOTATION '+node.nodeName +
+                        return '<' + '!NOTATION ' + node.nodeName +
                                         addExternalID(node, true) +
                                         '>';
                     default:
