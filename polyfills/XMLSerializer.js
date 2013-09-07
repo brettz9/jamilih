@@ -93,7 +93,8 @@ var XMLSerializer;
                 xmlDeclaration = true,
                 string = '',
                 children = {},
-                i = 0;
+                i = 0,
+                nodeType = nodeArg.nodeType;
 
             function serializeDOM(node, namespaces) {
                 var children, tagName, tagAttributes, prefix, val, content, i,
@@ -342,29 +343,17 @@ var XMLSerializer;
                 return string;
             }
 
-            if (nodeArg.nodeType === 9) { // DOCUMENT - Faster to do it here without first calling serializeDOM
-                if (xmlDeclaration) {
-                    if (document.xmlVersion) {
-                        string += '<?xml version="'+document.xmlVersion+'"';
-                        if (document.xmlEncoding !== undefined && document.xmlEncoding !== null) {
-                            string += ' encoding="'+document.xmlEncoding+'"';
-                        }
-                        if (document.xmlStandalone !== undefined) { // Could configure to only output if "yes"
-                            string += ' standalone="'+(document.xmlStandalone ? 'yes' : 'no')+'"';
-                        }
-                        string += '?>\n';
-                    }
+            if (xmlDeclaration && document.xmlVersion && nodeType === 9) { // DOCUMENT - Faster to do it here without first calling serializeDOM
+                string += '<?xml version="'+document.xmlVersion+'"';
+                if (document.xmlEncoding !== undefined && document.xmlEncoding !== null) {
+                    string += ' encoding="'+document.xmlEncoding+'"';
                 }
-                children = nodeArg.childNodes;
-                if (!children.length) {
-                    invalidStateError();
+                if (document.xmlStandalone !== undefined) { // Could configure to only output if "yes"
+                    string += ' standalone="'+(document.xmlStandalone ? 'yes' : 'no')+'"';
                 }
-                for (i = 0; i < children.length; i++) { // Can't just do documentElement as there may be doctype, comments, etc.
-                    string += serializeDOM(children[i], namespaces);
-                }
-                return string;
+                string += '?>\n';
             }
-            if (nodeArg.nodeType === 11) { // DOCUMENT FRAGMENT - Faster to do it here without first calling serializeDOM
+            if (nodeType === 9 || nodeType === 11) { // DOCUMENT FRAGMENT - Faster to do it here without first calling serializeDOM
                 children = nodeArg.childNodes;
                 for (i = 0; i < children.length; i++) {
                     string += serializeDOM(children[i], namespaces);
