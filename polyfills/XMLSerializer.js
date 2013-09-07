@@ -204,9 +204,9 @@ var XMLSerializer;
                         if (nodeValue.indexOf(']]'+'>') !== -1) {
                             invalidStateError();
                         }
-                        string += '<' + '![CDATA[';
-                        string += nodeValue;
-                        string += ']]' + '>';
+                        string += '<' + '![CDATA[' +
+                                        nodeValue +
+                                        ']]' + '>';
                         break;
                     case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
                         string += '&' + node.nodeName+';';
@@ -220,8 +220,8 @@ var XMLSerializer;
                             if (node.xmlVersion) {
                                 string += 'version="'+node.xmlVersion+'" ';
                             }
-                            string += 'encoding="'+node.xmlEncoding+'"';
-                            string += '?>';
+                            string += 'encoding="'+node.xmlEncoding+'"' +
+                                            '?>';
 
                             if (!content) {
                                 return '';
@@ -249,7 +249,7 @@ var XMLSerializer;
                             val += content.nodeValue; // FIX: allow for other entity types
                             content = content.nextSibling;
                         }
-                        string += '"'+entify(val)+'">';
+                        string += '"' + entify(val) + '">';
                         break;
                     case 7: // PROCESSING INSTRUCTION
                         if (/^xml$/i.test(node.target)) {
@@ -280,9 +280,9 @@ var XMLSerializer;
                         if (!pubIdChar.test(node.publicId)) {
                             invalidStateError();
                         }
-                        string += addExternalID(node);
-                        string += node.internalSubset ? '[\n' + node.internalSubset + '\n]' : '';
-                        string += '>\n';
+                        string += addExternalID(node) +
+                                        node.internalSubset ? '[\n' + node.internalSubset + '\n]' : '' +
+                                        '>\n';
                         /* Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
                         var notations = node.notations;
                         if (notations) {
@@ -296,9 +296,9 @@ var XMLSerializer;
                     case 11: // DOCUMENT FRAGMENT (handled earlier in script)
                         break;
                     case 12: // NOTATION (would need to be passed in directly)
-                        string += '<'+'!NOTATION '+node.nodeName;
-                        string += addExternalID(node, true);
-                        string += '>';
+                        string += '<'+'!NOTATION '+node.nodeName +
+                                        addExternalID(node, true) +
+                                        '>';
                         break;
                     default:
                         throw 'Not an XML type';
