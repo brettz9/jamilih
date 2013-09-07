@@ -24,10 +24,10 @@ var XMLSerializer;
             'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
             pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/,
             xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/,
-            entify = function entify(str) { // FIX: this is probably too many replaces in some cases and a call to it may not be needed at all in some cases
+            entify = function (str) { // FIX: this is probably too many replaces in some cases and a call to it may not be needed at all in some cases
                 return str.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
             },
-            clone = function clone (obj) { // We don't need a deep clone, so this should be sufficient without recursion
+            clone = function (obj) { // We don't need a deep clone, so this should be sufficient without recursion
                 var prop, newObj = {};
                 for (prop in obj) {
                     if (obj.hasOwnProperty(prop)) {
@@ -108,10 +108,10 @@ var XMLSerializer;
                 }
 
                 if (
-                        ((type === 3 || type === 4 || type === 7 || type === 8) &&
-                            !xmlChars.test(nodeValue)) ||
-                        ((type === 2) && !xmlChars.test(node.value)) // Attr.nodeValue is now deprecated, so we use Attr.value
-                    ) {
+                    ((type === 3 || type === 4 || type === 7 || type === 8) &&
+                        !xmlChars.test(nodeValue)) ||
+                    ((type === 2) && !xmlChars.test(node.value)) // Attr.nodeValue is now deprecated, so we use Attr.value
+                ) {
                     invalidStateError();
                 }
 
@@ -156,48 +156,11 @@ var XMLSerializer;
                                 // with IE
                                 notIEInsertedAttributes(tagAttributes[i], node, [
                                     ['type', 'text'], 'colSpan', 'rowSpan', 'cssText', 'shape'
-                                ])
+                                ]) &&
+                                !tagAttributes[i].name.match(/^xmlns:?\w*$/) // Avoid adding these (e.g., from Firefox) as we add above
                             ) {
-                                if (!tagAttributes[i].name.match(/^xmlns:?\w*$/)) { // Avoid adding these (e.g., from Firefox) as we add above
-                                    if (tagAttributes[i].name === 'style') {
-                                        // This doesn't work as we need to sort the rules in a predictable order as IE varies them
-                                        /*
-                                        // Streamline serialization due to IE's upper-casing, stripping semi-colons and fixing post-property whitespace to a single space
-                                        string += ' style="' +
-                                            entify(tagAttributes[i].value.
-                                                replace(new RegExp('([\\w\\-]*:)\\s*', 'g'), lowerCaseCSSPropertiesForIE).
-                                                replace(/;$/, '') // also for IE
-                                            ) + '"';
-                                        */
-
-                                        try {
-                                        /*
-                                        // This works but we instead choose the alternative approach which is to call a streamlining polyfill of node.getAttribute (for 'style') and thereby avoid a need for the CSSStyleDeclaration polyfilling
-                                        string += ' style="' + Array.from(node.style).sort().map(function (style) {
-                                            // This approach not supported in IE (without a CSSStyleDeclaration polyfill); we can't get IE
-                                            //   to polyfill the style object to auto-return lower-cased values, however, since it is already defined
-                                            //   and IE does not allow redefining an existing method
-                                            var priority = node.style.getPropertyPriority(style);
-                                            return style.toLowerCase() + ': ' + node.style.getPropertyValue(style) + (priority ? ' !' + priority : '');
-                                        }).join('; ') + '"';
-                                        */
-//                                        tagAttributes[i].value = 'color:pink';
-                                            string += ' style="' +
-                                                // Either of these works now that Attr.prototype has a style-harmonizing value getter as well as a getAttribute harmonizer
-                                                // node.getAttribute('style') +
-                                                tagAttributes[i].value +
-                                                '"';
-                                        }
-                                        catch(e) {
-                                            // alert(''+node.style);
-                                            throw e;
-                                        }
-                                    }
-                                    else {
-                                        string += ' ' + tagAttributes[i].name + // .toLowerCase() +
-                                            '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
-                                    }
-                                }
+                                string += ' ' + tagAttributes[i].name + // .toLowerCase() +
+                                    '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                             }
                         }
 
@@ -344,12 +307,12 @@ var XMLSerializer;
             }
 
             if (xmlDeclaration && document.xmlVersion && nodeType === 9) { // DOCUMENT - Faster to do it here without first calling serializeDOM
-                string += '<?xml version="'+document.xmlVersion+'"';
+                string += '<?xml version="' + document.xmlVersion + '"';
                 if (document.xmlEncoding !== undefined && document.xmlEncoding !== null) {
-                    string += ' encoding="'+document.xmlEncoding+'"';
+                    string += ' encoding="' + document.xmlEncoding + '"';
                 }
                 if (document.xmlStandalone !== undefined) { // Could configure to only output if "yes"
-                    string += ' standalone="'+(document.xmlStandalone ? 'yes' : 'no')+'"';
+                    string += ' standalone="' + (document.xmlStandalone ? 'yes' : 'no') + '"';
                 }
                 string += '?>\n';
             }
