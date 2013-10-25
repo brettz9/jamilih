@@ -4,6 +4,7 @@
 * Currently applying not only as a polyfill for IE but for other browsers in order to ensure consistent serialization. For example,
 *  its serialization method is serializing attributes in alphabetical order despite Mozilla doing so in document order since
 * IE does not appear to otherwise give a readily determinable order
+* Looks for optional, non-standard $overrideNative boolean property
 * @license MIT, GPL, Do what you want
 * @requires polyfill: Array.from
 * @requires polyfill: Array.prototype.map
@@ -11,81 +12,82 @@
 * @todo NOT COMPLETE! Especially for namespaces
 */
 var XMLSerializer;
-(function () {
+(function (undefined) {
     'use strict';
     if (!XMLSerializer) {
         XMLSerializer = function () {};
     }
-    // Todo: Make this configurable whether to always add?
-    // if (!XMLSerializer.prototype.serializeToString) {
-        var prohibitHTMLOnly = true,
-            emptyElements = '|basefont|frame|isindex' + // Deprecated
-            '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
-            nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
-            'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
-            pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/,
-            xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/,
-            entify = function (str) { // FIX: this is probably too many replaces in some cases and a call to it may not be needed at all in some cases
-                return str.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
-            },
-            clone = function (obj) { // We don't need a deep clone, so this should be sufficient without recursion
-                var prop, newObj = {};
-                for (prop in obj) {
-                    if (obj.hasOwnProperty(prop)) {
-                        newObj[prop] = obj[prop];
-                    }
+    var prohibitHTMLOnly = true,
+        _serializeToString = XMLSerializer.prototype.serializeToString,
+        emptyElements = '|basefont|frame|isindex' + // Deprecated
+        '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
+        nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
+        'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
+        pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/,
+        xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/,
+        entify = function (str) { // FIX: this is probably too many replaces in some cases and a call to it may not be needed at all in some cases
+            return str.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+        },
+        clone = function (obj) { // We don't need a deep clone, so this should be sufficient without recursion
+            var prop, newObj = {};
+            for (prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    newObj[prop] = obj[prop];
                 }
-                return JSON.parse(JSON.stringify(newObj));
-            },
-            invalidStateError = function () { // These are probably only necessary if working with text/html
-                if (prohibitHTMLOnly) {
-                    // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
-                    throw window.DOMException && DOMException.create ?
-                        DOMException.create(11) :
-                        // If the (nonstandard) polyfill plugin helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
-                        {message: 'INVALID_STATE_ERR: DOM Exception 11', code: 11};
-                }
-            },
-            addExternalID = function (node, all) {
-                if (node.systemId.indexOf('"') !== -1 && node.systemId.indexOf("'") !== -1) {
-                    invalidStateError();
-                }
-                var string = '',
-                    publicId = node.publicId,
-                    systemId = node.systemId,
-                    publicQuote  = publicId && publicId.indexOf("'") !== -1 ? "'" : '"', // Don't need to check for quotes here, since not allowed with public
-                    systemQuote  = systemId && systemId.indexOf("'") !== -1 ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
-                if (systemId !== null && publicId !== null) {
-                    string += ' PUBLIC ' + publicQuote + publicId + publicQuote + ' ' + systemQuote + systemId + systemQuote;
-                }
-                else if (publicId !== null) {
-                    string += ' PUBLIC ' + publicQuote + publicId + publicQuote;
-                }
-                else if (all || systemId !== null) {
-                    string += ' SYSTEM ' + systemQuote + systemId + systemQuote;
-                }
-                return string;
-            },
-            notIEInsertedAttributes = function (att, node, nameVals) {
-                return nameVals.every(function (nameVal) {
-                    var name = Array.isArray(nameVal) ? nameVal[0] : nameVal,
-                        val = Array.isArray(nameVal) ? nameVal[1] : null;
-                    return att.name !== name ||
-                        (val && att.value !== val) ||
-                        //(!node.outerHTML.match(new RegExp(' ' + name + '=')));
-                        (node.outerHTML.match(new RegExp(' ' + name + '=' + val ? '"' + val + '"' : '')));
-                });
-            };
-
-        XMLSerializer.prototype.serializeToString = function (nodeArg) {
+            }
+            return JSON.parse(JSON.stringify(newObj));
+        },
+        invalidStateError = function () { // These are probably only necessary if working with text/html
+            if (prohibitHTMLOnly) {
+                // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
+                throw window.DOMException && DOMException.create ?
+                    DOMException.create(11) :
+                    // If the (nonstandard) polyfill plugin helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
+                    {message: 'INVALID_STATE_ERR: DOM Exception 11', code: 11};
+            }
+        },
+        addExternalID = function (node, all) {
+            if (node.systemId.indexOf('"') !== -1 && node.systemId.indexOf("'") !== -1) {
+                invalidStateError();
+            }
+            var string = '',
+                publicId = node.publicId,
+                systemId = node.systemId,
+                publicQuote  = publicId && publicId.indexOf("'") !== -1 ? "'" : '"', // Don't need to check for quotes here, since not allowed with public
+                systemQuote  = systemId && systemId.indexOf("'") !== -1 ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
+            if (systemId !== null && publicId !== null) {
+                string += ' PUBLIC ' + publicQuote + publicId + publicQuote + ' ' + systemQuote + systemId + systemQuote;
+            }
+            else if (publicId !== null) {
+                string += ' PUBLIC ' + publicQuote + publicId + publicQuote;
+            }
+            else if (all || systemId !== null) {
+                string += ' SYSTEM ' + systemQuote + systemId + systemQuote;
+            }
+            return string;
+        },
+        notIEInsertedAttributes = function (att, node, nameVals) {
+            return nameVals.every(function (nameVal) {
+                var name = Array.isArray(nameVal) ? nameVal[0] : nameVal,
+                    val = Array.isArray(nameVal) ? nameVal[1] : null;
+                return att.name !== name ||
+                    (val && att.value !== val) ||
+                    //(!node.outerHTML.match(new RegExp(' ' + name + '=')));
+                    (node.outerHTML.match(new RegExp(' ' + name + '=' + val ? '"' + val + '"' : '')));
+            });
+        },
+        serializeToString = function (nodeArg) {
+            if (!this.$overrideNative && _serializeToString) {
+                return _serializeToString.apply(this, arguments);
+            }
 
             // if (nodeArg.xml) { // If this is genuine XML, IE should be able to handle it (and anyways, I am not sure how to override the prototype of XML elements in IE as we must do to add the likes of lookupNamespaceURI)
              //   return nodeArg.xml;
             // }
-
-            var ieFix = true, // Todo: Make conditional on IE and processing of HTML
+            var mode = this.$mode || 'xml',
+                ieFix = true, // Todo: Make conditional on IE and processing of HTML
                 mozilla = true, // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
-                htmlMode = true, // Todo: Make conditional on namespace?
+                htmlElement = true, // Todo: Make conditional on namespace?
                 emptyElement,
                 namespaces = {},
                 xmlDeclaration = true,
@@ -165,10 +167,10 @@ var XMLSerializer;
 
                         // Todo: Faster to use array with Array.prototype.indexOf polyfill?
                         emptyElement = emptyElements.indexOf('|' + tagName + '|') > -1;
-                        htmlMode = (nonEmptyElements.indexOf('|' + tagName + '|') > -1) || emptyElement;
+                        htmlElement = (nonEmptyElements.indexOf('|' + tagName + '|') > -1) || emptyElement;
 
-                        if (!node.firstChild && (!htmlMode || emptyElement)) {
-                            string += ' />';
+                        if (!node.firstChild && (emptyElement || !htmlElement)) {
+                            string += mode === 'xml' ? ' />' : '>';
                         }
                         else {
                             string += '>';
@@ -318,5 +320,15 @@ var XMLSerializer;
             }
             return serializeDOM(nodeArg, namespaces);
         };
-    // }
+
+    XMLSerializer.prototype.serializeToString = serializeToString;
+
+    /*if (!Element.prototype.outerHTML) {
+        var ser = new XMLSerializer();
+        ser.$mode = 'html';
+        Object.defineProperty(Element.prototype.outerHTML, {get: function () {
+            return ser.serializeToString.apply(ser, arguments);
+        }});
+    }*/
+
 }());
