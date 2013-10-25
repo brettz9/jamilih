@@ -84,7 +84,8 @@ var XMLSerializer;
             // if (nodeArg.xml) { // If this is genuine XML, IE should be able to handle it (and anyways, I am not sure how to override the prototype of XML elements in IE as we must do to add the likes of lookupNamespaceURI)
              //   return nodeArg.xml;
             // }
-            var mode = this.$mode || 'xml',
+            var that = this,
+                mode = this.$mode || 'xml',
                 ieFix = true, // Todo: Make conditional on IE and processing of HTML
                 mozilla = true, // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
                 htmlElement = true, // Todo: Make conditional on namespace?
@@ -97,7 +98,7 @@ var XMLSerializer;
                 nodeType = nodeArg.nodeType;
 
             function serializeDOM(node, namespaces) {
-                var children, tagName, tagAttributes, tagAttLen, prefix, val, content, i,
+                var children, tagName, tagAttributes, tagAttLen, opt, optionsLen, prefix, val, content, i,
                     string = '',
                     nodeValue = node.nodeValue,
                     type = node.nodeType;
@@ -122,6 +123,30 @@ var XMLSerializer;
                         if (ieFix) {
                             tagName = tagName.toLowerCase();
                         }
+
+                        if (that.$formSerialize) {
+                            node = node.cloneNode(true); // Avoid manipulating the input
+                            // Firefox serializes certain properties even if only set via JavaScript ("disabled", "readonly") and it sometimes even adds the "value" property in certain cases (<input type=hidden>)
+                            if ('|input|button|textarea|object|'.indexOf('|' + tagName + '|') > -1) {
+                                if (node.value !== node.defaultValue) { // May be undefined for an object, or empty string for input, etc.
+                                // We can safely add to this node since it was a clone
+                                    node.setAttribute('value', node.value);
+                                }
+                                if (tagName === 'input' && node.checked !== node.defaultChecked) {
+                                    node.setAttribute('checked', node.checked);
+                                }
+                            }
+                            else if (tagName === 'select') {
+                                for (i = 0, optionsLen = node.options.length; i < optionsLen; i++) {
+                                    opt = node.options[i];
+                                    if (opt.selected !== opt.defaultSelected) {
+                                        opt.setAttribute('selected', opt.selected);
+                                    }
+                                }
+                            }
+                        }
+
+
                         // Make this consistent, e.g., so browsers can be reliable in serialization
 
                          // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, but we can safely use name and value
