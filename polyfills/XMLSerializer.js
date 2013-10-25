@@ -1,4 +1,5 @@
 /*globals DOMException*/
+/*jslint todo:true*/
 /**
 * Currently applying not only as a polyfill for IE but for other browsers in order to ensure consistent serialization. For example,
 *  its serialization method is serializing attributes in alphabetical order despite Mozilla doing so in document order since
@@ -16,7 +17,7 @@ var XMLSerializer;
         XMLSerializer = function () {};
     }
     // Todo: Make this configurable whether to always add?
-    if (1 || !XMLSerializer.prototype.serializeToString) {
+    // if (!XMLSerializer.prototype.serializeToString) {
         var prohibitHTMLOnly = true,
             emptyElements = '|basefont|frame|isindex' + // Deprecated
             '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
@@ -74,9 +75,6 @@ var XMLSerializer;
                         //(!node.outerHTML.match(new RegExp(' ' + name + '=')));
                         (node.outerHTML.match(new RegExp(' ' + name + '=' + val ? '"' + val + '"' : '')));
                 });
-            },
-            lowerCaseCSSPropertiesForIE = function (n0, n1) {
-                return n1.toLowerCase() + ' ';
             };
 
         XMLSerializer.prototype.serializeToString = function (nodeArg) {
@@ -277,7 +275,7 @@ var XMLSerializer;
                             invalidStateError();
                         }
                         string += addExternalID(node) +
-                                        node.internalSubset ? '[\n' + node.internalSubset + '\n]' : '' +
+                                        (node.internalSubset ? '[\n' + node.internalSubset + '\n]' : '') +
                                         '>\n';
                         /* Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
                         var notations = node.notations;
@@ -320,5 +318,5 @@ var XMLSerializer;
             }
             return serializeDOM(nodeArg, namespaces);
         };
-    }
+    // }
 }());
