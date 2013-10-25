@@ -18,7 +18,7 @@ var XMLSerializer;
     // Todo: Make this configurable whether to always add?
     if (1 || !XMLSerializer.prototype.serializeToString) {
         var prohibitHTMLOnly = true,
-            emptyElements = '|basefont|frame|isindex'+ // Deprecated
+            emptyElements = '|basefont|frame|isindex' + // Deprecated
             '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
             nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
             'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
@@ -97,7 +97,7 @@ var XMLSerializer;
                 nodeType = nodeArg.nodeType;
 
             function serializeDOM(node, namespaces) {
-                var children, tagName, tagAttributes, prefix, val, content, i,
+                var children, tagName, tagAttributes, tagAttLen, prefix, val, content, i,
                     string = '',
                     nodeValue = node.nodeValue,
                     type = node.nodeType;
@@ -140,14 +140,15 @@ var XMLSerializer;
                                         '="' + entify(namespaces[prefix || '$']) + '"';
                         }
                         //*/
+                        tagAttLen = tagAttributes.length;
                         // Todo: optimize this by joining the for loops together but inserting into an array to sort
-                        for (i = 0; i < tagAttributes.length; i++) {
+                        for (i = 0; i < tagAttLen; i++) {
                             if (tagAttributes[i].name.match(/^xmlns:\w*$/)) {
                                 string += ' ' + tagAttributes[i].name + // .toLowerCase() +
                                     '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                             }
                         }
-                        for (i = 0; i < tagAttributes.length; i++) {
+                        for (i = 0; i < tagAttLen; i++) {
                             if (
                                 // IE includes attributes like type=text even if not explicitly added as such
                                 // Todo: Maybe we should ALWAYS apply instead of never apply in the case of type=text?
@@ -165,8 +166,8 @@ var XMLSerializer;
                         }
 
                         // Todo: Faster to use array with Array.prototype.indexOf polyfill?
-                        emptyElement = emptyElements.indexOf('|'+tagName+'|') > -1;
-                        htmlMode = (nonEmptyElements.indexOf('|'+tagName+'|') > -1) || emptyElement;
+                        emptyElement = emptyElements.indexOf('|' + tagName + '|') > -1;
+                        htmlMode = (nonEmptyElements.indexOf('|' + tagName + '|') > -1) || emptyElement;
 
                         if (!node.firstChild && (!htmlMode || emptyElement)) {
                             string += ' />';
@@ -199,14 +200,14 @@ var XMLSerializer;
                     case 3: // TEXT
                         return entify(nodeValue); // Todo: only entify for XML
                     case 4: // CDATA
-                        if (nodeValue.indexOf(']]'+'>') !== -1) {
+                        if (nodeValue.indexOf(']]' + '>') !== -1) {
                             invalidStateError();
                         }
                         return '<' + '![CDATA[' +
                                         nodeValue +
                                         ']]' + '>';
                     case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
-                        return '&' + node.nodeName+';';
+                        return '&' + node.nodeName + ';';
                     case 6: // ENTITY (would need to pass in directly)
                         val = '';
                         content = node.firstChild;
@@ -214,9 +215,9 @@ var XMLSerializer;
                         if (node.xmlEncoding) { // an external entity file?
                             string += '<?xml ';
                             if (node.xmlVersion) {
-                                string += 'version="'+node.xmlVersion+'" ';
+                                string += 'version="' + node.xmlVersion + '" ';
                             }
-                            string += 'encoding="'+node.xmlEncoding+'"' +
+                            string += 'encoding="' + node.xmlEncoding + '"' +
                                             '?>';
 
                             if (!content) {
@@ -232,7 +233,7 @@ var XMLSerializer;
                         if (node.publicId || node.systemId) { // External Entity?
                             string += addExternalID(node);
                             if (node.notationName) {
-                                string += ' NDATA '+node.notationName;
+                                string += ' NDATA ' + node.notationName;
                             }
                             string += '>';
                             break;
@@ -267,11 +268,11 @@ var XMLSerializer;
                         ) {
                             invalidStateError();
                         }
-                        return '<'+'!--' + nodeValue + '-->';
+                        return '<' + '!--' + nodeValue + '-->';
                     case 9: // DOCUMENT (handled earlier in script)
                         break;
                     case 10: // DOCUMENT TYPE
-                        string += '<'+'!DOCTYPE ' + node.name;
+                        string += '<' + '!DOCTYPE ' + node.name;
                         if (!pubIdChar.test(node.publicId)) {
                             invalidStateError();
                         }
