@@ -132,7 +132,12 @@ var XMLSerializer;
                                     node.setAttribute('value', node.value);
                                 }
                                 if (tagName === 'input' && node.checked !== node.defaultChecked) {
-                                    node.setAttribute('checked', node.checked);
+                                    if (node.checked) {
+                                        node.setAttribute('checked', 'checked');
+                                    }
+                                    else {
+                                        node.removeAttribute('checked');
+                                    }
                                 }
                             }
                             else if (tagName === 'select') {
@@ -140,7 +145,7 @@ var XMLSerializer;
                                     opt = node.options[i];
                                     if (opt.selected !== opt.defaultSelected) {
                                         if (opt.selected) {
-                                            opt.setAttribute('selected', opt.selected);
+                                            opt.setAttribute('selected', 'selected');
                                         }
                                         else {
                                             opt.removeAttribute('selected');
