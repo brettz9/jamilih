@@ -1,3 +1,4 @@
+// From https://github.com/brettz9/jamilih/blob/master/polyfills/XMLSerializer.js
 /*globals DOMException*/
 /*jslint todo:true*/
 /**
@@ -12,7 +13,7 @@
 * @todo NOT COMPLETE! Especially for namespaces
 */
 var XMLSerializer;
-(function (undefined) {
+(function () {
     'use strict';
     if (!XMLSerializer) {
         XMLSerializer = function () {};
@@ -98,7 +99,7 @@ var XMLSerializer;
                 nodeType = nodeArg.nodeType;
 
             function serializeDOM(node, namespaces) {
-                var children, tagName, tagAttributes, tagAttLen, opt, optionsLen, prefix, val, content, i,
+                var children, tagName, tagAttributes, tagAttLen, opt, optionsLen, prefix, val, content, i, textNode,
                     string = '',
                     nodeValue = node.nodeValue,
                     type = node.nodeType;
@@ -125,11 +126,9 @@ var XMLSerializer;
                         }
 
                         if (that.$formSerialize) {
-                            node = node.cloneNode(true); // Avoid manipulating the input
                             // Firefox serializes certain properties even if only set via JavaScript ("disabled", "readonly") and it sometimes even adds the "value" property in certain cases (<input type=hidden>)
-                            if ('|input|button|textarea|object|'.indexOf('|' + tagName + '|') > -1) {
+                            if ('|input|button|object|'.indexOf('|' + tagName + '|') > -1) {
                                 if (node.value !== node.defaultValue) { // May be undefined for an object, or empty string for input, etc.
-                                // We can safely add to this node since it was a clone
                                     node.setAttribute('value', node.value);
                                 }
                                 if (tagName === 'input' && node.checked !== node.defaultChecked) {
@@ -140,7 +139,12 @@ var XMLSerializer;
                                 for (i = 0, optionsLen = node.options.length; i < optionsLen; i++) {
                                     opt = node.options[i];
                                     if (opt.selected !== opt.defaultSelected) {
-                                        opt.setAttribute('selected', opt.selected);
+                                        if (opt.selected) {
+                                            opt.setAttribute('selected', opt.selected);
+                                        }
+                                        else {
+                                            opt.removeAttribute('selected');
+                                        }
                                     }
                                 }
                             }
@@ -212,6 +216,10 @@ var XMLSerializer;
                                 }
                             }
                             else {
+                                if (that.$formSerialize && tagName === 'textarea') {
+                                    textNode = document.createTextNode(node.value);
+                                    children = [textNode];
+                                }
                                 for (i = 0; i < children.length; i++) {
                                     string += serializeDOM(children[i], namespaces);
                                 }
@@ -336,13 +344,15 @@ var XMLSerializer;
                 }
                 string += '?>\n';
             }
-            if (nodeType === 9 || nodeType === 11) { // DOCUMENT FRAGMENT - Faster to do it here without first calling serializeDOM
+            if (nodeType === 9 || nodeType === 11) { // DOCUMENT & DOCUMENT FRAGMENT - Faster to do it here without first calling serializeDOM
                 children = nodeArg.childNodes;
                 for (i = 0; i < children.length; i++) {
-                    string += serializeDOM(children[i], namespaces);
+                    string += serializeDOM(children[i] /*.cloneNode(true)*/, namespaces);
                 }
                 return string;
             }
+            // While safer to clone to avoid modifying original DOM, we need to iterate over properties to obtain textareas and select menu states (if they have been set dynamically) and these states are lost upon cloning (even though dynamic setting of input boxes is not lost to the DOM)
+//            nodeArg = nodeArg.cloneNode(true);
             return serializeDOM(nodeArg, namespaces);
         };
 
