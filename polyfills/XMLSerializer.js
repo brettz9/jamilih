@@ -357,6 +357,10 @@ var XMLSerializer;
                 return string;
             }
             // While safer to clone to avoid modifying original DOM, we need to iterate over properties to obtain textareas and select menu states (if they have been set dynamically) and these states are lost upon cloning (even though dynamic setting of input boxes is not lost to the DOM)
+            // See http://stackoverflow.com/a/21060052/271577 and:
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=197294
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=230307
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=237783
 //            nodeArg = nodeArg.cloneNode(true);
             return serializeDOM(nodeArg, namespaces);
         };
