@@ -179,6 +179,7 @@ Todos:
                     }
                     return 'object';
                 }
+                return undefined;
             },
             fragReducer = function (frag, node) {
                 frag.appendChild(node);
