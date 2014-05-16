@@ -345,7 +345,7 @@ Todos:
                                 case 'innerHTML':
                                     elem.innerHTML = attVal;
                                     break;
-                                case 'selected' : case 'checked': case 'value':
+                                case 'selected' : case 'checked': case 'value': case 'defaultValue':
                                     elem[p] = attVal;
                                     break;
                                 case 'htmlFor': case 'for':
