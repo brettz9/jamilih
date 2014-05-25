@@ -1,5 +1,5 @@
-/*globals DOMParser, XMLSerializer, module*/
-(function () {
+/*globals define, module, DOMParser, XMLSerializer*/
+(function (undef) {
 /*
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
 0. Support style object? / Confirm utility of JsonML fix for style attribute and IE; if so, handle style.cssFloat (or style.styleFloat in IE)
@@ -162,7 +162,7 @@ Todos:
      * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
      */
     function jml () {
-        var i, arg, procValue, p, p2, attVal, replacer = '', xmlns, val, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
+        var i, arg, procValue, p, p2, attVal, replacer = '', val, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
             _getType = function (item) {
                 if (typeof item === 'string') {
                     return 'string';
@@ -179,7 +179,7 @@ Todos:
                     }
                     return 'object';
                 }
-                return undefined;
+                return undef;
             },
             fragReducer = function (frag, node) {
                 frag.appendChild(node);
@@ -187,10 +187,12 @@ Todos:
             },
             replaceDefiner = function (xmlnsObj) {
                 return function (n0) {
-                    var retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
-                    for (xmlns in xmlnsObj) {
-                        if (xmlns !== '') {
-                            retStr += ' xmlns:' + xmlns + '="' + xmlnsObj[xmlns] + '"';
+                    var ns, retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
+                    for (ns in xmlnsObj) {
+                        if (xmlnsObj.hasOwnProperty(ns)) {
+                            if (ns !== '') {
+                                retStr += ' xmlns:' + ns + '="' + xmlnsObj[ns] + '"';
+                            }
                         }
                     }
                     return retStr;
@@ -397,6 +399,9 @@ Todos:
                 case 'array': // Arrays or arrays of arrays indicate child nodes
                     child = arg;
                     for (j = 0, cl = child.length; j < cl; j++) { // Go through children array container to handle elements
+                        if (child[j] === undef) {
+                            throw String('Parent array:' + JSON.stringify(argv) + '; child: ' + child + '; index:' + j);
+                        }
                         if (typeof child[j] === 'string') {
                             _appendNode(elem, document.createTextNode(child[j]));
                         }
@@ -417,7 +422,7 @@ Todos:
     }
 
     // EXPORTS
-    if (typeof module !== 'undefined') {
+    if ('undefined' !== typeof module) {
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {
