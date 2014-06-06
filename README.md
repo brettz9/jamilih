@@ -198,6 +198,8 @@ object iteration order is not reliable across browser
 1. Implement a method building JML by string rather than DOM but create
 DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
 interfaces for direct manipulation.
+1. Allow configuration
+	1. Allow auto-namespacing of class and/or dataset keys
 
 # Naming
 
