@@ -1,4 +1,5 @@
-/*globals define, module, DOMParser, XMLSerializer*/
+/*globals define, module, DOMParser, XMLSerializer, window, document*/
+/*jslint todo:true*/
 (function (undef) {
 /*
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
@@ -162,7 +163,12 @@ Todos:
      * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
      */
     function jml () {
-        var i, arg, procValue, p, p2, attVal, replacer = '', val, k, elsl, j, cl, elem = document.createDocumentFragment(), nodes = [], elStr, atts, child = [], argc = arguments.length, argv = arguments, NS_HTML = 'http://www.w3.org/1999/xhtml',
+        var i, arg, procValue, p, p2, attVal, childContent, childContentType,
+            val, k, elsl, j, cl, replacer = '',
+            elem = document.createDocumentFragment(), nodes = [],
+            elStr, atts, child = [],
+            argc = arguments.length, argv = arguments,
+            NS_HTML = 'http://www.w3.org/1999/xhtml',
             _getType = function (item) {
                 if (typeof item === 'string') {
                     return 'string';
@@ -399,20 +405,27 @@ Todos:
                 case 'array': // Arrays or arrays of arrays indicate child nodes
                     child = arg;
                     for (j = 0, cl = child.length; j < cl; j++) { // Go through children array container to handle elements
-                        if (child[j] === undef) {
+                        childContent = child[j];
+                        childContentType = typeof childContent;
+                        if (childContent === undef) {
                             throw String('Parent array:' + JSON.stringify(argv) + '; child: ' + child + '; index:' + j);
                         }
-                        if (typeof child[j] === 'string') {
-                            _appendNode(elem, document.createTextNode(child[j]));
-                        }
-                        else if (Array.isArray(child[j])) { // Arrays representing child elements
-                            _appendNode(elem, jml.apply(null, child[j]));
-                        }
-                        else if (child[j]['#']) { // Fragment
-                            _appendNode(elem, jml.apply(null, [child[j]['#']]));
-                        }
-                        else { // Single DOM element children
-                            _appendNode(elem, child[j]);
+                        switch (childContentType) {
+                            // Todo: determine whether null or function should have special handling or be converted to text
+                            case 'string': case 'number': case 'boolean':
+                                _appendNode(elem, document.createTextNode(childContent));
+                                break;
+                            default:
+                                if (Array.isArray(childContent)) { // Arrays representing child elements
+                                    _appendNode(elem, jml.apply(null, childContent));
+                                }
+                                else if (childContent['#']) { // Fragment
+                                    _appendNode(elem, jml.apply(null, [childContent['#']]));
+                                }
+                                else { // Single DOM element children
+                                    _appendNode(elem, childContent);
+                                }
+                                break;
                         }
                     }
                     break;
