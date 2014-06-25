@@ -235,6 +235,9 @@ DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
 interfaces for direct manipulation.
 1. Allow configuration
 	1. Allow auto-namespacing of class and/or dataset keys
+1. Allow DOM element as first item (for cloning or allowing style of
+appending (as in jQuery) that does not place the parent as the
+last item?); probably best as latter with method to clone.
 
 # Naming
 
