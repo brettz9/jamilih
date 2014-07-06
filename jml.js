@@ -3,7 +3,6 @@
 (function (undef) {
 /*
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
-0. Support style object? / Confirm utility of JsonML fix for style attribute and IE; if so, handle style.cssFloat (or style.styleFloat in IE)
 
 0. Add JsonML code to handle name attribute (during element creation)
 0. boolean attributes?
@@ -31,6 +30,10 @@ Todos:
 */
 
     'use strict';
+
+    // STATIC PROPERTIES
+    var NS_HTML = 'http://www.w3.org/1999/xhtml',
+        hyphenForCamelCase = /-([a-z])/g;
 
     /**
     * Retrieve the (lower-cased) HTML name of a node
@@ -168,7 +171,6 @@ Todos:
             elem = document.createDocumentFragment(), nodes = [],
             elStr, atts, child = [],
             argc = arguments.length, argv = arguments,
-            NS_HTML = 'http://www.w3.org/1999/xhtml',
             _getType = function (item) {
                 if (typeof item === 'string') {
                     return 'string';
@@ -345,7 +347,7 @@ Todos:
                                 case 'dataset':
                                     for (p2 in attVal) { // Map can be keyed with hyphenated or camel-cased properties
                                         if (attVal.hasOwnProperty(p2)) {
-                                            elem.dataset[p2.replace(/-([a-z])/g, _upperCase)] = attVal[p2];
+                                            elem.dataset[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
                                         }
                                     }
                                     break;
@@ -373,11 +375,25 @@ Todos:
                                         break;
                                     }
                                     if (p === 'style') { // setAttribute will work, but erases any existing styles
-                                        if (elem.style.cssText !== undefined) {
-                                            elem.style.cssText = attVal; // Todo: If we don't need the following condition, we could change to += to avoid overwriting existing style values
+                                        if (attVal && typeof attVal === 'object') {
+                                            for (p2 in attVal) {
+                                                if (attVal.hasOwnProperty(p2)) {
+                                                    // Todo: Handle aggregate properties like "border"
+                                                    if (p2 === 'float') {
+                                                        elem.style.cssFloat = attVal[p2];
+                                                        elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
+                                                    }
+                                                    else {
+                                                        elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                                                    }
+                                                }
+                                            }
                                         }
-                                        else {
-                                            elem.style = attVal;
+                                        else if (elem.style.cssText !== undefined) {
+                                            elem.style.cssText += attVal;
+                                        }
+                                        else { // Opera
+                                            elem.style += attVal;
                                         }
                                         break;
                                     }
@@ -392,6 +408,9 @@ Todos:
                     1) Last element always the parent (put null if don't want parent and want to return array) unless only atts and children (no other elements)
                     2) Individual elements (DOM elements or sequences of string[/object/array]) get added to parent first-in, first-added
                     */
+                    if (i === 0) { // Allow wrapping of element
+                        elem = arg;
+                    }
                     if (i === argc - 1 || (i === argc - 2 && argv[i+1] === null)) { // parent
                         for (k = 0, elsl = nodes.length; k < elsl; k++) {
                             _appendNode(arg, nodes[k]);

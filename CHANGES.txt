@@ -1,3 +1,9 @@
+0.7.0
+* Support appending of attributes/properties and children to existing
+DOM element
+* Support style as object (with hyphenated or CamelCase keys)
+* Append style string attributes rather than replacing
+
 0.6.0
 * Breaking change to allow `on`-prefixed event handlers to become
 set as direct properties rather than through `addEventListener`. If

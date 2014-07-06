@@ -27,8 +27,8 @@ assert.matchesXMLString(
     '<input xmlns="http://www.w3.org/1999/xhtml" />'
 );
 assert.matchesXMLString(
-	jml('input', null),
-	'<input xmlns="http://www.w3.org/1999/xhtml" />'
+    jml('input', null),
+    '<input xmlns="http://www.w3.org/1999/xhtml" />'
 );
 
 assert.matchesXMLString(
@@ -101,13 +101,11 @@ var trsFragment = jml('tr', [
 
 var ser = new XMLSerializer();
 ser.$overrideNative = true;
-assert.matches(
-    ser.serializeToString(trsFragment.childNodes[0]) +
-    ser.serializeToString(trsFragment.childNodes[1]),
-    '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>'
-);
 
 var parent = document.body;
+
+assert.matches(parent, jml(parent));
+
 var div = jml(
     'div', {style: 'position:absolute    !important; left:   -1000px;'}, [
         $('#DOMChildrenMustBeInArray')[0]
@@ -116,12 +114,19 @@ var div = jml(
     $('#yetAnotherSiblingToAddToParent')[0],
     parent
 );
+
 assert.matchesXMLString(
     div,
     '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div id="DOMChildrenMustBeInArray" style="display: none;">test1</div></div>'
     // '<div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; left: -1000px;"><div id="DOMChildrenMustBeInArray" style="display:none;">test1</div></div><div id="anotherElementToAddToParent" style="display:none;">test2</div><div id="yetAnotherSiblingToAddToParent" style="display:none;">test3</div>'
 );
 //throw '';
+
+assert.matches(
+    ser.serializeToString(trsFragment.childNodes[0]) +
+    ser.serializeToString(trsFragment.childNodes[1]),
+    '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>'
+);
 
 assert.matchesXMLString(
     jml('div', [
@@ -145,6 +150,11 @@ assert.matchesXMLString(
 assert.matchesXMLString(
     jml('div', {dataset: {'abcDefGh': 'fff', 'jkl-mno-pq': 'ggg'}}),
     '<div xmlns="http://www.w3.org/1999/xhtml" data-abc-def-gh="fff" data-jkl-mno-pq="ggg"></div>'
+);
+
+assert.matchesXMLString(
+    jml('div', {style: {'float': 'left', 'border-color': 'red'}}, ['test']),
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="border-color: red; float: left;">test</div>'
 );
 
 var str,
