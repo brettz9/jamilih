@@ -1,4 +1,4 @@
-NOTE: This project is currently incomplete and the API is not yet stable.
+NOTE: This project's API is not yet 100% stable.
 
 # Rationale
 Provide round-trippable JSON/JavaScript serialization as with JsonML,
