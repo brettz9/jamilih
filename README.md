@@ -1,5 +1,10 @@
 NOTE: This project's API is not yet 100% stable.
 
+If you are seeking an even lighter version (e.g., for inclusion in a
+stand-alone library) while still getting some benefits of the
+syntax-highlighter-friendly pure JS approach for DOM construction,
+see https://gist.github.com/brettz9/ac4c18f51c0af8003a41
+
 # Rationale
 Provide round-trippable JSON/JavaScript serialization as with JsonML,
 but with all items at a given array level being the same type of item
