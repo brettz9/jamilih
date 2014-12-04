@@ -222,7 +222,7 @@ jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi'}})
 jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}})
 ```
 
-Not yet implemented...
+# Todos
 
 1. Namespaced elements and attributes
 2. Ordered sequences of attributes (or namespace declarations) -
