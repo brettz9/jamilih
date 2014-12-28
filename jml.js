@@ -463,15 +463,18 @@ Todos:
                                 if `stringOutput` is true, it will be the stringified version of
                                 such an object
     */
-    jml.toJML = function (domOrString, stringOutput) {
+    jml.toJML = function (domOrString, config) {
         var ret;
         if (typeof domOrString === 'string') {
             domOrString = new DOMParser().parseFromString(domOrString, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
         }
         
-        if (stringOutput) {
+        if (config.stringOutput) {
             return JSON.stringify(ret);
         }
+    };
+    jml.toJMLString = function (domOrString) {
+        return jml.toJML(domOrString, {stringOutput: true});
     };
 
     // EXPORTS
