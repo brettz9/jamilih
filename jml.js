@@ -453,6 +453,26 @@ Todos:
         }
         return nodes[0] || elem;
     }
+    
+    /**
+    * Converts a DOM object or a string of HTML into a Jamilih object (or string)
+    * @param {string|HTMLElement} [domOrString=document.documentElement] Defaults to converting the current document.
+    * @param {object} [config={stringOutput:false}] Configuration object
+    * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string. 
+    * @returns {array|string} Array containing the elements which represent a Jamilih object, or,
+                                if `stringOutput` is true, it will be the stringified version of
+                                such an object
+    */
+    jml.toJML = function (domOrString, stringOutput) {
+        var ret;
+        if (typeof domOrString === 'string') {
+            domOrString = new DOMParser().parseFromString(domOrString, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
+        }
+        
+        if (stringOutput) {
+            return JSON.stringify(ret);
+        }
+    };
 
     // EXPORTS
     if ('undefined' !== typeof module) {
