@@ -608,6 +608,9 @@ Todos:
                     set({$attribute: [node.name, node.value]}); // Todo: add attribute node support to Jamilih
                     break;
                 case 3: // TEXT
+                    if (config.stripWhitespace && (/^\s+$/).test(node.nodeValue)) {
+                        return;
+                    }
                     set(node.nodeValue);
                     break;
                 case 4: // CDATA
@@ -726,8 +729,8 @@ Todos:
             return JSON.stringify(ret);
         }
     };
-    jml.toJMLString = function (dom) {
-        return jml.toJML(dom, {stringOutput: true});
+    jml.toJMLString = function (dom, config) {
+        return jml.toJML(dom, Object.assign(config || {}, {stringOutput: true}));
     };
 
     // EXPORTS
