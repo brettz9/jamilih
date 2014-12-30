@@ -501,6 +501,7 @@ Todos:
                                 such an object
     */
     jml.toJML = function (dom, config) {
+        config = config || {stringOutput: false};
         if (typeof dom === 'string') {
             dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
         }
@@ -569,10 +570,10 @@ Todos:
                 case 1: // ELEMENT
                     var tmpParent = parent;
                     var tmpParentIdx = parentIdx;
-                    var tagName = node.tagName;
+                    var nodeName = node.nodeName.toLowerCase(); // Todo: for XML, should not lower-case
 
                     setChildren();
-                    set(tagName);
+                    set(nodeName);
                     if (node.attributes.length) {
                         set(Array.from(node.attributes).reduce(function (obj, att) {
                             obj[att.name] = att.value; // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, so we can safely use name and value
@@ -595,10 +596,10 @@ Todos:
                                 parentIdx++;
                             }
                         });
-//alert(tagName + JSON.stringify(ret));
+//alert(nodeName + JSON.stringify(ret));
                     }
                     else {
-  //                  alert('empty:'+tagName + JSON.stringify(ret));
+  //                  alert('empty:'+nodeName + JSON.stringify(ret));
 
                     }
                     parent = tmpParent;
@@ -728,6 +729,7 @@ Todos:
         if (config.stringOutput) {
             return JSON.stringify(ret);
         }
+        return ret;
     };
     jml.toJMLString = function (dom, config) {
         return jml.toJML(dom, Object.assign(config || {}, {stringOutput: true}));
