@@ -1,5 +1,42 @@
 /*globals define, module, DOMParser, XMLSerializer, window, document*/
-/*jslint todo:true*/
+/*jslint todo:true, vars:true*/
+var module;
+if (!String.prototype.includes) {
+  String.prototype.includes = function() {'use strict';
+    return String.prototype.indexOf.apply(this, arguments) !== -1;
+  };
+}
+if (![].includes) {
+  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {'use strict';
+    if (this === undefined || this === null) {
+      throw new TypeError('Cannot convert this value to object');
+    }
+    var O = Object(this);
+    var len = parseInt(O.length) || 0;
+    if (len === 0) {
+      return false;
+    }
+    var n = parseInt(arguments[1]) || 0;
+    var k;
+    if (n >= 0) {
+      k = n;
+    } else {
+      k = len + n;
+      if (k < 0) {k = 0;}
+    }
+    var currentElement;
+    while (k < len) {
+      currentElement = O[k];
+      if (searchElement === currentElement ||
+         (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true;
+      }
+      k++;
+    }
+    return false;
+  };
+}
+
 (function (undef) {
 /*
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
@@ -286,7 +323,7 @@ Todos:
                 case 'object': // Non-DOM-element objects indicate attribute-value pairs
                     atts = arg;
 
-                    if (atts.xmlns !== undefined) { // We handle this here, as otherwise may lose events, etc.
+                    if (atts.xmlns !== undef) { // We handle this here, as otherwise may lose events, etc.
                         // As namespace of element already set as XHTML, we need to change the namespace
                         // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
                         // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
@@ -389,7 +426,7 @@ Todos:
                                                 }
                                             }
                                         }
-                                        else if (elem.style.cssText !== undefined) {
+                                        else if (elem.style.cssText !== undef) {
                                             elem.style.cssText += attVal;
                                         }
                                         else { // Opera
@@ -456,29 +493,245 @@ Todos:
     
     /**
     * Converts a DOM object or a string of HTML into a Jamilih object (or string)
-    * @param {string|HTMLElement} [domOrString=document.documentElement] Defaults to converting the current document.
+    * @param {string|HTMLElement} [dom=document.documentElement] Defaults to converting the current document.
     * @param {object} [config={stringOutput:false}] Configuration object
     * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string. 
     * @returns {array|string} Array containing the elements which represent a Jamilih object, or,
                                 if `stringOutput` is true, it will be the stringified version of
                                 such an object
     */
-    jml.toJML = function (domOrString, config) {
-        var ret;
-        if (typeof domOrString === 'string') {
-            domOrString = new DOMParser().parseFromString(domOrString, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
+    jml.toJML = function (dom, config) {
+        if (typeof dom === 'string') {
+            dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
         }
+        
+        var prohibitHTMLOnly = true;
+
+        var ret = [], parent = ret, parentIdx = 0;
+
+        function invalidStateError () { // These are probably only necessary if working with text/html
+            function DOMException () {return this;}
+            if (prohibitHTMLOnly) {
+                // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
+                // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
+                var e = new DOMException();
+                e.code = 11;
+                throw e;
+            }
+        }
+
+        function addExternalID (node, all) {
+            if (node.systemId.includes('"') && node.systemId.includes("'")) {
+                invalidStateError();
+            }
+            var publicId = node.publicId, systemId = node.systemId;
+            var publicQuote = publicId && publicId.includes("'") ? "'" : '"'; // Don't need to check for quotes here, since not allowed with public
+            var systemQuote = systemId && systemId.includes("'") ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
+            if (systemId !== null && publicId !== null) {
+                string += ' PUBLIC ' + publicQuote + publicId + publicQuote + ' ' + systemQuote + systemId + systemQuote;
+            }
+            else if (publicId !== null) {
+                string += ' PUBLIC ' + publicQuote + publicId + publicQuote;
+            }
+            else if (all || systemId !== null) {
+                string += ' SYSTEM ' + systemQuote + systemId + systemQuote;
+            }
+        }
+
+        function set (val) {
+            parent[parentIdx] = val;
+            parentIdx++;
+        }
+        function setChildren () {
+            set([]);
+            parent = parent[parentIdx - 1];
+            parentIdx = 0;
+        }
+
+        function parseDOM (node) { // , namespaces
+            //namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
+
+            /*
+            if ((node.prefix && node.prefix.includes(':')) || (node.localName && node.localName.includes(':'))) {
+                invalidStateError();
+            }
+            */
+
+            var type = node.nodeType;
+
+            var xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/;
+            if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
+                invalidStateError();
+            }
+
+            var children;
+            switch (type) {
+                case 1: // ELEMENT
+                    var tmpParent = parent;
+                    var tmpParentIdx = parentIdx;
+                    var tagName = node.tagName;
+
+                    setChildren();
+                    set(tagName);
+                    if (node.attributes.length) {
+                        set(Array.from(node.attributes).reduce(function (obj, att) {
+                            obj[att.name] = att.value; // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, so we can safely use name and value
+                            return obj;
+                        }, {}));
+                    }
+                    // Do the attributes above cover our namespaces ok? What if unused but in the DOM?
+        //                var prefix = node.prefix;
+        //                if (node.lookupNamespaceURI(prefix) !== null && namespaces[prefix] === undef) {
+        //                    namespaces[prefix] = node.namespaceURI;
+        //                    string += ' xmlns' + (prefix ? ':'+prefix : '') +
+        //                                '="' + entify(node.namespaceURI) + '"';
+        //                }
+                    children = node.childNodes;
+                    if (children.length) {
+                        setChildren();
+                        Array.from(children).forEach(function (childNode) {
+                            parseDOM(childNode);
+                            if (childNode.nodeType === 1) {
+                                parentIdx++;
+                            }
+                        });
+//alert(tagName + JSON.stringify(ret));
+                    }
+                    else {
+  //                  alert('empty:'+tagName + JSON.stringify(ret));
+
+                    }
+                    parent = tmpParent;
+                    parentIdx = tmpParentIdx;
+                    break;
+                case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
+                    set({$attribute: [node.name, node.value]}); // Todo: add attribute node support to Jamilih
+                    break;
+                case 3: // TEXT
+                    set(node.nodeValue);
+                    break;
+                case 4: // CDATA
+                    if (node.nodeValue.includes(']]'+'>')) {
+                        invalidStateError();
+                    }
+                    set(['![', node.nodeValue]);
+                    break;
+                case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
+                    set(['&', node.nodeName]);
+                    break;
+                case 6: // ENTITY (would need to pass in directly)
+                    var val = '', content = node.firstChild;
+
+                    if (node.xmlEncoding) { // an external entity file?
+                        while (content) {
+                            val += content.nodeValue; // todo: allow for other entity types
+                            content = content.nextSibling;
+                        }
+                        set({$externalEntity: {version: node.xmlVersion, encoding: node.xmlEncoding, value: val}});
+                        return;
+                    }
+                    set({ENTITY: {name: node.nodeName}});
+
+                    if (node.publicId || node.systemId) { // External Entity?
+                        addExternalID(node);
+                        if (node.notationName) {
+                            string += ' NDATA ' + node.notationName;
+                        }
+                        break;
+                    }
+
+                    if (!content) {
+                        return '';
+                    }
+                    while (content) {
+                        val += content.nodeValue; // FIX: allow for other entity types
+                        content = content.nextSibling;
+                    }
+                    break;
+                case 7: // PROCESSING INSTRUCTION
+                    if (/^xml$/i.test(node.target)) {
+                        invalidStateError();
+                    }
+                    if (node.target.includes('?>')) {
+                        invalidStateError();
+                    }
+                    if (node.target.includes(':')) {
+                        invalidStateError();
+                    }
+                    if (node.data.includes('?>')) {
+                        invalidStateError();
+                    }
+                    set(['?', node.target, node.nodeValue]); // Todo: Could give option to attempt to convert value back into object if has pseudo-attributes
+                    break;
+                case 8: // COMMENT
+                    if (node.nodeValue.includes('--') ||
+                        (node.nodeValue.length && node.nodeValue.lastIndexOf('-') === node.nodeValue.length - 1)) {
+                        invalidStateError();
+                    }
+                    set(['!', node.nodeValue]);
+                    break;
+                case 9: // DOCUMENT
+                    var docObj = {$document: []};
+                    if (config.xmlDeclaration) {
+                        docObj = Object.assign({xmlDeclaration: {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone ? 'yes' : 'no'}}, docObj);
+                    }
+                    children = node.childNodes;
+                    if (!children.length) {
+                        invalidStateError();
+                    }
+                    set(docObj); // document.implementation.createHTMLDocument
+                    parent = parent[parent.length - 1].$document;
+                    parentIdx = 0;
+                    // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditonally
+                    Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
+                        parseDOM(childNode);
+                    });
+                    break;
+                case 10: // DOCUMENT TYPE
+                    var pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
+                    if (!pubIdChar.test(node.publicId)) {
+                        invalidStateError();
+                    }
+                    addExternalID(node);
+                    // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
+                    var notations = node.notations; // Currenty deprecated
+                    if (notations) {
+                        Array.from(notations).forEach(function (notation) {
+                            parseDOM(notation);
+                        });
+                    }
+                    // Todo: UNFINISHED
+                    // Can create directly by document.implementation.createDocumentType
+                    set({$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}}); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
+                    break;
+                case 11: // DOCUMENT FRAGMENT
+                    set({'#': []});
+                    children = node.childNodes;
+                    Array.from(children).forEach(function (childNode) {
+                        parseDOM(childNode);
+                    });
+                    break;
+                case 12: // NOTATION (would need to be passed in directly)
+                    addExternalID(node, true);
+                    set({$NOTATION: [node.nodeName, '', '']}); // 'publicId', 'systemId'
+                    break;
+                default:
+                    throw 'Not an XML type';
+            }
+        }
+
+        parseDOM(dom);
         
         if (config.stringOutput) {
             return JSON.stringify(ret);
         }
     };
-    jml.toJMLString = function (domOrString) {
-        return jml.toJML(domOrString, {stringOutput: true});
+    jml.toJMLString = function (dom) {
+        return jml.toJML(dom, {stringOutput: true});
     };
 
     // EXPORTS
-    if ('undefined' !== typeof module) {
+    if (module !== undef) {
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {
