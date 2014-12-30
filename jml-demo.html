@@ -7,9 +7,19 @@
 </head>
 <body>
 <script>
+function s (s) {return (JSON.stringify(s));}
+function o (o) {alert(o.outerHTML);}
 
-alert(jml.toJMLString(document.documentElement, {stripWhitespace: true}));
+alert(
+    s(
+        jml.toJML((jml.apply(null, jml.toJML(document.documentElement)[0])))
+    ) ===
+    s(
+        jml.toJML(document.documentElement)
+    )
+);
 
+//alert(jml.toJMLString(document.documentElement));
 </script>
 </body>
 </html>
