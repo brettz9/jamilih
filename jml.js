@@ -572,7 +572,7 @@ Todos:
                     var tmpParentIdx = parentIdx;
                     var nodeName = node.nodeName.toLowerCase(); // Todo: for XML, should not lower-case
 
-                    setChildren();
+                    setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
                     set(nodeName);
                     if (node.attributes.length) {
                         set(Array.from(node.attributes).reduce(function (obj, att) {
@@ -584,26 +584,18 @@ Todos:
         //                var prefix = node.prefix;
         //                if (node.lookupNamespaceURI(prefix) !== null && namespaces[prefix] === undef) {
         //                    namespaces[prefix] = node.namespaceURI;
-        //                    string += ' xmlns' + (prefix ? ':'+prefix : '') +
-        //                                '="' + entify(node.namespaceURI) + '"';
+        //                    parent[parentIdx - 1]['xmlns' + (prefix ? ':' + prefix : '')] = node.namespaceURI;
         //                }
                     children = node.childNodes;
                     if (children.length) {
-                        setChildren();
+                        setChildren(); // Element children array container
                         Array.from(children).forEach(function (childNode) {
                             parseDOM(childNode);
-                            if (childNode.nodeType === 1) {
-                                parentIdx++;
-                            }
                         });
-//alert(nodeName + JSON.stringify(ret));
-                    }
-                    else {
-  //                  alert('empty:'+nodeName + JSON.stringify(ret));
-
                     }
                     parent = tmpParent;
                     parentIdx = tmpParentIdx;
+                    parentIdx++; // Increment index in parent container of this element
                     break;
                 case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
                     set({$attribute: [node.name, node.value]}); // Todo: add attribute node support to Jamilih
@@ -665,7 +657,7 @@ Todos:
                     if (node.data.includes('?>')) {
                         invalidStateError();
                     }
-                    set(['?', node.target, node.nodeValue]); // Todo: Could give option to attempt to convert value back into object if has pseudo-attributes
+                    set(['?', node.target, node.data]); // Todo: Could give option to attempt to convert value back into object if has pseudo-attributes
                     break;
                 case 8: // COMMENT
                     if (node.nodeValue.includes('--') ||
@@ -687,8 +679,12 @@ Todos:
                     parent = parent[parent.length - 1].$document;
                     parentIdx = 0;
                     // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditonally
+                    setChildren();
                     Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
                         parseDOM(childNode);
+                        if (childNode.nodeType === 1) {
+                            parentIdx++;
+                        }
                     });
                     break;
                 case 10: // DOCUMENT TYPE
@@ -709,11 +705,24 @@ Todos:
                     set({$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}}); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
                     break;
                 case 11: // DOCUMENT FRAGMENT
+                    var tmpParent = parent;
+                    var tmpParentIdx = parentIdx;
+                    
                     set({'#': []});
+                    
+                    // Set position to fragment's array children
+                    parent = parent[parentIdx - 1]['#'];
+                    parentIdx = 0;
+
                     children = node.childNodes;
                     Array.from(children).forEach(function (childNode) {
+                        // No need for setChildren, as we have already built the container array
                         parseDOM(childNode);
                     });
+
+                    parent = tmpParent;
+                    parentIdx = tmpParentIdx;
+                    parentIdx++; // Probably not necessary since fragment would not be contained by anything
                     break;
                 case 12: // NOTATION (would need to be passed in directly)
                     addExternalID(node, true);
