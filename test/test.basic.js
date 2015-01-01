@@ -16,7 +16,7 @@ module.exports = testCase({
     'simple div': function(test) {
     // ============================================================================
         test.expect(1);
-        var expected = ['div', {'class': 'test'}, ['someContent']];
+        var expected = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
         var result = jml.toJML(xml);
         test.deepEqual(expected, result);
         test.done();
