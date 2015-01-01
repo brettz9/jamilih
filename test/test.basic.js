@@ -13,7 +13,7 @@ var xml = new DOMParser().parseFromString('<div class="test">someContent</div>',
 module.exports = testCase({
 
     // ============================================================================
-    'simple parent selection, return both path and value': function(test) {
+    'simple div': function(test) {
     // ============================================================================
         test.expect(1);
         var expected = ['div', {'class': 'test'}, ['someContent']];
