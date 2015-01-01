@@ -23,6 +23,13 @@
     "engine": {
         "node": ">=0.10"
     },
+    "dependencies": {
+        "jsdom": "2.x",
+        "xmldom": "0.1.x"
+    },
+    "devDependencies": {
+        "nodeunit": "*"
+    },
     "readmeFilename": "README.md",
     "bugs": {
         "url": "https://github.com/brettz9/jamilih/issues"
