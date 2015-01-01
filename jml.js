@@ -358,8 +358,8 @@ Todos:
                                 0. {$DOCTYPE: []} // document.implementation.createDocumentType
                                 0. {$NOTATION: [name, publicID, systemID]}
                                 0. {$ENTITY: ...}
+                                0. {$attribute: [name, value, namespace]}
 
-                                0. Way to create attribute nodes esp. if no element even if now deprecated
                                 0. JSON mode to prevent event addition
                                 */
                                 /* unfinished:
@@ -601,7 +601,7 @@ Todos:
                     parentIdx++; // Increment index in parent container of this element
                     break;
                 case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
-                    set({$attribute: [node.name, node.value]});
+                    set({$attribute: [node.name, node.value, node.namespaceURI]});
                     break;
                 case 3: // TEXT
                     if (config.stripWhitespace && (/^\s+$/).test(node.nodeValue)) {
