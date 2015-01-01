@@ -552,7 +552,7 @@ Todos:
             parentIdx = 0;
         }
 
-        function parseDOM (node) { // , namespaces
+        function parseDOM (node, namespaces) {
             //namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
 
             /*
@@ -577,30 +577,34 @@ Todos:
 
                     setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
                     set(nodeName);
-                    if (node.attributes.length) {
-                        var start = {};
+                    
+                    var start = {}, hasNamespaceDeclaration = false;
+                    
+                    if (namespaces[node.prefix || ''] !== node.namespaceURI) {
+                        namespaces[node.prefix || ''] = node.namespaceURI;
                         if (node.prefix) {
                             start[xmlns + ':' + node.prefix] = node.namespaceURI;
                         }
                         else if (node.namespaceURI) {
                             start.xmlns = node.namespaceURI;
                         }
+                        hasNamespaceDeclaration = true;
+                    }
+                    if (node.attributes.length) {
                         set(Array.from(node.attributes).reduce(function (obj, att) {
                             obj[att.name] = att.value; // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, so we can safely use name and value
                             return obj;
                         }, start));
                     }
-                    // Do the attributes above cover our namespaces ok? What if unused but in the DOM?
-        //                var prefix = node.prefix;
-        //                if (node.lookupNamespaceURI(prefix) !== null && namespaces[prefix] === undef) {
-        //                    namespaces[prefix] = node.namespaceURI;
-        //                    parent[parentIdx - 1]['xmlns' + (prefix ? ':' + prefix : '')] = node.namespaceURI;
-        //                }
+                    else if (hasNamespaceDeclaration) {
+                        set(start);
+                    }
+
                     children = node.childNodes;
                     if (children.length) {
                         setChildren(); // Element children array container
                         Array.from(children).forEach(function (childNode) {
-                            parseDOM(childNode);
+                            parseDOM(childNode, namespaces);
                         });
                     }
                     parent = tmpParent;
@@ -700,7 +704,7 @@ Todos:
 
                     Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
                         // No need for setChildren, as we have already built the container array
-                        parseDOM(childNode);
+                        parseDOM(childNode, namespaces);
                     });
                     parent = tmpParent;
                     parentIdx = tmpParentIdx;
@@ -716,7 +720,7 @@ Todos:
                     var notations = node.notations; // Currenty deprecated
                     if (notations) {
                         Array.from(notations).forEach(function (notation) {
-                            parseDOM(notation);
+                            parseDOM(notation, namespaces);
                         });
                     }
                     // Todo: UNFINISHED
@@ -736,7 +740,7 @@ Todos:
                     children = node.childNodes;
                     Array.from(children).forEach(function (childNode) {
                         // No need for setChildren, as we have already built the container array
-                        parseDOM(childNode);
+                        parseDOM(childNode, namespaces);
                     });
 
                     parent = tmpParent;
@@ -752,7 +756,7 @@ Todos:
             }
         }
 
-        parseDOM(dom);
+        parseDOM(dom, {});
         
         if (config.stringOutput) {
             return JSON.stringify(ret);
