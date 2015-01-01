@@ -25,7 +25,8 @@
     },
     "dependencies": {
         "jsdom": "2.x",
-        "xmldom": "0.1.x"
+        "xmldom": "0.1.x",
+        "array.from": "0.2.x"
     },
     "devDependencies": {
         "nodeunit": "*"

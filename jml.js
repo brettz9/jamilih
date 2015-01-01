@@ -758,6 +758,7 @@ Todos:
 
     // EXPORTS
     if (module !== undef) {
+        require('array.from');
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {
