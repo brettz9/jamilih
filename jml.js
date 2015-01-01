@@ -346,20 +346,21 @@ Todos:
                     for (p in atts) {
                         if (atts.hasOwnProperty(p)) {
                             attVal = atts[p];
-                            switch(p) {
+                            switch (p) {
                                 /*
                                 Todos:
-                                0. Accept array for any attribute with first item as prefix and second as value?
                                 0. add '$a' for array of ordered (prefix-)attribute-value arrays
                                 0. {$: ['xhtml', 'div']} for prefixed elements
+                                0. Accept array for any attribute with first item as prefix and second as value?
+
                                 0. {$document: []} // document.implementation.createHTMLDocument
                                 0. {$xmlDocument: []} // document.implementation.createDocument
                                 0. {$DOCTYPE: []} // document.implementation.createDocumentType
                                 0. {$NOTATION: [name, publicID, systemID]}
                                 0. {$ENTITY: ...}
-                                0. Way to create attribute nodes esp. if no element? Now deprecated
 
-                                0. JSON mode to prevent event addition?
+                                0. Way to create attribute nodes esp. if no element even if now deprecated
+                                0. JSON mode to prevent event addition
                                 */
                                 /* unfinished:
                                 case '$': // Element with prefix?
@@ -600,7 +601,7 @@ Todos:
                     parentIdx++; // Increment index in parent container of this element
                     break;
                 case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
-                    set({$attribute: [node.name, node.value]}); // Todo: add attribute node support to Jamilih
+                    set({$attribute: [node.name, node.value]});
                     break;
                 case 3: // TEXT
                     if (config.stripWhitespace && (/^\s+$/).test(node.nodeValue)) {
@@ -688,7 +689,7 @@ Todos:
                         invalidStateError();
                     }
 
-                    // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditonally
+                    // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditionally
 
                     Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
                         // No need for setChildren, as we have already built the container array
