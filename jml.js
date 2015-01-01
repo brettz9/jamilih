@@ -578,10 +578,17 @@ Todos:
                     setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
                     set(nodeName);
                     if (node.attributes.length) {
+                        var start = {};
+                        if (node.prefix) {
+                            start[xmlns + ':' + node.prefix] = node.namespaceURI;
+                        }
+                        else if (node.namespaceURI) {
+                            start.xmlns = node.namespaceURI;
+                        }
                         set(Array.from(node.attributes).reduce(function (obj, att) {
                             obj[att.name] = att.value; // Attr.nodeName and Attr.nodeValue are deprecated as of DOM4 as Attr no longer inherits from Node, so we can safely use name and value
                             return obj;
-                        }, {}));
+                        }, start));
                     }
                     // Do the attributes above cover our namespaces ok? What if unused but in the DOM?
         //                var prefix = node.prefix;
