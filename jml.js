@@ -667,25 +667,34 @@ Todos:
                     set(['!', node.nodeValue]);
                     break;
                 case 9: // DOCUMENT
+                    var tmpParent = parent;
+                    var tmpParentIdx = parentIdx;
                     var docObj = {$document: []};
+                    
                     if (config.xmlDeclaration) {
-                        docObj = Object.assign({xmlDeclaration: {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone ? 'yes' : 'no'}}, docObj);
+                        docObj = Object.assign({xmlDeclaration: {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone}}, docObj);
                     }
+                    
+                    set(docObj); // document.implementation.createHTMLDocument
+                    
+                    // Set position to fragment's array children
+                    parent = parent[parentIdx - 1].$document;
+                    parentIdx = 0;
+                    
                     children = node.childNodes;
                     if (!children.length) {
                         invalidStateError();
                     }
-                    set(docObj); // document.implementation.createHTMLDocument
-                    parent = parent[parent.length - 1].$document;
-                    parentIdx = 0;
+
                     // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditonally
-                    setChildren();
+
                     Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
+                        // No need for setChildren, as we have already built the container array
                         parseDOM(childNode);
-                        if (childNode.nodeType === 1) {
-                            parentIdx++;
-                        }
                     });
+                    parent = tmpParent;
+                    parentIdx = tmpParentIdx;
+                    parentIdx++; // Probably not necessary since fragment would not be contained by anything
                     break;
                 case 10: // DOCUMENT TYPE
                     var pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
