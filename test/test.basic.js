@@ -8,7 +8,7 @@ var jml = require('../jml'),
     XMLSerializer = require('xmldom').XMLSerializer,
     jsdom = require('jsdom').jsdom;
 
-var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
+var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html'); // This polyfill apparently mistakenly avoids putting the document into a full HTML document (with body)
 
 var document = jsdom('');
 var window = document.parentWindow;
