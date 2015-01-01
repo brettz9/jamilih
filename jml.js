@@ -354,7 +354,9 @@ Todos:
                                 0. {$: ['xhtml', 'div']} for prefixed elements
                                 0. {$document: []} // document.implementation.createHTMLDocument
                                 0. {$xmlDocument: []} // document.implementation.createDocument
-                                0. {$documentType: []} // document.implementation.createDocumentType
+                                0. {$DOCTYPE: []} // document.implementation.createDocumentType
+                                0. {$NOTATION: [name, publicID, systemID]}
+                                0. {$ENTITY: ...}
                                 0. Way to create attribute nodes esp. if no element? Now deprecated
 
                                 0. JSON mode to prevent event addition?
@@ -626,7 +628,7 @@ Todos:
                         set({$externalEntity: {version: node.xmlVersion, encoding: node.xmlEncoding, value: val}});
                         return;
                     }
-                    set({ENTITY: {name: node.nodeName}});
+                    set({$ENTITY: {name: node.nodeName}});
 
                     if (node.publicId || node.systemId) { // External Entity?
                         addExternalID(node);
