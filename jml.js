@@ -358,7 +358,7 @@ Todos:
                                 0. {$DOCTYPE: []} // document.implementation.createDocumentType
                                 0. {$NOTATION: [name, publicID, systemID]}
                                 0. {$ENTITY: ...}
-                                0. {$attribute: [name, value, namespace]}
+                                0. {$attribute: [namespace, name, value]}
 
                                 0. JSON mode to prevent event addition
                                 */
@@ -601,7 +601,7 @@ Todos:
                     parentIdx++; // Increment index in parent container of this element
                     break;
                 case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
-                    set({$attribute: [node.name, node.value, node.namespaceURI]});
+                    set({$attribute: [node.namespaceURI, node.name, node.value]});
                     break;
                 case 3: // TEXT
                     if (config.stripWhitespace && (/^\s+$/).test(node.nodeValue)) {
