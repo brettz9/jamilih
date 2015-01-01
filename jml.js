@@ -750,7 +750,7 @@ Todos:
         if (config.stringOutput) {
             return JSON.stringify(ret);
         }
-        return ret;
+        return ret[0];
     };
     jml.toJMLString = function (dom, config) {
         return jml.toJML(dom, Object.assign(config || {}, {stringOutput: true}));

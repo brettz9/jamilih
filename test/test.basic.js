@@ -7,7 +7,7 @@ var jml = require('../jml'),
     DOMParser = require('xmldom').DOMParser,
     XMLSerializer = require('xmldom').XMLSerializer;
 
-var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html').documentElement;
+var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
 
 
 module.exports = testCase({
@@ -17,7 +17,7 @@ module.exports = testCase({
     // ============================================================================
         test.expect(1);
         var expected = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
-        var result = jml.toJML(xml);
+        var result = jml.toJML(xml.documentElement);
         test.deepEqual(expected, result);
         test.done();
     }
