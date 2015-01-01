@@ -26,7 +26,8 @@
     "dependencies": {
         "jsdom": "2.x",
         "xmldom": "0.1.x",
-        "array.from": "0.2.x"
+        "array.from": "0.2.x",
+        "object-assign": "2.x"
     },
     "devDependencies": {
         "nodeunit": "*"

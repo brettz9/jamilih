@@ -562,6 +562,7 @@ Todos:
             */
 
             var type = node.nodeType;
+            namespaces = Object.assign({}, namespaces);
 
             var xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/;
             if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
@@ -770,6 +771,7 @@ Todos:
     // EXPORTS
     if (module !== undef) {
         require('array.from');
+        Object.assign = require('object-assign');
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {
