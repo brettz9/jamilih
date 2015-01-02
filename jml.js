@@ -643,33 +643,35 @@ Todos:
                     set(['&', node.nodeName]);
                     break;
                 case 6: // ENTITY (would need to pass in directly)
-                    var val = '', content = node.firstChild;
-
+                    tmpParent = parent;
+                    tmpParentIdx = parentIdx;
                     if (node.xmlEncoding) { // an external entity file?
-                        while (content) {
-                            val += content.nodeValue; // todo: allow for other entity types
-                            content = content.nextSibling;
-                        }
-                        set({$externalEntity: {version: node.xmlVersion, encoding: node.xmlEncoding, value: val}});
-                        return;
-                    }
-                    set({$ENTITY: {name: node.nodeName}});
+                        set({$ENTITY: {version: node.xmlVersion, encoding: node.xmlEncoding, value: []}});
 
-                    if (node.publicId || node.systemId) { // External Entity?
-                        addExternalID(node);
-                        if (node.notationName) {
-                            string += ' NDATA ' + node.notationName;
+                        // Set position to $ENTITY's value array children
+                        parent = parent[parentIdx - 1].$ENTITY;
+                        parentIdx = 0;
+                    }
+                    else {
+                        set({$ENTITY: {name: node.nodeName, value: []}}); // Todo: Do we need a value here?
+                        if (node.publicId || node.systemId) { // External Entity?
+                            addExternalID(node);
+                            if (node.notationName) {
+                                string += ' NDATA ' + node.notationName;
+                            }
+                            break;
                         }
-                        break;
                     }
-
-                    if (!content) {
-                        return '';
+                    children = node.childNodes;
+                    if (children.length) {
+                        setChildren(); // Entity children array container
+                        Array.from(children).forEach(function (childNode) {
+                            parseDOM(childNode, namespaces);
+                        });
                     }
-                    while (content) {
-                        val += content.nodeValue; // todo: allow for other entity types
-                        content = content.nextSibling;
-                    }
+                    parent = tmpParent;
+                    parentIdx = tmpParentIdx;
+                    parentIdx++; // Increment index in parent container of this element
                     break;
                 case 7: // PROCESSING INSTRUCTION
                     if (/^xml$/i.test(node.target)) {
