@@ -375,7 +375,7 @@ Todos:
                                     break;
                                 case '$ENTITY':
                                     // Todo: Unfinished (esp. childNodes)
-                                    node = {nodeName: attVal.name, nodeValue: null, publicId: attVal.publicId, systemId: attVal.systemId, notationName: attVal.name, nodeType: 6, childNodes: []};
+                                    node = {nodeName: attVal.name, nodeValue: null, publicId: attVal.publicId, systemId: attVal.systemId, notationName: attVal.notationName, nodeType: 6, childNodes: []};
                                     break;
                                 case '$NOTATION':
                                     // Todo: We could add further properties/methods, but unlikely to be used as is.
