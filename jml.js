@@ -1,6 +1,6 @@
-/*globals define, module, DOMParser, XMLSerializer, window, document*/
+/*globals define, DOMParser, XMLSerializer */
 /*jslint todo:true, vars:true*/
-var module;
+var module, require, document, window;
 if (!String.prototype.includes) {
   String.prototype.includes = function() {'use strict';
     return String.prototype.indexOf.apply(this, arguments) !== -1;
@@ -204,7 +204,7 @@ Todos:
      */
     function jml () {
         var i, arg, procValue, p, p2, attVal, childContent, childContentType,
-            val, k, elsl, j, cl, replacer = '',
+            val, k, elsl, att, j, cl, replacer = '',
             elem = document.createDocumentFragment(), nodes = [],
             elStr, atts, child = [],
             argc = arguments.length, argv = arguments,
@@ -358,7 +358,6 @@ Todos:
                                 0. {$DOCTYPE: []} // document.implementation.createDocumentType
                                 0. {$NOTATION: [name, publicID, systemID]}
                                 0. {$ENTITY: ...}
-                                0. {$attribute: [namespace, name, value]}
 
                                 0. JSON mode to prevent event addition
                                 */
@@ -369,6 +368,11 @@ Todos:
                                 */
                                 case '#': // Document fragment
                                     nodes[nodes.length] = jml.apply(null, [attVal]); // Nest within array to avoid confusion with elements
+                                    break;
+                                case '$attribute': // Attribute node
+                                    att = document.createAttributeNS(attVal[0], attVal[1]);
+                                    att.value = attVal[2];
+                                    nodes[nodes.length] = att;
                                     break;
                                 case '$on': // Events
                                     for (p2 in attVal) {
@@ -569,11 +573,11 @@ Todos:
                 invalidStateError();
             }
 
-            var children;
+            var children, tmpParent, tmpParentIdx;
             switch (type) {
                 case 1: // ELEMENT
-                    var tmpParent = parent;
-                    var tmpParentIdx = parentIdx;
+                    tmpParent = parent;
+                    tmpParentIdx = parentIdx;
                     var nodeName = node.nodeName.toLowerCase(); // Todo: for XML, should not lower-case
 
                     setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
@@ -584,7 +588,7 @@ Todos:
                     if (namespaces[node.prefix || ''] !== node.namespaceURI) {
                         namespaces[node.prefix || ''] = node.namespaceURI;
                         if (node.prefix) {
-                            start[xmlns + ':' + node.prefix] = node.namespaceURI;
+                            start['xmlns:' + node.prefix] = node.namespaceURI;
                         }
                         else if (node.namespaceURI) {
                             start.xmlns = node.namespaceURI;
@@ -682,8 +686,8 @@ Todos:
                     set(['!', node.nodeValue]);
                     break;
                 case 9: // DOCUMENT
-                    var tmpParent = parent;
-                    var tmpParentIdx = parentIdx;
+                    tmpParent = parent;
+                    tmpParentIdx = parentIdx;
                     var docObj = {$document: []};
                     
                     if (config.xmlDeclaration) {
@@ -729,8 +733,8 @@ Todos:
                     set({$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}}); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
                     break;
                 case 11: // DOCUMENT FRAGMENT
-                    var tmpParent = parent;
-                    var tmpParentIdx = parentIdx;
+                    tmpParent = parent;
+                    tmpParentIdx = parentIdx;
                     
                     set({'#': []});
                     
@@ -772,6 +776,8 @@ Todos:
     if (module !== undef) {
         require('array.from');
         Object.assign = require('object-assign');
+        document = require('jsdom').jsdom('');
+        window = document.parentWindow;
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {

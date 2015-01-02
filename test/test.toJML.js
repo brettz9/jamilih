@@ -104,6 +104,7 @@ module.exports = testCase({
     // ============================================================================
     'document fragment': function (test) {
     // ============================================================================
+        test.expect(1);
         var expected = {'#': [divJamilih]};
         var frag = document.createDocumentFragment();
         frag.appendChild(divDOM.cloneNode(true));
