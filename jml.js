@@ -349,8 +349,9 @@ Todos:
                             switch (p) {
                                 /*
                                 Todos:
+                                0. JSON mode to prevent event addition
+
                                 0. add '$a' for array of ordered (prefix-)attribute-value arrays
-                                0. {$: ['xhtml', 'div']} for prefixed elements
                                 0. Accept array for any attribute with first item as prefix and second as value?
 
                                 0. {$document: []} // document.implementation.createHTMLDocument
@@ -359,9 +360,9 @@ Todos:
                                 0. {$NOTATION: [name, publicID, systemID]}
                                 0. {$ENTITY: ...}
 
-                                0. JSON mode to prevent event addition
                                 */
                                 /* unfinished:
+                                0. {$: ['xhtml', 'div']} for prefixed elements
                                 case '$': // Element with prefix?
                                     nodes[nodes.length] = elem = document.createElementNS(attVal[0], attVal[1]);
                                     break;
