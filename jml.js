@@ -667,7 +667,7 @@ Todos:
                         return '';
                     }
                     while (content) {
-                        val += content.nodeValue; // FIX: allow for other entity types
+                        val += content.nodeValue; // todo: allow for other entity types
                         content = content.nextSibling;
                     }
                     break;
