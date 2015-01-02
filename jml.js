@@ -563,6 +563,10 @@ Todos:
             parent = parent[parentIdx - 1];
             parentIdx = 0;
         }
+        function setObj (prop) {
+            parent = parent[parentIdx - 1][prop];
+            parentIdx = 0;
+        }
 
         function parseDOM (node, namespaces) {
             //namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
@@ -667,8 +671,7 @@ Todos:
                     children = node.childNodes;
                     if (children.length) {
                         // Set position to $ENTITY's value array children
-                        parent = parent[parentIdx - 1].$ENTITY;
-                        parentIdx = 0;
+                        setObj('$ENTITY');
 
                         setChildren(); // Entity children array container
                         Array.from(children).forEach(function (childNode) {
@@ -710,8 +713,7 @@ Todos:
                     set(docObj); // document.implementation.createHTMLDocument
                     
                     // Set position to fragment's array children
-                    parent = parent[parentIdx - 1].$document;
-                    parentIdx = 0;
+                    setObj('$document');
                     
                     children = node.childNodes;
                     if (!children.length) {
@@ -754,8 +756,7 @@ Todos:
                     set({'#': []});
                     
                     // Set position to fragment's array children
-                    parent = parent[parentIdx - 1]['#'];
-                    parentIdx = 0;
+                    setObj('#');
 
                     children = node.childNodes;
                     Array.from(children).forEach(function (childNode) {
