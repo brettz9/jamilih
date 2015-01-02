@@ -33,6 +33,9 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
 		1. `#x` followed by a hexadecimal character reference as a string, e.g., `ab3`
 		1. `?` followed by a processing instruction target string and string value (XML)
         1. `'![` followed by CDATA content as a string (XML), e.g., `&test <CDATA> content`
+    1. An object with:
+		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
+        1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node).
 1. Subsequent strings at the top level create elements siblings (note,
 however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow
@@ -41,7 +44,6 @@ element names) optionally follow and indicate attribute-value pairs
 		1. `$on` expects a subject of event types mapped to a function or to an array
 		with the first element as a function and the second element as a boolean
 		indicating whether to capture or not.
-		1. `#` indicates a fragment; see array children below
 		1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style` 
 			1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
 		1. `on` followed by any string will be set as a property (for events).
