@@ -35,7 +35,7 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
         1. `'![` followed by CDATA content as a string (XML), e.g., `&test <CDATA> content`
     1. An object with:
 		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
-        1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node).
+        1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node) (deprecated per latest DOM spec, however).
 1. Subsequent strings at the top level create elements siblings (note,
 however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow

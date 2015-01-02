@@ -753,7 +753,7 @@ Todos:
                     parentIdx = tmpParentIdx;
                     parentIdx++; // Probably not necessary since fragment would not be contained by anything
                     break;
-                case 12: // NOTATION (would need to be passed in directly)
+                case 12: // NOTATION
                     addExternalID(node, true);
                     set({$NOTATION: [node.nodeName, '', '']}); // 'publicId', 'systemId'
                     break;
