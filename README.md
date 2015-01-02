@@ -28,17 +28,19 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
 	without using `null` as the last argument.)
 	1. Any of the following special characters:
 		1. `!` followed by a string to create a comment
-		1. `&` followed by an HTML entity (e.g., `copy`)
+		1. `&` followed by an HTML entity reference (e.g., `copy`)
         1. `#` followed by a decimal character reference as a string or number, e.g., `1234`
 		1. `#x` followed by a hexadecimal character reference as a string, e.g., `ab3`
 		1. `?` followed by a processing instruction target string and string value (XML)
         1. `'![` followed by CDATA content as a string (XML), e.g., `&test <CDATA> content`
     1. An object with:
 		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
+        1. A property `$document` set to an object with properties `childNodes` and, where present, a child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`
+        1. A property `$DOCTYPE` object with properties `name`, an `entities` and `notations` array, `internalSubset`, and where present, `publicId` and `systemId`.
         1. The following items which produce nodes deprecated by the latest DOM spec:
             1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node).
-            1. A property `$NOTATION` set to an object of notation `name`, `publicId`, and `systemId`.
-            1. A property `$ENTITY` set to an object with the properties `name`, `publicId`, and `systemId`.
+            1. A property `$NOTATION` set to an object with properties `name`, `publicId`, and `systemId`.
+            1. A property `$ENTITY` set to an object with the properties `name` (or `version` and `encoding` for an external parsed entity with a declaration present) and `publicId`, `systemId`, or `childNodes` where present.
 1. Subsequent strings at the top level create elements siblings (note,
 however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow

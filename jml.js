@@ -541,16 +541,11 @@ Todos:
                 invalidStateError();
             }
             var publicId = node.publicId, systemId = node.systemId;
-            var publicQuote = publicId && publicId.includes("'") ? "'" : '"'; // Don't need to check for quotes here, since not allowed with public
-            var systemQuote = systemId && systemId.includes("'") ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
-            if (systemId !== null && publicId !== null) {
-                string += ' PUBLIC ' + publicQuote + publicId + publicQuote + ' ' + systemQuote + systemId + systemQuote;
+            if (systemId) {
+                obj.systemId = systemId;
             }
-            else if (publicId !== null) {
-                string += ' PUBLIC ' + publicQuote + publicId + publicQuote;
-            }
-            else if (all || systemId !== null) {
-                string += ' SYSTEM ' + systemQuote + systemId + systemQuote;
+            if (publicId) {
+                obj.publicId = publicId;
             }
         }
 
@@ -660,23 +655,25 @@ Todos:
                     break;
                 case 6: // ENTITY (would need to pass in directly)
                     setTemp();
-                    if (node.xmlEncoding) { // an external entity file?
-                        start = {$ENTITY: {version: node.xmlVersion, encoding: node.xmlEncoding, value: []}};
+                    start = {$ENTITY: {}};
+                    if (node.xmlEncoding || node.xmlVersion) { // an external entity file?
+                        start.$ENTITY = {version: node.xmlVersion, encoding: node.xmlEncoding};
                     }
                     else {
-                        start = {$ENTITY: {name: node.nodeName, value: []}};
+                        start.$ENTITY = {name: node.nodeName};
                         if (node.publicId || node.systemId) { // External Entity?
                             addExternalID(start.$ENTITY, node);
                             if (node.notationName) {
-                                start.NDATA = node.notationName;
+                                start.$ENTITY.NDATA = node.notationName;
                             }
                         }
                     }
                     set(start);
                     children = node.childNodes;
                     if (children.length) {
-                        // Set position to $ENTITY's value array children
-                        setObj('$ENTITY', 'value');
+                        start.$ENTITY.childNodes = [];
+                        // Set position to $ENTITY's childNodes array children
+                        setObj('$ENTITY', 'childNodes');
 
                         Array.from(children).forEach(function (childNode) {
                             parseDOM(childNode, namespaces);
@@ -735,7 +732,7 @@ Todos:
                     setTemp();
 
                     // Can create directly by document.implementation.createDocumentType
-                    start = {$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}};
+                    start = {$DOCTYPE: {name: node.name, entities: [], notations: [], internalSubset: node.internalSubset}};
                     var pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
                     if (!pubIdChar.test(node.publicId)) {
                         invalidStateError();
@@ -743,6 +740,17 @@ Todos:
                     addExternalID(start.$DOCTYPE, node);
                     // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
                     set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
+
+                    var entities = node.entities; // Currently deprecated
+                    if (entities) {
+                        setObj('$DOCTYPE', 'entities');
+                        Array.from(entities).forEach(function (entity) {
+                            parseDOM(entity, namespaces);
+                        });
+                        
+                        // Reset for notations (parentIdx will be reset anyways)
+                        parent = start;
+                    }
 
                     var notations = node.notations; // Currently deprecated
                     if (notations) {
@@ -770,7 +778,7 @@ Todos:
                     resetTemp();
                     break;
                 case 12: // NOTATION
-                    start = {$NOTATION: {name: node.nodeName, publicId: node.publicId, systemId: node.systemId}};
+                    start = {$NOTATION: {name: node.nodeName}};
                     addExternalID(start.$NOTATION, node, true);
                     set(start);
                     break;
