@@ -536,7 +536,7 @@ Todos:
             }
         }
 
-        function addExternalID (node, all) {
+        function addExternalID (obj, node, all) {
             if (node.systemId.includes('"') && node.systemId.includes("'")) {
                 invalidStateError();
             }
@@ -581,7 +581,7 @@ Todos:
                 invalidStateError();
             }
 
-            var children, tmpParent, tmpParentIdx;
+            var children, tmpParent, tmpParentIdx, start;
             switch (type) {
                 case 1: // ELEMENT
                     tmpParent = parent;
@@ -591,7 +591,8 @@ Todos:
                     setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
                     set(nodeName);
                     
-                    var start = {}, hasNamespaceDeclaration = false;
+                    start = {};
+                    var hasNamespaceDeclaration = false;
                     
                     if (namespaces[node.prefix || ''] !== node.namespaceURI) {
                         namespaces[node.prefix || ''] = node.namespaceURI;
@@ -647,23 +648,23 @@ Todos:
                     tmpParentIdx = parentIdx;
                     if (node.xmlEncoding) { // an external entity file?
                         set({$ENTITY: {version: node.xmlVersion, encoding: node.xmlEncoding, value: []}});
-
-                        // Set position to $ENTITY's value array children
-                        parent = parent[parentIdx - 1].$ENTITY;
-                        parentIdx = 0;
                     }
                     else {
-                        set({$ENTITY: {name: node.nodeName, value: []}}); // Todo: Do we need a value here?
+                        start = {$ENTITY: {name: node.nodeName, value: []}};
                         if (node.publicId || node.systemId) { // External Entity?
-                            addExternalID(node);
+                            addExternalID(start, node);
                             if (node.notationName) {
-                                string += ' NDATA ' + node.notationName;
+                                start.NDATA = node.notationName;
                             }
-                            break;
                         }
+                        set(start);
                     }
                     children = node.childNodes;
                     if (children.length) {
+                        // Set position to $ENTITY's value array children
+                        parent = parent[parentIdx - 1].$ENTITY;
+                        parentIdx = 0;
+
                         setChildren(); // Entity children array container
                         Array.from(children).forEach(function (childNode) {
                             parseDOM(childNode, namespaces);
@@ -726,11 +727,12 @@ Todos:
                     parentIdx++; // Probably not necessary since fragment would not be contained by anything
                     break;
                 case 10: // DOCUMENT TYPE
+                    start = {$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}};
                     var pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
                     if (!pubIdChar.test(node.publicId)) {
                         invalidStateError();
                     }
-                    addExternalID(node);
+                    addExternalID(start, node);
                     // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
                     var notations = node.notations; // Currenty deprecated
                     if (notations) {
@@ -740,7 +742,7 @@ Todos:
                     }
                     // Todo: UNFINISHED
                     // Can create directly by document.implementation.createDocumentType
-                    set({$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}}); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
+                    set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
                     break;
                 case 11: // DOCUMENT FRAGMENT
                     tmpParent = parent;
@@ -763,8 +765,9 @@ Todos:
                     parentIdx++; // Probably not necessary since fragment would not be contained by anything
                     break;
                 case 12: // NOTATION
-                    addExternalID(node, true);
-                    set({$NOTATION: [node.nodeName, node.publicId, node.systemId]});
+                    start = {$NOTATION: [node.nodeName, node.publicId, node.systemId]};
+                    addExternalID(start, node, true);
+                    set(start);
                     break;
                 default:
                     throw 'Not an XML type';
