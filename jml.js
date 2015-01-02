@@ -204,7 +204,7 @@ Todos:
      */
     function jml () {
         var i, arg, procValue, p, p2, attVal, childContent, childContentType,
-            val, k, elsl, att, notation, j, cl, replacer = '',
+            val, k, elsl, j, cl, replacer = '', node,
             elem = document.createDocumentFragment(), nodes = [],
             elStr, atts, child = [],
             argc = arguments.length, argv = arguments,
@@ -357,7 +357,6 @@ Todos:
                                 0. {$document: []} // document.implementation.createHTMLDocument
                                 0. {$xmlDocument: []} // document.implementation.createDocument
                                 0. {$DOCTYPE: []} // document.implementation.createDocumentType
-                                0. {$ENTITY: ...}
 
                                 */
                                 /* unfinished:
@@ -370,14 +369,18 @@ Todos:
                                     nodes[nodes.length] = jml.apply(null, [attVal]); // Nest within array to avoid confusion with elements
                                     break;
                                 case '$attribute': // Attribute node
-                                    att = document.createAttributeNS(attVal[0], attVal[1]);
-                                    att.value = attVal[2];
-                                    nodes[nodes.length] = att;
+                                    node = document.createAttributeNS(attVal[0], attVal[1]);
+                                    node.value = attVal[2];
+                                    nodes[nodes.length] = node;
+                                    break;
+                                case '$ENTITY':
+                                    // Todo: Unfinished (esp. childNodes)
+                                    node = {nodeName: attVal.name, nodeValue: null, publicId: attVal.publicId, systemId: attVal.systemId, notationName: attVal.name, nodeType: 6, childNodes: []};
                                     break;
                                 case '$NOTATION':
                                     // Todo: We could add further properties/methods, but unlikely to be used as is.
-                                    notation = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
-                                    nodes[nodes.length] = notation;
+                                    node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
+                                    nodes[nodes.length] = node;
                                     break;
                                 case '$on': // Events
                                     for (p2 in attVal) {

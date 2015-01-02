@@ -37,6 +37,7 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
 		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
         1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node) (deprecated per latest DOM spec, however).
         1. A property `$NOTATION` set to an array of notation name, public ID, and system ID (deprecated per latest DOM spec, however).
+        1. A property `$ENTITY` set to an object with the properties `name`, `publicId`, and `systemId`.
 1. Subsequent strings at the top level create elements siblings (note,
 however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow
