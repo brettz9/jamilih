@@ -755,7 +755,7 @@ Todos:
                     break;
                 case 12: // NOTATION
                     addExternalID(node, true);
-                    set({$NOTATION: [node.nodeName, '', '']}); // 'publicId', 'systemId'
+                    set({$NOTATION: [node.nodeName, node.publicId, node.systemId]});
                     break;
                 default:
                     throw 'Not an XML type';
