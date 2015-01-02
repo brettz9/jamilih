@@ -564,8 +564,13 @@ Todos:
             parentIdx = 0;
         }
         function setObj (prop) {
-            parent = parent[parentIdx - 1][prop];
-            parentIdx = 0;
+            if (arguments.length > 1) {
+                Array.from(arguments).forEach(setObj);
+            }
+            else {
+                parent = parent[parentIdx - 1][prop];
+                parentIdx = 0;
+            }
         }
 
         function parseDOM (node, namespaces) {
@@ -671,9 +676,8 @@ Todos:
                     children = node.childNodes;
                     if (children.length) {
                         // Set position to $ENTITY's value array children
-                        setObj('$ENTITY');
+                        setObj('$ENTITY', 'value');
 
-                        setChildren(); // Entity children array container
                         Array.from(children).forEach(function (childNode) {
                             parseDOM(childNode, namespaces);
                         });
@@ -704,22 +708,21 @@ Todos:
                     break;
                 case 9: // DOCUMENT
                     setTemp();
-                    var docObj = {$document: []};
+                    var docObj = {$document: {childNodes: []}};
                     
                     if (config.xmlDeclaration) {
-                        docObj = Object.assign({xmlDeclaration: {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone}}, docObj);
+                        docObj.$document.xmlDeclaration = {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone};
                     }
                     
                     set(docObj); // document.implementation.createHTMLDocument
                     
                     // Set position to fragment's array children
-                    setObj('$document');
+                    setObj('$document', 'childNodes');
                     
                     children = node.childNodes;
                     if (!children.length) {
                         invalidStateError();
                     }
-
                     // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditionally
 
                     Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
@@ -743,7 +746,7 @@ Todos:
 
                     var notations = node.notations; // Currently deprecated
                     if (notations) {
-                        
+                        setObj('$DOCTYPE', 'notations');
                         Array.from(notations).forEach(function (notation) {
                             parseDOM(notation, namespaces);
                         });
