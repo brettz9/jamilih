@@ -666,7 +666,7 @@ Todos:
                     else {
                         start = {$ENTITY: {name: node.nodeName, value: []}};
                         if (node.publicId || node.systemId) { // External Entity?
-                            addExternalID(start, node);
+                            addExternalID(start.$ENTITY, node);
                             if (node.notationName) {
                                 start.NDATA = node.notationName;
                             }
@@ -740,7 +740,7 @@ Todos:
                     if (!pubIdChar.test(node.publicId)) {
                         invalidStateError();
                     }
-                    addExternalID(start, node);
+                    addExternalID(start.$DOCTYPE, node);
                     // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
                     set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
 
@@ -770,8 +770,8 @@ Todos:
                     resetTemp();
                     break;
                 case 12: // NOTATION
-                    start = {$NOTATION: [node.nodeName, node.publicId, node.systemId]};
-                    addExternalID(start, node, true);
+                    start = {$NOTATION: {name: node.nodeName, publicId: node.publicId, systemId: node.systemId}};
+                    addExternalID(start.$NOTATION, node, true);
                     set(start);
                     break;
                 default:
