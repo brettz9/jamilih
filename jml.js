@@ -582,10 +582,18 @@ Todos:
             }
 
             var children, tmpParent, tmpParentIdx, start;
+            function setTemp() {
+                tmpParent = parent;
+                tmpParentIdx = parentIdx;
+            }
+            function resetTemp() {
+                parent = tmpParent;
+                parentIdx = tmpParentIdx;
+                parentIdx++; // Increment index in parent container of this element
+            }
             switch (type) {
                 case 1: // ELEMENT
-                    tmpParent = parent;
-                    tmpParentIdx = parentIdx;
+                    setTemp();
                     var nodeName = node.nodeName.toLowerCase(); // Todo: for XML, should not lower-case
 
                     setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
@@ -621,9 +629,7 @@ Todos:
                             parseDOM(childNode, namespaces);
                         });
                     }
-                    parent = tmpParent;
-                    parentIdx = tmpParentIdx;
-                    parentIdx++; // Increment index in parent container of this element
+                    resetTemp();
                     break;
                 case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
                     set({$attribute: [node.namespaceURI, node.name, node.value]});
@@ -644,10 +650,9 @@ Todos:
                     set(['&', node.nodeName]);
                     break;
                 case 6: // ENTITY (would need to pass in directly)
-                    tmpParent = parent;
-                    tmpParentIdx = parentIdx;
+                    setTemp();
                     if (node.xmlEncoding) { // an external entity file?
-                        set({$ENTITY: {version: node.xmlVersion, encoding: node.xmlEncoding, value: []}});
+                        start = {$ENTITY: {version: node.xmlVersion, encoding: node.xmlEncoding, value: []}};
                     }
                     else {
                         start = {$ENTITY: {name: node.nodeName, value: []}};
@@ -657,8 +662,8 @@ Todos:
                                 start.NDATA = node.notationName;
                             }
                         }
-                        set(start);
                     }
+                    set(start);
                     children = node.childNodes;
                     if (children.length) {
                         // Set position to $ENTITY's value array children
@@ -670,9 +675,7 @@ Todos:
                             parseDOM(childNode, namespaces);
                         });
                     }
-                    parent = tmpParent;
-                    parentIdx = tmpParentIdx;
-                    parentIdx++; // Increment index in parent container of this element
+                    resetTemp();
                     break;
                 case 7: // PROCESSING INSTRUCTION
                     if (/^xml$/i.test(node.target)) {
@@ -697,8 +700,7 @@ Todos:
                     set(['!', node.nodeValue]);
                     break;
                 case 9: // DOCUMENT
-                    tmpParent = parent;
-                    tmpParentIdx = parentIdx;
+                    setTemp();
                     var docObj = {$document: []};
                     
                     if (config.xmlDeclaration) {
@@ -722,11 +724,12 @@ Todos:
                         // No need for setChildren, as we have already built the container array
                         parseDOM(childNode, namespaces);
                     });
-                    parent = tmpParent;
-                    parentIdx = tmpParentIdx;
-                    parentIdx++; // Probably not necessary since fragment would not be contained by anything
+                    resetTemp();
                     break;
                 case 10: // DOCUMENT TYPE
+                    setTemp();
+
+                    // Can create directly by document.implementation.createDocumentType
                     start = {$DOCTYPE: {name: node.name, entities: [], notations: [], publicId: '', systemId: '', internalSubset: node.internalSubset}};
                     var pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
                     if (!pubIdChar.test(node.publicId)) {
@@ -734,19 +737,19 @@ Todos:
                     }
                     addExternalID(start, node);
                     // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
-                    var notations = node.notations; // Currenty deprecated
+                    set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
+
+                    var notations = node.notations; // Currently deprecated
                     if (notations) {
+                        
                         Array.from(notations).forEach(function (notation) {
                             parseDOM(notation, namespaces);
                         });
                     }
-                    // Todo: UNFINISHED
-                    // Can create directly by document.implementation.createDocumentType
-                    set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
+                    resetTemp();
                     break;
                 case 11: // DOCUMENT FRAGMENT
-                    tmpParent = parent;
-                    tmpParentIdx = parentIdx;
+                    setTemp();
                     
                     set({'#': []});
                     
@@ -760,9 +763,7 @@ Todos:
                         parseDOM(childNode, namespaces);
                     });
 
-                    parent = tmpParent;
-                    parentIdx = tmpParentIdx;
-                    parentIdx++; // Probably not necessary since fragment would not be contained by anything
+                    resetTemp();
                     break;
                 case 12: // NOTATION
                     start = {$NOTATION: [node.nodeName, node.publicId, node.systemId]};
