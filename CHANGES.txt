@@ -1,3 +1,10 @@
+0.8.0
+* Actual Node support
+* Add document, document type, notation, entity, attribute node support
+* Add ordered attribute support
+* New methods on jml: toJML(), toJMLString(), toHTML() (or toDOMString()), toXML() (or toXMLDOMString()), toDOM() (an alias for jml()).
+* Added unit tests
+
 0.7.0
 * Support appending of attributes/properties and children to existing
 DOM element
