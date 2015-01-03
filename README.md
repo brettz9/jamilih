@@ -25,6 +25,7 @@ which can be set to `true` in order to JSON-stringify the converted
 Jamilih JSON object. Note that element results will be in array form.
 - `jml.toJMLString(objOrString, config)` - Works like `jml.toJML` but stringifies the resulting Jamilih object.
 - `jml.toHTML()` - Works like jml() except that the resulting DOM object is converted into an HTML string.
+- `jml.toXML()` - Works like jml() except that the resulting DOM object is converted into an XML-serialized string.
 - `jml.toDOM()` - An alias for jml().
 - `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
 
