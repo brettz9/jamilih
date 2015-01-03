@@ -653,9 +653,9 @@ Todos:
                     break;
                 case 6: // ENTITY (would need to pass in directly)
                     setTemp();
-                    start = {$ENTITY: {}};
+                    start = {};
                     if (node.xmlEncoding || node.xmlVersion) { // an external entity file?
-                        start.$ENTITY = {version: node.xmlVersion, encoding: node.xmlEncoding};
+                        start.$ENTITY = {name: node.nodeName, version: node.xmlVersion, encoding: node.xmlEncoding};
                     }
                     else {
                         start.$ENTITY = {name: node.nodeName};
