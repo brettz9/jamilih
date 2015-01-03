@@ -136,7 +136,7 @@ Event attachment...
 ```javascript
 var input = jml('input', {
     // Contains events to be added via addEventListener or
-	//   attachEvent where available
+    //   attachEvent where available
     $on: {
         click: [function () {
             alert('worked1');
@@ -198,18 +198,18 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
 # Rules (detailed)
 
 1. Currently, the first item supplied to `jml()` must be either:
-	1. An element name as a string (to create an element
-	structure). (Top-level fragments are not currently supported
-	without using `null` as the last argument.)
-	1. Any of the following special characters:
-		1. `!` followed by a string to create a comment
-		1. `&` followed by an HTML entity reference (e.g., `copy`)
+    1. An element name as a string (to create an element
+    structure). (Top-level fragments are not currently supported
+    without using `null` as the last argument.)
+    1. Any of the following special characters:
+        1. `!` followed by a string to create a comment
+        1. `&` followed by an HTML entity reference (e.g., `copy`)
         1. `#` followed by a decimal character reference as a string or number, e.g., `1234`
-		1. `#x` followed by a hexadecimal character reference as a string, e.g., `ab3`
-		1. `?` followed by a processing instruction target string and string value (XML)
+        1. `#x` followed by a hexadecimal character reference as a string, e.g., `ab3`
+        1. `?` followed by a processing instruction target string and string value (XML)
         1. `'![` followed by CDATA content as a string (XML), e.g., `&test <CDATA> content`
     1. An object with:
-		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
+        1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
         1. A property `$text` set to a string to create a bare text node (this is only necessary if one wishes jml()
         to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
         children array).
@@ -230,34 +230,34 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
 however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow
 element names) optionally follow and indicate attribute-value pairs
-	1. "Magic" keys in this object alter the default behavior of simply setting an attribute:
-		1. `$on` expects a subject of event types mapped to a function or to an array
-		with the first element as a function and the second element as a boolean
-		indicating whether to capture or not.
-		1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style` 
-			1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
-		1. `on` followed by any string will be set as a property (for events).
-		1. `xmlns` for namespace declarations (not needed in HTML)
-		1. `dataset` is an object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
+    1. "Magic" keys in this object alter the default behavior of simply setting an attribute:
+        1. `$on` expects a subject of event types mapped to a function or to an array
+        with the first element as a function and the second element as a boolean
+        indicating whether to capture or not.
+        1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style` 
+            1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
+        1. `on` followed by any string will be set as a property (for events).
+        1. `xmlns` for namespace declarations (not needed in HTML)
+        1. `dataset` is an object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
 1. Arrays indicate children.
-	1. They can be:
-		1. DOM Nodes
-		1. Strings, numbers, or booleans (to become text nodes)
-		1. Arrays encapsulating another Jamilih structure (start rule
-		processing over at no. 1)
-		1. An object with the key `#` with an array of children (following
-		these same rules) as its value to represent a fragment. (Useful
-		if embedding the return result of a function amidst other children.)
-		1. Note: Adding a function inline (without being part of an attribute
-		object) or `null` is currently undefined behavior and should not be used;
-		these may be allowed for some other purpose in the future, however.
-	1. Individual elements (DOM elements or sequences of
-	string/number/boolean[/object/array]) get added to parent first-in, first-added
+    1. They can be:
+        1. DOM Nodes
+        1. Strings, numbers, or booleans (to become text nodes)
+        1. Arrays encapsulating another Jamilih structure (start rule
+        processing over at no. 1)
+        1. An object with the key `#` with an array of children (following
+        these same rules) as its value to represent a fragment. (Useful
+        if embedding the return result of a function amidst other children.)
+        1. Note: Adding a function inline (without being part of an attribute
+        object) or `null` is currently undefined behavior and should not be used;
+        these may be allowed for some other purpose in the future, however.
+    1. Individual elements (DOM elements or sequences of
+    string/number/boolean[/object/array]) get added to parent first-in, first-added
 1. The last item supplied to `jml()` is usually the parent node to which to
 append the contents, with the following exceptions:
-	1. If there are no other elements (i.e., only an element name with
-	optional attributes and children), the element is returned.
-	1. `null` (at the end) will cause an element or fragment to be returned
+    1. If there are no other elements (i.e., only an element name with
+    optional attributes and children), the element is returned.
+    1. `null` (at the end) will cause an element or fragment to be returned
 1. The first created element will be returned unless `null` is the last
 argument, in which case, it returns a fragment of all added elements or,
 if only one element was present, the element itself.
@@ -274,7 +274,7 @@ object iteration order is not reliable across browser
 DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
 interfaces for direct manipulation.
 1. Allow configuration
-	1. Allow auto-namespacing of class and/or dataset keys
+    1. Allow auto-namespacing of class and/or dataset keys
 1. Allow DOM element as first item (for cloning or allowing style of
 appending (as in jQuery) that does not place the parent as the
 last item?); probably best as latter with method to clone.
