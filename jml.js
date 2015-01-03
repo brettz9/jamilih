@@ -887,7 +887,7 @@ Todos:
         parseDOM(dom, {});
         
         if (config.stringOutput) {
-            return JSON.stringify(ret);
+            return JSON.stringify(ret[0]);
         }
         return ret[0];
     };
