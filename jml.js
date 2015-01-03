@@ -1,6 +1,6 @@
-/*globals define, DOMParser, XMLSerializer */
+/*globals define */
 /*jslint todo:true, vars:true*/
-var module, require, document, window;
+var module, require, document, window, DOMParser, XMLSerializer;
 if (!String.prototype.includes) {
   String.prototype.includes = function() {'use strict';
     return String.prototype.indexOf.apply(this, arguments) !== -1;
@@ -313,7 +313,7 @@ Todos:
                             if (document.createElementNS) {
                                 elem = document.createElementNS(NS_HTML, elStr);
                             }
-                            // Fix this to depend on XML/config, not availability of methods
+                            // Todo: Fix this to depend on XML/config, not availability of methods
                             else {
                                 elem = document.createElement(elStr);
                             }
@@ -899,12 +899,15 @@ Todos:
     };
     jml.toHTML = function () {
         var ret = jml.apply(null, arguments);
-        return new XMLSerializer().serializeToString(ret);
+        return ret.outerHTML;
     };
     jml.toDOMString = function () { // Alias for jml.toHTML for parity with toJMLString
         return jml.toHTML.apply(jml, arguments);
     };
-
+    jml.toXML = function () {
+        var ret = jml.apply(null, arguments);
+        return new XMLSerializer().serializeToString(ret);
+    };
 
     // EXPORTS
     if (module !== undef) {
@@ -912,6 +915,8 @@ Todos:
         Object.assign = require('object-assign');
         document = require('jsdom').jsdom('');
         window = document.parentWindow;
+        DOMParser = require('xmldom').DOMParser;
+        XMLSerializer = require('xmldom').XMLSerializer;
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {
