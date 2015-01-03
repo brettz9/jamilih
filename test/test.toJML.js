@@ -112,6 +112,16 @@ module.exports = testCase({
         test.done();
     },
     // ============================================================================
+    'document type': function(test) {
+    // ============================================================================
+        test.expect(1);
+        var expected = {$DOCTYPE: {name: 'a-prefix:a-name', publicId: 'a-pub-id', systemId: 'a-sys-id'}};
+
+        var result = jml.toJML(document.implementation.createDocumentType('a-prefix:a-name', 'a-pub-id', 'a-sys-id'));
+        test.deepEqual(expected, result);
+        test.done();
+    },
+    // ============================================================================
     'document fragment': function (test) {
     // ============================================================================
         test.expect(1);
