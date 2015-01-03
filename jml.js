@@ -424,8 +424,34 @@ Todos:
                                         }
                                         break;
                                     case '$DOCTYPE':
-                                        node = document.implementation.createDocumentType();
-                                        // Todo: Unfinished
+                                        /*
+                                        // Todo:
+                                        if (attVal.internalSubset) {
+                                            node = {};
+                                        }
+                                        else
+                                        */
+                                        if (attVal.entities || attVal.notations) {
+                                            node = {
+                                                name: attVal.name,
+                                                nodeName: attVal.name,
+                                                nodeValue: null,
+                                                nodeType: 10,
+                                                entities: attVal.entities.map(function (entityJML) {
+                                                    return jml(entityJML);
+                                                }),
+                                                notations: attVal.notations.map(function (notationJML) {
+                                                    return jml(notationJML);
+                                                }),
+                                                publicId: attVal.publicId,
+                                                systemId: attVal.systemId
+                                                // internalSubset: // Todo
+                                            };
+                                        }
+                                        else {
+                                            node = document.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                                        }
+                                        nodes[nodes.length] = node;
                                         break;
                                     case '$ENTITY':
                                         // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
