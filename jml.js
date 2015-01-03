@@ -743,19 +743,19 @@ Todos:
                     set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
 
                     var entities = node.entities; // Currently deprecated
-                    if (entities) {
+                    if (entities && entities.length) {
                         start.$DOCTYPE.entities = [];
                         setObj('$DOCTYPE', 'entities');
                         Array.from(entities).forEach(function (entity) {
                             parseDOM(entity, namespaces);
                         });
-                        
-                        // Reset for notations (parentIdx will be reset anyways)
-                        parent = start;
+                        // Reset for notations
+                        parent = tmpParent;
+                        parentIdx = tmpParentIdx + 1;
                     }
 
                     var notations = node.notations; // Currently deprecated
-                    if (notations) {
+                    if (notations && notations.length) {
                         start.$DOCTYPE.notations = [];
                         setObj('$DOCTYPE', 'notations');
                         Array.from(notations).forEach(function (notation) {
