@@ -14,17 +14,19 @@ template-friendly capacity to inline insert fragments or child nodes
 
 # Overview
 
-There are two functions, `jml()` and `jml.toJML()` which can be used.
+The following functions are available:
 
-The former is for building DOM objects (and optionally appending into
-an existing DOM node) whereas the latter is for converting HTML in
-DOM or string form into a JML JavaScript/JSON object.
-
-`jml.toJML()`, whose first argument is the DOM object or string to
-convert into JML, also takes an optional second argument which is
-a configuration object and which supports a `stringOutput` property
+- `jml()` - For building DOM objects (and optionally appending into
+an existing DOM node). Arguments demoed and explained below.
+- `jml.toJML(objOrString, config)` - For converting HTML in DOM or string form into
+a JML JavaScript/JSON object. Its first argument is the DOM object or string to
+convert into JML. `config` is an object and which supports a `stringOutput` property
 which can be set to `true` in order to stringify the converted
 Jamilih JSON object.
+- `toJMLString(objOrString, config)` - Works like `jml.toJML` but stringifies the resulting Jamilih object.
+- `jml.toHTML()` - Works like jml() except that the resulting DOM object is converted into an HTML string.
+- `jml.toDOM()` - An alias for jml()
+- `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
 
 # Examples
 

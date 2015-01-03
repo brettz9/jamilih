@@ -894,6 +894,17 @@ Todos:
     jml.toJMLString = function (dom, config) {
         return jml.toJML(dom, Object.assign(config || {}, {stringOutput: true}));
     };
+    jml.toDOM = function () { // Alias for jml()
+        return jml.apply(null, arguments);
+    };
+    jml.toHTML = function () {
+        var ret = jml.apply(null, arguments);
+        return new XMLSerializer().serializeToString(ret);
+    };
+    jml.toDOMString = function () { // Alias for jml.toHTML for parity with toJMLString
+        return jml.toHTML.apply(jml, arguments);
+    };
+
 
     // EXPORTS
     if (module !== undef) {
