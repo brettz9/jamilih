@@ -18,7 +18,16 @@ var window = document.parentWindow;
 var Node = window.Node;
 
 module.exports = testCase({
-
+    // ============================================================================
+    'text node': function(test) {
+    // ============================================================================
+        test.expect(2);
+        var expected = document.createTextNode('abc');
+        var result = jml({$text: 'abc'});
+        test.deepEqual(expected.nodeType, result.nodeType);
+        test.deepEqual(expected.nodeValue, result.nodeValue);
+        test.done();
+    },
     // ============================================================================
     'attribute node': function(test) {
     // ============================================================================
