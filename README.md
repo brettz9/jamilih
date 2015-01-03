@@ -209,6 +209,9 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
         1. A property `$text` set to a string to create a bare text node (this is only necessary if one wishes jml()
         to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
         children array).
+        1. A property `$a` set to an array of attribute name-value arrays (this is only necessary if one requires
+        and the environment allows a fixed attribute order but may not support first-declared-first-iterated
+        for-in object iteration).
         1. A property `$document` set to an object with properties `childNodes` and, where present, a child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`. In place of `childNodes`, one may
         instead add to any of the array properties, `head` and `body`. One may also add a string `title` property in which case, a `<head>` will be automatically created, with a `<meta charset="utf-8"/>` element (as expected by HTML5) and a `<title>` element, and any additionally supplied `head` array items appended to that `<head>`. If `head`,
         `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
