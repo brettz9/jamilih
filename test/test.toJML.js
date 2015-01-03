@@ -102,6 +102,16 @@ module.exports = testCase({
         test.done();
     },
     // ============================================================================
+    'document': function(test) {
+    // ============================================================================
+        test.expect(1);
+        var expected = {$document: {childNodes: [{$DOCTYPE: {name: 'html'}}, ['html', {xmlns: 'http://www.w3.org/1999/xhtml'}, [['head', [['title', ['a title']]]], ['body']]]]}};
+        var doc = document.implementation.createHTMLDocument('a title');
+        var result = jml.toJML(doc);
+        test.deepEqual(expected, result);
+        test.done();
+    },
+    // ============================================================================
     'document fragment': function (test) {
     // ============================================================================
         test.expect(1);
