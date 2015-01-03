@@ -558,15 +558,11 @@ Todos:
             parent = parent[parentIdx - 1];
             parentIdx = 0;
         }
-        function setObj (prop) {
-            if (arguments.length > 1) {
-                Array.from(arguments).forEach(function (arg) {
-                    setObj(arg);
-                });
-            }
-            else {
-                parent = parent[parentIdx - 1][prop];
-                parentIdx = 0;
+        function setObj (prop1, prop2) {
+            parent = parent[parentIdx - 1][prop1];
+            parentIdx = 0;
+            if (prop2) {
+                parent = parent[prop2];
             }
         }
 
