@@ -354,9 +354,7 @@ Todos:
                                 0. add '$a' for array of ordered (prefix-)attribute-value arrays
                                 0. Accept array for any attribute with first item as prefix and second as value?
 
-                                0. {$document: []} // document.implementation.createHTMLDocument
                                 0. {$xmlDocument: []} // document.implementation.createDocument
-                                0. {$DOCTYPE: []} // document.implementation.createDocumentType
 
                                 */
                                 /* unfinished:
@@ -372,6 +370,57 @@ Todos:
                                     node = document.createAttributeNS(attVal[0], attVal[1]);
                                     node.value = attVal[2];
                                     nodes[nodes.length] = node;
+                                    break;
+                                case '$text': // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
+                                    node = document.createTextNode(attVal);
+                                    nodes[nodes.length] = node;
+                                    break;
+                                case '$document':
+                                    node = document.implementation.createHTMLDocument();
+                                    if (attVal.childNodes) {
+                                        attVal.childNodes.forEach(function (childNodeJML, i) {
+                                            var cn = node.childNodes[i];
+                                            cn.parentNode.replaceChild(jml.apply(null, childNodeJML), cn);
+                                        });
+                                        // Remove any extra nodes created by createHTMLDocument().
+                                        var i = attVal.childNodes.length;
+                                        while (node.childNodes[i]) {
+                                            var cn = node.childNodes[i];
+                                            cn.parentNode.removeChild(cn);
+                                            i++;
+                                        }
+                                    }
+                                    else {
+                                        var html = node.childNodes[1];
+                                        var head = html.childNodes[0];
+                                        if (attVal.title || attVal.head) {
+                                            var meta = document.createElement('meta');
+                                            meta.charset = 'utf-8';
+                                            head.appendChild(meta);
+                                        }
+                                        if (attVal.title) {
+                                            node.title = attVal.title; // Appends after meta
+                                        }
+                                        if (attVal.head) {
+                                            attVal.head.forEach(function (childJML) {
+                                                head.appendChild(jml.apply(null, childJML));
+                                            });
+                                        }
+                                        if (attVal.body) {
+                                            attVal.body.forEach(function (childJML) {
+                                                if (typeof childJML === 'string') {
+                                                    body.appendChild(document.createTextNode(childJML));
+                                                }
+                                                else {
+                                                    body.appendChild(jml.apply(null, childJML));
+                                                }
+                                            });
+                                        }
+                                    }
+                                    break;
+                                case '$DOCTYPE':
+                                    node = document.implementation.createDocumentType();
+                                    // Todo: Unfinished
                                     break;
                                 case '$ENTITY':
                                     // Todo: Unfinished (esp. childNodes)

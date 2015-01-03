@@ -206,7 +206,14 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
         1. `'![` followed by CDATA content as a string (XML), e.g., `&test <CDATA> content`
     1. An object with:
 		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
-        1. A property `$document` set to an object with properties `childNodes` and, where present, a child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`
+        1. A property `$text` set to a string to create a bare text node (this is only necessary if one wishes jml()
+        to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
+        children array).
+        1. A property `$document` set to an object with properties `childNodes` and, where present, a child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`. In place of `childNodes`, one may
+        instead add to any of the array properties, `head` and `body`. One may also add a string `title` property in which case, a `<head>` will be automatically created, with a `<meta charset="utf-8"/>` element (as expected by HTML5) and a `<title>` element, and any additionally supplied `head` array items appended to that `<head>`. If `head`,
+        `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
+        `<html>` element with the XHTML namespace. If `head` is supplied, a `<meta charset="utf-8">` will also be added as
+        the first child of `<head>`.
         1. A property `$DOCTYPE` object with properties `name`, and, where present, `entities` and `notations` arrays and `internalSubset`, `publicId` and `systemId`.
         1. The following items which produce nodes deprecated by the latest DOM spec:
             1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node).
