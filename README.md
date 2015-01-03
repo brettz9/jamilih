@@ -23,7 +23,7 @@ a JML JavaScript/JSON object. Its first argument is the DOM object or string to
 convert into JML. `config` is an object and which supports a `stringOutput` property
 which can be set to `true` in order to stringify the converted
 Jamilih JSON object.
-- `toJMLString(objOrString, config)` - Works like `jml.toJML` but stringifies the resulting Jamilih object.
+- `jml.toJMLString(objOrString, config)` - Works like `jml.toJML` but stringifies the resulting Jamilih object.
 - `jml.toHTML()` - Works like jml() except that the resulting DOM object is converted into an HTML string.
 - `jml.toDOM()` - An alias for jml()
 - `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
