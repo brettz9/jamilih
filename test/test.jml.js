@@ -18,6 +18,8 @@ var window = document.parentWindow;
 var Node = window.Node;
 
 module.exports = testCase({
+    // Todo: Add more tests (and harmonize with browser tests)
+
     // ============================================================================
     'text node': function(test) {
     // ============================================================================
