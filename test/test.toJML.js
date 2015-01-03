@@ -5,7 +5,7 @@
 var jml = require('../jml'),
     testCase = require('nodeunit').testCase,
     DOMParser = require('xmldom').DOMParser,
-    XMLSerializer = require('xmldom').XMLSerializer,
+    // XMLSerializer = require('xmldom').XMLSerializer,
     jsdom = require('jsdom').jsdom;
 
 var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
@@ -14,7 +14,7 @@ var divDOM = xml.documentElement; // This polyfill apparently mistakenly avoids 
 var divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
 
 var document = jsdom('');
-var window = document.parentWindow;
+// var window = document.parentWindow;
 
 module.exports = testCase({
 
@@ -78,6 +78,24 @@ module.exports = testCase({
         var expected = ['&', 'anEntity'];
 
         var result = jml.toJML(document.createEntityReference('anEntity'));
+        test.deepEqual(expected, result);
+        test.done();
+    },
+    // ============================================================================
+    'entity': function(test) {
+    // ============================================================================
+        test.expect(1);
+        var expected = {$ENTITY: {name: 'copy', childNodes: ['\u00a9']}};
+        
+        // xmldom is missing the "doctype" property, and even when we use childNodes, it is missing the "entities" NamedNodeMap (and there is no public DOM method to create entities)
+        /*
+        var doc = new DOMParser().parseFromString('<!DOCTYPE root [<!ENTITY copy "\u00a9">]><root/>', 'text/xml');
+        var result = doc.childNodes[0].entities[0];
+        */
+
+        // As per the above, we need simulate an entity
+        var result = jml.toJML({nodeType: 6, nodeName: 'copy', childNodes: [{nodeType: 3, nodeValue: '\u00a9'}]});
+        
         test.deepEqual(expected, result);
         test.done();
     },
