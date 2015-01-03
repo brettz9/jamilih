@@ -41,7 +41,7 @@ module.exports = testCase({
     'jml.toXML()': function(test) {
     // ============================================================================
         test.expect(1);
-        var expected = '<BR/>'; // Todo: Fix jsdom/XMLSerializer to give '<br xmlns="http://www.w3.org/1999/xhtml" />'
+        var expected = '<BR/>'; // Todo: Fix jsdom/xmldom's XMLSerializer to give '<br xmlns="http://www.w3.org/1999/xhtml" />'
         var result = jml.toXML('br');
         test.deepEqual(expected, result);
         test.done();
