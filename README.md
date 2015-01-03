@@ -264,10 +264,8 @@ if only one element was present, the element itself.
 
 # Todos
 
-1. Namespaced elements and attributes
-2. Ordered sequences of attributes (or namespace declarations) -
-necessary for perfect round-tripping (e.g., for diffs) given that
-object iteration order is not reliable across browser
+1. Namespaced elements and attributes and XML options
+1. See todos within code.
 
 # Possible todos
 1. Implement a method building JML by string rather than DOM but create
