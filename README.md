@@ -207,7 +207,7 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
     1. An object with:
 		1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
         1. A property `$document` set to an object with properties `childNodes` and, where present, a child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`
-        1. A property `$DOCTYPE` object with properties `name`, an `entities` and `notations` array, `internalSubset`, and where present, `publicId` and `systemId`.
+        1. A property `$DOCTYPE` object with properties `name`, and, where present, `entities` and `notations` arrays and `internalSubset`, `publicId` and `systemId`.
         1. The following items which produce nodes deprecated by the latest DOM spec:
             1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node).
             1. A property `$NOTATION` set to an object with properties `name`, `publicId`, and `systemId`.

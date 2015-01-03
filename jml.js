@@ -730,7 +730,10 @@ Todos:
                     setTemp();
 
                     // Can create directly by document.implementation.createDocumentType
-                    start = {$DOCTYPE: {name: node.name, entities: [], notations: [], internalSubset: node.internalSubset}};
+                    start = {$DOCTYPE: {name: node.name}};
+                    if (node.internalSubset) {
+                        start.internalSubset = node.internalSubset;
+                    }
                     var pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[\-'()+,.\/:=?;!*#@$_%])*$/;
                     if (!pubIdChar.test(node.publicId)) {
                         invalidStateError();
@@ -741,6 +744,7 @@ Todos:
 
                     var entities = node.entities; // Currently deprecated
                     if (entities) {
+                        start.$DOCTYPE.entities = [];
                         setObj('$DOCTYPE', 'entities');
                         Array.from(entities).forEach(function (entity) {
                             parseDOM(entity, namespaces);
@@ -752,6 +756,7 @@ Todos:
 
                     var notations = node.notations; // Currently deprecated
                     if (notations) {
+                        start.$DOCTYPE.notations = [];
                         setObj('$DOCTYPE', 'notations');
                         Array.from(notations).forEach(function (notation) {
                             parseDOM(notation, namespaces);
