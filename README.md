@@ -1,3 +1,5 @@
+# Jamilih
+
 NOTE: This project's API is not yet 100% stable.
 
 If you are seeking an even lighter version (e.g., for inclusion in a
@@ -6,6 +8,7 @@ syntax-highlighter-friendly pure JS approach for DOM construction,
 see [Jamilih Lite](https://gist.github.com/brettz9/ac4c18f51c0af8003a41).
 
 # Rationale
+
 Provide round-trippable JSON/JavaScript serialization as with JsonML,
 but with all items at a given array level being the same type of item
 (unless marked with a deeper level of nesting) and with a slightly more
@@ -29,6 +32,20 @@ Jamilih JSON object. Note that element results will be in array form.
 - `jml.toDOM()` - An alias for jml().
 - `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
 - `jml.toXMLDOMString()` - An alias for `jml.toXML()` (for parity with `toJMLString`).
+
+# Browser usage
+
+Simply access the above methods via the global `jml` function.
+
+# Node installation and usage
+
+```
+npm install jamilih
+```
+
+```
+var jml = require('jamilih');
+```
 
 # Examples
 
