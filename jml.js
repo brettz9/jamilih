@@ -423,8 +423,23 @@ Todos:
                                     // Todo: Unfinished
                                     break;
                                 case '$ENTITY':
-                                    // Todo: Unfinished (esp. childNodes)
-                                    node = {nodeName: attVal.name, nodeValue: null, publicId: attVal.publicId, systemId: attVal.systemId, notationName: attVal.notationName, nodeType: 6, childNodes: []};
+                                    // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
+                                    node = {
+                                        nodeName: attVal.name,
+                                        nodeValue: null,
+                                        publicId: attVal.publicId,
+                                        systemId: attVal.systemId,
+                                        notationName: attVal.notationName,
+                                        nodeType: 6,
+                                        childNodes: attVal.childNodes.map(function (childNodeJML) {
+                                            if (typeof childNodeJML === 'string') {
+                                                return document.createTextNode(childNodeJML);
+                                            }
+                                            else {
+                                                return jml.apply(null, childNodeJML);
+                                            }
+                                        })
+                                    };
                                     break;
                                 case '$NOTATION':
                                     // Todo: We could add further properties/methods, but unlikely to be used as is.
