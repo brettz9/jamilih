@@ -24,7 +24,7 @@
         "node": ">=0.10"
     },
     "dependencies": {
-        "jsdom": "2.x",
+        "jsdom": "git://github.com/brettz9/jsdom.git",
         "xmldom": "git://github.com/brettz9/xmldom.git",
         "array.from": "0.2.x",
         "object-assign": "2.x"
