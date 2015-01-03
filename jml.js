@@ -351,9 +351,7 @@ Todos:
                                 Todos:
                                 0. JSON mode to prevent event addition
 
-                                0. add '$a' for array of ordered (prefix-)attribute-value arrays
                                 0. Accept array for any attribute with first item as prefix and second as value?
-
                                 0. {$xmlDocument: []} // document.implementation.createDocument
 
                                 */
@@ -367,13 +365,16 @@ Todos:
                                     nodes[nodes.length] = jml.apply(null, [attVal]); // Nest within array to avoid confusion with elements
                                     break;
                                 case '$attribute': // Attribute node
-                                    node = document.createAttributeNS(attVal[0], attVal[1]);
-                                    node.value = attVal[2];
+                                    node = attVal.length === 3 ? document.createAttributeNS(attVal[0], attVal[1]) : document.createAttribute(attVal[0]);
+                                    node.value = attVal[attVal.length - 1];
                                     nodes[nodes.length] = node;
                                     break;
                                 case '$text': // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
                                     node = document.createTextNode(attVal);
                                     nodes[nodes.length] = node;
+                                    break;
+                                case '$a': // array of ordered (prefix-)attribute-value arrays
+                                    
                                     break;
                                 case '$document':
                                     node = document.implementation.createHTMLDocument();

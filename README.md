@@ -216,7 +216,7 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
         the first child of `<head>`.
         1. A property `$DOCTYPE` object with properties `name`, and, where present, `entities` and `notations` arrays and `internalSubset`, `publicId` and `systemId`.
         1. The following items which produce nodes deprecated by the latest DOM spec:
-            1. A property `$attribute` set to an array of a namespace, name, and value (for an attribute node).
+            1. A property `$attribute` set to an array of a namespace, name, and value (for a namespaced attribute node) or a two-item name-value array for a non-namespaced attribute node.
             1. A property `$NOTATION` set to an object with properties `name`, `publicId`, and `systemId`.
             1. A property `$ENTITY` set to an object with the properties `name` (or `version` and `encoding` for an external parsed entity with a declaration present) and `publicId`, `systemId`, or `childNodes` where present.
 1. Subsequent strings at the top level create elements siblings (note,
