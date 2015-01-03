@@ -5,6 +5,7 @@ Todos:
 0. Add test cases for properties: innerHTML, selected, checked, value, htmlFor, for
 0. When CDATA XML-check added, add check for CDATA section in XML
 0. Fix bug with IE 10 (but not IE 8) when testing $on events (race condition)
+0. Harmonize with node unit tests (get Makefile of nodeunit to run so can run in browser)
 */
 // Note: we always end styles in the tests with a semi-colon, as our standardizing Element.prototype.getAttribute() polyfill used internally will always add a semi-colon, but even modern browsers do not do this (nor are they required to do so) without the harmonizing polyfill (but to harmonize, such an approach is necessary since IE8 always drops the semi-colon with no apparent way to recover whether it was written with or without it); even though our polyfill could handle either case, by adding a semicolon at the end of even the last rule, we are at least ensuring the tests will remain valid in modern browsers regardless of whether the polyfill is present or not; we really should do the same in alphabetizing our properties as well, since our polyfill handles that (since IE has its own order not the same as document order or alphabetical), but modern browsers (at least Firefox) follow document order.
 
