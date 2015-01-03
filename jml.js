@@ -560,7 +560,9 @@ Todos:
         }
         function setObj (prop) {
             if (arguments.length > 1) {
-                Array.from(arguments).forEach(setObj);
+                Array.from(arguments).forEach(function (arg) {
+                    setObj(arg);
+                });
             }
             else {
                 parent = parent[parentIdx - 1][prop];
