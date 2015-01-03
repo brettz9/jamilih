@@ -901,12 +901,15 @@ Todos:
         var ret = jml.apply(null, arguments);
         return ret.outerHTML;
     };
-    jml.toDOMString = function () { // Alias for jml.toHTML for parity with toJMLString
+    jml.toDOMString = function () { // Alias for jml.toHTML for parity with jml.toJMLString
         return jml.toHTML.apply(jml, arguments);
     };
     jml.toXML = function () {
         var ret = jml.apply(null, arguments);
         return new XMLSerializer().serializeToString(ret);
+    };
+    jml.toXMLDOMString = function () { // Alias for jml.toXML for parity with jml.toJMLString
+        return jml.toXML.apply(jml, arguments);
     };
 
     // EXPORTS

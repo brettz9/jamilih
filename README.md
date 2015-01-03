@@ -28,6 +28,7 @@ Jamilih JSON object. Note that element results will be in array form.
 - `jml.toXML()` - Works like jml() except that the resulting DOM object is converted into an XML-serialized string.
 - `jml.toDOM()` - An alias for jml().
 - `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
+- `jml.toXMLDOMString()` - An alias for `jml.toXML()` (for parity with `toJMLString`).
 
 # Examples
 
