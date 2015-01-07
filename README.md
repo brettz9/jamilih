@@ -281,7 +281,7 @@ if only one element was present, the element itself.
 
 # Schema
 
-A tentative [JSON Schema](http://json-schema.org/) is available [here](./jamilih.jsonschema).
+A tentative [JSON Schema](http://json-schema.org/) is available [here](jamilih.jsonschema).
 
 # Todos
 

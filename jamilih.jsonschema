@@ -1,0 +1,42 @@
+{
+    "definitions": {
+        "element": {
+            "title": "Element",
+            "anyOf": [{"$ref": "#/definitions/elementNameOnly"}, {"$ref": "#/definitions/elementNameAndAttributes"}, {"$ref": "#/definitions/elementNameAndChildren"}, {"$ref": "#/definitions/elementNameAndAttributesAndChildren"}]
+        },
+        "elementNameOnly": {
+            "type": "array",
+            "items": [{"$ref": "#/definitions/elementName"}]
+        },
+        "elementNameAndAttributes": {
+            "type": "array",
+            "items": [{"$ref": "#/definitions/elementName"}, {"$ref": "#/definitions/attributes"}]
+        },
+        "elementNameAndChildren": {
+            "type": "array",
+            "items": [{"$ref": "#/definitions/elementName"}, {"$ref": "#/definitions/elementChildren"}]
+        },
+        "elementNameAndAttributesAndChildren": {
+            "type": "array",
+            "items": [{"$ref": "#/definitions/elementName"}, {"$ref": "#/definitions/attributes"}, {"$ref": "#/definitions/elementChildren"}]
+        },
+        "elementName": {
+            "title": "Element name",
+            "type": "string"
+        },
+        "attributes": {
+            "title": "Attributes",
+            "type": "object"
+        },
+        "elementChildren": {
+            "title": "Element children",
+            "type": "array",
+            "items": {"anyOf": [{"$ref": "#/definitions/Element"}, {"$ref": "#/definitions/textNode"}]}
+        },
+        "textNode": {
+            "title": "Text node",
+            "type": "string"
+        }
+    },
+    "$ref": "#/definitions/element"
+}
