@@ -286,6 +286,9 @@ A tentative [JSON Schema](http://json-schema.org/) is available [here](jamilih.j
 # Todos
 
 1. Namespaced elements and attributes and XML options
+1. JSON Schema todos
+    1. Specify types of allowable properties on attributes object in JSON Schema.
+    1. Allow for fragments and other out-of-place objects
 1. See todos within code.
 
 # Possible todos
