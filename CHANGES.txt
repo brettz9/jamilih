@@ -1,3 +1,5 @@
+* Provided tentative JSON Schema
+
 0.8.0
 * Actual Node support
 * Add document, document type, notation, entity, attribute node support
