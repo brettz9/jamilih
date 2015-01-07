@@ -279,6 +279,10 @@ append the contents, with the following exceptions:
 argument, in which case, it returns a fragment of all added elements or,
 if only one element was present, the element itself.
 
+# Schema
+
+A tentative [JSON Schema](http://json-schema.org/) is available [here](./jamilih.jsonschema).
+
 # Todos
 
 1. Namespaced elements and attributes and XML options
