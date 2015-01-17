@@ -7,13 +7,11 @@ stand-alone library) while still getting some benefits of the
 syntax-highlighter-friendly pure JS approach for DOM construction,
 see [Jamilih Lite](https://gist.github.com/brettz9/ac4c18f51c0af8003a41).
 
-# Rationale
+# Some advantages/Uses
 
-Provide round-trippable JSON/JavaScript serialization as with JsonML,
-but with all items at a given array level being the same type of item
-(unless marked with a deeper level of nesting) and with a slightly more
-template-friendly capacity to inline insert fragments or child nodes
-(e.g., as by function return).
+- Templates with the full expressive power of JavaScript (Why start in HTML when you will probably need JavaScript anyways and why use a template language with significant additional learning time overhead for those already familiar with HTML and JavaScript?)
+- Syntax highlighting out of the box (unlike embedded string-based templates)
+- Could restrict to JSON for declarative but easily parseable templates
 
 # Overview
 
@@ -282,6 +280,14 @@ if only one element was present, the element itself.
 # Schema
 
 A tentative [JSON Schema](http://json-schema.org/) is available [here](jamilih.jsonschema).
+
+# Design Rationale
+
+Provide round-trippable JSON/JavaScript serialization as with JsonML,
+but with all items at a given array level being the same type of item
+(unless marked with a deeper level of nesting) and with a slightly more
+template-friendly capacity to inline insert fragments or child nodes
+(e.g., as by function return).
 
 # Todos
 
