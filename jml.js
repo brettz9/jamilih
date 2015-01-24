@@ -68,6 +68,8 @@ Todos:
 
     'use strict';
 
+    var jml;
+
     // STATIC PROPERTIES
     var NS_HTML = 'http://www.w3.org/1999/xhtml',
         hyphenForCamelCase = /-([a-z])/g;
@@ -185,6 +187,122 @@ Todos:
     }
 
     /**
+    * @private
+    * @static
+    */
+    function _getType (item) {
+        if (typeof item === 'string') {
+            return 'string';
+        }
+        if (typeof item === 'object') {
+            if (item === null) {
+                return 'null';
+            }
+            if (Array.isArray(item)) {
+                return 'array';
+            }
+            if (item.nodeType === 1) {
+                return 'element';
+            }
+            return 'object';
+        }
+        return undef;
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _fragReducer (frag, node) {
+        frag.appendChild(node);
+        return frag;
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _replaceDefiner (xmlnsObj) {
+        return function (n0) {
+            var ns, retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
+            for (ns in xmlnsObj) {
+                if (xmlnsObj.hasOwnProperty(ns)) {
+                    if (ns !== '') {
+                        retStr += ' xmlns:' + ns + '="' + xmlnsObj[ns] + '"';
+                    }
+                }
+            }
+            return retStr;
+        };
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _jmlSingleArg (arg) {
+        return jml(arg);
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _copyOrderedAtts (attArr) {
+        var obj = {};
+        // Todo: Fix if allow prefixed attributes
+        obj[attArr[0]] = attArr[1]; // array of ordered attribute-value arrays
+        return obj;
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _childrenToJML (node) {
+        return function (childNodeJML, i) {
+            var cn = node.childNodes[i];
+            cn.parentNode.replaceChild(jml.apply(null, childNodeJML), cn);
+        };
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _appendJML (node) {
+        return function (childJML) {
+            node.appendChild(jml.apply(null, childJML));
+        };
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _appendJMLOrText (node) {
+        return function (childJML) {
+            if (typeof childJML === 'string') {
+                node.appendChild(document.createTextNode(childJML));
+            }
+            else {
+                node.appendChild(jml.apply(null, childJML));
+            }
+        };
+    }
+
+    /**
+    * @private
+    * @static
+    */
+    function _DOMfromJMLOrString (childNodeJML) {
+        if (typeof childNodeJML === 'string') {
+            return document.createTextNode(childNodeJML);
+        }
+        return jml.apply(null, childNodeJML);
+    }
+
+    /**
      * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers that support);
      * Any element after element can be omitted, and any subsequent type or types added afterwards
      * @requires polyfill: Array.isArray
@@ -202,48 +320,13 @@ Todos:
      * @param {null} [returning] Can use null to indicate an array of elements should be returned
      * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
      */
-    function jml () {
-        var i, arg, procValue, p, p2, attVal, childContent, childContentType,
+    jml = function jml () {
+        var i, arg, procValue, p, attVal, childContent, childContentType,
             val, k, elsl, j, cl, cn, replacer = '', node,
             html, body, head, meta,
             elem = document.createDocumentFragment(), nodes = [],
             elStr, atts, ordered_arr, child = [],
-            argc = arguments.length, argv = arguments,
-            _getType = function (item) {
-                if (typeof item === 'string') {
-                    return 'string';
-                }
-                if (typeof item === 'object') {
-                    if (item === null) {
-                        return 'null';
-                    }
-                    if (Array.isArray(item)) {
-                        return 'array';
-                    }
-                    if (item.nodeType === 1) {
-                        return 'element';
-                    }
-                    return 'object';
-                }
-                return undef;
-            },
-            fragReducer = function (frag, node) {
-                frag.appendChild(node);
-                return frag;
-            },
-            replaceDefiner = function (xmlnsObj) {
-                return function (n0) {
-                    var ns, retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
-                    for (ns in xmlnsObj) {
-                        if (xmlnsObj.hasOwnProperty(ns)) {
-                            if (ns !== '') {
-                                retStr += ' xmlns:' + ns + '="' + xmlnsObj[ns] + '"';
-                            }
-                        }
-                    }
-                    return retStr;
-                };
-            };
+            argc = arguments.length, argv = arguments;
         for (i = 0; i < argc; i++) {
             arg = argv[i];
             switch (_getType(arg)) {
@@ -251,7 +334,7 @@ Todos:
                     if (i === argc - 1) {
                         _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
                         // Todo: Fix to allow application of stylesheets of style tags within fragments?
-                        return nodes.length <= 1 ? nodes[0] : nodes.reduce(fragReducer, document.createDocumentFragment()); // nodes;
+                        return nodes.length <= 1 ? nodes[0] : nodes.reduce(_fragReducer, document.createDocumentFragment()); // nodes;
                     }
                     break;
                 case 'string': // Strings indicate elements
@@ -329,7 +412,7 @@ Todos:
                         // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
                         // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
                         if (typeof atts.xmlns === 'object') {
-                            replacer = replaceDefiner(atts.xmlns);
+                            replacer = _replaceDefiner(atts.xmlns);
                         }
                         else {
                             replacer = ' xmlns="' + atts.xmlns + '"';
@@ -344,17 +427,13 @@ Todos:
                         ).documentElement;
 //}catch(e) {alert(elem.outerHTML);throw e;}
                     }
-                    ordered_arr = atts.$a ? atts.$a.map(function (attArr) {
-                            var obj = {};
-                            // Todo: Fix if allow prefixed attributes
-                            obj[attArr[0]] = attArr[1]; // array of ordered attribute-value arrays
-                            return obj;
-                        }) : [atts];
+                    ordered_arr = atts.$a ? atts.$a.map(_copyOrderedAtts) : [atts];
                     ordered_arr.forEach(function (atts) {
-                        for (p in atts) {
-                            if (atts.hasOwnProperty(p)) {
-                                attVal = atts[p];
-                                switch (p) {
+                        var att, p2;
+                        for (att in atts) {
+                            if (atts.hasOwnProperty(att)) {
+                                attVal = atts[att];
+                                switch (att) {
                                     /*
                                     Todos:
                                     0. JSON mode to prevent event addition
@@ -382,10 +461,7 @@ Todos:
                                     case '$document':
                                         node = document.implementation.createHTMLDocument();
                                         if (attVal.childNodes) {
-                                            attVal.childNodes.forEach(function (childNodeJML, i) {
-                                                cn = node.childNodes[i];
-                                                cn.parentNode.replaceChild(jml.apply(null, childNodeJML), cn);
-                                            });
+                                            attVal.childNodes.forEach(_childrenToJML(node));
                                             // Remove any extra nodes created by createHTMLDocument().
                                             j = attVal.childNodes.length;
                                             while (node.childNodes[j]) {
@@ -407,19 +483,10 @@ Todos:
                                                 node.title = attVal.title; // Appends after meta
                                             }
                                             if (attVal.head) {
-                                                attVal.head.forEach(function (childJML) {
-                                                    head.appendChild(jml.apply(null, childJML));
-                                                });
+                                                attVal.head.forEach(_appendJML(head));
                                             }
                                             if (attVal.body) {
-                                                attVal.body.forEach(function (childJML) {
-                                                    if (typeof childJML === 'string') {
-                                                        body.appendChild(document.createTextNode(childJML));
-                                                    }
-                                                    else {
-                                                        body.appendChild(jml.apply(null, childJML));
-                                                    }
-                                                });
+                                                attVal.body.forEach(_appendJMLOrText(body));
                                             }
                                         }
                                         break;
@@ -437,12 +504,8 @@ Todos:
                                                 nodeName: attVal.name,
                                                 nodeValue: null,
                                                 nodeType: 10,
-                                                entities: attVal.entities.map(function (entityJML) {
-                                                    return jml(entityJML);
-                                                }),
-                                                notations: attVal.notations.map(function (notationJML) {
-                                                    return jml(notationJML);
-                                                }),
+                                                entities: attVal.entities.map(_jmlSingleArg),
+                                                notations: attVal.notations.map(_jmlSingleArg),
                                                 publicId: attVal.publicId,
                                                 systemId: attVal.systemId
                                                 // internalSubset: // Todo
@@ -462,12 +525,7 @@ Todos:
                                             systemId: attVal.systemId,
                                             notationName: attVal.notationName,
                                             nodeType: 6,
-                                            childNodes: attVal.childNodes.map(function (childNodeJML) {
-                                                if (typeof childNodeJML === 'string') {
-                                                    return document.createTextNode(childNodeJML);
-                                                }
-                                                return jml.apply(null, childNodeJML);
-                                            })
+                                            childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
                                         };
                                         break;
                                     case '$NOTATION':
@@ -501,25 +559,25 @@ Todos:
                                         elem.innerHTML = attVal;
                                         break;
                                     case 'selected' : case 'checked': case 'value': case 'defaultValue':
-                                        elem[p] = attVal;
+                                        elem[att] = attVal;
                                         break;
                                     case 'htmlFor': case 'for':
                                         if (elStr === 'label') {
                                             elem.htmlFor = attVal;
                                             break;
                                         }
-                                        elem.setAttribute(p, attVal);
+                                        elem.setAttribute(att, attVal);
                                         break;
                                     case 'xmlns':
                                         // Already handled
                                         break;
                                     default:
-                                        if (p.match(/^on/)) {
-                                            elem[p] = attVal;
-                                            // _addEvent(elem, p.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
+                                        if (att.match(/^on/)) {
+                                            elem[att] = attVal;
+                                            // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
                                             break;
                                         }
-                                        if (p === 'style') { // setAttribute will work, but erases any existing styles
+                                        if (att === 'style') { // setAttribute will work, but erases any existing styles
                                             if (attVal && typeof attVal === 'object') {
                                                 for (p2 in attVal) {
                                                     if (attVal.hasOwnProperty(p2)) {
@@ -542,7 +600,7 @@ Todos:
                                             }
                                             break;
                                         }
-                                        elem.setAttribute(p, attVal);
+                                        elem.setAttribute(att, attVal);
                                         break;
                                 }
                             }
@@ -598,7 +656,7 @@ Todos:
             }
         }
         return nodes[0] || elem;
-    }
+    };
     
     /**
     * Converts a DOM object or a string of HTML into a Jamilih object (or string)
