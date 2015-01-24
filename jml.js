@@ -327,6 +327,184 @@ Todos:
             elem = document.createDocumentFragment(), nodes = [],
             elStr, atts, ordered_arr, child = [],
             argc = arguments.length, argv = arguments;
+        function _checkAtts (atts) {
+            var att, p2;
+            for (att in atts) {
+                if (atts.hasOwnProperty(att)) {
+                    attVal = atts[att];
+                    switch (att) {
+                        /*
+                        Todos:
+                        0. JSON mode to prevent event addition
+
+                        0. {$xmlDocument: []} // document.implementation.createDocument
+
+                        0. Accept array for any attribute with first item as prefix and second as value?
+                        0. {$: ['xhtml', 'div']} for prefixed elements
+                            case '$': // Element with prefix?
+                                nodes[nodes.length] = elem = document.createElementNS(attVal[0], attVal[1]);
+                                break;
+                        */
+                        case '#': // Document fragment
+                            nodes[nodes.length] = jml.apply(null, [attVal]); // Nest within array to avoid confusion with elements
+                            break;
+                        case '$attribute': // Attribute node
+                            node = attVal.length === 3 ? document.createAttributeNS(attVal[0], attVal[1]) : document.createAttribute(attVal[0]);
+                            node.value = attVal[attVal.length - 1];
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$text': // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
+                            node = document.createTextNode(attVal);
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$document':
+                            node = document.implementation.createHTMLDocument();
+                            if (attVal.childNodes) {
+                                attVal.childNodes.forEach(_childrenToJML(node));
+                                // Remove any extra nodes created by createHTMLDocument().
+                                j = attVal.childNodes.length;
+                                while (node.childNodes[j]) {
+                                    cn = node.childNodes[j];
+                                    cn.parentNode.removeChild(cn);
+                                    j++;
+                                }
+                            }
+                            else {
+                                html = node.childNodes[1];
+                                head = html.childNodes[0];
+                                body = html.childNodes[1];
+                                if (attVal.title || attVal.head) {
+                                    meta = document.createElement('meta');
+                                    meta.charset = 'utf-8';
+                                    head.appendChild(meta);
+                                }
+                                if (attVal.title) {
+                                    node.title = attVal.title; // Appends after meta
+                                }
+                                if (attVal.head) {
+                                    attVal.head.forEach(_appendJML(head));
+                                }
+                                if (attVal.body) {
+                                    attVal.body.forEach(_appendJMLOrText(body));
+                                }
+                            }
+                            break;
+                        case '$DOCTYPE':
+                            /*
+                            // Todo:
+                            if (attVal.internalSubset) {
+                                node = {};
+                            }
+                            else
+                            */
+                            if (attVal.entities || attVal.notations) {
+                                node = {
+                                    name: attVal.name,
+                                    nodeName: attVal.name,
+                                    nodeValue: null,
+                                    nodeType: 10,
+                                    entities: attVal.entities.map(_jmlSingleArg),
+                                    notations: attVal.notations.map(_jmlSingleArg),
+                                    publicId: attVal.publicId,
+                                    systemId: attVal.systemId
+                                    // internalSubset: // Todo
+                                };
+                            }
+                            else {
+                                node = document.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                            }
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$ENTITY':
+                            // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
+                            node = {
+                                nodeName: attVal.name,
+                                nodeValue: null,
+                                publicId: attVal.publicId,
+                                systemId: attVal.systemId,
+                                notationName: attVal.notationName,
+                                nodeType: 6,
+                                childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
+                            };
+                            break;
+                        case '$NOTATION':
+                            // Todo: We could add further properties/methods, but unlikely to be used as is.
+                            node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$on': // Events
+                            for (p2 in attVal) {
+                                if (attVal.hasOwnProperty(p2)) {
+                                    val = attVal[p2];
+                                    if (typeof val === 'function') {
+                                        val = [val, false];
+                                    }
+                                    _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
+                                }
+                            }
+                            break;
+                        case 'className': case 'class':
+                            elem.className = attVal;
+                            break;
+                        case 'dataset':
+                            for (p2 in attVal) { // Map can be keyed with hyphenated or camel-cased properties
+                                if (attVal.hasOwnProperty(p2)) {
+                                    elem.dataset[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                                }
+                            }
+                            break;
+                        // Todo: Disable this by default unless configuration explicitly allows (for security)
+                        case 'innerHTML':
+                            elem.innerHTML = attVal;
+                            break;
+                        case 'selected' : case 'checked': case 'value': case 'defaultValue':
+                            elem[att] = attVal;
+                            break;
+                        case 'htmlFor': case 'for':
+                            if (elStr === 'label') {
+                                elem.htmlFor = attVal;
+                                break;
+                            }
+                            elem.setAttribute(att, attVal);
+                            break;
+                        case 'xmlns':
+                            // Already handled
+                            break;
+                        default:
+                            if (att.match(/^on/)) {
+                                elem[att] = attVal;
+                                // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
+                                break;
+                            }
+                            if (att === 'style') { // setAttribute will work, but erases any existing styles
+                                if (attVal && typeof attVal === 'object') {
+                                    for (p2 in attVal) {
+                                        if (attVal.hasOwnProperty(p2)) {
+                                            // Todo: Handle aggregate properties like "border"
+                                            if (p2 === 'float') {
+                                                elem.style.cssFloat = attVal[p2];
+                                                elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
+                                            }
+                                            else {
+                                                elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (elem.style.cssText !== undef) {
+                                    elem.style.cssText += attVal;
+                                }
+                                else { // Opera
+                                    elem.style += attVal;
+                                }
+                                break;
+                            }
+                            elem.setAttribute(att, attVal);
+                            break;
+                    }
+                }
+            }
+        }
         for (i = 0; i < argc; i++) {
             arg = argv[i];
             switch (_getType(arg)) {
@@ -428,184 +606,7 @@ Todos:
 //}catch(e) {alert(elem.outerHTML);throw e;}
                     }
                     ordered_arr = atts.$a ? atts.$a.map(_copyOrderedAtts) : [atts];
-                    ordered_arr.forEach(function (atts) {
-                        var att, p2;
-                        for (att in atts) {
-                            if (atts.hasOwnProperty(att)) {
-                                attVal = atts[att];
-                                switch (att) {
-                                    /*
-                                    Todos:
-                                    0. JSON mode to prevent event addition
-
-                                    0. {$xmlDocument: []} // document.implementation.createDocument
-
-                                    0. Accept array for any attribute with first item as prefix and second as value?
-                                    0. {$: ['xhtml', 'div']} for prefixed elements
-                                        case '$': // Element with prefix?
-                                            nodes[nodes.length] = elem = document.createElementNS(attVal[0], attVal[1]);
-                                            break;
-                                    */
-                                    case '#': // Document fragment
-                                        nodes[nodes.length] = jml.apply(null, [attVal]); // Nest within array to avoid confusion with elements
-                                        break;
-                                    case '$attribute': // Attribute node
-                                        node = attVal.length === 3 ? document.createAttributeNS(attVal[0], attVal[1]) : document.createAttribute(attVal[0]);
-                                        node.value = attVal[attVal.length - 1];
-                                        nodes[nodes.length] = node;
-                                        break;
-                                    case '$text': // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
-                                        node = document.createTextNode(attVal);
-                                        nodes[nodes.length] = node;
-                                        break;
-                                    case '$document':
-                                        node = document.implementation.createHTMLDocument();
-                                        if (attVal.childNodes) {
-                                            attVal.childNodes.forEach(_childrenToJML(node));
-                                            // Remove any extra nodes created by createHTMLDocument().
-                                            j = attVal.childNodes.length;
-                                            while (node.childNodes[j]) {
-                                                cn = node.childNodes[j];
-                                                cn.parentNode.removeChild(cn);
-                                                j++;
-                                            }
-                                        }
-                                        else {
-                                            html = node.childNodes[1];
-                                            head = html.childNodes[0];
-                                            body = html.childNodes[1];
-                                            if (attVal.title || attVal.head) {
-                                                meta = document.createElement('meta');
-                                                meta.charset = 'utf-8';
-                                                head.appendChild(meta);
-                                            }
-                                            if (attVal.title) {
-                                                node.title = attVal.title; // Appends after meta
-                                            }
-                                            if (attVal.head) {
-                                                attVal.head.forEach(_appendJML(head));
-                                            }
-                                            if (attVal.body) {
-                                                attVal.body.forEach(_appendJMLOrText(body));
-                                            }
-                                        }
-                                        break;
-                                    case '$DOCTYPE':
-                                        /*
-                                        // Todo:
-                                        if (attVal.internalSubset) {
-                                            node = {};
-                                        }
-                                        else
-                                        */
-                                        if (attVal.entities || attVal.notations) {
-                                            node = {
-                                                name: attVal.name,
-                                                nodeName: attVal.name,
-                                                nodeValue: null,
-                                                nodeType: 10,
-                                                entities: attVal.entities.map(_jmlSingleArg),
-                                                notations: attVal.notations.map(_jmlSingleArg),
-                                                publicId: attVal.publicId,
-                                                systemId: attVal.systemId
-                                                // internalSubset: // Todo
-                                            };
-                                        }
-                                        else {
-                                            node = document.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
-                                        }
-                                        nodes[nodes.length] = node;
-                                        break;
-                                    case '$ENTITY':
-                                        // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
-                                        node = {
-                                            nodeName: attVal.name,
-                                            nodeValue: null,
-                                            publicId: attVal.publicId,
-                                            systemId: attVal.systemId,
-                                            notationName: attVal.notationName,
-                                            nodeType: 6,
-                                            childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
-                                        };
-                                        break;
-                                    case '$NOTATION':
-                                        // Todo: We could add further properties/methods, but unlikely to be used as is.
-                                        node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
-                                        nodes[nodes.length] = node;
-                                        break;
-                                    case '$on': // Events
-                                        for (p2 in attVal) {
-                                            if (attVal.hasOwnProperty(p2)) {
-                                                val = attVal[p2];
-                                                if (typeof val === 'function') {
-                                                    val = [val, false];
-                                                }
-                                                _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
-                                            }
-                                        }
-                                        break;
-                                    case 'className': case 'class':
-                                        elem.className = attVal;
-                                        break;
-                                    case 'dataset':
-                                        for (p2 in attVal) { // Map can be keyed with hyphenated or camel-cased properties
-                                            if (attVal.hasOwnProperty(p2)) {
-                                                elem.dataset[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
-                                            }
-                                        }
-                                        break;
-                                    // Todo: Disable this by default unless configuration explicitly allows (for security)
-                                    case 'innerHTML':
-                                        elem.innerHTML = attVal;
-                                        break;
-                                    case 'selected' : case 'checked': case 'value': case 'defaultValue':
-                                        elem[att] = attVal;
-                                        break;
-                                    case 'htmlFor': case 'for':
-                                        if (elStr === 'label') {
-                                            elem.htmlFor = attVal;
-                                            break;
-                                        }
-                                        elem.setAttribute(att, attVal);
-                                        break;
-                                    case 'xmlns':
-                                        // Already handled
-                                        break;
-                                    default:
-                                        if (att.match(/^on/)) {
-                                            elem[att] = attVal;
-                                            // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
-                                            break;
-                                        }
-                                        if (att === 'style') { // setAttribute will work, but erases any existing styles
-                                            if (attVal && typeof attVal === 'object') {
-                                                for (p2 in attVal) {
-                                                    if (attVal.hasOwnProperty(p2)) {
-                                                        // Todo: Handle aggregate properties like "border"
-                                                        if (p2 === 'float') {
-                                                            elem.style.cssFloat = attVal[p2];
-                                                            elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
-                                                        }
-                                                        else {
-                                                            elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            else if (elem.style.cssText !== undef) {
-                                                elem.style.cssText += attVal;
-                                            }
-                                            else { // Opera
-                                                elem.style += attVal;
-                                            }
-                                            break;
-                                        }
-                                        elem.setAttribute(att, attVal);
-                                        break;
-                                }
-                            }
-                        }
-                    });
+                    ordered_arr.forEach(_checkAtts);
                     break;
                 case 'element':
                     /*
