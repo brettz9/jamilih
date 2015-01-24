@@ -973,9 +973,317 @@ Other Todos:
         return jml.apply(null, arguments);
     };
     jml.toHTML = function () { // Todo: Replace this with version of jml() that directly builds a string
-        var ret = jml.apply(null, arguments);
-        // Todo: deal with serialization of properties like 'selected', 'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*', 'style'! (i.e., need to build a string ourselves)
-        return ret.outerHTML;
+        var i, arg, procValue, p, attVal, childContent, childContentType,
+            val, k, elsl, j, cl, cn, replacer = '', node,
+            html, body, head, meta,
+            htmlStr = '',
+            elStr, atts, ordered_arr, child = [],
+            argc = arguments.length, argv = arguments;
+        // Todo: add attribute escaping
+        function _checkAtts (atts) {
+            var att, p2;
+            for (att in atts) {
+                if (atts.hasOwnProperty(att)) {
+                    attVal = atts[att];
+                    switch (att) {
+                        /*
+                        Todos:
+                        0. JSON mode to prevent event addition
+
+                        0. {$xmlDocument: []} // document.implementation.createDocument
+
+                        0. Accept array for any attribute with first item as prefix and second as value?
+                        0. {$: ['xhtml', 'div']} for prefixed elements
+                            case '$': // Element with prefix?
+                                nodes[nodes.length] = elem = document.createElementNS(attVal[0], attVal[1]);
+                                break;
+                        */
+                        case '#': // Document fragment
+                            htmlStr += jml.toHTML.apply(jml, [attVal]); // Nest within array to avoid confusion with elements
+                            break;
+                        case '$attribute': // Attribute node
+                            node = attVal.length === 3 ? document.createAttributeNS(attVal[0], attVal[1]) : document.createAttribute(attVal[0]);
+                            node.value = attVal[attVal.length - 1];
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$text': // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
+                            htmlStr += attVal;
+                            break;
+                        case '$document':
+                            node = document.implementation.createHTMLDocument();
+                            if (attVal.childNodes) {
+                                attVal.childNodes.forEach(_childrenToJML(node));
+                                // Remove any extra nodes created by createHTMLDocument().
+                                j = attVal.childNodes.length;
+                                while (node.childNodes[j]) {
+                                    cn = node.childNodes[j];
+                                    cn.parentNode.removeChild(cn);
+                                    j++;
+                                }
+                            }
+                            else {
+                                html = node.childNodes[1];
+                                head = html.childNodes[0];
+                                body = html.childNodes[1];
+                                if (attVal.title || attVal.head) {
+                                    meta = document.createElement('meta');
+                                    meta.charset = 'utf-8';
+                                    head.appendChild(meta);
+                                }
+                                if (attVal.title) {
+                                    node.title = attVal.title; // Appends after meta
+                                }
+                                if (attVal.head) {
+                                    attVal.head.forEach(_appendJML(head));
+                                }
+                                if (attVal.body) {
+                                    attVal.body.forEach(_appendJMLOrText(body));
+                                }
+                            }
+                            break;
+                        case '$DOCTYPE':
+                            /*
+                            // Todo:
+                            if (attVal.internalSubset) {
+                                node = {};
+                            }
+                            else
+                            */
+                            if (attVal.entities || attVal.notations) {
+                                node = {
+                                    name: attVal.name,
+                                    nodeName: attVal.name,
+                                    nodeValue: null,
+                                    nodeType: 10,
+                                    entities: attVal.entities.map(_jmlSingleArg),
+                                    notations: attVal.notations.map(_jmlSingleArg),
+                                    publicId: attVal.publicId,
+                                    systemId: attVal.systemId
+                                    // internalSubset: // Todo
+                                };
+                            }
+                            else {
+                                node = document.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                            }
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$ENTITY':
+                            // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
+                            node = {
+                                nodeName: attVal.name,
+                                nodeValue: null,
+                                publicId: attVal.publicId,
+                                systemId: attVal.systemId,
+                                notationName: attVal.notationName,
+                                nodeType: 6,
+                                childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
+                            };
+                            break;
+                        case '$NOTATION':
+                            // Todo: We could add further properties/methods, but unlikely to be used as is.
+                            node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
+                            nodes[nodes.length] = node;
+                            break;
+                        case '$on': // Events
+                            // Todo: We could continue to build with a string, but auto-generate an ID and add a method to optionally attach our events at any point when the string is converted into a DOM object;
+                            // or, as per user option, we could simply call toString() on the function and put it inline
+                            for (p2 in attVal) {
+                                if (attVal.hasOwnProperty(p2)) {
+                                    val = attVal[p2];
+                                    if (typeof val === 'function') {
+                                        val = [val, false];
+                                    }
+                                    _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
+                                }
+                            }
+                            break;
+                        case 'className': case 'class':
+                            htmlStr += ' class="' + attVal + '"';
+                            break;
+                        case 'dataset':
+                            for (p2 in attVal) { // Map can be keyed with hyphenated or camel-cased properties
+                                if (attVal.hasOwnProperty(p2)) {
+                                    elem.dataset[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                                }
+                            }
+                            break;
+                        // Todo: Disable this by default unless configuration explicitly allows (for security)
+                        case 'innerHTML':
+                            elem.innerHTML = attVal;
+                            break;
+                        case 'selected': case 'checked': case 'value': case 'defaultValue':
+                            elem[att] = attVal;
+                            break;
+                        case 'htmlFor': case 'for':
+                            htmlStr += ' for="' + attVal + '"';
+                            break;
+                        case 'xmlns':
+                            // Already handled
+                            break;
+                        default:
+                            if (att === 'style' && attVal && typeof attVal === 'object') {
+                                for (p2 in attVal) {
+                                    if (attVal.hasOwnProperty(p2)) {
+                                        // Todo: Handle aggregate properties like "border"
+                                        if (p2 === 'float') {
+                                            elem.style.cssFloat = attVal[p2];
+                                            elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
+                                        }
+                                        else {
+                                            elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            htmlStr += ' ' + att + '="' + attVal + '"';
+                            break;
+                    }
+                }
+            }
+        }
+        for (i = 0; i < argc; i++) {
+            arg = argv[i];
+            switch (_getType(arg)) {
+                case 'null': // null always indicates a place-holder (only needed for last argument if want array returned)
+                    if (i === argc - 1) {
+                        _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
+                        // Todo: Fix to allow application of stylesheets of style tags within fragments?
+                        return nodes.length <= 1 ? nodes[0] : nodes.reduce(_fragReducer, document.createDocumentFragment()); // nodes;
+                    }
+                    break;
+                case 'string': // Strings indicate elements
+                    switch (arg) {
+                        case '!':
+                            htmlStr += '<!--' + argv[++i] + '-->';
+                            break;
+                        case '?':
+                            arg = argv[++i];
+                            procValue = val = argv[++i];
+                            if (typeof val === 'object') {
+                                procValue = [];
+                                for (p in val) {
+                                    if (val.hasOwnProperty(p)) {
+                                        procValue.push(p + '=' + '"' + val[p].replace(/"/g, '\\"') + '"');
+                                    }
+                                }
+                                procValue = procValue.join(' ');
+                            }
+                            // Firefox allows instructions with ">" in this method, but not if placed directly!
+                            htmlStr += '<?' + arg + ' ' + procValue + '?>';
+                            break;
+                        // Browsers don't support document.createEntityReference, so we just use this as a convenience
+                        case '&':
+                            nodes[nodes.length] = _createSafeReference('entity', '', argv[++i]);
+                            break;
+                        case '#': // // Decimal character reference - ['#', '01234'] // &#01234; // probably easier to use JavaScript Unicode escapes
+                            nodes[nodes.length] = _createSafeReference('decimal', arg, String(argv[++i]));
+                            break;
+                        case '#x': // Hex character reference - ['#x', '123a'] // &#x123a; // probably easier to use JavaScript Unicode escapes
+                            nodes[nodes.length] = _createSafeReference('hexadecimal', arg, argv[++i]);
+                            break;
+                        case '![':
+                            // '![', ['escaped <&> text'] // <![CDATA[escaped <&> text]]>
+                            // CDATA valid in XML only, so we'll just treat as text for mutual compatibility
+                            // Todo: config (or detection via some kind of document.documentType property?) of whether in XML
+                            try {
+                                nodes[nodes.length] = document.createCDATASection(argv[++i]);
+                            }
+                            catch (e2) {
+                                nodes[nodes.length] = document.createTextNode(argv[i]); // i already incremented
+                            }
+                            break;
+                        case '':
+                            nodes[nodes.length] = document.createDocumentFragment();
+                            break;
+                        default: // An element
+                            elStr = arg;
+                            if (document.createElementNS) {
+                                elem = document.createElementNS(NS_HTML, elStr);
+                            }
+                            // Todo: Fix this to depend on XML/config, not availability of methods
+                            else {
+                                elem = document.createElement(elStr);
+                            }
+                            nodes[nodes.length] = elem; // Add to parent
+                            break;
+                    }
+                    break;
+                case 'object': // Non-DOM-element objects indicate attribute-value pairs
+                    atts = arg;
+
+                    if (atts.xmlns !== undef) { // We handle this here, as otherwise may lose events, etc.
+                        // As namespace of element already set as XHTML, we need to change the namespace
+                        // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
+                        // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
+                        if (typeof atts.xmlns === 'object') {
+                            replacer = _replaceDefiner(atts.xmlns);
+                        }
+                        else {
+                            replacer = ' xmlns="' + atts.xmlns + '"';
+                        }
+//try {
+                        // Also fix DOMParser to work with text/html
+                        elem = nodes[nodes.length - 1] = new DOMParser().parseFromString(
+                            new XMLSerializer().serializeToString(elem).
+                                // Mozilla adds XHTML namespace
+                                replace(' xmlns="' + NS_HTML + '"', replacer),
+                            'application/xml'
+                        ).documentElement;
+//}catch(e) {alert(elem.outerHTML);throw e;}
+                    }
+                    ordered_arr = atts.$a ? atts.$a.map(_copyOrderedAtts) : [atts];
+                    ordered_arr.forEach(_checkAtts);
+                    break;
+                case 'element':
+                    /*
+                    1) Last element always the parent (put null if don't want parent and want to return array) unless only atts and children (no other elements)
+                    2) Individual elements (DOM elements or sequences of string[/object/array]) get added to parent first-in, first-added
+                    */
+                    if (i === 0) { // Allow wrapping of element
+                        elem = arg;
+                    }
+                    if (i === argc - 1 || (i === argc - 2 && argv[i+1] === null)) { // parent
+                        for (k = 0, elsl = nodes.length; k < elsl; k++) {
+                            _appendNode(arg, nodes[k]);
+                        }
+                        // Todo: Apply stylesheets if any style tags were added elsewhere besides the first element?
+                        _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
+                    }
+                    else {
+                        nodes[nodes.length] = arg;
+                    }
+                    break;
+                case 'array': // Arrays or arrays of arrays indicate child nodes
+                    child = arg;
+                    for (j = 0, cl = child.length; j < cl; j++) { // Go through children array container to handle elements
+                        childContent = child[j];
+                        childContentType = typeof childContent;
+                        if (childContent === undef) {
+                            throw String('Parent array:' + JSON.stringify(argv) + '; child: ' + child + '; index:' + j);
+                        }
+                        switch (childContentType) {
+                            // Todo: determine whether null or function should have special handling or be converted to text
+                            case 'string': case 'number': case 'boolean':
+                                _appendNode(elem, document.createTextNode(childContent));
+                                break;
+                            default:
+                                if (Array.isArray(childContent)) { // Arrays representing child elements
+                                    _appendNode(elem, jml.apply(null, childContent));
+                                }
+                                else if (childContent['#']) { // Fragment
+                                    _appendNode(elem, jml.apply(null, [childContent['#']]));
+                                }
+                                else { // Single DOM element children
+                                    _appendNode(elem, childContent);
+                                }
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+        return nodes[0] || elem;
     };
     jml.toDOMString = function () { // Alias for jml.toHTML for parity with jml.toJMLString
         return jml.toHTML.apply(jml, arguments);
