@@ -956,7 +956,7 @@ Todos:
     jml.toDOM = function () { // Alias for jml()
         return jml.apply(null, arguments);
     };
-    jml.toHTML = function () {
+    jml.toHTML = function () { // Todo: Replace this with version of jml() that directly builds a string
         var ret = jml.apply(null, arguments);
         return ret.outerHTML;
     };
