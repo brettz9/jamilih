@@ -457,7 +457,7 @@ Todos:
                         case 'innerHTML':
                             elem.innerHTML = attVal;
                             break;
-                        case 'selected' : case 'checked': case 'value': case 'defaultValue':
+                        case 'selected': case 'checked': case 'value': case 'defaultValue':
                             elem[att] = attVal;
                             break;
                         case 'htmlFor': case 'for':
@@ -958,6 +958,7 @@ Todos:
     };
     jml.toHTML = function () { // Todo: Replace this with version of jml() that directly builds a string
         var ret = jml.apply(null, arguments);
+        // Todo: deal with serialization of properties like 'selected', 'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*', 'style'! (i.e., need to build a string ourselves)
         return ret.outerHTML;
     };
     jml.toDOMString = function () { // Alias for jml.toHTML for parity with jml.toJMLString
