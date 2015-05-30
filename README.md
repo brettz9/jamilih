@@ -1,15 +1,29 @@
 # Jamilih
 
-NOTE: This project's API is not yet 100% stable.
-
 If you are seeking an even lighter version (e.g., for inclusion in a
 stand-alone library) while still getting some benefits of the
 syntax-highlighter-friendly pure JS approach for DOM construction,
 see [Jamilih Lite](https://gist.github.com/brettz9/ac4c18f51c0af8003a41).
 
+# Separation of concerns
+
+For templating,
+`separation_of_concerns !== separation_of_syntaxes`!
+One can very legitimately build HTML DOM using Jamilih as with any other
+JavaScript function and maintain separation of concerns. Just because
+the syntax is JavaScript does not mean it
+isn't suitable for building structural and styling design logic. On
+the contrary, it provides flexibility for designers to utilize their
+own JavaScript (and/or your own custom template functions) as long as
+the designer can maintain the discipline to avoid adding business
+logic. (A future "JSON mode" should allow more security but less control.)
+
 # Some advantages/Uses
 
-- Templates with the full expressive power of JavaScript (Why start in HTML when you will probably need JavaScript anyways and why use a template language with significant additional learning time overhead for those already familiar with HTML and JavaScript?)
+- Templates with the full expressive power of JavaScript (Why start in
+HTML when you will probably need JavaScript anyways and why use a
+template language with significant additional learning time overhead
+for those already familiar with HTML and JavaScript?)
 - Syntax highlighting out of the box (unlike embedded string-based templates)
 - Could restrict to JSON for declarative but easily parseable templates
 
