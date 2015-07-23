@@ -39,9 +39,13 @@ if (![].includes) {
 
 (function (undef) {
 /*
+Possible todos:
+0. Add XSLT to JML-string stylesheet (or even vice versa)
+0. IE problem: Add JsonML code to handle name attribute (during element creation)
+0. Element-specific: IE object-param handling
+
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
 
-0. Add JsonML code to handle name attribute (during element creation)
 0. boolean attributes?
 0. DOM attributes?
 0. duplicate attributes?
@@ -53,11 +57,11 @@ Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-h
 
 JsonML element-specific:
 0. table appending
-0. IE object-param handling
 0. canHaveChildren necessary? (attempts to append to script and img)
 
-Todos:
+Other Todos:
 0. Note to self: Integrate research from other jml notes
+0. Allow Jamilih to be seeded with an existing element, so as to be able to add/modify attributes and children
 0. Allow array as single first argument
 0. Settle on whether need to use null as last argument to return array (or fragment) or other way to allow appending? Options object at end instead to indicate whether returning array, fragment, first element, etc.?
 0. Allow building of generic XML (pass configuration object)
