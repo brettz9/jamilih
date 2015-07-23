@@ -401,21 +401,24 @@ Other Todos:
                             }
                             else
                             */
-                            if (attVal.entities || attVal.notations) {
+                            var docName = attVal[0];
+                            var publicId = attVal[1] && attVal[1].publicId;
+                            var systemId = attVal[1] && attVal[1].systemId;
+                            if (attVal[1] && (attVal[1].entities || attVal[1].notations)) {
                                 node = {
-                                    name: attVal.name,
-                                    nodeName: attVal.name,
+                                    name: docName,
+                                    nodeName: docName,
                                     nodeValue: null,
                                     nodeType: 10,
-                                    entities: attVal.entities.map(_jmlSingleArg),
-                                    notations: attVal.notations.map(_jmlSingleArg),
-                                    publicId: attVal.publicId,
-                                    systemId: attVal.systemId
+                                    entities: attVal[1].entities.map(_jmlSingleArg),
+                                    notations: attVal[1].notations.map(_jmlSingleArg),
+                                    publicId: publicId,
+                                    systemId: systemId
                                     // internalSubset: // Todo
                                 };
                             }
                             else {
-                                node = document.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                                node = document.implementation.createDocumentType(docName, publicId, systemId);
                             }
                             nodes[nodes.length] = node;
                             break;
@@ -462,6 +465,18 @@ Other Todos:
                             elem.innerHTML = attVal;
                             break;
                         case 'selected': case 'checked': case 'value': case 'defaultValue':
+                        
+                         if (value) {
+							// boolean attributes
+							elem.setAttribute(name, name);
+
+							// also set duplicated attributes
+							name = ATTR_DUP[name];
+							if (name) {
+								elem.setAttribute(name, name);
+							}
+						}
+                        
                             elem[att] = attVal;
                             break;
                         case 'htmlFor': case 'for':
@@ -693,16 +708,16 @@ Other Todos:
             }
         }
 
-        function addExternalID (obj, node) {
+        function addExternalID (arr, node) {
             if (node.systemId.includes('"') && node.systemId.includes("'")) {
                 invalidStateError();
             }
             var publicId = node.publicId, systemId = node.systemId;
             if (systemId) {
-                obj.systemId = systemId;
+                arr[1].systemId = systemId;
             }
             if (publicId) {
-                obj.publicId = publicId;
+                arr[1].publicId = publicId;
             }
         }
 
@@ -715,8 +730,15 @@ Other Todos:
             parent = parent[parentIdx - 1];
             parentIdx = 0;
         }
-        function setObj (prop1, prop2) {
-            parent = parent[parentIdx - 1][prop1];
+        function setObj (prop1, prop2, prop3) {
+            if (prop3) {
+                parent = parent[parentIdx - 1][prop1][prop2];
+                prop2 = prop3;
+            }
+            else {
+                parent = parent[parentIdx - 1][prop1];
+            }
+
             parentIdx = 0;
             if (prop2) {
                 parent = parent[prop2];
@@ -812,23 +834,23 @@ Other Todos:
                     setTemp();
                     start = {};
                     if (node.xmlEncoding || node.xmlVersion) { // an external entity file?
-                        start.$ENTITY = {name: node.nodeName, version: node.xmlVersion, encoding: node.xmlEncoding};
+                        start.$ENTITY = [node.nodeName, {version: node.xmlVersion, encoding: node.xmlEncoding}];
                     }
                     else {
-                        start.$ENTITY = {name: node.nodeName};
+                        start.$ENTITY = [node.nodeName, {}];
                         if (node.publicId || node.systemId) { // External Entity?
                             addExternalID(start.$ENTITY, node);
                             if (node.notationName) {
-                                start.$ENTITY.NDATA = node.notationName;
+                                start.$ENTITY[1].NDATA = node.notationName;
                             }
                         }
                     }
                     set(start);
                     children = node.childNodes;
                     if (children.length) {
-                        start.$ENTITY.childNodes = [];
+                        start.$ENTITY[1].childNodes = [];
                         // Set position to $ENTITY's childNodes array children
-                        setObj('$ENTITY', 'childNodes');
+                        setObj('$ENTITY', 1, 'childNodes');
 
                         Array.from(children).forEach(function (childNode) {
                             parseDOM(childNode, namespaces);
@@ -887,7 +909,7 @@ Other Todos:
                     setTemp();
 
                     // Can create directly by document.implementation.createDocumentType
-                    start = {$DOCTYPE: {name: node.name}};
+                    start = {$DOCTYPE: [node.name, {}]};
                     if (node.internalSubset) {
                         start.internalSubset = node.internalSubset;
                     }
@@ -901,8 +923,8 @@ Other Todos:
 
                     var entities = node.entities; // Currently deprecated
                     if (entities && entities.length) {
-                        start.$DOCTYPE.entities = [];
-                        setObj('$DOCTYPE', 'entities');
+                        start.$DOCTYPE[1].entities = [];
+                        setObj('$DOCTYPE', 1, 'entities');
                         Array.from(entities).forEach(function (entity) {
                             parseDOM(entity, namespaces);
                         });
@@ -913,8 +935,8 @@ Other Todos:
 
                     var notations = node.notations; // Currently deprecated
                     if (notations && notations.length) {
-                        start.$DOCTYPE.notations = [];
-                        setObj('$DOCTYPE', 'notations');
+                        start.$DOCTYPE[1].notations = [];
+                        setObj('$DOCTYPE', 1, 'notations');
                         Array.from(notations).forEach(function (notation) {
                             parseDOM(notation, namespaces);
                         });
@@ -938,7 +960,7 @@ Other Todos:
                     resetTemp();
                     break;
                 case 12: // NOTATION
-                    start = {$NOTATION: {name: node.nodeName}};
+                    start = {$NOTATION: [node.nodeName]};
                     addExternalID(start.$NOTATION, node, true);
                     set(start);
                     break;

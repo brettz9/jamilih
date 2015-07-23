@@ -250,11 +250,11 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
         `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
         `<html>` element with the XHTML namespace. If `head` is supplied, a `<meta charset="utf-8">` will also be added as
         the first child of `<head>`.
-        1. A property `$DOCTYPE` object with properties `name`, and, where present, `entities` and `notations` arrays and `publicId` and `systemId` (`internalSubset` is not currently supported in `jml()`).
+        1. A property `$DOCTYPE` array with first value as the name, and, the second value as an object whose properties, when present, are: `entities` and `notations` arrays and `publicId` and `systemId` (`internalSubset` is not currently supported in `jml()`).
         1. The following items which produce nodes deprecated by the latest DOM spec:
             1. A property `$attribute` set to an array of a namespace, name, and value (for a namespaced attribute node) or a two-item name-value array for a non-namespaced attribute node.
-            1. A property `$NOTATION` set to an object with properties `name`, `publicId`, and `systemId`.
-            1. A property `$ENTITY` set to an object with the properties `name` (or `version` and `encoding` for an external parsed entity with a declaration present) and `publicId`, `systemId`, or `childNodes` where present.
+            1. A property `$NOTATION` set to an array with first value as the name, and the second value as an object whose properties, when present, are: `publicId`, and `systemId`.
+            1. A property `$ENTITY` set to an array with first value as the name or an object with `version` and `encoding` for an external parsed entity with a declaration present, and the second value as an object whose properties, when present, are: `publicId`, `systemId`, or `childNodes` where present.
 1. Subsequent strings at the top level create elements siblings (note,
 however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow
