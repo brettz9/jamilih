@@ -263,7 +263,7 @@ element names) optionally follow and indicate attribute-value pairs
         1. `$on` expects a subject of event types mapped to a function or to an array
         with the first element as a function and the second element as a boolean
         indicating whether to capture or not.
-        1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style` 
+        1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style`
             1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
         1. `xmlns` for namespace declarations (not needed in HTML)
@@ -309,6 +309,7 @@ template-friendly capacity to inline insert fragments or child nodes
 1. JSON Schema todos
     1. Specify types of allowable properties on attributes object in JSON Schema.
     1. Allow for fragments and other out-of-place objects
+    1. Get working with JSONEditor
 1. See todos within code.
 
 # Possible todos
