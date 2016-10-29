@@ -1,6 +1,5 @@
 {
   "name": "jamilih",
-  "version": "0.8.0",
   "main": "jml.js",
   "ignore": ["node_modules"],
   "authors": [
