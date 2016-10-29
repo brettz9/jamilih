@@ -2,19 +2,21 @@
 /*jslint vars:true*/
 (function () {'use strict';
 
-var jml = require('../jml'),
-    testCase = require('nodeunit').testCase,
-    DOMParser = require('xmldom').DOMParser,
-    // XMLSerializer = require('xmldom').XMLSerializer,
-    jsdom = require('jsdom').jsdom;
+var jml = require('../'),
+    testCase = require('nodeunit').testCase;
 
-var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
-var divDOM = xml.documentElement; // This polyfill apparently mistakenly avoids putting the document into a full HTML document (with body)
+if (typeof GLOBAL !== 'undefined') {
+    GLOBAL.jsdom = require('jsdom').jsdom;
+    GLOBAL.document = jsdom('');
+    GLOBAL.window = document.defaultView;
+    GLOBAL.DOMParser = window.DOMParser;
+}
 
 var divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
+var html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
+var divDOM = html.documentElement.querySelector('.test');
 
-var document = jsdom('');
-// var window = document.parentWindow;
+var xml = document.implementation.createDocument('', 'xml', null);
 
 module.exports = testCase({
 
@@ -27,6 +29,8 @@ module.exports = testCase({
         test.deepEqual(expected, result);
         test.done();
     },
+    /*
+    // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641
     // ============================================================================
     'attribute node': function(test) {
     // ============================================================================
@@ -39,7 +43,7 @@ module.exports = testCase({
 
         var result = jml.toJML(att);
         test.deepEqual(expected, result);
-        
+
         xlink[0] = null;
         expected = {$attribute: xlink};
         att = document.createAttribute.apply(document, xlink.slice(1, -1));
@@ -50,6 +54,7 @@ module.exports = testCase({
 
         test.done();
     },
+    */
     // ============================================================================
     'text node': function(test) {
     // ============================================================================
@@ -63,14 +68,19 @@ module.exports = testCase({
     // ============================================================================
     'CDATA section': function(test) {
     // ============================================================================
-        test.expect(1);
         var content = 'CDATA <>&\'" content';
         var expected = ['![', content];
-
-        var result = jml.toJML(document.createCDATASection(content));
+        if (!xml.createCDATASection) { // https://github.com/tmpvar/jsdom/issues/1642
+            test.done();
+            return;
+        }
+        test.expect(1);
+        var result = jml.toJML(xml.createCDATASection(content));
         test.deepEqual(expected, result);
         test.done();
     },
+    /*
+    // Currently removed from spec: https://dom.spec.whatwg.org/#dom-core-changes
     // ============================================================================
     'entity reference': function(test) {
     // ============================================================================
@@ -81,21 +91,22 @@ module.exports = testCase({
         test.deepEqual(expected, result);
         test.done();
     },
+    */
     // ============================================================================
     'entity': function(test) {
     // ============================================================================
         test.expect(1);
         var expected = {$ENTITY: {name: 'copy', childNodes: ['\u00a9']}};
-        
+
         // xmldom is missing the "doctype" property, and even when we use childNodes, it is missing the "entities" NamedNodeMap (and there is no public DOM method to create entities)
         /*
         var doc = new DOMParser().parseFromString('<!DOCTYPE root [<!ENTITY copy "\u00a9">]><root/>', 'text/xml');
         var result = doc.childNodes[0].entities[0];
         */
 
-        // As per the above, we need simulate an entity
+        // As per the above, we need to simulate an entity
         var result = jml.toJML({nodeType: 6, nodeName: 'copy', childNodes: [{nodeType: 3, nodeValue: '\u00a9'}]});
-        
+
         test.deepEqual(expected, result);
         test.done();
     },

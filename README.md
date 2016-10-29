@@ -303,25 +303,6 @@ but with all items at a given array level being the same type of item
 template-friendly capacity to inline insert fragments or child nodes
 (e.g., as by function return).
 
-# Todos
-
-1. Namespaced elements and attributes and XML options
-1. JSON Schema todos
-    1. Specify types of allowable properties on attributes object in JSON Schema.
-    1. Allow for fragments and other out-of-place objects
-    1. Get working with JSONEditor
-1. See todos within code.
-
-# Possible todos
-1. Implement a method building JML by string rather than DOM but create
-DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
-interfaces for direct manipulation.
-1. Allow configuration
-    1. Allow auto-namespacing of class and/or dataset keys
-1. Allow DOM element as first item (for cloning or allowing style of
-appending (as in jQuery) that does not place the parent as the
-last item?); probably best as latter with method to clone.
-
 # Naming
 
 I originally named the project JML (for JavaScript or Json Markup
@@ -366,3 +347,24 @@ goal #1 in terms of succinctness than my proposal for Jamilih
 for goal #3, I believe Jamilih is slightly more flexible for regular usage
 in templates, and to my personal sensibilities, more clear in goal #8
 (and with a plan for goal #5 and #7?).
+
+# Todos
+
+1. Namespaced elements and attributes and XML options
+1. JSON Schema todos
+    1. Specify types of allowable properties on attributes object in JSON Schema.
+    1. Allow for fragments and other out-of-place objects
+    1. Get working with JSONEditor
+1. See todos within code.
+1. Migrate `tests` folder into nodeunit `test` folder
+
+# Possible todos
+
+1. Implement a method building JML by string rather than DOM but create
+DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
+interfaces for direct manipulation.
+1. Allow configuration
+    1. Allow auto-namespacing of class and/or dataset keys
+1. Allow DOM element as first item (for cloning or allowing style of
+appending (as in jQuery) that does not place the parent as the
+last item?); probably best as latter with method to clone.

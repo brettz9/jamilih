@@ -4,14 +4,20 @@
     "author": {
         "name": "Brett Zamir",
         "email": "brettz9@yahoo.com",
-        "url": "brett-zamir.me"
+        "url": "http://brett-zamir.me"
+    },
+    "contributors": [],
+    "scripts": {
+        "start": "node test-helpers/nodeunit-server.js",
+        "test": "nodeunit"
     },
     "description": "Provide round-trippable JSON/JavaScript serialization as with JsonML, but with all items at a given array level being the same type of item (unless marked with a deeper level of nesting) and with a slightly more template-friendly capacity to inline insert fragments or child nodes (e.g., as by function return).",
     "main": "./jml",
     "repository": {
         "type": "git",
-        "url": "https://github.com/brettz9/jamilih.git"
+        "url": "https://github.com/brettz9/jamilih"
     },
+    "homepage": "https://github.com/brettz9/jamilih",
     "keywords": [
         "json",
         "javascript",
@@ -20,12 +26,12 @@
         "html"
     ],
     "license": "MIT",
-    "engine": {
+    "engines": {
         "node": ">=0.10"
     },
     "dependencies": {
-        "jsdom": "git://github.com/brettz9/jsdom.git",
-        "xmldom": "git://github.com/brettz9/xmldom.git",
+        "jsdom": "9.8.3",
+        "xmldom": "https://github.com/brettz9/xmldom",
         "array.from": "0.2.x",
         "object-assign": "2.x"
     },

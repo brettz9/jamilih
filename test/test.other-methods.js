@@ -2,20 +2,21 @@
 /*jslint vars:true*/
 (function () {'use strict';
 
-var jml = require('../jml'),
-    testCase = require('nodeunit').testCase,
-    DOMParser = require('xmldom').DOMParser,
-    XMLSerializer = require('xmldom').XMLSerializer,
-    jsdom = require('jsdom').jsdom;
+var jml = require('../'),
+    testCase = require('nodeunit').testCase;
 
-var xml = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
-var divDOM = xml.documentElement; // This polyfill apparently mistakenly avoids putting the document into a full HTML document (with body)
+if (typeof GLOBAL !== 'undefined') {
+    GLOBAL.XMLSerializer = require('xmldom').XMLSerializer;
+    GLOBAL.jsdom = require('jsdom').jsdom;
+    GLOBAL.document = jsdom('');
+    GLOBAL.window = document.defaultView;
+    GLOBAL.DOMParser = window.DOMParser;
+    GLOBAL.Node = window.Node;
+}
 
 var divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
-
-var document = jsdom('');
-var window = document.parentWindow;
-var Node = window.Node;
+var html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
+var divDOM = html.documentElement.querySelector('.test');
 
 module.exports = testCase({
     // ============================================================================
@@ -41,7 +42,8 @@ module.exports = testCase({
     'jml.toXML()': function(test) {
     // ============================================================================
         test.expect(1);
-        var expected = '<BR/>'; // Todo: Fix jsdom/xmldom's XMLSerializer to give '<br xmlns="http://www.w3.org/1999/xhtml" />'
+        // Todo: Fix xmldom's XMLSerializer (or wait for jsdom version) to give same result as browser
+        var expected = typeof process !== 'undefined' ? '<BR/>' : '<br xmlns="http://www.w3.org/1999/xhtml" />';
         var result = jml.toXML('br');
         test.deepEqual(expected, result);
         test.done();

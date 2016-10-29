@@ -462,6 +462,18 @@ Other Todos:
                             elem.innerHTML = attVal;
                             break;
                         case 'selected': case 'checked': case 'value': case 'defaultValue':
+                            /*
+                            // Todo: utilize this from JsonML?
+                            if (value) {
+                                // boolean attributes
+                                elem.setAttribute(name, name);
+                                // also set duplicated attributes
+                                name = ATTR_DUP[name];
+                                if (name) {
+                                    elem.setAttribute(name, name);
+                                }
+                            }
+                            */
                             elem[att] = attVal;
                             break;
                         case 'htmlFor': case 'for':
@@ -662,12 +674,12 @@ Other Todos:
         }
         return nodes[0] || elem;
     };
-    
+
     /**
     * Converts a DOM object or a string of HTML into a Jamilih object (or string)
     * @param {string|HTMLElement} [dom=document.documentElement] Defaults to converting the current document.
     * @param {object} [config={stringOutput:false}] Configuration object
-    * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string. 
+    * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string.
     * @returns {array|string} Array containing the elements which represent a Jamilih object, or,
                                 if `stringOutput` is true, it will be the stringified version of
                                 such an object
@@ -677,7 +689,7 @@ Other Todos:
         if (typeof dom === 'string') {
             dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
         }
-        
+
         var prohibitHTMLOnly = true;
 
         var ret = [], parent = ret, parentIdx = 0;
@@ -757,10 +769,10 @@ Other Todos:
 
                     setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
                     set(nodeName);
-                    
+
                     start = {};
                     var hasNamespaceDeclaration = false;
-                    
+
                     if (namespaces[node.prefix || ''] !== node.namespaceURI) {
                         namespaces[node.prefix || ''] = node.namespaceURI;
                         if (node.prefix) {
@@ -861,16 +873,16 @@ Other Todos:
                 case 9: // DOCUMENT
                     setTemp();
                     var docObj = {$document: {childNodes: []}};
-                    
+
                     if (config.xmlDeclaration) {
                         docObj.$document.xmlDeclaration = {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone};
                     }
-                    
+
                     set(docObj); // document.implementation.createHTMLDocument
-                    
+
                     // Set position to fragment's array children
                     setObj('$document', 'childNodes');
-                    
+
                     children = node.childNodes;
                     if (!children.length) {
                         invalidStateError();
@@ -923,9 +935,9 @@ Other Todos:
                     break;
                 case 11: // DOCUMENT FRAGMENT
                     setTemp();
-                    
+
                     set({'#': []});
-                    
+
                     // Set position to fragment's array children
                     setObj('#');
 
@@ -948,7 +960,7 @@ Other Todos:
         }
 
         parseDOM(dom, {});
-        
+
         if (config.stringOutput) {
             return JSON.stringify(ret[0]);
         }
@@ -982,8 +994,7 @@ Other Todos:
         Object.assign = require('object-assign');
         document = require('jsdom').jsdom('');
         window = document.parentWindow;
-        DOMParser = require('xmldom').DOMParser;
-        XMLSerializer = require('xmldom').XMLSerializer;
+        XMLSerializer = require('xmldom').XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
         module.exports = jml;
     }
     else if (typeof define === 'function' && define.amd) {
