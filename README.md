@@ -1,3 +1,9 @@
+[![Build Status](https://img.shields.io/travis/brettz9/jamilih.svg)](https://travis-ci.org/brettz9/jamilih)
+[![Dependencies](https://img.shields.io/david/dev/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih)
+[![npm](http://img.shields.io/npm/v/jamilih.svg)](https://www.npmjs.com/package/jamilih)
+[![Bower](http://img.shields.io/bower/v/jamilih.svg)](http://bower.io/search/?q=jamilih)
+[![License](https://img.shields.io/npm/l/jamilih.svg)](LICENSE-APACHE)
+
 # Jamilih
 
 If you are seeking an even lighter version (e.g., for inclusion in a
