@@ -1,6 +1,6 @@
 {
     "name": "jamilih",
-    "version": "0.10.3",
+    "version": "0.10.4",
     "author": {
         "name": "Brett Zamir",
         "email": "brettz9@yahoo.com",
@@ -11,7 +11,7 @@
         "start": "node test-helpers/nodeunit-server.js",
         "test": "nodeunit"
     },
-    "description": "Provide round-trippable JSON/JavaScript serialization as with JsonML, but with all items at a given array level being the same type of item (unless marked with a deeper level of nesting) and with a slightly more template-friendly capacity to inline insert fragments or child nodes (e.g., as by function return).",
+    "description": "Provide round-trippable JSON/JavaScript serialization",
     "main": "./jml",
     "repository": {
         "type": "git",
