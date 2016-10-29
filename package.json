@@ -32,11 +32,11 @@
     "dependencies": {
         "jsdom": "9.8.3",
         "xmldom": "https://github.com/brettz9/xmldom",
-        "array.from": "0.2.x",
-        "object-assign": "2.x"
+        "array.from": "1.0.3",
+        "object-assign": "4.1.0"
     },
     "devDependencies": {
-        "nodeunit": "*"
+        "nodeunit": "0.10.2"
     },
     "readmeFilename": "README.md",
     "bugs": {
