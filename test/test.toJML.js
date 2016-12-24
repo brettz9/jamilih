@@ -70,10 +70,6 @@ module.exports = testCase({
     // ============================================================================
         var content = 'CDATA <>&\'" content';
         var expected = ['![', content];
-        if (!xml.createCDATASection) { // https://github.com/tmpvar/jsdom/issues/1642
-            test.done();
-            return;
-        }
         test.expect(1);
         var result = jml.toJML(xml.createCDATASection(content));
         test.deepEqual(expected, result);
