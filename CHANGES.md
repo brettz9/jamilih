@@ -1,4 +1,36 @@
-- Provided tentative JSON Schema
+# 0.11.0
+- npm: Upgrade jsdom version
+- Demo: Fix
+- Testing: Unskip `createCDATASection` test for `jsdom` now that implemented
+
+# 0.10.5
+- Bower: Shrink description as per npm
+
+# 0.10.4
+- npm: Shrink description to fit limit
+
+# 0.10.3
+- Rename MIT license file to LICENSE-MIT.txt
+
+# 0.10.2
+- Docs: Fix license text displayed
+- Travis: Add dependencies status to README
+
+# 0.10.1 (skipped 0.10.0)
+- npm: Update dependencies
+- Travis: Add support and display build status
+- Testing: Workaround` nodeunit` in browser issue
+
+# 0.9.0
+- npm: Lint, add scripts for browser/Node testing
+- npm: Rely on latest `jsdom` rather than my now outdated fork
+- Refactoring: Avoid `DOMParser` from `xmldom` since `jsdom` supports (still need its `XMLSerializer` however)
+- Testing/npm: Support `nodeunit` also in browser, via testing server
+- Testing: All tests passing in Node, browser
+- Testing: Upgrade tests per current DOM spec (no more `createEntityReference`) and `jsdom` behavior
+- Testing: Temporarily avoid or provide workarounds for `jsdom` in testing (Needs attr. node added back and `createCDATASection`)
+- Testing: Temporarily provide workaround for `xmldom` in testing (non-namespaced serialization)
+- Schema: Provided tentative JSON Schema
 
 # 0.8.0
 - Actual Node support
