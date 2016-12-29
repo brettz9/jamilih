@@ -1,3 +1,6 @@
+# 0.11.1
+- npm: apply correct branch!
+
 # 0.11.0
 - npm: Upgrade jsdom version
 - Demo: Fix
