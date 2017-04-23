@@ -461,7 +461,8 @@ Other Todos:
                         case 'innerHTML':
                             elem.innerHTML = attVal;
                             break;
-                        case 'selected': case 'checked': case 'value': case 'defaultValue':
+                        case 'selected': case 'checked': case 'defaultChecked': case 'defaultSelected':
+                        case 'value': case 'defaultValue':
                             // See [JsonML](https://github.com/mckamey/jsonml) for some ideas here but
                             //   we don't set attribute as we want to allow setting of `undefined`
                             //   (e.g., from an empty variable) on templates to have no effect

@@ -270,10 +270,10 @@ element names) optionally follow and indicate attribute-value pairs
         1. `$on` expects a subject of event types mapped to a function or to an array
         with the first element as a function and the second element as a boolean
         indicating whether to capture or not.
-        1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style`
-            1. This is particularly convenient for boolean properties (i.e., `selected` or `checked`) as a template
-            can set them with a variable, and if falsey (including `undefined`), it will unset them (rather than
-             `setAttribute` which would always set them)
+        1. The following booleans are set as properties (`selected`, `checked`, `defaultSelected`, `defaultChecked`), making them useful in templates
+            as they can be set with a variable, and if falsey (including `undefined`), they will be unset (rather than
+             would be the case with `setAttribute` which would always set them if present).
+         1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`, `defaultValue`, `style`
         1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
         1. `xmlns` for namespace declarations (not needed in HTML)
