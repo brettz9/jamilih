@@ -1,3 +1,6 @@
+# 0.12.0
+- Add `defaultChecked` and `defaultSelected` support as properties
+
 # 0.11.1
 - npm: apply correct branch!
 
