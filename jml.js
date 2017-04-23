@@ -462,18 +462,9 @@ Other Todos:
                             elem.innerHTML = attVal;
                             break;
                         case 'selected': case 'checked': case 'value': case 'defaultValue':
-                            /*
-                            // Todo: utilize this from JsonML?
-                            if (value) {
-                                // boolean attributes
-                                elem.setAttribute(name, name);
-                                // also set duplicated attributes
-                                name = ATTR_DUP[name];
-                                if (name) {
-                                    elem.setAttribute(name, name);
-                                }
-                            }
-                            */
+                            // See [JsonML](https://github.com/mckamey/jsonml) for some ideas here but
+                            //   we don't set attribute as we want to allow setting of `undefined`
+                            //   (e.g., from an empty variable) on templates to have no effect
                             elem[att] = attVal;
                             break;
                         case 'htmlFor': case 'for':

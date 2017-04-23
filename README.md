@@ -271,7 +271,10 @@ element names) optionally follow and indicate attribute-value pairs
         with the first element as a function and the second element as a boolean
         indicating whether to capture or not.
         1. The following are set as properties: `class`, `for`, `innerHTML`, `selected`, `checked`, `value`, `defaultValue`, `style`
-            1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
+            1. This is particularly convenient for boolean properties (i.e., `selected` or `checked`) as a template
+            can set them with a variable, and if falsey (including `undefined`), it will unset them (rather than
+             `setAttribute` which would always set them)
+        1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
         1. `xmlns` for namespace declarations (not needed in HTML)
         1. `dataset` is an object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
