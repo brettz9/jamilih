@@ -1,3 +1,7 @@
+# 0.13.1
+
+- Fix `readOnly` in map and bool check
+
 # 0.13.0
 
 - Add ATTR_MAP (inspired by JsonML): Only `readOnly`->`readonly` for now

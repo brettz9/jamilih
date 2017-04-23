@@ -78,7 +78,7 @@ Other Todos:
         hyphenForCamelCase = /-([a-z])/g;
 
     var ATTR_MAP = {
-        'readOnly': 'readonly'
+        'readonly': 'readOnly'
     };
 
     // We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
@@ -90,7 +90,7 @@ Other Todos:
         'defaultSelected',
         'disabled',
         'indeterminate',
-        'readonly',
+        'readOnly',
         'selected'
     ];
     var ATTR_DOM = BOOL_ATTS.concat([ // From JsonML
@@ -100,7 +100,6 @@ Other Todos:
 		'defer',
 		'formnovalidate',
 		'hidden',
-		'indeterminate',
 		'ismap',
 		'multiple',
 		'novalidate',
