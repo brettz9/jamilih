@@ -5,11 +5,11 @@
 var jml = require('../'),
     testCase = require('nodeunit').testCase;
 
-if (typeof GLOBAL !== 'undefined') {
-    GLOBAL.jsdom = require('jsdom').jsdom;
-    GLOBAL.document = jsdom('');
-    GLOBAL.window = document.defaultView;
-    GLOBAL.DOMParser = window.DOMParser;
+if (typeof global !== 'undefined') {
+    global.jsdom = require('jsdom').jsdom;
+    global.document = jsdom('');
+    global.window = document.defaultView;
+    global.DOMParser = window.DOMParser;
 }
 
 var divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];

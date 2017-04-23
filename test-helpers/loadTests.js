@@ -4,4 +4,4 @@
     'test.jml.js',
     'test.other-methods.js'
 ].forEach(loadJS);
-nodeunit.run(suites, {}); // Keep second argument until https://github.com/caolan/nodeunit/pull/329
+nodeunit.run(suites);

@@ -1,6 +1,7 @@
 /*globals define */
 /*jslint todo:true, vars:true*/
 var module, require, document, window, DOMParser, XMLSerializer;
+
 if (!String.prototype.includes) {
   String.prototype.includes = function() {'use strict';
     return String.prototype.indexOf.apply(this, arguments) !== -1;
@@ -46,10 +47,8 @@ Possible todos:
 
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
 
-0. boolean attributes?
-0. DOM attributes?
 0. duplicate attributes?
-0. expand with attr_map
+0. expand ATTR_MAP
 0. equivalent of markup, to allow strings to be embedded within an object (e.g., {$value: '<div>id</div>'}); advantage over innerHTML in that it wouldn't need to work as the entire contents (nor destroy any existing content or handlers)
 0. More validation?
 0. JsonML DOM Level 0 listener
@@ -77,6 +76,40 @@ Other Todos:
     // STATIC PROPERTIES
     var NS_HTML = 'http://www.w3.org/1999/xhtml',
         hyphenForCamelCase = /-([a-z])/g;
+
+    var ATTR_MAP = {
+        'readOnly': 'readonly'
+    };
+
+    // We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
+    // We don't set attribute esp. for boolean atts as we want to allow setting of `undefined`
+    //   (e.g., from an empty variable) on templates to have no effect
+    var BOOL_ATTS = [
+        'checked',
+        'defaultChecked',
+        'defaultSelected',
+        'disabled',
+        'indeterminate',
+        'readonly',
+        'selected'
+    ];
+    var ATTR_DOM = BOOL_ATTS.concat([ // From JsonML
+        'async',
+		'autofocus',
+        'defaultValue',
+		'defer',
+		'formnovalidate',
+		'hidden',
+		'indeterminate',
+		'ismap',
+		'multiple',
+		'novalidate',
+		'required',
+		'spellcheck',
+        'value',
+		'willvalidate'
+    ]);
+
 
     /**
     * Retrieve the (lower-cased) HTML name of a node
@@ -336,6 +369,11 @@ Other Todos:
             for (att in atts) {
                 if (atts.hasOwnProperty(att)) {
                     attVal = atts[att];
+                    att = att in ATTR_MAP ? ATTR_MAP[att] : att;
+                    if (ATTR_DOM.includes(att)) {
+                        elem[att] = attVal;
+                        continue;
+                    }
                     switch (att) {
                         /*
                         Todos:
@@ -460,13 +498,6 @@ Other Todos:
                         // Todo: Disable this by default unless configuration explicitly allows (for security)
                         case 'innerHTML':
                             elem.innerHTML = attVal;
-                            break;
-                        case 'selected': case 'checked': case 'defaultChecked': case 'defaultSelected':
-                        case 'value': case 'defaultValue':
-                            // See [JsonML](https://github.com/mckamey/jsonml) for some ideas here but
-                            //   we don't set attribute as we want to allow setting of `undefined`
-                            //   (e.g., from an empty variable) on templates to have no effect
-                            elem[att] = attVal;
                             break;
                         case 'htmlFor': case 'for':
                             if (elStr === 'label') {

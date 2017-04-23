@@ -1,3 +1,14 @@
+# 0.13.0
+
+- Add ATTR_MAP (inspired by JsonML): Only `readOnly`->`readonly` for now
+- Add ATTR_DOM (inspired by JsonML): Attributes to be set in DOM along
+    with booleans (Uses attributes in JsonML)
+- Add 'disabled', 'readonly', 'indeterminate' to boolean attributes
+- Refactoring: Define BOOL_ATTS (paralleling JsonML) for our boolean attributes
+- Test refactoring (minor): Dummy favicon placeholders in test files for avoiding logs
+- Test refactoring (minor): Switch from `GLOBAL` to `global` in tests
+- npm: Update deps
+
 # 0.12.0
 - Add `defaultChecked` and `defaultSelected` support as properties
 

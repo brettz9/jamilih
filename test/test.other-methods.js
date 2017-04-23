@@ -5,13 +5,13 @@
 var jml = require('../'),
     testCase = require('nodeunit').testCase;
 
-if (typeof GLOBAL !== 'undefined') {
-    GLOBAL.XMLSerializer = require('xmldom').XMLSerializer;
-    GLOBAL.jsdom = require('jsdom').jsdom;
-    GLOBAL.document = jsdom('');
-    GLOBAL.window = document.defaultView;
-    GLOBAL.DOMParser = window.DOMParser;
-    GLOBAL.Node = window.Node;
+if (typeof global !== 'undefined') {
+    global.XMLSerializer = require('xmldom').XMLSerializer;
+    global.jsdom = require('jsdom').jsdom;
+    global.document = jsdom('');
+    global.window = document.defaultView;
+    global.DOMParser = window.DOMParser;
+    global.Node = window.Node;
 }
 
 var divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];

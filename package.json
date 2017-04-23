@@ -1,6 +1,6 @@
 {
     "name": "jamilih",
-    "version": "0.12.0",
+    "version": "0.13.0",
     "author": {
         "name": "Brett Zamir",
         "email": "brettz9@yahoo.com",
@@ -30,13 +30,13 @@
         "node": ">=0.10"
     },
     "dependencies": {
-        "jsdom": "9.9.1",
+        "jsdom": "9.12.0",
         "xmldom": "https://github.com/brettz9/xmldom",
         "array.from": "1.0.3",
-        "object-assign": "4.1.0"
+        "object-assign": "4.1.1"
     },
     "devDependencies": {
-        "nodeunit": "0.10.2"
+        "nodeunit": "0.11.0"
     },
     "readmeFilename": "README.md",
     "bugs": {
