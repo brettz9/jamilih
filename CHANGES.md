@@ -1,3 +1,7 @@
+# ?
+
+- Add `pattern` to DOM properties
+
 # 0.14.0
 
 - Avoid having nully dataset value set `dataset`, `class`/`className`,

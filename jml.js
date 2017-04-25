@@ -103,6 +103,7 @@ Other Todos:
 		'ismap',
 		'multiple',
 		'novalidate',
+        'pattern',
 		'required',
 		'spellcheck',
         'value',
