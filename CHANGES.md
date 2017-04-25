@@ -1,3 +1,9 @@
+# 0.14.0
+
+- Avoid having nully dataset value set `dataset`, `class`/`className`,
+    `style`, `for`/`htmlFor`, `innerHTML`, and `$on` handlers (as
+    setting by DOM alone sets it to the string "undefined" or "null").
+
 # 0.13.1
 
 - Fix `readOnly` in map and bool check

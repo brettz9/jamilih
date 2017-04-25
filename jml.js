@@ -480,27 +480,35 @@ Other Todos:
                                     if (typeof val === 'function') {
                                         val = [val, false];
                                     }
-                                    _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
+                                    if (typeof val[0] === 'function') {
+                                        _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
+                                    }
                                 }
                             }
                             break;
                         case 'className': case 'class':
-                            elem.className = attVal;
+                            if (attVal != null) {
+                                elem.className = attVal;
+                            }
                             break;
                         case 'dataset':
                             for (p2 in attVal) { // Map can be keyed with hyphenated or camel-cased properties
-                                if (attVal.hasOwnProperty(p2)) {
+                                if (attVal.hasOwnProperty(p2) && attVal[p2] != null) {
                                     elem.dataset[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
                                 }
                             }
                             break;
                         // Todo: Disable this by default unless configuration explicitly allows (for security)
                         case 'innerHTML':
-                            elem.innerHTML = attVal;
+                            if (attVal != null) {
+                                elem.innerHTML = attVal;
+                            }
                             break;
                         case 'htmlFor': case 'for':
                             if (elStr === 'label') {
-                                elem.htmlFor = attVal;
+                                if (attVal != null) {
+                                    elem.htmlFor = attVal;
+                                }
                                 break;
                             }
                             elem.setAttribute(att, attVal);
@@ -515,9 +523,12 @@ Other Todos:
                                 break;
                             }
                             if (att === 'style') { // setAttribute will work, but erases any existing styles
-                                if (attVal && typeof attVal === 'object') {
+                                if (attVal == null) {
+                                    break;
+                                }
+                                if (typeof attVal === 'object') {
                                     for (p2 in attVal) {
-                                        if (attVal.hasOwnProperty(p2)) {
+                                        if (attVal.hasOwnProperty(p2) && attVal[p2] != null) {
                                             // Todo: Handle aggregate properties like "border"
                                             if (p2 === 'float') {
                                                 elem.style.cssFloat = attVal[p2];

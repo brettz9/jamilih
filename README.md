@@ -367,6 +367,7 @@ in templates, and to my personal sensibilities, more clear in goal #8
     1. Get working with JSONEditor
 1. See todos within code.
 1. Migrate `tests` folder into nodeunit `test` folder
+1. Ensure setting of `select` `value` can take place *after* the options are added
 
 # Possible todos
 
