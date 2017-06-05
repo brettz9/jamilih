@@ -101,7 +101,7 @@ Other Todos:
 		'formnovalidate',
 		'hidden',
 		'ismap',
-		'multiple',
+        'multiple',
 		'novalidate',
         'pattern',
 		'required',
@@ -109,6 +109,12 @@ Other Todos:
         'value',
 		'willvalidate'
     ]);
+    // Todo: Add more to this as useful for templating
+    //   to avoid setting with nullish value
+    var NON_NULL = [
+        'max',
+        'min'
+    ];
 
 
     /**
@@ -370,7 +376,12 @@ Other Todos:
                 if (atts.hasOwnProperty(att)) {
                     attVal = atts[att];
                     att = att in ATTR_MAP ? ATTR_MAP[att] : att;
-                    if (ATTR_DOM.includes(att)) {
+                    if (NON_NULL.includes(att)) {
+                        if (attVal != null) {
+                            elem[att] = attVal;
+                        }
+                        continue;
+                    } else if (ATTR_DOM.includes(att)) {
                         elem[att] = attVal;
                         continue;
                     }

@@ -1,6 +1,10 @@
-# ?
+# 0.15.0
 
 - Add `pattern` to DOM properties
+- Add new internal group `NON_NULL` for attributes that if set to `null`
+    or `undefined`, they will not be set at all (useful for templates
+    that can use the ternary operator to avoid setting)
+- Add `max`, `min` to `NON_NULL` att group
 
 # 0.14.0
 
