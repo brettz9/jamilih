@@ -90,6 +90,7 @@ Other Todos:
         'defaultSelected',
         'disabled',
         'indeterminate',
+        'open', // Dialog elements
         'readOnly',
         'selected'
     ];
