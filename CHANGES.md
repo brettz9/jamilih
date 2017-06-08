@@ -1,3 +1,7 @@
+# 0.16.0
+
+- Add `lang` to `NULLABLE` att group
+
 # 0.15.0
 
 - Add `pattern` to DOM properties

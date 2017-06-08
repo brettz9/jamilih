@@ -112,7 +112,8 @@ Other Todos:
     ]);
     // Todo: Add more to this as useful for templating
     //   to avoid setting with nullish value
-    var NON_NULL = [
+    var NULLABLES = [
+        'lang',
         'max',
         'min'
     ];
@@ -377,7 +378,7 @@ Other Todos:
                 if (atts.hasOwnProperty(att)) {
                     attVal = atts[att];
                     att = att in ATTR_MAP ? ATTR_MAP[att] : att;
-                    if (NON_NULL.includes(att)) {
+                    if (NULLABLES.includes(att)) {
                         if (attVal != null) {
                             elem[att] = attVal;
                         }
