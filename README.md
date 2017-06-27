@@ -358,19 +358,21 @@ for goal #3, I believe Jamilih is slightly more flexible for regular usage
 in templates, and to my personal sensibilities, more clear in goal #8
 (and with a plan for goal #5 and #7?).
 
-# Todos
+# To-dos
 
-1. Namespaced elements and attributes and XML options
+1. Allow attribute for binding DOM to Map/WeakMap! Templates (or model)
+    can easily define and invoke functions/objects tied to an element
 1. JSON Schema todos
     1. Specify types of allowable properties on attributes object in JSON Schema.
     1. Allow for fragments and other out-of-place objects
     1. Get working with JSONEditor
-1. See todos within code.
+1. See "todo"'s within code.
 1. Migrate `tests` folder into nodeunit `test` folder
 1. Ensure setting of `select` `value` can take place *after* the options are added
 
 # Possible todos
 
+1. Namespaced elements and attributes and XML options (but move to own file)
 1. Implement a method building JML by string rather than DOM but create
 DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
 interfaces for direct manipulation.
