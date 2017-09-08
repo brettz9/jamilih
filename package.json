@@ -1,6 +1,6 @@
 {
     "name": "jamilih",
-    "version": "0.16.0",
+    "version": "0.17.0",
     "author": {
         "name": "Brett Zamir",
         "email": "brettz9@yahoo.com",
@@ -8,6 +8,7 @@
     },
     "contributors": [],
     "scripts": {
+        "eslint": "eslint jml-es6.js test-helpers/ test/ tests/",
         "start": "node test-helpers/nodeunit-server.js",
         "test": "nodeunit"
     },
@@ -36,7 +37,14 @@
         "object-assign": "4.1.1"
     },
     "devDependencies": {
-        "nodeunit": "0.11.0"
+        "nodeunit": "0.11.0",
+        "eslint": "4.6.1",
+        "eslint-config-standard": "10.2.1",
+        "eslint-plugin-compat": "1.0.4",
+        "eslint-plugin-import": "2.7.0",
+        "eslint-plugin-node": "5.1.1",
+        "eslint-plugin-promise": "3.5.0",
+        "eslint-plugin-standard": "3.0.1"
     },
     "readmeFilename": "README.md",
     "bugs": {

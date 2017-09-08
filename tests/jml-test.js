@@ -1,4 +1,4 @@
-/*globals jml, assert, XMLSerializer, Event*/
+/* globals jml, assert, XMLSerializer, Event */
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); fix IE8 with dataset; remove IE8 processing instruction hack?
@@ -13,14 +13,14 @@ Todos:
 'use strict';
 
 // HELPERS
-var $ = function (sel) {
-        return document.querySelectorAll(sel);
-    },
-    isIE = window.navigator.appName === 'Microsoft Internet Explorer';
+const $ = function (sel) {
+    return document.querySelectorAll(sel);
+};
+const isIE = window.navigator.appName === 'Microsoft Internet Explorer';
 
 // BEGIN TESTS
 
-var br = document.createElement('br');
+const br = document.createElement('br');
 br.className = 'a>bc';
 
 assert.matchesXMLString(
@@ -33,7 +33,7 @@ assert.matchesXMLString(
 );
 
 assert.matchesXMLString(
-    jml('input', {type:'password', id: 'my_pass'}),
+    jml('input', {type: 'password', id: 'my_pass'}),
     '<input xmlns="http://www.w3.org/1999/xhtml" id="my_pass" type="password" />'
 );
 
@@ -64,50 +64,50 @@ assert.matchesXMLString(
 if (!document.body) {
     document.body = document.getElementsByTagName('body')[0];
 }
-var simpleAttachToParent = jml('hr', document.body);
+/* const simpleAttachToParent = */
+jml('hr', document.body);
 
 assert.matchesXMLStringOnElement(
     document.getElementsByTagName('body')[0],
     '<hr xmlns="http://www.w3.org/1999/xhtml" />'
 );
 
-var table = jml('table', {style: 'position:absolute; left: -1000px;'}, document.body);
-var firstTr = jml('tr', [
-        ['td', ['row 1 cell 1']],
-        ['td', ['row 1 cell 2']]
-    ],
-    'tr', {className: 'anotherRowSibling'}, [
-        ['td', ['row 2 cell 1']],
-        ['td', ['row 2 cell 2']]
-    ],
-    table
-);
+let table = jml('table', {style: 'position:absolute; left: -1000px;'}, document.body);
+/* const firstTr = */
+jml('tr', [
+    ['td', ['row 1 cell 1']],
+    ['td', ['row 1 cell 2']]
+],
+'tr', {className: 'anotherRowSibling'}, [
+    ['td', ['row 2 cell 1']],
+    ['td', ['row 2 cell 2']]
+],
+table);
 
 assert.matchesXMLStringWithinElement(
     table,
     '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>'
 );
 
-var table = jml('table', {style: 'position:absolute; left: -1000px;'}, document.body); // Rebuild
-var trsFragment = jml('tr', [
-        ['td', ['row 1 cell 1']],
-        ['td', ['row 1 cell 2']]
-    ],
-    'tr', {className: 'anotherRowSibling'}, [
-        ['td', ['row 2 cell 1']],
-        ['td', ['row 2 cell 2']]
-    ],
-    null
-);
+table = jml('table', {style: 'position:absolute; left: -1000px;'}, document.body); // Rebuild
+const trsFragment = jml('tr', [
+    ['td', ['row 1 cell 1']],
+    ['td', ['row 1 cell 2']]
+],
+'tr', {className: 'anotherRowSibling'}, [
+    ['td', ['row 2 cell 1']],
+    ['td', ['row 2 cell 2']]
+],
+null);
 
-var ser = new XMLSerializer();
+const ser = new XMLSerializer();
 ser.$overrideNative = true;
 
-var parent = document.body;
+const parent = document.body;
 
 assert.matches(parent, jml(parent));
 
-var div = jml(
+const div = jml(
     'div', {style: 'position:absolute    !important; left:   -1000px;'}, [
         $('#DOMChildrenMustBeInArray')[0]
     ],
@@ -121,7 +121,7 @@ assert.matchesXMLString(
     '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div id="DOMChildrenMustBeInArray" style="display: none;">test1</div></div>'
     // '<div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; left: -1000px;"><div id="DOMChildrenMustBeInArray" style="display:none;">test1</div></div><div id="anotherElementToAddToParent" style="display:none;">test2</div><div id="yetAnotherSiblingToAddToParent" style="display:none;">test3</div>'
 );
-//throw '';
+// throw '';
 
 assert.matches(
     ser.serializeToString(trsFragment.childNodes[0]) +
@@ -158,19 +158,19 @@ assert.matchesXMLString(
     '<div xmlns="http://www.w3.org/1999/xhtml" style="border-color: red; float: left;">test</div>'
 );
 
-var str,
-    input = jml('input', {
-        type: 'button',
-        style: 'position:absolute; left: -1000px;',
-        $on: {click: [function () {
-            str = 'worked1';
-        }, true]}
-    }, document.body);
+let str;
+const input = jml('input', {
+    type: 'button',
+    style: 'position:absolute; left: -1000px;',
+    $on: {click: [function () {
+        str = 'worked1';
+    }, true]}
+}, document.body);
 input.click(); // IE won't activate unless the above element is appended to the DOM
 
 assert.matches(str, 'worked1');
 
-var input2 = jml('input', {
+const input2 = jml('input', {
     style: 'position:absolute; left: -1000px;',
     $on: {
         click: function () {
@@ -184,9 +184,8 @@ var input2 = jml('input', {
 
 if (input2.fireEvent) {
     input2.fireEvent('onchange');
-}
-else {
-    var event = new Event('change');
+} else {
+    const event = new Event('change');
     input2.dispatchEvent(event);
 }
 assert.matches(str, 'worked2');
@@ -213,7 +212,7 @@ assert.matchesXMLString(
 );
 
 assert.matches(
-    jml('abc', {xmlns:'def'}).namespaceURI,
+    jml('abc', {xmlns: 'def'}).namespaceURI,
     'def'
 );
 
@@ -242,37 +241,32 @@ assert.matches(
 */
 
 assert.matchesXMLString(
-    jml("ul", [
+    jml('ul', [
         [
-            "li",
-                { "style" : "color:red;" },
-                ["First Item"],
-            "li",
-                {
-                    "title" : "Some hover text.",
-                    "style" : "color:green;"
-                },
-                ["Second Item"],
-            "li",
-                [
-                    ["span",
-                        {
-                            "class" : "Remove-Me",
-                            "style" : "font-weight:bold;"
-                        },
-                        ["Not Filtered"]
-                    ],
-                    " Item"
+            'li', {'style': 'color:red;'}, ['First Item'],
+            'li', {
+                'title': 'Some hover text.',
+                'style': 'color:green;'
+            },
+            ['Second Item'],
+            'li', [
+                ['span',
+                    {
+                        'class': 'Remove-Me',
+                        'style': 'font-weight:bold;'
+                    },
+                    ['Not Filtered']
                 ],
-            "li",
-                [
-                    ["a",
-                        {
-                            "href" : "#NewWindow"
-                        },
-                        ["Special Link"]
-                    ]
-                ],
+                ' Item'
+            ],
+            'li', [
+                ['a',
+                    {
+                        'href': '#NewWindow'
+                    },
+                    ['Special Link']
+                ]
+            ],
             null
         ]
     ], document.body),
@@ -290,5 +284,4 @@ assert.matchesXMLString(
     jml('script', {'class': 'test'}, ['alert("hello!");'], document.body),
     '<script xmlns="http://www.w3.org/1999/xhtml" class="test">alert("hello!");</script>'
 );
-
 }());

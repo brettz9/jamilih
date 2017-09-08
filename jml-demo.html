@@ -4,10 +4,11 @@
     <meta charset="utf-8" />
     <title>DOM to Jamilih demo</title>
     <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
-    <script src="jml.js"></script>
 </head>
 <body>
-<script>
+<script type="module">
+import jml from './jml-es6.js';
+
 function s (s) {return (JSON.stringify(s));}
 function o (o) {alert(o.outerHTML);}
 

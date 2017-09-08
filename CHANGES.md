@@ -1,3 +1,12 @@
+# 0.17.0
+
+- Refactoring: Add jml-es6.js file for ES6 module support
+- Linting: ESLint ES6 module file and tests
+- npm: Add ESLint script
+- Testing: Serve proper content-types in test server
+- Testing: Use ES6 modules in HTML tests and demo file
+- Testing: Simplify suite running API
+
 # 0.16.0
 
 - Add `lang` to `NULLABLE` att group

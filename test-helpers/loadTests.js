@@ -1,7 +1,7 @@
-/*global loadJS, nodeunit, suites*/
-[
+import {runSuites} from './testLoading.js';
+
+runSuites(
     'test.toJML.js',
     'test.jml.js',
     'test.other-methods.js'
-].forEach(loadJS);
-nodeunit.run(suites);
+);
