@@ -281,6 +281,11 @@ assert.matchesXMLString(
 jml('p', {'class': 'test'}, ['test'], document.body);
 
 assert.matchesXMLString(
+    jml('div', {dataset: {'aCamel-case': {result: 'hello'}, 'anotherResult': 'world', 'aNullishToIgnore': null}}),
+    '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" data-another-result="world"></div>'
+);
+
+assert.matchesXMLString(
     jml('script', {'class': 'test'}, ['alert("hello!");'], document.body),
     '<script xmlns="http://www.w3.org/1999/xhtml" class="test">alert("hello!");</script>'
 );

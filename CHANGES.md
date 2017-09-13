@@ -1,3 +1,7 @@
+# 0.18.0
+
+- For jml-es6.js file, support recursive objects under `dataset`.
+
 # 0.17.0
 
 - Refactoring: Add jml-es6.js file for ES6 module support

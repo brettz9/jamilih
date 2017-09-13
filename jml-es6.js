@@ -445,11 +445,30 @@ const jml = function jml (...args) {
                     }
                     break;
                 case 'dataset': {
-                    for (const p2 in attVal) { // Map can be keyed with hyphenated or camel-cased properties
-                        if (attVal.hasOwnProperty(p2) && attVal[p2] != null) {
-                            elem.dataset[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                    let prop = '';
+                    let pastInitialProp = false;
+                    // Map can be keyed with hyphenated or camel-cased properties
+                    JSON.stringify(attVal, (key, value) => {
+                        if (!key) {
+                            return value;
                         }
-                    }
+                        if (pastInitialProp) {
+                            prop += key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/, _upperCase);
+                        } else {
+                            if (typeof value === 'object') {
+                                pastInitialProp = true;
+                            }
+                            prop += key.replace(hyphenForCamelCase, _upperCase);
+                        }
+                        if (typeof value === 'string') {
+                            if (value !== undefined) {
+                                elem.dataset[prop] = value;
+                                prop = '';
+                                pastInitialProp = false;
+                            }
+                        }
+                        return value;
+                    });
                     break;
                 // Todo: Disable this by default unless configuration explicitly allows (for security)
                 } case 'innerHTML':

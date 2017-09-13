@@ -10,7 +10,12 @@ const assert = {
         if (item1 !== item2) {
             alert(item1 + '\n\n' + item2);
         }
-        document.write((item1 === item2) + '<br />\n');
+        document.body.appendChild(
+            document.createTextNode((item1 === item2))
+        );
+        document.body.appendChild(
+            document.createElement('br')
+        );
     },
     matchesXMLStringWithinElement: function (element, item2) {
         const docFrag = document.createDocumentFragment();
