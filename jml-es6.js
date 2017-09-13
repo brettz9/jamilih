@@ -445,30 +445,28 @@ const jml = function jml (...args) {
                     }
                     break;
                 case 'dataset': {
-                    let prop = '';
-                    let pastInitialProp = false;
                     // Map can be keyed with hyphenated or camel-cased properties
-                    JSON.stringify(attVal, (key, value) => {
-                        if (!key) {
-                            return value;
-                        }
-                        if (pastInitialProp) {
-                            prop += key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/, _upperCase);
-                        } else {
-                            if (typeof value === 'object') {
-                                pastInitialProp = true;
+                    const recurse = (attVal, startProp) => {
+                        let prop = '';
+                        const pastInitialProp = startProp !== '';
+                        Object.keys(attVal).forEach((key) => {
+                            const value = attVal[key];
+                            if (pastInitialProp) {
+                                prop = startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/, _upperCase);
+                            } else {
+                                prop = startProp + key.replace(hyphenForCamelCase, _upperCase);
                             }
-                            prop += key.replace(hyphenForCamelCase, _upperCase);
-                        }
-                        if (value === null || typeof value !== 'object') {
-                            if (value != null) {
-                                elem.dataset[prop] = value;
+                            if (value === null || typeof value !== 'object') {
+                                if (value != null) {
+                                    elem.dataset[prop] = value;
+                                }
+                                prop = startProp;
+                                return;
                             }
-                            prop = '';
-                            pastInitialProp = false;
-                        }
-                        return value;
-                    });
+                            recurse(value, prop);
+                        });
+                    };
+                    recurse(attVal, '');
                     break;
                 // Todo: Disable this by default unless configuration explicitly allows (for security)
                 } case 'innerHTML':

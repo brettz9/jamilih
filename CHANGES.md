@@ -1,3 +1,8 @@
+# 0.20.0
+
+- For jml-es6.js file, `dataset` recursive objects fixed
+    to always repeat prefix when other properties on same sub-object
+
 # 0.19.0
 
 - For jml-es6.js file, `dataset` recursive objects now support non-string
