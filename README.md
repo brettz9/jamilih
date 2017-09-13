@@ -277,7 +277,7 @@ element names) optionally follow and indicate attribute-value pairs
         1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
         1. `xmlns` for namespace declarations (not needed in HTML)
-        1. `dataset` is an object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
+        1. `dataset` is a (nestable) object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
 1. Arrays indicate children.
     1. They can be:
         1. DOM Nodes
