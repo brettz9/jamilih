@@ -1,3 +1,8 @@
+# 0.19.0
+
+- For jml-es6.js file, `dataset` recursive objects now support non-string
+    primitive values (with null/undefined ignoring)
+
 # 0.18.0
 
 - For jml-es6.js file, support recursive objects under `dataset`.

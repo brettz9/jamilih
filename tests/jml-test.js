@@ -281,8 +281,8 @@ assert.matchesXMLString(
 jml('p', {'class': 'test'}, ['test'], document.body);
 
 assert.matchesXMLString(
-    jml('div', {dataset: {'aCamel-case': {result: 'hello'}, 'anotherResult': 'world', 'aNullishToIgnore': null}}),
-    '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" data-another-result="world"></div>'
+    jml('div', {dataset: {'aCamel-case': {result: 'hello'}, 'anotherResult': 'world', 'aNullishToIgnore': null, aNum: 8}}),
+    '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" data-a-num="8" data-another-result="world"></div>'
 );
 
 assert.matchesXMLString(

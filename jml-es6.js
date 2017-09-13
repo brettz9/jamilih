@@ -460,12 +460,12 @@ const jml = function jml (...args) {
                             }
                             prop += key.replace(hyphenForCamelCase, _upperCase);
                         }
-                        if (typeof value === 'string') {
-                            if (value !== undefined) {
+                        if (value === null || typeof value !== 'object') {
+                            if (value != null) {
                                 elem.dataset[prop] = value;
-                                prop = '';
-                                pastInitialProp = false;
                             }
+                            prop = '';
+                            pastInitialProp = false;
                         }
                         return value;
                     });
