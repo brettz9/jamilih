@@ -77,7 +77,7 @@ npm install jamilih
 ```
 
 ```
-var jml = require('jamilih');
+const jml = require('jamilih');
 ```
 
 # Examples
@@ -85,19 +85,19 @@ var jml = require('jamilih');
 Simple element...
 
 ```javascript
-var input = jml('input');
+const input = jml('input');
 ```
 
 Simple element with attributes...
 
 ```javascript
-var input = jml('input', {type:'password', id:'my_pass'});
+const input = jml('input', {type:'password', id:'my_pass'});
 ```
 
 Simple element with just child elements...
 
 ```javascript
-var div = jml('div', [
+const div = jml('div', [
     ['p', ['no attributes on the div']]
 ]);
 ```
@@ -105,7 +105,7 @@ var div = jml('div', [
 Simple element with attributes and child elements...
 
 ```javascript
-var div = jml('div', {'class': 'myClass'}, [
+const div = jml('div', {'class': 'myClass'}, [
     ['p', ['Some inner text']],
     ['p', ['another child paragraph']]
 ]);
@@ -114,7 +114,7 @@ var div = jml('div', {'class': 'myClass'}, [
 Simple element with attributes, child elements, and text nodes...
 
 ```javascript
-var div = jml('div', {'class': 'myClass'}, [
+const div = jml('div', {'class': 'myClass'}, [
     'text1',
     ['p', ['Some inner text']],
     'text3'
@@ -124,14 +124,14 @@ var div = jml('div', {'class': 'myClass'}, [
 DOM attachment...
 
 ```javascript
-var simpleAttachToParent = jml('hr', document.body);
+const simpleAttachToParent = jml('hr', document.body);
 ```
 
 Returning first element among siblings when appending them to a
 DOM element (API unstable)...
 
 ```javascript
-var firstTr = jml('tr', [
+const firstTr = jml('tr', [
         ['td', ['row 1 cell 1']],
         ['td', ['row 1 cell 2']]
     ],
@@ -146,7 +146,7 @@ var firstTr = jml('tr', [
 Returning element siblings as an array (API unstable)...
 
 ```javascript
-var trsFragment = jml('tr', [
+const trsFragment = jml('tr', [
         ['td', ['row 1 cell 1']],
         ['td', ['row 1 cell 2']]
     ],
@@ -161,7 +161,7 @@ var trsFragment = jml('tr', [
 Inclusion of regular DOM elements...
 
 ```javascript
-var div = jml(
+const div = jml(
     'div', [
         $('#DOMChildrenMustBeInArray')[0]
     ],
@@ -184,7 +184,7 @@ jml('div', [
 Event attachment...
 
 ```javascript
-var input = jml('input', {
+const input = jml('input', {
     // Contains events to be added via addEventListener or
     //   attachEvent where available
     $on: {
@@ -196,7 +196,7 @@ var input = jml('input', {
 ```
 
 ```javascript
-var input2 = jml('input', {
+const input2 = jml('input', {
     style: 'position:absolute; left: -1000px;',
     $on: {
         click: function () {
@@ -213,7 +213,7 @@ Comments, processing instructions, entities, decimal and hexadecimal
 character references, CDATA sections...
 
 ```javascript
-var div = jml('div', [
+const div = jml('div', [
     ['!', 'a comment'],
     ['?', 'customPI', 'a processing instruction'],
     ['&', 'copy'],
