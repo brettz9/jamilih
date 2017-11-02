@@ -225,6 +225,14 @@ function _replaceDefiner (xmlnsObj) {
     };
 }
 
+function _optsOrUndefinedJML (...args) {
+    return jml(...(
+        args[0] === undefined
+            ? args.slice(1)
+            : args
+    ));
+}
+
 /**
 * @private
 * @static
@@ -339,7 +347,7 @@ const jml = function jml (...args) {
                         break;
                 */
                 case '#': { // Document fragment
-                    nodes[nodes.length] = jml(attVal);
+                    nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
                     break;
                 } case '$data' : {
                     setMap(attVal);
@@ -529,7 +537,7 @@ const jml = function jml (...args) {
     let opts;
     if (_getType(args[0]) === 'object') {
         opts = args[0];
-        if (opts.$map.root !== false) {
+        if (!opts.$map.root && opts.$map.root !== false) {
             opts.$map = {root: opts.$map};
         }
         args = args.slice(1);
@@ -700,9 +708,9 @@ const jml = function jml (...args) {
                     break;
                 default:
                     if (Array.isArray(childContent)) { // Arrays representing child elements
-                        _appendNode(elem, jml(...childContent));
+                        _appendNode(elem, _optsOrUndefinedJML(opts, ...childContent));
                     } else if (childContent['#']) { // Fragment
-                        _appendNode(elem, jml(childContent['#']));
+                        _appendNode(elem, _optsOrUndefinedJML(opts, childContent['#']));
                     } else { // Single DOM element children
                         _appendNode(elem, childContent);
                     }

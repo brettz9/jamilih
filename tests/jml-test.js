@@ -14,7 +14,7 @@ Todos:
 
 // HELPERS
 const $ = function (sel) {
-    return document.querySelectorAll(sel);
+    return document.querySelector(sel);
 };
 const isIE = window.navigator.appName === 'Microsoft Internet Explorer';
 
@@ -109,10 +109,10 @@ assert.matches(parent, jml(parent));
 
 const div = jml(
     'div', {style: 'position:absolute    !important; left:   -1000px;'}, [
-        $('#DOMChildrenMustBeInArray')[0]
+        $('#DOMChildrenMustBeInArray')
     ],
-    $('#anotherElementToAddToParent')[0],
-    $('#yetAnotherSiblingToAddToParent')[0],
+    $('#anotherElementToAddToParent'),
+    $('#yetAnotherSiblingToAddToParent'),
     parent
 );
 
@@ -309,9 +309,30 @@ assert.matches(
     myMap.invoke(elem, 'myMethod', 'external test'),
     'external test localValue 100'
 );
-const mapInput = document.querySelector('#mapTest').firstElementChild;
+const mapInput = $('#mapTest').firstElementChild;
 mapInput.value = '1001';
 mapInput.dispatchEvent(
     new Event('input')
+);
+
+const weakMap1 = new WeakMap();
+const weakMap2 = new WeakMap();
+const testObj1 = {test: 5};
+const testObj2 = {test: 7};
+const el = jml({$map: [weakMap1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
+    ['input', {id: 'input1', $data: true}, ['Test']],
+    ['input', {id: 'input2', $data: [weakMap2, testObj2]}]
+], document.body);
+assert.matches(
+    weakMap1.get(el),
+    testObj1
+);
+assert.matches(
+    weakMap1.get($('#input1')),
+    testObj1
+);
+assert.matches(
+    weakMap2.get($('#input2')),
+    testObj2
 );
 }());
