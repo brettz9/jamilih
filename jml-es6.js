@@ -341,6 +341,9 @@ const jml = function jml (...args) {
                 case '#': { // Document fragment
                     nodes[nodes.length] = jml(attVal);
                     break;
+                } case '$data' : {
+                    setMap(attVal);
+                    break;
                 } case '$attribute': { // Attribute node
                     const node = attVal.length === 3 ? document.createAttributeNS(attVal[0], attVal[1]) : document.createAttribute(attVal[0]);
                     node.value = attVal[attVal.length - 1];
@@ -522,8 +525,45 @@ const jml = function jml (...args) {
         }
     }
     const nodes = [];
-    const argc = arguments.length;
     let elStr;
+    let opts;
+    if (_getType(args[0]) === 'object') {
+        opts = args[0];
+        if (opts.$map.root !== false) {
+            opts.$map = {root: opts.$map};
+        }
+        args = args.slice(1);
+    }
+    const argc = args.length;
+    const defaultMap = opts && opts.$map && opts.$map.root;
+    const setMap = (dataVal) => {
+        let map, obj;
+        // Boolean indicating use of default map and object
+        if (dataVal === true) {
+            [map, obj] = defaultMap;
+        } else if (Array.isArray(dataVal)) {
+            // Array of strings mapping to default
+            if (typeof dataVal[0] === 'string') {
+                dataVal.forEach((dVal) => {
+                    setMap(opts.$map[dVal]);
+                });
+            // Array of Map and non-map data object
+            } else {
+                map = dataVal[0] || defaultMap[0];
+                obj = dataVal[1] || defaultMap[1];
+            }
+        // Map
+        } else if ((/^[object (?:Weak)?Map]$/).test([].toString.call(dataVal))) {
+            map = dataVal;
+            obj = defaultMap[1];
+        // Non-map data object
+        } else {
+            map = defaultMap[0];
+            obj = dataVal;
+        }
+
+        map.set(elem, obj);
+    };
     for (let i = 0; i < argc; i++) {
         let arg = args[i];
         switch (_getType(arg)) {
@@ -672,7 +712,11 @@ const jml = function jml (...args) {
             break;
         }
     }
-    return nodes[0] || elem;
+    const ret = nodes[0] || elem;
+    if (opts && opts.$map && opts.$map.root) {
+        setMap(true);
+    }
+    return ret;
 };
 
 /**
@@ -1003,16 +1047,14 @@ jml.Map = JamilihMap;
 jml.WeakMap = JamilihWeakMap;
 
 jml.weak = function (obj, ...args) {
-    const elem = jml(...args);
     const map = new JamilihWeakMap();
-    map.set(elem, obj);
+    const elem = jml({$map: [map, obj]}, ...args);
     return [map, elem];
 };
 
 jml.strong = function (obj, ...args) {
-    const elem = jml(...args);
     const map = new JamilihMap();
-    map.set(elem, obj);
+    const elem = jml({$map: [map, obj]}, ...args);
     return [map, elem];
 };
 
