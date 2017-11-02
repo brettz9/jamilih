@@ -988,6 +988,34 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
     return jml.toXML(...args);
 };
 
+class JamilihMap extends Map {
+    invoke (elem, methodName, ...args) {
+        return this.get(elem)[methodName](...args, elem);
+    }
+}
+class JamilihWeakMap extends WeakMap {
+    invoke (elem, methodName, ...args) {
+        return this.get(elem)[methodName](...args, elem);
+    }
+}
+
+jml.Map = JamilihMap;
+jml.WeakMap = JamilihWeakMap;
+
+jml.weak = function (obj, ...args) {
+    const elem = jml(...args);
+    const map = new JamilihWeakMap();
+    map.set(elem, obj);
+    return [map, elem];
+};
+
+jml.strong = function (obj, ...args) {
+    const elem = jml(...args);
+    const map = new JamilihMap();
+    map.set(elem, obj);
+    return [map, elem];
+};
+
 // EXPORTS
 /*
 if (module !== undefined) { // Todo: Fix

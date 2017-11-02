@@ -286,7 +286,32 @@ assert.matchesXMLString(
 );
 
 assert.matchesXMLString(
-    jml('script', {'class': 'test'}, ['alert("hello!");'], document.body),
-    '<script xmlns="http://www.w3.org/1999/xhtml" class="test">alert("hello!");</script>'
+    jml('script', {'class': 'test'}, ['console.log("hello!");'], document.body),
+    '<script xmlns="http://www.w3.org/1999/xhtml" class="test">console.log("hello!");</script>'
+);
+
+const [myMap, elem] = jml.weak({
+    localVar: 'localValue',
+    myMethod (arg1, elem) {
+        return arg1 + ' ' + this.localVar + ' ' + elem.querySelector('input').value;
+    }
+}, 'div', {id: 'mapTest'}, [
+    ['input', {value: '100', $on: {
+        input () {
+            assert.matches(
+                myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
+                'internal test localValue 1001'
+            );
+        }
+    }}]
+], document.body);
+assert.matches(
+    myMap.invoke(elem, 'myMethod', 'external test'),
+    'external test localValue 100'
+);
+const mapInput = document.querySelector('#mapTest').firstElementChild;
+mapInput.value = '1001';
+mapInput.dispatchEvent(
+    new Event('input')
 );
 }());

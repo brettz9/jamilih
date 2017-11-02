@@ -1,3 +1,9 @@
+# 0.21.0
+
+- For jml-es6.js file, add `jml.weak`, `jml.strong`, `jml.Map`,
+    and `jml.WeakMap` for easier association of elements to
+    `Map` or `WeakMap` maps.
+
 # 0.20.0
 
 - For jml-es6.js file, `dataset` recursive objects fixed

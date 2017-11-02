@@ -39,18 +39,32 @@ for those already familiar with HTML and JavaScript?)
 The following functions are available:
 
 - `jml()` - For building DOM objects (and optionally appending into
-an existing DOM node). Arguments demoed and explained below.
+    an existing DOM node). Arguments demoed and explained below.
 - `jml.toJML(objOrString, config)` - For converting HTML in DOM or string form into
-a JML JavaScript/JSON object. Its first argument is the DOM object or string to
-convert into JML. `config` is an object and which supports a `stringOutput` property
-which can be set to `true` in order to JSON-stringify the converted
-Jamilih JSON object. Note that element results will be in array form.
-- `jml.toJMLString(objOrString, config)` - Works like `jml.toJML` but stringifies the resulting Jamilih object.
-- `jml.toHTML()` - Works like jml() except that the resulting DOM object is converted into an HTML string.
-- `jml.toXML()` - Works like jml() except that the resulting DOM object is converted into an XML-serialized string.
-- `jml.toDOM()` - An alias for jml().
+    a JML JavaScript/JSON object. Its first argument is the DOM object or string to
+    convert into JML. `config` is an object and which supports a `stringOutput` property
+    which can be set to `true` in order to JSON-stringify the converted
+    Jamilih JSON object. Note that element results will be in array form.
+- `jml.toJMLString(objOrString, config)` - Works like `jml.toJML` but
+    stringifies the resulting Jamilih object.
+- `jml.toHTML()` - Works like `jml()` except that the resulting DOM
+    object is converted into an HTML string.
+- `jml.toXML()` - Works like `jml()` except that the resulting DOM object
+    is converted into an XML-serialized string.
+- `jml.toDOM()` - An alias for `jml()`.
 - `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
 - `jml.toXMLDOMString()` - An alias for `jml.toXML()` (for parity with `toJMLString`).
+- `jml.weak(obj, ...args)` - Returns a two-item array with the first item as a new `jml.WeakMap` object
+    on which an association is made between `obj` and a Jamilih element created out of passing
+    `args` to `jml()` and the second item is the new Jamilih elemnet  
+- `jml.strong(obj, ...args)` - Same as `jml.weak` but creates a new `jml.Map` object instead of a `jml.WeakMap`.
+- `jml.WeakMap()` - a `WeakMap` subclass with an `invoke` method that should be passed a DOM element
+    (such as one created by `jml` or `jml.weak()`), the name of a method to invoke (on an object
+    previously associated with the supplied element (e.g., via `jml.weak()`)), and any number of
+    optional arguments to be supplied to that method. The user method will have its `this` value
+    set to that of the previously associated object and in addition to accepting the arguments
+    supplied to `invoke`, it will have the element itself supplied as the last argument.
+- `jml.Map()` - Same as `jml.WeakMap` but is a subclass of `Map` instead.
 
 # Browser usage
 
