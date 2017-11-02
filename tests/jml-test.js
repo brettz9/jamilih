@@ -321,7 +321,11 @@ const testObj1 = {test: 5};
 const testObj2 = {test: 7};
 const el = jml({$map: [weakMap1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
     ['input', {id: 'input1', $data: true}, ['Test']],
-    ['input', {id: 'input2', $data: [weakMap2, testObj2]}]
+    ['input', {id: 'input2', $data: [weakMap2, testObj2]}],
+    ['input', {id: 'input3', $data: weakMap1}],
+    ['input', {id: 'input4', $data: testObj2}],
+    ['input', {id: 'input5', $data: [, testObj1]}], // eslint-disable-line no-sparse-arrays
+    ['input', {id: 'input6', $data: [weakMap1]}]
 ], document.body);
 assert.matches(
     weakMap1.get(el),
@@ -334,5 +338,21 @@ assert.matches(
 assert.matches(
     weakMap2.get($('#input2')),
     testObj2
+);
+assert.matches(
+    weakMap1.get($('#input3')),
+    testObj1
+);
+assert.matches(
+    weakMap1.get($('#input4')),
+    testObj2
+);
+assert.matches(
+    weakMap1.get($('#input5')),
+    testObj1
+);
+assert.matches(
+    weakMap1.get($('#input6')),
+    testObj1
 );
 }());

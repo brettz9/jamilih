@@ -535,8 +535,13 @@ const jml = function jml (...args) {
     const nodes = [];
     let elStr;
     let opts;
+    let isRoot = false;
     if (_getType(args[0]) === 'object') {
         opts = args[0];
+        if (opts.state !== 'child') {
+            isRoot = true;
+            opts.state = 'child';
+        }
         if (!opts.$map.root && opts.$map.root !== false) {
             opts.$map = {root: opts.$map};
         }
@@ -561,7 +566,7 @@ const jml = function jml (...args) {
                 obj = dataVal[1] || defaultMap[1];
             }
         // Map
-        } else if ((/^[object (?:Weak)?Map]$/).test([].toString.call(dataVal))) {
+        } else if ((/^\[object (?:Weak)?Map\]$/).test([].toString.call(dataVal))) {
             map = dataVal;
             obj = defaultMap[1];
         // Non-map data object
@@ -569,7 +574,6 @@ const jml = function jml (...args) {
             map = defaultMap[0];
             obj = dataVal;
         }
-
         map.set(elem, obj);
     };
     for (let i = 0; i < argc; i++) {
@@ -721,7 +725,7 @@ const jml = function jml (...args) {
         }
     }
     const ret = nodes[0] || elem;
-    if (opts && opts.$map && opts.$map.root) {
+    if (opts && isRoot && opts.$map && opts.$map.root) {
         setMap(true);
     }
     return ret;
