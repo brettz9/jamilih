@@ -303,6 +303,19 @@ const [myMap, elem] = jml.weak({
                 'internal test localValue 1001'
             );
         }
+    }}],
+    ['div', {id: 'clickArea', $data: {
+        localVariable: 8,
+        test (arg1, el) {
+            assert.matches(
+                arg1 + ' ' + el.id + this.localVariable,
+                'arg1 clickArea8'
+            );
+        }
+    }, $on: {
+        click () {
+            myMap.invoke(this, 'test', 'arg1');
+        }
     }}]
 ], document.body);
 assert.matches(
@@ -314,6 +327,8 @@ mapInput.value = '1001';
 mapInput.dispatchEvent(
     new Event('input')
 );
+const mapDiv = $('#clickArea');
+mapDiv.dispatchEvent(new Event('click'));
 
 const weakMap1 = new WeakMap();
 const weakMap2 = new WeakMap();
