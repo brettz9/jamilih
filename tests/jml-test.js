@@ -384,6 +384,7 @@ jml('div', [
     ['div', {id: 'divSymbolTest', $on: {
         click () {
             jml.sym(this.previousElementSibling, 'forSym1')('test1');
+            jml.sym('#symInput3', sym).test('test3');
         }
     }}],
     ['input', {id: 'symInput2', $symbol: [sym, function (arg1) {
