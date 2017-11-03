@@ -386,6 +386,7 @@ jml('div', [
             this.id + ' ' + arg1,
             'symInput2 test2'
         );
+        jml.sym(this.previousElementSibling, 'forSym1')('test1');
     }]}],
     ['input', {id: 'symInput3', $symbol: [sym, {
         localValue: 5,
