@@ -378,19 +378,19 @@ jml('div', [
     ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
         assert.matches(
             this.id + ' ' + arg1,
-            'symInput1 test1'
+            'symInput1 arg1'
         );
     }]}],
     ['div', {id: 'divSymbolTest', $on: {
         click () {
-            jml.sym(this.previousElementSibling, 'publicForSym1')('test1');
-            jml.sym('#symInput3', privateSym).test('test3');
+            jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
+            jml.sym('#symInput3', privateSym).test('arg3');
         }
     }}],
     ['input', {id: 'symInput2', $symbol: [privateSym, function (arg1) {
         assert.matches(
             this.id + ' ' + arg1,
-            'symInput2 test2'
+            'symInput2 arg2'
         );
     }]}],
     ['input', {id: 'symInput3', $symbol: [privateSym, {
@@ -402,20 +402,20 @@ jml('div', [
             );
             assert.matches(
                 this.elem.id + ' ' + arg1,
-                'symInput3 test3'
+                'symInput3 arg3'
             );
         }
     }]}]
 ], document.body);
 
-$('#symInput1')[Symbol.for('publicForSym1')]('test1');
-jml.sym($('#symInput1'), 'publicForSym1')('test1');
-jml.sym('#symInput1', 'publicForSym1')('test1');
+$('#symInput1')[Symbol.for('publicForSym1')]('arg1');
+jml.sym($('#symInput1'), 'publicForSym1')('arg1');
+jml.sym('#symInput1', 'publicForSym1')('arg1');
 
-$('#symInput2')[privateSym]('test2');
+$('#symInput2')[privateSym]('arg2');
 
-$('#symInput3')[privateSym].test('test3');
-jml.sym('#symInput3', privateSym).test('test3');
+$('#symInput3')[privateSym].test('arg3');
+jml.sym('#symInput3', privateSym).test('arg3');
 $('#divSymbolTest').dispatchEvent(new Event('click'));
 //
 }());
