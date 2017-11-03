@@ -247,7 +247,7 @@ to be used with `Symbol.for()` or a `Symbol` instance, and the second
 item being the function or object. If a function is supplied, its `this`
 will be set to the element on which the symbol was added, while if an
 object is supplied, its `this` will remain as the object itself, but an
-`elem` propery will be added to the object which can be used to get the
+`elem` property will be added to the object which can be used to get the
 element on which the symbol was added.
 
 ```js
