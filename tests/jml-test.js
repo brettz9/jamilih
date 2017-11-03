@@ -388,10 +388,11 @@ jml('div', [
             jml.sym('#symInput3', privateSym).test('arg3');
         }
     }}],
-    ['input', {id: 'symInput2', $symbol: [privateSym, function (arg1) {
+    ['input', {id: 'symInput2', $symbol: [privateSym, (arg1) => {
+        // No `this` available as using arrow function, but would give element
         assert.matches(
-            this.id + ' ' + arg1,
-            'symInput2 arg2'
+            arg1,
+            'arg2'
         );
     }]}],
     ['input', {id: 'symInput3', $symbol: [privateSym, {
