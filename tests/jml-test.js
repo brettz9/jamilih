@@ -403,8 +403,13 @@ jml('div', [
 ], document.body);
 
 $('#symInput1')[Symbol.for('forSym1')]('test1');
+jml.sym($('#symInput1'), 'forSym1')('test1');
+jml.sym('#symInput1', 'forSym1')('test1');
+
 $('#symInput2')[sym]('test2');
+
 $('#symInput3')[sym].test('test3');
+jml.sym('#symInput3', sym).test('test3');
 
 //
 }());

@@ -1089,6 +1089,11 @@ jml.strong = function (obj, ...args) {
     return [map, elem];
 };
 
+jml.symbol = jml.sym = jml.for = function (elem, sym) {
+    elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+    return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
+};
+
 // EXPORTS
 /*
 if (module !== undefined) { // Todo: Fix
