@@ -373,7 +373,7 @@ assert.matches(
 
 // Todo: Add tests for array of map strings
 
-const sym = Symbol('Test symbol');
+const privateSym = Symbol('Test symbol');
 jml('div', [
     ['input', {id: 'symInput1', $symbol: ['forSym1', function (arg1) {
         assert.matches(
@@ -384,16 +384,16 @@ jml('div', [
     ['div', {id: 'divSymbolTest', $on: {
         click () {
             jml.sym(this.previousElementSibling, 'forSym1')('test1');
-            jml.sym('#symInput3', sym).test('test3');
+            jml.sym('#symInput3', privateSym).test('test3');
         }
     }}],
-    ['input', {id: 'symInput2', $symbol: [sym, function (arg1) {
+    ['input', {id: 'symInput2', $symbol: [privateSym, function (arg1) {
         assert.matches(
             this.id + ' ' + arg1,
             'symInput2 test2'
         );
     }]}],
-    ['input', {id: 'symInput3', $symbol: [sym, {
+    ['input', {id: 'symInput3', $symbol: [privateSym, {
         localValue: 5,
         test (arg1) {
             assert.matches(
@@ -412,10 +412,10 @@ $('#symInput1')[Symbol.for('forSym1')]('test1');
 jml.sym($('#symInput1'), 'forSym1')('test1');
 jml.sym('#symInput1', 'forSym1')('test1');
 
-$('#symInput2')[sym]('test2');
+$('#symInput2')[privateSym]('test2');
 
-$('#symInput3')[sym].test('test3');
-jml.sym('#symInput3', sym).test('test3');
+$('#symInput3')[privateSym].test('test3');
+jml.sym('#symInput3', privateSym).test('test3');
 $('#divSymbolTest').dispatchEvent(new Event('click'));
 //
 }());
