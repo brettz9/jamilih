@@ -84,19 +84,19 @@ const jml = require('jamilih');
 
 Simple element...
 
-```javascript
+```js
 const input = jml('input');
 ```
 
 Simple element with attributes...
 
-```javascript
+```js
 const input = jml('input', {type:'password', id:'my_pass'});
 ```
 
 Simple element with just child elements...
 
-```javascript
+```js
 const div = jml('div', [
     ['p', ['no attributes on the div']]
 ]);
@@ -104,7 +104,7 @@ const div = jml('div', [
 
 Simple element with attributes and child elements...
 
-```javascript
+```js
 const div = jml('div', {'class': 'myClass'}, [
     ['p', ['Some inner text']],
     ['p', ['another child paragraph']]
@@ -113,7 +113,7 @@ const div = jml('div', {'class': 'myClass'}, [
 
 Simple element with attributes, child elements, and text nodes...
 
-```javascript
+```js
 const div = jml('div', {'class': 'myClass'}, [
     'text1',
     ['p', ['Some inner text']],
@@ -123,14 +123,14 @@ const div = jml('div', {'class': 'myClass'}, [
 
 DOM attachment...
 
-```javascript
+```js
 const simpleAttachToParent = jml('hr', document.body);
 ```
 
 Returning first element among siblings when appending them to a
 DOM element (API unstable)...
 
-```javascript
+```js
 const firstTr = jml('tr', [
         ['td', ['row 1 cell 1']],
         ['td', ['row 1 cell 2']]
@@ -145,7 +145,7 @@ const firstTr = jml('tr', [
 
 Returning element siblings as an array (API unstable)...
 
-```javascript
+```js
 const trsFragment = jml('tr', [
         ['td', ['row 1 cell 1']],
         ['td', ['row 1 cell 2']]
@@ -160,7 +160,7 @@ const trsFragment = jml('tr', [
 
 Inclusion of regular DOM elements...
 
-```javascript
+```js
 const div = jml(
     'div', [
         $('#DOMChildrenMustBeInArray')[0]
@@ -173,7 +173,7 @@ const div = jml(
 
 Document fragments addable anywhere within child elements...
 
-```javascript
+```js
 jml('div', [
     'text0',
     {'#': ['text1', ['span', ['inner text']], 'text2']},
@@ -183,7 +183,7 @@ jml('div', [
 
 Event attachment...
 
-```javascript
+```js
 const input = jml('input', {
     // Contains events to be added via addEventListener or
     //   attachEvent where available
@@ -195,7 +195,7 @@ const input = jml('input', {
 }});
 ```
 
-```javascript
+```js
 const input2 = jml('input', {
     style: 'position:absolute; left: -1000px;',
     $on: {
@@ -209,10 +209,12 @@ const input2 = jml('input', {
 }, document.body);
 ```
 
+The events attached via `$on` are added through `addEventListener`.
+
 Comments, processing instructions, entities, decimal and hexadecimal
 character references, CDATA sections...
 
-```javascript
+```js
 const div = jml('div', [
     ['!', 'a comment'],
     ['?', 'customPI', 'a processing instruction'],
@@ -225,17 +227,109 @@ const div = jml('div', [
 
 Namespace definitions (default or prefixed)...
 
-```javascript
+```js
 jml('abc', {xmlns:'def'})
 ```
 
-```javascript
+```js
 jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi'}})
 ```
 
-```javascript
+```js
 jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}})
 ```
+
+## Symbols
+
+One may attach functions or objects to elements via a `$symbol` attribute
+which accepts a two-item array, with the first item either being a string
+to be used with `Symbol.for()` or a `Symbol` instance, and the second
+item being the function or object. If a function is supplied, its `this`
+will be set to the element on which the symbol was added, while if an
+object is supplied, its `this` will remain as the object itself, but an
+`elem` propery will be added to the object which can be used to get the
+element on which the symbol was added.
+
+```js
+jml('input', {
+    id: 'symInput1',
+    $symbol: ['publicForSym1', function (arg1) {
+        console.log(
+            (this.id + ' ' + arg1) === 'symInput1 arg1'
+        );
+    }]
+}, document.body)
+
+// Then elsewhere get and use the symbol function for the DOM object
+$('#symInput1')[Symbol.for('publicForSym1')]('arg1');
+
+// Or using the `jml.sym` utility (accepting selector or
+//    DOM element as first argument):
+jml.sym($('#symInput1'), 'publicForSym1')('arg1');
+jml.sym('#symInput1', 'publicForSym1')('arg1');
+```
+
+Or using an example with a (private) `Symbol` instance and
+an object instead of a function:
+
+```js
+const privateSym = Symbol('a private symbol');
+jml('input', {id: 'symInput3', $symbol: [privateSym, {
+    localValue: 5,
+    test (arg1) {
+        console.log(this.localValue === 5);
+        console.log(
+            (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
+        );
+    }
+}]}, document.body);
+
+// Obtaining the element with symbol or using the utility:
+$('#symInput3')[privateSym].test('arg3');
+jml.sym('#symInput3', privateSym).test('arg3');
+```
+
+Symbol attachment is particularly convenient for templates where you
+wish to keep a lot of inline children (avoiding defining the children
+separately, adding the symbol to the variables, and then reassembling them
+together).
+
+```js
+jml('div', [
+    ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
+        console.log(
+            (this.id + ' ' + arg1) === 'symInput1 arg1'
+        );
+    }]}],
+    ['div', {id: 'divSymbolTest', $on: {
+        click () {
+            // Can supply element or selector
+            jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
+            jml.sym('#symInput3', privateSym).test('arg3');
+
+            // Or use symbols directly:
+            this.previousElementSibling[Symbol.for('publicForSym1')]('arg1');
+        }
+    }}],
+    ['input', {id: 'symInput3', $symbol: [privateSym, {
+        localValue: 5,
+        test (arg1) {
+            console.log(this.localValue === 5);
+            console.log(
+                (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
+            );
+        }
+    }]}]
+], document.body);
+```
+
+## Maps
+
+While symbols are somewhat more convenient to use, you may wish to
+associate elements with any number of `Map` or `WeakMap` instances
+and take advantage of those objects' methods.
+
+(TODO: Adapt examples from tests)
 
 # Rules (summary)
 
