@@ -381,12 +381,16 @@ jml('div', [
             'symInput1 test1'
         );
     }]}],
+    ['div', {id: 'divSymbolTest', $on: {
+        click () {
+            jml.sym(this.previousElementSibling, 'forSym1')('test1');
+        }
+    }}],
     ['input', {id: 'symInput2', $symbol: [sym, function (arg1) {
         assert.matches(
             this.id + ' ' + arg1,
             'symInput2 test2'
         );
-        jml.sym(this.previousElementSibling, 'forSym1')('test1');
     }]}],
     ['input', {id: 'symInput3', $symbol: [sym, {
         localValue: 5,
@@ -411,6 +415,6 @@ $('#symInput2')[sym]('test2');
 
 $('#symInput3')[sym].test('test3');
 jml.sym('#symInput3', sym).test('test3');
-
+$('#divSymbolTest').dispatchEvent(new Event('click'));
 //
 }());
