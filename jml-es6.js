@@ -29,6 +29,10 @@ Other Todos:
 */
 
 // STATIC PROPERTIES
+const possibleOptions = [
+    '$map' // Add any other options here
+];
+
 const NS_HTML = 'http://www.w3.org/1999/xhtml',
     hyphenForCamelCase = /-([a-z])/g;
 
@@ -555,13 +559,14 @@ const jml = function jml (...args) {
     let elStr;
     let opts;
     let isRoot = false;
-    if (_getType(args[0]) === 'object') {
+    if (_getType(args[0]) === 'object' &&
+        Object.keys(args[0]).some((key) => possibleOptions.includes(key))) {
         opts = args[0];
         if (opts.state !== 'child') {
             isRoot = true;
             opts.state = 'child';
         }
-        if (!opts.$map.root && opts.$map.root !== false) {
+        if (opts.$map && !opts.$map.root && opts.$map.root !== false) {
             opts.$map = {root: opts.$map};
         }
         args = args.slice(1);

@@ -1,3 +1,6 @@
+# 0.22.1
+- Fix: For jml-es6.js file, avoid error if `opts.$map` doesn't exist!
+
 # 0.22.0
 
 - For jml-es6.js file, add `jml.sym` (and aliases `jml.symbol`
