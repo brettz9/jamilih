@@ -383,8 +383,8 @@ jml('div', [
     }]}],
     ['div', {id: 'divSymbolTest', $on: {
         click () {
-            jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
             // Can supply element or selector
+            jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
             jml.sym($('#symInput2'), privateSym)('arg2');
             jml.sym('#symInput3', privateSym).test('arg3');
         }
