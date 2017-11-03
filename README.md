@@ -468,8 +468,10 @@ in templates, and to my personal sensibilities, more clear in goal #8
 
 # To-dos
 
-1. Allow attribute for binding DOM to `Map`/`WeakMap`! Templates (or model)
-    can easily define and invoke functions/objects tied to an element
+1. Document binding DOM to `Map`/`WeakMap` Templates to define and invoke
+    functions/objects tied to an element
+1. Allow `$symbol` to accept array of arrays for attaching multiple symbols
+    to an element
 1. JSON Schema todos
     1. Specify types of allowable properties on attributes object in JSON Schema.
     1. Allow for fragments and other out-of-place objects
