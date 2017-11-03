@@ -370,4 +370,27 @@ assert.matches(
     weakMap1.get($('#input6')),
     testObj1
 );
+
+// Todo: Add tests for array of map strings
+
+const sym = Symbol('Test symbol');
+jml('div', [
+    ['input', {id: 'symInput1', $symbol: ['forSym1', function (arg1) {
+        assert.matches(
+            this.id + ' ' + arg1,
+            'symInput1 test1'
+        );
+    }]}],
+    ['input', {id: 'symInput2', $symbol: [sym, function (arg1) {
+        assert.matches(
+            this.id + ' ' + arg1,
+            'symInput2 test2'
+        );
+    }]}]
+], document.body);
+
+$('#symInput1')[Symbol.for('forSym1')]('test1');
+$('#symInput2')[sym]('test2');
+
+//
 }());

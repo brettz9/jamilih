@@ -349,6 +349,15 @@ const jml = function jml (...args) {
                 case '#': { // Document fragment
                     nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
                     break;
+                } case '$symbol': {
+                    const [symbol, func] = attVal;
+                    const funcBound = func.bind(elem);
+                    if (typeof symbol === 'string') {
+                        elem[Symbol.for(symbol)] = funcBound;
+                    } else {
+                        elem[symbol] = funcBound;
+                    }
+                    break;
                 } case '$data' : {
                     setMap(attVal);
                     break;
