@@ -1,3 +1,17 @@
+# 0.22.0
+
+- For jml-es6.js file, add `jml.sym` (and aliases `jml.symbol`
+    and `jml.for`) utilities for retrieving a `Symbol` (or `Symbol.for`)
+    instance on a particular element
+- For jml-es6.js file, allow `$symbol` two-item array with the first
+    item as a `Symbol` (or a string for `Symbol.for`) to be added as
+    a key on the given element with the second item as the function
+    or object to be its value. The object will have an `elem` property
+    added to it to reference the current element, or, if a function
+    is used, its `this` will be set to the element.
+- For jml-es6.js file, allow `$data` attribute (and `$map` in config)
+    (as yet undocumented)
+
 # 0.21.0
 
 - For jml-es6.js file, add `jml.weak`, `jml.strong`, `jml.Map`,
