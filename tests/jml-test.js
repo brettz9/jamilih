@@ -386,11 +386,25 @@ jml('div', [
             this.id + ' ' + arg1,
             'symInput2 test2'
         );
+    }]}],
+    ['input', {id: 'symInput3', $symbol: [sym, {
+        localValue: 5,
+        test (arg1) {
+            assert.matches(
+                this.localValue,
+                5
+            );
+            assert.matches(
+                this.elem.id + ' ' + arg1,
+                'symInput3 test3'
+            );
+        }
     }]}]
 ], document.body);
 
 $('#symInput1')[Symbol.for('forSym1')]('test1');
 $('#symInput2')[sym]('test2');
+$('#symInput3')[sym].test('test3');
 
 //
 }());

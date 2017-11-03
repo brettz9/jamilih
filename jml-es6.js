@@ -351,11 +351,21 @@ const jml = function jml (...args) {
                     break;
                 } case '$symbol': {
                     const [symbol, func] = attVal;
-                    const funcBound = func.bind(elem);
-                    if (typeof symbol === 'string') {
-                        elem[Symbol.for(symbol)] = funcBound;
+                    if (typeof func === 'function') {
+                        const funcBound = func.bind(elem);
+                        if (typeof symbol === 'string') {
+                            elem[Symbol.for(symbol)] = funcBound;
+                        } else {
+                            elem[symbol] = funcBound;
+                        }
                     } else {
-                        elem[symbol] = funcBound;
+                        const obj = func;
+                        obj.elem = elem;
+                        if (typeof symbol === 'string') {
+                            elem[Symbol.for(symbol)] = obj;
+                        } else {
+                            elem[symbol] = obj;
+                        }
                     }
                     break;
                 } case '$data' : {
