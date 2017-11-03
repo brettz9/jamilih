@@ -375,7 +375,7 @@ assert.matches(
 
 const privateSym = Symbol('Test symbol');
 jml('div', [
-    ['input', {id: 'symInput1', $symbol: ['forSym1', function (arg1) {
+    ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
         assert.matches(
             this.id + ' ' + arg1,
             'symInput1 test1'
@@ -383,7 +383,7 @@ jml('div', [
     }]}],
     ['div', {id: 'divSymbolTest', $on: {
         click () {
-            jml.sym(this.previousElementSibling, 'forSym1')('test1');
+            jml.sym(this.previousElementSibling, 'publicForSym1')('test1');
             jml.sym('#symInput3', privateSym).test('test3');
         }
     }}],
@@ -408,9 +408,9 @@ jml('div', [
     }]}]
 ], document.body);
 
-$('#symInput1')[Symbol.for('forSym1')]('test1');
-jml.sym($('#symInput1'), 'forSym1')('test1');
-jml.sym('#symInput1', 'forSym1')('test1');
+$('#symInput1')[Symbol.for('publicForSym1')]('test1');
+jml.sym($('#symInput1'), 'publicForSym1')('test1');
+jml.sym('#symInput1', 'publicForSym1')('test1');
 
 $('#symInput2')[privateSym]('test2');
 
