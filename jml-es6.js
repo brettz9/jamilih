@@ -353,6 +353,12 @@ const jml = function jml (...args) {
                 case '#': { // Document fragment
                     nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
                     break;
+                } case '$shadow': {
+                    const shadowRoot = elem.attachShadow({
+                        mode: attVal[0] === 'open' ? 'open' : 'closed'
+                    });
+                    jml(...attVal[1], shadowRoot);
+                    break;
                 } case '$symbol': {
                     const [symbol, func] = attVal;
                     if (typeof func === 'function') {
