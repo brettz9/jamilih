@@ -384,6 +384,15 @@ const jml = function jml (...args) {
                     }
                     break;
                 } case '$define': {
+                    const getConstructor = () => {
+                        return class extends [
+                            (options && (options.extends === undefined
+                                ? options
+                                : (options && options.extends && window[options.extends])
+                            )) ||
+                            HTMLElement
+                        ] {};
+                    };
                     const localName = elem.localName.toLowerCase();
                     if (customElements.get(localName)) {
                         break;
@@ -397,10 +406,7 @@ const jml = function jml (...args) {
                             }
                             if (typeof constructor === 'object') {
                                 prototype = constructor;
-                                constructor = class extends [
-                                    (options && options.extends && window[options.extends]) ||
-                                    HTMLElement
-                                ] {};
+                                constructor = getConstructor();
                             }
                         } else {
                             [constructor, prototype, options] = attVal;
@@ -422,10 +428,7 @@ const jml = function jml (...args) {
                             options = {extends: options};
                         }
                         if (!constructor) {
-                            constructor = class extends [
-                                (options && options.extends && window[options.extends]) ||
-                                HTMLElement
-                            ] {};
+                            constructor = getConstructor();
                             Object.assign(constructor.prototype, attVal.prototype);
                         }
                     }
