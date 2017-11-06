@@ -354,10 +354,27 @@ const jml = function jml (...args) {
                     nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
                     break;
                 } case '$shadow': {
+                    const {content, template, open, closed} = attVal;
                     const shadowRoot = elem.attachShadow({
-                        mode: attVal[0] === 'open' ? 'open' : 'closed'
+                        mode: closed ? 'closed' : 'open'
                     });
-                    jml(...attVal[1], shadowRoot);
+                    if (content) {
+                        if (Array.isArray(content)) {
+                            jml(...content, shadowRoot);
+                        } else {
+                            jml(content, shadowRoot);
+                        }
+                    } else if (template) {
+                        jml(
+                            (typeof template === 'string'
+                                ? document.querySelector(template)
+                                : template
+                            ).content.cloneNode(true),
+                            shadowRoot
+                        );
+                    } else {
+                        jml(...(open || closed), shadowRoot);
+                    }
                     break;
                 } case '$symbol': {
                     const [symbol, func] = attVal;
