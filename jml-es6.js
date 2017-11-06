@@ -388,11 +388,28 @@ const jml = function jml (...args) {
                     if (customElements.get(localName)) {
                         break;
                     }
-                    let constructor, options;
+                    let constructor, options, prototype;
                     if (Array.isArray(attVal)) {
-                        [constructor, options] = attVal;
-                        if (typeof options === 'string') {
-                            options = {extends: options};
+                        if (attVal.length === 2) {
+                            [constructor, options] = attVal;
+                            if (typeof options === 'string') {
+                                options = {extends: options};
+                            }
+                            if (typeof constructor === 'object') {
+                                prototype = constructor;
+                                constructor = class extends [
+                                    (options && options.extends && window[options.extends]) ||
+                                    HTMLElement
+                                ] {};
+                            }
+                        } else {
+                            [constructor, prototype, options] = attVal;
+                            if (typeof options === 'string') {
+                                options = {extends: options};
+                            }
+                        }
+                        if (prototype) {
+                            Object.assign(constructor.prototype, prototype);
                         }
                     } else if (typeof attVal === 'function') {
                         constructor = attVal;
