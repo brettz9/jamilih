@@ -354,7 +354,8 @@ const jml = function jml (...args) {
                     nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
                     break;
                 } case '$shadow': {
-                    const {content, template, open, closed} = attVal;
+                    const {content, open, closed} = attVal;
+                    let {template} = attVal;
                     const shadowRoot = elem.attachShadow({
                         mode: closed ? 'closed' : 'open'
                     });
@@ -365,11 +366,17 @@ const jml = function jml (...args) {
                             jml(content, shadowRoot);
                         }
                     } else if (template) {
+                        if (Array.isArray(template)) {
+                            if (_getType(template[0]) === 'object') { // Has attributes
+                                template = jml('template', ...template, elem);
+                            } else { // Array is for the children
+                                template = jml('template', template, elem);
+                            }
+                        } else if (typeof template === 'string') {
+                            template = document.querySelector(template);
+                        }
                         jml(
-                            (typeof template === 'string'
-                                ? document.querySelector(template)
-                                : template
-                            ).content.cloneNode(true),
+                            template.content.cloneNode(true),
                             shadowRoot
                         );
                     } else {
