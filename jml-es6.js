@@ -391,6 +391,9 @@ const jml = function jml (...args) {
                     let constructor, options;
                     if (Array.isArray(attVal)) {
                         [constructor, options] = attVal;
+                        if (typeof options === 'string') {
+                            options = {extends: options};
+                        }
                     } else if (typeof attVal === 'function') {
                         constructor = attVal;
                     } else {
@@ -398,9 +401,16 @@ const jml = function jml (...args) {
                         if (!options) {
                             options = attVal.extends;
                         }
-                    }
-                    if (typeof options === 'string') {
-                        options = {extends: options};
+                        if (typeof options === 'string') {
+                            options = {extends: options};
+                        }
+                        if (!constructor) {
+                            constructor = class extends [
+                                (options && options.extends && window[options.extends]) ||
+                                HTMLElement
+                            ] {};
+                            Object.assign(constructor.prototype, attVal.prototype);
+                        }
                     }
                     customElements.define(localName, constructor, options);
                     break;
