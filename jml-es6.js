@@ -383,6 +383,27 @@ const jml = function jml (...args) {
                         jml(...(open || closed), shadowRoot);
                     }
                     break;
+                } case '$define': {
+                    const localName = elem.localName.toLowerCase();
+                    if (customElements.get(localName)) {
+                        break;
+                    }
+                    let constructor, options;
+                    if (Array.isArray(attVal)) {
+                        [constructor, options] = attVal;
+                    } else if (typeof attVal === 'function') {
+                        constructor = attVal;
+                    } else {
+                        ({constructor, options} = attVal);
+                        if (!options) {
+                            options = attVal.extends;
+                        }
+                    }
+                    if (typeof options === 'string') {
+                        options = {extends: options};
+                    }
+                    customElements.define(localName, constructor, options);
+                    break;
                 } case '$symbol': {
                     const [symbol, func] = attVal;
                     if (typeof func === 'function') {
