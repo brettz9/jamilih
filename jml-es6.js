@@ -1209,7 +1209,8 @@ jml.command = function (elem, sym, methodName, ...args) {
     if (typeof func === 'function') {
         return func.call(elem, methodName, ...args);
     }
-    return func[methodName].call(elem, ...args);
+    // return func[methodName].call(elem, ...args);
+    return func[methodName](...args);
 };
 
 // EXPORTS

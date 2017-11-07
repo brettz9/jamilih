@@ -424,5 +424,7 @@ $('#symInput2')[privateSym]('arg2');
 $('#symInput3')[privateSym].test('arg3');
 jml.sym('#symInput3', privateSym).test('arg3');
 $('#divSymbolTest').dispatchEvent(new Event('click'));
+jml.command('#symInput1', 'publicForSym1', 'arg1');
+jml.command('#symInput3', privateSym, 'test', 'arg3');
 //
 }());
