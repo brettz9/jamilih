@@ -1203,6 +1203,15 @@ jml.symbol = jml.sym = jml.for = function (elem, sym) {
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
+jml.command = function (elem, sym, methodName, ...args) {
+    elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+    const func = jml.sym(elem, sym);
+    if (typeof func === 'function') {
+        return func.call(elem, methodName, ...args);
+    }
+    return func[methodName].call(elem, ...args);
+};
+
 // EXPORTS
 /*
 if (module !== undefined) { // Todo: Fix
