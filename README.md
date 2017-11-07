@@ -63,7 +63,7 @@ The following functions are available:
     previously associated with the supplied element (e.g., via `jml.weak()`)), and any number of
     optional arguments to be supplied to that method. The user method will have its `this` value
     set to that of the previously associated object and in addition to accepting the arguments
-    supplied to `invoke`, it will have the element itself supplied as the last argument.
+    supplied to `invoke`, it will have the element itself supplied as the first argument.
 - `jml.Map()` - Same as `jml.WeakMap` but is a subclass of `Map` instead.
 
 # Browser usage
