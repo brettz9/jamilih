@@ -390,10 +390,11 @@ const jml = function jml (...args) {
                     break;
                 } case '$define': {
                     const localName = elem.localName.toLowerCase();
-                    if (customElements.get(localName)) {
+                    const customizedBuiltIn = !localName.includes('-');
+                    const def = customizedBuiltIn ? atts.is : localName;
+                    if (customElements.get(def)) {
                         break;
                     }
-                    const customizedBuiltIn = !localName.includes('-');
                     const getConstructor = () => {
                         let baseClass = options && options.extends
                             ? document.createElement(options.extends).constructor
@@ -439,11 +440,7 @@ const jml = function jml (...args) {
                     if (prototype) {
                         Object.assign(constructor.prototype, prototype);
                     }
-                    if (customizedBuiltIn) {
-                        customElements.define(atts.is || `localeName-${isCt++}`, constructor, options);
-                    } else {
-                        customElements.define(localName, constructor);
-                    }
+                    customElements.define(def, constructor, customizedBuiltIn ? options : undefined);
                     break;
                 } case '$symbol': {
                     const [symbol, func] = attVal;
@@ -759,8 +756,12 @@ const jml = function jml (...args) {
                 elStr = arg;
                 const atts = args[i + 1];
                 // Todo: Fix this to depend on XML/config, not availability of methods
-                if (_getType(atts) === 'object' && atts.is) {
-                    const {is} = atts;
+                if (_getType(atts) === 'object' && (
+                    atts.is ||
+                    (atts.$define && !elStr.includes('-'))
+                )) {
+                    const is = atts.is || `${elStr}-${isCt++}`;
+
                     if (document.createElementNS) {
                         elem = document.createElementNS(NS_HTML, elStr, {is});
                     } else {
