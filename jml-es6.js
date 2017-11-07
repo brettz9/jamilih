@@ -124,6 +124,10 @@ function _appendNode (parent, child) {
             return;
         }
     }
+    if (parentName === 'template') {
+        parent.content.appendChild(child);
+        return;
+    }
     try {
         parent.appendChild(child); // IE9 is now ok with this
     } catch (e) {
