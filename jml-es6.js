@@ -302,6 +302,8 @@ function _DOMfromJMLOrString (childNodeJML) {
 }
 */
 
+let isCt = 0;
+
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers that support);
  * Any element after element can be omitted, and any subsequent type or types added afterwards
@@ -383,23 +385,34 @@ const jml = function jml (...args) {
                         jml(...(open || closed), shadowRoot);
                     }
                     break;
+                } case 'is': {
+                    // Handled during element creation
+                    break;
                 } case '$define': {
-                    const getConstructor = () => {
-                        return class extends [
-                            (options && (options.extends === undefined
-                                ? options
-                                : (options && options.extends && window[options.extends])
-                            )) ||
-                            HTMLElement
-                        ] {};
-                    };
                     const localName = elem.localName.toLowerCase();
                     if (customElements.get(localName)) {
                         break;
                     }
+                    const customizedBuiltIn = !localName.includes('-');
+                    const getConstructor = () => {
+                        let baseClass = options && options.extends
+                            ? document.createElement(options.extends).constructor
+                            : customizedBuiltIn
+                                ? document.createElement(localName).constructor
+                                : null;
+                        if (baseClass === null) {
+                            const preHyphenName = localName.slice(0, localName.indexOf('-'));
+                            baseClass = document.createElement(preHyphenName).constructor;
+                            if (baseClass === HTMLUnknownElement) {
+                                baseClass = HTMLElement;
+                            }
+                        }
+                        return class extends baseClass {};
+                    };
+
                     let constructor, options, prototype;
                     if (Array.isArray(attVal)) {
-                        if (attVal.length === 2) {
+                        if (attVal.length <= 2) {
                             [constructor, options] = attVal;
                             if (typeof options === 'string') {
                                 options = {extends: options};
@@ -414,25 +427,23 @@ const jml = function jml (...args) {
                                 options = {extends: options};
                             }
                         }
-                        if (prototype) {
-                            Object.assign(constructor.prototype, prototype);
-                        }
                     } else if (typeof attVal === 'function') {
                         constructor = attVal;
                     } else {
-                        ({constructor, options} = attVal);
-                        if (!options) {
-                            options = attVal.extends;
-                        }
-                        if (typeof options === 'string') {
-                            options = {extends: options};
-                        }
-                        if (!constructor) {
-                            constructor = getConstructor();
-                            Object.assign(constructor.prototype, attVal.prototype);
-                        }
+                        prototype = attVal;
+                        constructor = getConstructor();
                     }
-                    customElements.define(localName, constructor, options);
+                    if (!options && customizedBuiltIn) {
+                        options = {extends: localName};
+                    }
+                    if (prototype) {
+                        Object.assign(constructor.prototype, prototype);
+                    }
+                    if (customizedBuiltIn) {
+                        customElements.define(atts.is || `localeName-${isCt++}`, constructor, options);
+                    } else {
+                        customElements.define(localName, constructor);
+                    }
                     break;
                 } case '$symbol': {
                     const [symbol, func] = attVal;
@@ -744,16 +755,27 @@ const jml = function jml (...args) {
             case '':
                 nodes[nodes.length] = document.createDocumentFragment();
                 break;
-            default: // An element
+            default: { // An element
                 elStr = arg;
+                const atts = args[i + 1];
                 // Todo: Fix this to depend on XML/config, not availability of methods
-                if (document.createElementNS) {
-                    elem = document.createElementNS(NS_HTML, elStr);
+                if (_getType(atts) === 'object' && atts.is) {
+                    const {is} = atts;
+                    if (document.createElementNS) {
+                        elem = document.createElementNS(NS_HTML, elStr, {is});
+                    } else {
+                        elem = document.createElement(elStr, {is});
+                    }
                 } else {
-                    elem = document.createElement(elStr);
+                    if (document.createElementNS) {
+                        elem = document.createElementNS(NS_HTML, elStr);
+                    } else {
+                        elem = document.createElement(elStr);
+                    }
                 }
                 nodes[nodes.length] = elem; // Add to parent
                 break;
+            }
             }
             break;
         case 'object': // Non-DOM-element objects indicate attribute-value pairs
