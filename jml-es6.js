@@ -1203,9 +1203,14 @@ jml.symbol = jml.sym = jml.for = function (elem, sym) {
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
-jml.command = function (elem, sym, methodName, ...args) {
+jml.command = function (elem, symOrMap, methodName, ...args) {
     elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
-    const func = jml.sym(elem, sym);
+    let func;
+    if (['symbol', 'string'].includes(typeof symOrMap)) {
+        func = jml.sym(elem, symOrMap);
+    } else {
+        func = symOrMap.get(elem);
+    }
     if (typeof func === 'function') {
         return func.call(elem, methodName, ...args);
     }

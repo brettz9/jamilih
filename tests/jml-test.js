@@ -334,13 +334,15 @@ const weakMap1 = new WeakMap();
 const weakMap2 = new WeakMap();
 const testObj1 = {test: 5};
 const testObj2 = {test: 7};
+const testFunc = function (arg1) { return this.id + ' ok ' + arg1; };
 const el = jml({$map: [weakMap1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
     ['input', {id: 'input1', $data: true}, ['Test']],
     ['input', {id: 'input2', $data: [weakMap2, testObj2]}],
     ['input', {id: 'input3', $data: weakMap1}],
     ['input', {id: 'input4', $data: testObj2}],
     ['input', {id: 'input5', $data: [, testObj1]}], // eslint-disable-line no-sparse-arrays
-    ['input', {id: 'input6', $data: [weakMap1]}]
+    ['input', {id: 'input6', $data: [weakMap1]}],
+    ['input', {id: 'input7', $data: [weakMap1, testFunc]}]
 ], document.body);
 assert.matches(
     weakMap1.get(el),
@@ -370,7 +372,10 @@ assert.matches(
     weakMap1.get($('#input6')),
     testObj1
 );
-
+assert.matches(
+    jml.command($('#input7'), weakMap1, 'arg1'),
+    'input7 ok arg1'
+);
 // Todo: Add tests for array of map strings
 
 const privateSym = Symbol('Test symbol');
@@ -426,5 +431,6 @@ jml.sym('#symInput3', privateSym).test('arg3');
 $('#divSymbolTest').dispatchEvent(new Event('click'));
 jml.command('#symInput1', 'publicForSym1', 'arg1');
 jml.command('#symInput3', privateSym, 'test', 'arg3');
+
 //
 }());
