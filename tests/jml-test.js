@@ -292,7 +292,7 @@ assert.matchesXMLString(
 
 const [myMap, elem] = jml.weak({
     localVar: 'localValue',
-    myMethod (arg1, elem) {
+    myMethod (elem, arg1) {
         return arg1 + ' ' + this.localVar + ' ' + elem.querySelector('input').value;
     }
 }, 'div', {id: 'mapTest'}, [
@@ -306,7 +306,7 @@ const [myMap, elem] = jml.weak({
     }}],
     ['div', {id: 'clickArea', $data: {
         localVariable: 8,
-        test (arg1, el) {
+        test (el, arg1) {
             assert.matches(
                 arg1 + ' ' + el.id + this.localVariable,
                 'arg1 clickArea8'
@@ -322,6 +322,11 @@ assert.matches(
     myMap.invoke(elem, 'myMethod', 'external test'),
     'external test localValue 100'
 );
+assert.matches(
+    myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
+    'localValue'
+);
+
 const mapInput = $('#mapTest').firstElementChild;
 mapInput.value = '1001';
 mapInput.dispatchEvent(
@@ -331,7 +336,7 @@ const mapDiv = $('#clickArea');
 mapDiv.dispatchEvent(new Event('click'));
 
 const weakMap1 = new WeakMap();
-const weakMap2 = new WeakMap();
+const weakMap2 = new jml.WeakMap();
 const testObj1 = {test: 5};
 const testObj2 = {test: 7};
 const testFunc = function (arg1) { return this.id + ' ok ' + arg1; };

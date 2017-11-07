@@ -1173,13 +1173,31 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
 };
 
 class JamilihMap extends Map {
+    get (elem) {
+        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        return super.get.call(this, elem);
+    }
+    set (elem, value) {
+        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        return super.set.call(this, elem, value);
+    }
     invoke (elem, methodName, ...args) {
-        return this.get(elem)[methodName](...args, elem);
+        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        return this.get(elem)[methodName](elem, ...args);
     }
 }
 class JamilihWeakMap extends WeakMap {
+    get (elem) {
+        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        return super.get.call(this, elem);
+    }
+    set (elem, value) {
+        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        return super.set.call(this, elem, value);
+    }
     invoke (elem, methodName, ...args) {
-        return this.get(elem)[methodName](...args, elem);
+        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        return this.get(elem)[methodName](elem, ...args);
     }
 }
 
@@ -1208,14 +1226,18 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
         func = jml.sym(elem, symOrMap);
+        if (typeof func === 'function') {
+            return func(methodName, ...args); // Already has `this` bound to `elem`
+        }
+        return func[methodName](...args);
     } else {
         func = symOrMap.get(elem);
-    }
-    if (typeof func === 'function') {
-        return func.call(elem, methodName, ...args);
+        if (typeof func === 'function') {
+            return func.call(elem, methodName, ...args);
+        }
+        return func[methodName](elem, ...args);
     }
     // return func[methodName].call(elem, ...args);
-    return func[methodName](...args);
 };
 
 // EXPORTS
