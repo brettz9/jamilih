@@ -379,10 +379,12 @@ const jml = function jml (...args) {
                         if (!content) {
                             content = open || closed;
                         }
-                        if (Array.isArray(content)) {
-                            jml(...content, shadowRoot);
-                        } else {
-                            jml(content, shadowRoot);
+                        if (content && typeof content !== 'boolean') {
+                            if (Array.isArray(content)) {
+                                jml(...content, shadowRoot);
+                            } else {
+                                jml(content, shadowRoot);
+                            }
                         }
                     }
                     break;
