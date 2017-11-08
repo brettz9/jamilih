@@ -309,8 +309,6 @@ function _DOMfromJMLOrString (childNodeJML) {
 }
 */
 
-let isCt = 0;
-
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers that support);
  * Any element after element can be omitted, and any subsequent type or types added afterwards
@@ -402,6 +400,13 @@ const jml = function jml (...args) {
                     const localName = elem.localName.toLowerCase();
                     // Note: customized built-ins sadly not working yet
                     const customizedBuiltIn = !localName.includes('-');
+
+                    const notACustomElement = customizedBuiltIn && !elem.hasAttribute('is');
+                    if (notACustomElement) {
+                        Object.assign(elem, attVal);
+                        break;
+                    }
+
                     const def = customizedBuiltIn ? elem.getAttribute('is') : localName;
                     if (customElements.get(def)) {
                         break;
@@ -772,12 +777,8 @@ const jml = function jml (...args) {
                 elStr = arg;
                 const atts = args[i + 1];
                 // Todo: Fix this to depend on XML/config, not availability of methods
-                if (_getType(atts) === 'object' && (
-                    atts.is ||
-                    (atts.$define && !elStr.includes('-'))
-                )) {
-                    const is = atts.is || `${elStr}-${isCt++}`;
-
+                if (_getType(atts) === 'object' && atts.is) {
+                    const {is} = atts;
                     if (document.createElementNS) {
                         elem = document.createElementNS(NS_HTML, elStr, {is});
                     } else {

@@ -540,6 +540,19 @@ myel4.test2();
 
 // Todo: Add and test simple addition of function or object methods to prototype or object
 
+const mySelect = jml('select', {
+    id: 'mySelect',
+    $define: {
+        test () {
+            return this.id;
+        }
+    }
+}, document.body);
+assert.matches(
+    mySelect.test(),
+    'mySelect'
+);
+
 /*
 // If customized built-in elements implemented, ensure testing `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
 const mySelect = jml('select', {
@@ -555,11 +568,6 @@ assert.matches(
     mySelect.test(),
     'mySelect'
 );
-*/
-
-/*
-$define
-is
 */
 
 //
