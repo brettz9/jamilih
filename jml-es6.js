@@ -388,7 +388,7 @@ const jml = function jml (...args) {
                         }
                         if (content && typeof content !== 'boolean') {
                             if (Array.isArray(content)) {
-                                jml(...content, shadowRoot);
+                                jml({'#': content}, shadowRoot);
                             } else {
                                 jml(content, shadowRoot);
                             }

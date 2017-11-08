@@ -13,7 +13,7 @@ Todos:
 'use strict';
 
 // HELPERS
-const $ = function (sel) {
+const $ = (sel) => {
     return document.querySelector(sel);
 };
 const isIE = window.navigator.appName === 'Microsoft Internet Explorer';
@@ -436,6 +436,51 @@ jml.sym('#symInput3', privateSym).test('arg3');
 $('#divSymbolTest').dispatchEvent(new Event('click'));
 jml.command('#symInput1', 'publicForSym1', 'arg1');
 jml.command('#symInput3', privateSym, 'test', 'arg3');
+
+jml('section', {
+    id: 'myElem',
+    $shadow: {
+        open: true, // Default (can also use `closed`)
+        template: [
+            {id: 'myTemplate'},
+            [
+                ['style', [`
+                    :host {color: red;}
+                    ::slotted(p) {color: blue;}
+                `]],
+                ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+                ['h2', ['Heading level 2']],
+                ['slot', ['DEFAULT CONTENT HERE']]
+            ]
+        ]
+    }
+}, [
+    ['h1', {slot: 'h'}, ['Heading level 1']],
+    ['p', ['Other content']]
+], document.body);
+
+jml('section', {
+    id: 'myElem2',
+    $shadow: {
+        content: [ // Could also define as `open: []`
+            ['style', [`
+                :host {color: red;}
+                ::slotted(p) {color: blue;}
+            `]],
+            ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+            ['h2', ['Heading level 2']],
+            ['slot', ['DEFAULT CONTENT HERE']]
+        ]
+    }
+}, [
+    ['h1', {slot: 'h'}, ['Heading level 1']],
+    ['p', ['Other content']]
+], document.body);
+
+/*
+$define
+is
+*/
 
 //
 }());

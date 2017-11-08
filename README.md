@@ -63,7 +63,9 @@ The following functions are available:
     previously associated with the supplied element (e.g., via `jml.weak()`)), and any number of
     optional arguments to be supplied to that method. The user method will have its `this` value
     set to that of the previously associated object and in addition to accepting the arguments
-    supplied to `invoke`, it will have the element itself supplied as the first argument.
+    supplied to `invoke`, it will have the element itself supplied as the first argument. This
+    class also has its `get` and `set` methods enhanced to accept a string selector to represent the
+    element used to find the associated object. 
 - `jml.Map()` - Same as `jml.WeakMap` but is a subclass of `Map` instead.
 
 # Browser usage
@@ -239,6 +241,59 @@ jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi'}})
 jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}})
 ```
 
+## Shadow DOM
+
+The `$shadow` property can be added to an element to attach Shadow DOM content.
+
+Its allowable properties include:
+
+- *open* - Optional boolean on whether the attachment is open or not. Defaults to `true`. May also be set in place of `content` (with the same allowable values) to serve as the shadow DOM contents.
+- *closed* - Optional boolean alternative to `open`. Defaults to `false`. May also be used (as with `open`) to directly build the contents (see `open`).
+- *content* - If `template` is not present, this optional array of arguments will be passed as fragment contents to `jml()` for direct attachment to the shadow root of this element. May also be set to a string or DOM element in which case, it is passed to `jml()` as the first argument (the element or element name).
+- *template* - `template` may optionally be present to indicate a template for cloning. If `template` is a string selector or a DOM `<template>` element, the indicated element will be cloned and added as the shadow root contents. If `template` is an array, its contents will be passed to `jml()` for first creating a `<template>` element, and then it will be appended to the document body, and then it will be cloned for use with the shadow DOM. If the first (or only) item in the array is a regular object, these will become the attributes of the `<template>` element while the subsequent item in the array will be passed as the template children. If the first item is not a regular object, the whole array will be assumed to represent the `<template>` children (without attributes).
+
+```js
+jml('div', {
+    id: 'myElem',
+    $shadow: {
+        open: true, // Default (can also use `closed`)
+        template: [
+            {id: 'myTemplate'},
+            [
+                ['style', [`
+                    :host {color: red;}
+                    ::slotted(p) {color: blue;}
+                `]],
+                ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+                ['h2', ['Heading level 2']],
+                ['slot', ['DEFAULT CONTENT HERE']]
+            ]
+        ]
+    }
+}, [
+    ['h1', {slot: 'h'}, ['Heading level 1']],
+    ['p', ['Other content']]
+], document.body);
+
+jml('div', {
+    id: 'myElem',
+    $shadow: {
+        content: [ // Could also define as `open: []`
+            ['style', [`
+                :host {color: red;}
+                ::slotted(p) {color: blue;}
+            `]],
+            ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+            ['h2', ['Heading level 2']],
+            ['slot', ['DEFAULT CONTENT HERE']]
+        ]
+    }
+}, [
+    ['h1', {slot: 'h'}, ['Heading level 1']],
+    ['p', ['Other content']]
+], document.body);
+```
+
 ## Symbols
 
 One may attach functions or objects to elements via a `$symbol` attribute
@@ -292,7 +347,7 @@ jml.sym('#symInput3', privateSym).test('arg3');
 Symbol attachment is particularly convenient for templates where you
 wish to keep a lot of inline children (avoiding defining the children
 separately, adding the symbol to the variables, and then reassembling them
-together).
+together) and without the overhead of defining a custom element.
 
 ```js
 jml('div', [
@@ -327,9 +382,21 @@ jml('div', [
 
 While symbols are somewhat more convenient to use, you may wish to
 associate elements with any number of `Map` or `WeakMap` instances
-and take advantage of those objects' methods.
+and take advantage of those objects' methods (or our enhanced
+version of these methods `jml.Map` and `jml.WeakMap`).
 
-(TODO: Adapt examples from tests)
+(TODO: Adapt examples from [tests](tests/jml-test.js))
+
+## Custom elements
+
+While there is some extra overhead to creating a custom element (in
+terms of performance at registering an element and for the need to
+give a unique name), among other benefits, custom elements allow
+its methods to have `this` not only reference the element, but also
+to call other custom methods on the element in the same manner (unlike
+the approach we use with maps and symbols).
+
+(TODO: Adapt examples from [tests](tests/jml-test.js))
 
 # Rules (summary)
 
