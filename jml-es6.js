@@ -396,16 +396,13 @@ const jml = function jml (...args) {
                 } case 'is': { // Not yet supported in browsers
                     // Handled during element creation
                     break;
+                } case '$custom': {
+                    Object.assign(elem, attVal);
+                    break;
                 } case '$define': {
                     const localName = elem.localName.toLowerCase();
                     // Note: customized built-ins sadly not working yet
                     const customizedBuiltIn = !localName.includes('-');
-
-                    const notACustomElement = customizedBuiltIn && !elem.hasAttribute('is');
-                    if (notACustomElement) {
-                        Object.assign(elem, attVal);
-                        break;
-                    }
 
                     const def = customizedBuiltIn ? elem.getAttribute('is') : localName;
                     if (customElements.get(def)) {

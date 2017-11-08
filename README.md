@@ -378,6 +378,34 @@ jml('div', [
 ], document.body);
 ```
 
+## Custom addition of DOM properties
+
+For attachment of custom properties (or setting of standard properties) to an element, supply
+an object with the desired properties to `$custom`.
+
+The advantage of this approach is that one doesn't need to manage symbols, maps, or define elements,
+and the `this` works as expected to refer to the element (including the other properties on the
+object which will also be added to the element instance), but one disadvantage is that the
+properties (like methods) will be added to each instance of the element rather than to a prototype.
+(In such a case, you can extend, the relevant `HTMLElement` interface like `HTMLAnchorElement`.)
+The object properties could also conflict with future methods added to the built-in element.
+
+```js
+const mySelect = jml('select', {
+    id: 'mySelect',
+    $custom: {
+        test () {
+            return this.id;
+        },
+        test2 () {
+            return this.test();
+        }
+    }
+}, document.body);
+console.log(mySelect.test() === 'mySelect');
+console.log(mySelect.test2() === 'mySelect');
+```
+
 ## Maps
 
 While symbols are somewhat more convenient to use, you may wish to

@@ -538,11 +538,9 @@ assert.matches(
 myel4.test();
 myel4.test2();
 
-// Todo: Add and test simple addition of function or object methods to prototype or object
-
 const mySelect = jml('select', {
     id: 'mySelect',
-    $define: {
+    $custom: {
         test () {
             return this.id;
         },
