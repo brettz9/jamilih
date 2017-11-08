@@ -65,7 +65,7 @@ The following functions are available:
     set to that of the previously associated object and in addition to accepting the arguments
     supplied to `invoke`, it will have the element itself supplied as the first argument. This
     class also has its `get` and `set` methods enhanced to accept a string selector to represent the
-    element used to find the associated object. 
+    element used to find the associated object.
 - `jml.Map()` - Same as `jml.WeakMap` but is a subclass of `Map` instead.
 
 # Browser usage
