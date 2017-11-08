@@ -335,6 +335,7 @@ mapInput.dispatchEvent(
 const mapDiv = $('#clickArea');
 mapDiv.dispatchEvent(new Event('click'));
 
+// Todo: Let `$map` accept an array of map-object arrays (and add tests)
 const weakMap1 = new WeakMap();
 const weakMap2 = new jml.WeakMap();
 const testObj1 = {test: 5};
