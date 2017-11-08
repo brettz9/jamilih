@@ -166,6 +166,10 @@ Other Todos:
                 return;
             }
         }
+        if (parentName === 'template') {
+            parent.content.appendChild(child);
+            return;
+        }
         try {
             parent.appendChild(child); // IE9 is now ok with this
         }
@@ -248,6 +252,9 @@ Other Todos:
             }
             if (item.nodeType === 1) {
                 return 'element';
+            }
+            if (item.nodeType === 11) {
+                return 'fragment';
             }
             return 'object';
         }
@@ -671,6 +678,7 @@ Other Todos:
                     ordered_arr = atts.$a ? atts.$a.map(_copyOrderedAtts) : [atts];
                     ordered_arr.forEach(_checkAtts);
                     break;
+                case 'fragment':
                 case 'element':
                     /*
                     1) Last element always the parent (put null if don't want parent and want to return array) unless only atts and children (no other elements)

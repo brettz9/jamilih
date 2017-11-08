@@ -1,4 +1,22 @@
+# 0.23.0
+
+- For both files:
+    - Breaking change: Support reasonable dynamic `template` creation
+        (append to its `content` fragment instead of to `template` itself)
+    - Allow document fragment to be appended as with elements
+
+- For jml-es6.js file:
+    - Breaking change: Change API for `jml.(Weak)Map.invoke` to pass element as first instead of last arg
+    - Enhancement: Add `$shadow` for creating Shadow DOM
+    - Enhancement: Add `$define` for Custom Element definitions
+    - Enhancement: Add `$custom` for arbitrary addition of DOM properties/methods
+    - Enhancement: Add `jml.command()` utility for invoking functions or
+        methods attached to an element by symbol or map
+    - Enhancement: Override `jml.Map` and `jml.WeakMap` `get` and `set` to accept selectors in
+        place of elements; also allow in custom `invoke`
+
 # 0.22.1
+
 - Fix: For jml-es6.js file, avoid error if `opts.$map` doesn't exist!
 
 # 0.22.0
