@@ -545,11 +545,18 @@ const mySelect = jml('select', {
     $define: {
         test () {
             return this.id;
+        },
+        test2 () {
+            return this.test();
         }
     }
 }, document.body);
 assert.matches(
     mySelect.test(),
+    'mySelect'
+);
+assert.matches(
+    mySelect.test2(),
     'mySelect'
 );
 
