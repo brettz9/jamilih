@@ -395,30 +395,31 @@ const jml = function jml (...args) {
                         }
                     }
                     break;
-                } case 'is': {
+                } case 'is': { // Not yet supported in browsers
                     // Handled during element creation
                     break;
                 } case '$define': {
                     const localName = elem.localName.toLowerCase();
+                    // Note: customized built-ins sadly not working yet
                     const customizedBuiltIn = !localName.includes('-');
-                    const def = customizedBuiltIn ? atts.is : localName;
+                    const def = customizedBuiltIn ? elem.getAttribute('is') : localName;
                     if (customElements.get(def)) {
                         break;
                     }
-                    const getConstructor = () => {
-                        let baseClass = options && options.extends
+                    const getConstructor = (cb) => {
+                        const baseClass = options && options.extends
                             ? document.createElement(options.extends).constructor
                             : customizedBuiltIn
                                 ? document.createElement(localName).constructor
-                                : null;
-                        if (baseClass === null) {
-                            const preHyphenName = localName.slice(0, localName.indexOf('-'));
-                            baseClass = document.createElement(preHyphenName).constructor;
-                            if (baseClass === HTMLUnknownElement) {
-                                baseClass = HTMLElement;
+                                : HTMLElement;
+                        return cb
+                            ? class extends baseClass {
+                                constructor () {
+                                    super();
+                                    cb.call(this);
+                                }
                             }
-                        }
-                        return class extends baseClass {};
+                            : class extends baseClass {};
                     };
 
                     let constructor, options, prototype;
@@ -427,6 +428,8 @@ const jml = function jml (...args) {
                             [constructor, options] = attVal;
                             if (typeof options === 'string') {
                                 options = {extends: options};
+                            } else if (!options.hasOwnProperty('extends')) {
+                                prototype = options;
                             }
                             if (typeof constructor === 'object') {
                                 prototype = constructor;
@@ -443,6 +446,9 @@ const jml = function jml (...args) {
                     } else {
                         prototype = attVal;
                         constructor = getConstructor();
+                    }
+                    if (!constructor.toString().startsWith('class')) {
+                        constructor = getConstructor(constructor);
                     }
                     if (!options && customizedBuiltIn) {
                         options = {extends: localName};

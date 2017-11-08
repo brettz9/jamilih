@@ -477,6 +477,86 @@ jml('section', {
     ['p', ['Other content']]
 ], document.body);
 
+const myEl = jml('my-el', {
+    id: 'myEl',
+    $define: {
+        test () {
+            return this.id;
+        }
+    }
+}, document.body);
+assert.matches(
+    myEl.test(),
+    'myEl'
+);
+
+let constructorSetVar2;
+jml('my-el2', {
+    id: 'myEl2',
+    $define: function () {
+        constructorSetVar2 = this.id;
+    }
+}, document.body);
+assert.matches(
+    constructorSetVar2,
+    'myEl2'
+);
+
+let constructorSetVar3;
+jml('my-el3', {
+    id: 'myEl3',
+    $define: class extends HTMLElement {
+        constructor () {
+            super();
+            constructorSetVar3 = this.id;
+        }
+    }
+}, document.body);
+assert.matches(
+    constructorSetVar3,
+    'myEl3'
+);
+
+let constructorSetVar4;
+const myel4 = jml('my-el4', {
+    id: 'myEl4',
+    $define: [function () {
+        constructorSetVar4 = this.id;
+    }, {
+        test () {
+            assert.matches(this.id, 'myEl4');
+        },
+        test2 () {
+            this.test();
+        }
+    }]
+}, document.body);
+assert.matches(
+    constructorSetVar4,
+    'myEl4'
+);
+myel4.test();
+myel4.test2();
+
+// Todo: Add and test simple addition of function or object methods to prototype or object
+
+/*
+// If customized built-in elements implemented, ensure testing `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
+const mySelect = jml('select', {
+    id: 'mySelect',
+    is: 'my-select',
+    $define: {
+        test () {
+            return this.id;
+        }
+    }
+}, document.body);
+assert.matches(
+    mySelect.test(),
+    'mySelect'
+);
+*/
+
 /*
 $define
 is
