@@ -539,6 +539,30 @@ assert.matches(
 myel4.test();
 myel4.test2();
 
+let constructorSetVar5;
+const myel5 = jml('my-el5', {
+    id: 'myEl5',
+    $define: [class extends HTMLElement {
+        constructor () {
+            super();
+            constructorSetVar5 = this.id;
+        }
+    }, {
+        test () {
+            assert.matches(this.id, 'myEl5');
+        },
+        test2 () {
+            this.test();
+        }
+    }]
+}, document.body);
+assert.matches(
+    constructorSetVar5,
+    'myEl5'
+);
+myel5.test();
+myel5.test2();
+
 const mySelect = jml('select', {
     id: 'mySelect',
     $custom: {

@@ -425,7 +425,77 @@ its methods to have `this` not only reference the element, but also
 to call other custom methods on the element in the same manner (unlike
 the approach we use with maps and symbols).
 
-(TODO: Adapt examples from [tests](tests/jml-test.js))
+You have a number of options.
+
+You may supply an object to have its prototype copied (onto
+an empty `HTMLElement`-extending constructor):
+
+```js
+const myEl = jml('my-el', {
+    id: 'myEl',
+    $define: {
+        test () {
+            return this.id;
+        }
+    }
+}, document.body);
+console.log(myEl.test() === 'myEl');
+```
+
+You may supply a (plain) function to be used within a `HTMLElement`-extending
+constructor (it will be executed after a call to the dynamically-created class'
+`super`):
+
+```js
+let constructorSetVar2;
+jml('my-el2', {
+    id: 'myEl2',
+    $define: function () {
+        constructorSetVar2 = this.id;
+    }
+}, document.body);
+console.log(constructorSetVar2 === 'myEl2');
+```
+
+You may supply a class (though it must extend `HTMLElement` and invoke `super()` as
+per [(autonomous) custom element requirements](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-element-conformance)).
+It may be an inline class expression or a reference to a class declaration.
+
+```js
+let constructorSetVar3;
+jml('my-el3', {
+    id: 'myEl3',
+    $define: class extends HTMLElement {
+        constructor () {
+            super();
+            constructorSetVar3 = this.id;
+        }
+    }
+}, document.body);
+console.log(constructorSetVar3 === 'myEl3');
+```
+
+You may supply a two-element array with the function (or class) and prototype methods.
+
+```js
+let constructorSetVar4;
+const myel4 = jml('my-el4', {
+    id: 'myEl4',
+    $define: [function () {
+        constructorSetVar4 = this.id;
+    }, {
+        test () {
+            console.log(this.id === 'myEl4');
+        },
+        test2 () {
+            this.test();
+        }
+    }]
+}, document.body);
+console.log(constructorSetVar4 === 'myEl4');
+myel4.test();
+myel4.test2();
+```
 
 # Rules (summary)
 
