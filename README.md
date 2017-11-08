@@ -303,7 +303,8 @@ item being the function or object. If a function is supplied, its `this`
 will be set to the element on which the symbol was added, while if an
 object is supplied, its `this` will remain as the object itself, but an
 `elem` property will be added to the object which can be used to get the
-element on which the symbol was added.
+element on which the symbol was added. If you do not wish to add such a
+reference, consider using a symbol with `$custom`.
 
 ```js
 jml('input', {
@@ -381,7 +382,7 @@ jml('div', [
 ## Custom addition of DOM properties
 
 For attachment of custom properties (or setting of standard properties) to an element, supply
-an object with the desired properties to `$custom`.
+an object with the desired properties (including symbols) to `$custom`.
 
 The advantage of this approach is that one doesn't need to manage symbols, maps, or define elements,
 and the `this` works as expected to refer to the element (including the other properties on the

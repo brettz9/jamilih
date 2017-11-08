@@ -542,6 +542,9 @@ myel4.test2();
 const mySelect = jml('select', {
     id: 'mySelect',
     $custom: {
+        [Symbol.for('testCustom')] () {
+            return this.test();
+        },
         test () {
             return this.id;
         },
@@ -550,12 +553,17 @@ const mySelect = jml('select', {
         }
     }
 }, document.body);
+
 assert.matches(
     mySelect.test(),
     'mySelect'
 );
 assert.matches(
     mySelect.test2(),
+    'mySelect'
+);
+assert.matches(
+    mySelect[Symbol.for('testCustom')](),
     'mySelect'
 );
 
