@@ -391,13 +391,6 @@ properties (like methods) will be added to each instance of the element rather t
 (In such a case, you can extend, the relevant `HTMLElement` interface like `HTMLAnchorElement`.)
 The object properties could also conflict with future methods added to the built-in element.
 
-Note that while our example does not do so, you might wish to protect consumers of your methods
-from naming that could conflict with future standard method names. Per [this comment](https://github.com/w3c/webcomponents/issues/700#issuecomment-342973055),
-a safe option would be to merely add `$` in front of the custom method names or properties
-(e.g., it would become `$test` and `$test2` in the example). Another advantage of doing so
-is that consumers can easily discern which methods are standard (and thus can be queried
-online) and which are specific to your API.
-
 ```js
 const mySelect = jml('select', {
     id: 'mySelect',
@@ -413,6 +406,13 @@ const mySelect = jml('select', {
 console.log(mySelect.test() === 'mySelect');
 console.log(mySelect.test2() === 'mySelect');
 ```
+
+Note that while our example does not do so, you might wish to protect consumers of your methods
+from naming that could conflict with future standard method names. Per [this comment](https://github.com/w3c/webcomponents/issues/700#issuecomment-342973055),
+a safe option would be to merely add `$` in front of the custom method names or properties
+(e.g., it would become `$test` and `$test2` in the example). Another advantage of doing so
+is that consumers can easily discern which methods are standard (and thus can be queried
+online) and which are specific to your API.
 
 ## Maps
 
