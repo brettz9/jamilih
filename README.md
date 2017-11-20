@@ -644,6 +644,7 @@ in templates, and to my personal sensibilities, more clear in goal #8
 
 # To-dos
 
+1. Add `jml.join(jmlStringArrayOrElement, glue)` (e.g., to intersperse with nbsp)
 1. Document binding DOM to `Map`/`WeakMap` Templates to define and invoke
     functions/objects tied to an element
 1. Allow `$symbol` to accept array of arrays for attaching multiple symbols
