@@ -12,7 +12,7 @@
     "build": "rollup -c",
     "test-build": "rollup -c rollup.config.test.js",
     "browser-test": "npm run build && npm start tests/",
-    "test": "npm run build && npm run test-build && node tests/jml-test.js"
+    "test": "npm run build && npm run test-build && node tests/jml-test-node.js"
   },
   "description": "Provide round-trippable JSON/JavaScript serialization",
   "main": "./jml.js",
