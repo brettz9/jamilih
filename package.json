@@ -9,8 +9,8 @@
   "contributors": [],
   "scripts": {
     "eslint": "eslint jml-es6.js test-helpers/ test/ tests/",
-    "build": "rollup -c",
-    "test-build": "rollup -c rollup.config.test.js",
+    "build": "npm run eslint && rollup -c",
+    "test-build": "npm run eslint && rollup -c rollup.config.test.js",
     "browser-test": "npm run build && npm start tests/",
     "test": "npm run build && npm run test-build && node tests/jml-test-node.js"
   },
@@ -43,7 +43,7 @@
     "babel-core": "^6.26.0",
     "babel-env": "^2.4.1",
     "babel-plugin-external-helpers": "^6.22.0",
-    "eslint": "4.12.0",
+    "eslint": "4.12.1",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-compat": "2.1.0",
     "eslint-plugin-import": "2.8.0",

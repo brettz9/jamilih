@@ -1,3 +1,4 @@
+/* globals global, require */
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); fix IE8 with dataset; remove IE8 processing instruction hack?
@@ -11,11 +12,20 @@ Todos:
 import jml from '../jml-es6.js';
 import * as assert from './assert.js';
 
+if (typeof module !== 'undefined') {
+    const JSDOM = require('jsdom').JSDOM;
+    global.window = new JSDOM('').window;
+    global.Event = window.Event;
+    global.document = window.document;
+    global.DOMParser = window.DOMParser;
+    global.XMLSerializer = require('xmldom').XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+}
+
 // HELPERS
 const $ = (sel) => {
     return document.querySelector(sel);
 };
-const isIE = window.navigator.appName === 'Microsoft Internet Explorer';
+const isIE = window.navigator && window.navigator.appName === 'Microsoft Internet Explorer';
 
 // BEGIN TESTS
 

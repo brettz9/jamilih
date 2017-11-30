@@ -205,8 +205,11 @@ Other Todos:
 */
 
 var isNode = typeof module !== 'undefined';
-
-var win = isNode ? new (require('jsdom').JSDOM)('') : window; // eslint-disable-line no-global-assign
+var JSDOM = void 0;
+if (isNode) {
+    JSDOM = require('jsdom').JSDOM;
+}
+var win = isNode ? new JSDOM('').window : window;
 var doc = isNode ? win.document : document;
 var XmlSerializer = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 

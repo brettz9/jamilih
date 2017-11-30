@@ -5,9 +5,10 @@ import {testCase} from 'nodeunit';
 
 if (typeof global !== 'undefined') {
     global.XMLSerializer = require('xmldom').XMLSerializer;
-    const jsdom = global.jsdom = require('jsdom').jsdom;
-    global.document = jsdom('');
-    global.Event = jsdom()....Event;
+    const JSDOM = require('jsdom').JSDOM;
+    global.window = new JSDOM('').window;
+    global.document = window.document;
+    global.Event = window.Event;
     global.window = document.defaultView;
     global.DOMParser = window.DOMParser;
     global.Node = window.Node;
