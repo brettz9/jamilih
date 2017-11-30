@@ -1,14 +1,13 @@
-/* globals require, module, global */
-(function () {
-'use strict';
+/* globals require, global */
 
-const jml = require('../');
-const testCase = require('nodeunit').testCase;
+import jml from '../jml-es6.js';
+import {testCase} from 'nodeunit';
 
 if (typeof global !== 'undefined') {
     global.XMLSerializer = require('xmldom').XMLSerializer;
     const jsdom = global.jsdom = require('jsdom').jsdom;
     global.document = jsdom('');
+    global.Event = jsdom()....Event;
     global.window = document.defaultView;
     global.DOMParser = window.DOMParser;
     global.Node = window.Node;
@@ -18,7 +17,7 @@ if (typeof global !== 'undefined') {
 // const html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
 // const divDOM = html.documentElement.querySelector('.test');
 
-module.exports = testCase({
+export default testCase({
     // ============================================================================
     'jml.toJMLString()': function (test) {
     // ============================================================================
@@ -76,4 +75,3 @@ module.exports = testCase({
         test.done();
     }
 });
-}());

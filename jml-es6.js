@@ -33,7 +33,7 @@ const isNode = typeof module !== 'undefined';
 
 const win = isNode ? new (require('jsdom').JSDOM)('') : window; // eslint-disable-line no-global-assign
 const doc = isNode ? win.document : document;
-const {XmlSerializer} = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+const XmlSerializer = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 
 // STATIC PROPERTIES
 const possibleOptions = [

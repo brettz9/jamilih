@@ -1,9 +1,7 @@
-/* globals require, module, global */
-(function () {
-'use strict';
+/* globals require, global */
 
-const jml = require('../');
-const testCase = require('nodeunit').testCase;
+import jml from '../jml-es6.js';
+import {testCase} from 'nodeunit';
 
 if (typeof global !== 'undefined') {
     const jsdom = global.jsdom = require('jsdom').jsdom;
@@ -18,7 +16,7 @@ const divDOM = html.documentElement.querySelector('.test');
 
 const xml = document.implementation.createDocument('', 'xml', null);
 
-module.exports = testCase({
+export default testCase({
 
     // ============================================================================
     'element with text content': function (test) {
@@ -158,4 +156,3 @@ module.exports = testCase({
         test.done();
     }
 });
-}());

@@ -1,9 +1,7 @@
-/* globals require, module, global */
-(function () {
-'use strict';
+/* globals require, global */
 
-const jml = require('../');
-const testCase = require('nodeunit').testCase;
+import jml from '../jml-es6.js';
+import {testCase} from 'nodeunit';
 
 if (typeof global !== 'undefined') {
     global.XMLSerializer = require('xmldom').XMLSerializer;
@@ -18,7 +16,7 @@ if (typeof global !== 'undefined') {
 // const html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
 // const divDOM = html.documentElement.querySelector('.test');
 
-module.exports = testCase({
+export default testCase({
     // Todo: Add more tests (and harmonize with browser tests)
 
     // ============================================================================
@@ -46,4 +44,3 @@ module.exports = testCase({
         test.done();
     }
 });
-}());

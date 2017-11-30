@@ -1,4 +1,3 @@
-/* globals jml, assert, XMLSerializer, Event */
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); fix IE8 with dataset; remove IE8 processing instruction hack?
@@ -9,8 +8,8 @@ Todos:
 */
 // Note: we always end styles in the tests with a semi-colon, as our standardizing Element.prototype.getAttribute() polyfill used internally will always add a semi-colon, but even modern browsers do not do this (nor are they required to do so) without the harmonizing polyfill (but to harmonize, such an approach is necessary since IE8 always drops the semi-colon with no apparent way to recover whether it was written with or without it); even though our polyfill could handle either case, by adding a semicolon at the end of even the last rule, we are at least ensuring the tests will remain valid in modern browsers regardless of whether the polyfill is present or not; we really should do the same in alphabetizing our properties as well, since our polyfill handles that (since IE has its own order not the same as document order or alphabetical), but modern browsers (at least Firefox) follow document order.
 
-(function () {
-'use strict';
+import jml from '../jml-es6.js';
+import * as assert from './assert.js';
 
 // HELPERS
 const $ = (sel) => {
@@ -19,6 +18,13 @@ const $ = (sel) => {
 const isIE = window.navigator.appName === 'Microsoft Internet Explorer';
 
 // BEGIN TESTS
+
+$('body').innerHTML = `
+    <h1 id="nodeunit-header">Jamilih Tests</h1>
+    <div style="display:none;" id="DOMChildrenMustBeInArray">test1</div>
+    <div style="display:none;" id="anotherElementToAddToParent">test2</div>
+    <div style="display:none;" id="yetAnotherSiblingToAddToParent">test3</div>
+`;
 
 const br = document.createElement('br');
 br.className = 'a>bc';
@@ -34,7 +40,7 @@ assert.matchesXMLString(
 
 assert.matchesXMLString(
     jml('input', {type: 'password', id: 'my_pass'}),
-    '<input xmlns="http://www.w3.org/1999/xhtml" id="my_pass" type="password" />'
+    '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />'
 );
 
 assert.matchesXMLString(
@@ -108,7 +114,7 @@ const parent = document.body;
 assert.matches(parent, jml(parent));
 
 const div = jml(
-    'div', {style: 'position:absolute    !important; left:   -1000px;'}, [
+    'div', {style: 'position:absolute !important; left: -1000px;'}, [
         $('#DOMChildrenMustBeInArray')
     ],
     $('#anotherElementToAddToParent'),
@@ -118,7 +124,7 @@ const div = jml(
 
 assert.matchesXMLString(
     div,
-    '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div id="DOMChildrenMustBeInArray" style="display: none;">test1</div></div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>'
     // '<div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; left: -1000px;"><div id="DOMChildrenMustBeInArray" style="display:none;">test1</div></div><div id="anotherElementToAddToParent" style="display:none;">test2</div><div id="yetAnotherSiblingToAddToParent" style="display:none;">test3</div>'
 );
 // throw '';
@@ -155,7 +161,7 @@ assert.matchesXMLString(
 
 assert.matchesXMLString(
     jml('div', {style: {'float': 'left', 'border-color': 'red'}}, ['test']),
-    '<div xmlns="http://www.w3.org/1999/xhtml" style="border-color: red; float: left;">test</div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="float: left; border-color: red;">test</div>'
 );
 
 let str;
@@ -218,12 +224,12 @@ assert.matches(
 
 assert.matchesXMLString(
     jml('abc', {z: 3, xmlns: {'prefix3': 'zzz', 'prefix1': 'def', 'prefix2': 'ghi'}, b: 7, a: 6}),
-    '<abc xmlns="http://www.w3.org/1999/xhtml" xmlns:prefix1="def" xmlns:prefix2="ghi" xmlns:prefix3="zzz" a="6" b="7" z="3" />'
+    '<abc xmlns="http://www.w3.org/1999/xhtml" xmlns:prefix3="zzz" xmlns:prefix1="def" xmlns:prefix2="ghi" z="3" b="7" a="6"></abc>'
 );
 
 assert.matchesXMLString(
     jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}}),
-    '<abc xmlns="newdefault" xmlns:prefix1="def" xmlns:prefix2="ghi" />'
+    '<abc xmlns="newdefault" xmlns:prefix1="def" xmlns:prefix2="ghi"/>'
 );
 
 assert.matches(
@@ -270,7 +276,10 @@ assert.matchesXMLString(
             null
         ]
     ], document.body),
-    '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color: red;">First Item</li><li style="color: green;" title="Some hover text.">Second Item</li><li><span class="Remove-Me" style="font-weight: bold;">Not Filtered</span> Item</li><li><a href="#NewWindow">Special Link</a></li></ul>'
+    '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color: red;">First Item</li>' +
+    '<li title="Some hover text." style="color: green;">Second Item</li>' +
+    '<li><span class="Remove-Me" style="font-weight: bold;">Not Filtered</span> Item</li>' +
+    '<li><a href="#NewWindow">Special Link</a></li></ul>'
 );
 
 assert.matchesXMLString(
@@ -281,8 +290,12 @@ assert.matchesXMLString(
 jml('p', {'class': 'test'}, ['test'], document.body);
 
 assert.matchesXMLString(
-    jml('div', {dataset: {'aCamel-case': {result: 'hello', result2: 'helloTwo'}, 'anotherResult': 'world', 'aNullishToIgnore': null, aNum: 8}}),
-    '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" data-a-camel-case-result2="helloTwo" data-a-num="8" data-another-result="world"></div>'
+    jml('div', {dataset: {
+        'aCamel-case': {result: 'hello', result2: 'helloTwo'},
+        'anotherResult': 'world', 'aNullishToIgnore': null, aNum: 8
+    }}),
+    '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" ' +
+    'data-a-camel-case-result2="helloTwo" data-another-result="world" data-a-num="8"></div>'
 );
 
 assert.matchesXMLString(
@@ -609,4 +622,3 @@ assert.matches(
 */
 
 //
-}());
