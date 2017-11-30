@@ -12,6 +12,8 @@ stand-alone library) while still getting some benefits of the
 syntax-highlighter-friendly pure JS approach for DOM construction,
 see [Jamilih Lite](https://gist.github.com/brettz9/ac4c18f51c0af8003a41).
 
+Note that it is our intent to move the XML-specific features into a new file.
+
 # Separation of concerns
 
 For templating,
@@ -70,7 +72,11 @@ The following functions are available:
 
 # Browser usage
 
-Simply access the above methods via the global `jml` function.
+Simply access the above methods via the global `jml` function or import:
+
+```js
+import jml from './node_modules/jamilih/jml-es6.js';
+```
 
 # Node installation and usage
 
@@ -512,15 +518,15 @@ myel4.test2();
 1. String element name (or array of 1-4)
 2. Optional object with attributes
 3. Optional array of DOM nodes, strings/numbers/booleans for
-text nodes, and arrays encapsulating elements (repeat step no. 1)
+    text nodes, and arrays encapsulating elements (repeat step no. 1)
 4. Optionally repeat for siblings
 
 # Rules (detailed)
 
 1. Currently, the first item supplied to `jml()` must be either:
     1. An element name as a string (to create an element
-    structure). (Top-level fragments are not currently supported
-    without using `null` as the last argument.)
+        structure). (Top-level fragments are not currently supported
+        without using `null` as the last argument.)
     1. Any of the following special characters:
         1. `!` followed by a string to create a comment
         1. `&` followed by an HTML entity reference (e.g., `copy`)
@@ -529,61 +535,74 @@ text nodes, and arrays encapsulating elements (repeat step no. 1)
         1. `?` followed by a processing instruction target string and string value (XML)
         1. `'![` followed by CDATA content as a string (XML), e.g., `&test <CDATA> content`
     1. An object with:
-        1. A property `#` indicating a document fragment; see array children below for allowable contents of this array.
-        1. A property `$text` set to a string to create a bare text node (this is only necessary if one wishes jml()
-        to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
-        children array).
-        1. A property `$a` set to an array of attribute name-value arrays (this is only necessary if one requires
-        and the environment allows a fixed attribute order but may not support first-declared-first-iterated
-        for-in object iteration).
-        1. A property `$document` set to an object with properties `childNodes` and, where present, a child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`. In place of `childNodes`, one may
-        instead add to any of the array properties, `head` and `body`. One may also add a string `title` property in which case, a `<head>` will be automatically created, with a `<meta charset="utf-8"/>` element (as expected by HTML5) and a `<title>` element, and any additionally supplied `head` array items appended to that `<head>`. If `head`,
-        `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
-        `<html>` element with the XHTML namespace. If `head` is supplied, a `<meta charset="utf-8">` will also be added as
-        the first child of `<head>`.
-        1. A property `$DOCTYPE` object with properties `name`, and, where present, `entities` and `notations` arrays and `publicId` and `systemId` (`internalSubset` is not currently supported in `jml()`).
+        1. A property `#` indicating a document fragment; see array children below for allowable
+            contents of this array.
+        1. A property `$text` set to a string to create a bare text node (this is only necessary if
+            one wishes jml()
+            to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
+            children array).
+        1. A property `$a` set to an array of attribute name-value arrays (this is only necessary if
+            one requires
+            and the environment allows a fixed attribute order but may not support
+            first-declared-first-iterated
+            for-in object iteration).
+        1. A property `$document` set to an object with properties `childNodes` and, where present, a
+            child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`. In place of `childNodes`, one may
+            instead add to any of the array properties, `head` and `body`. One may also add a string `title` property in which case, a `<head>` will be automatically created, with a `<meta charset="utf-8"/>` element (as expected by HTML5) and a `<title>` element, and any additionally supplied `head` array items appended to that `<head>`. If `head`,
+            `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
+            `<html>` element with the XHTML namespace. If `head` is supplied, a `<meta charset="utf-8">` will also be added as
+            the first child of `<head>`.
+        1. A property `$DOCTYPE` object with properties `name`, and, where present, `entities` and
+            `notations` arrays and `publicId` and `systemId` (`internalSubset` is not currently supported in `jml()`).
         1. The following items which produce nodes deprecated by the latest DOM spec:
-            1. A property `$attribute` set to an array of a namespace, name, and value (for a namespaced attribute node) or a two-item name-value array for a non-namespaced attribute node.
-            1. A property `$NOTATION` set to an object with properties `name`, `publicId`, and `systemId`.
-            1. A property `$ENTITY` set to an object with the properties `name` (or `version` and `encoding` for an external parsed entity with a declaration present) and `publicId`, `systemId`, or `childNodes` where present.
+            1. A property `$attribute` set to an array of a namespace, name, and value (for a
+                namespaced attribute node) or a two-item name-value array for a non-namespaced attribute node.
+            1. A property `$NOTATION` set to an object with properties `name`, `publicId`, and
+                `systemId`.
+            1. A property `$ENTITY` set to an object with the properties `name` (or `version` and
+                `encoding` for an external parsed entity with a declaration present) and `publicId`, `systemId`, or `childNodes` where present.
 1. Subsequent strings at the top level create elements siblings (note,
-however that this is less flexible for templating).
+    however that this is less flexible for templating).
 1. Non-DOM-element objects (if present, to immediately follow
-element names) optionally follow and indicate attribute-value pairs
+    element names) optionally follow and indicate attribute-value pairs
     1. "Magic" keys in this object alter the default behavior of simply setting an attribute:
         1. `$on` expects a subject of event types mapped to a function or to an array
-        with the first element as a function and the second element as a boolean
-        indicating whether to capture or not.
-        1. The following booleans are set as properties (`selected`, `checked`, `defaultSelected`, `defaultChecked`, `readonly`, `disabled`, `indeterminate`), making them useful in templates
-            as they can be set with a variable, and if falsey (including `undefined`), they will be unset (rather than
-             would be the case with `setAttribute` which would always set them if present).
-         1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`, `defaultValue`, `style`
-        1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved keywords `class` and `for`.
+            with the first element as a function and the second element as a boolean
+            indicating whether to capture or not.
+        1. The following booleans are set as properties (`selected`, `checked`, `defaultSelected`,
+            `defaultChecked`, `readonly`, `disabled`, `indeterminate`), making them useful in
+            templates as they can be set with a variable, and if falsey (including `undefined`),
+            they will be unset (rather than would be the case with `setAttribute` which would
+            always set them if present).
+         1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`,
+            `defaultValue`, `style`
+        1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved   
+            keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
         1. `xmlns` for namespace declarations (not needed in HTML)
-        1. `dataset` is a (nestable) object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
+            1. `dataset` is a (nestable) object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
 1. Arrays indicate children.
     1. They can be:
         1. DOM Nodes
         1. Strings, numbers, or booleans (to become text nodes)
         1. Arrays encapsulating another Jamilih structure (start rule
-        processing over at no. 1)
+            processing over at no. 1)
         1. An object with the key `#` with an array of children (following
-        these same rules) as its value to represent a fragment. (Useful
-        if embedding the return result of a function amidst other children.)
+            these same rules) as its value to represent a fragment. (Useful
+            if embedding the return result of a function amidst other children.)
         1. Note: Adding a function inline (without being part of an attribute
-        object) or `null` is currently undefined behavior and should not be used;
-        these may be allowed for some other purpose in the future, however.
+            object) or `null` is currently undefined behavior and should not be used;
+            these may be allowed for some other purpose in the future, however.
     1. Individual elements (DOM elements or sequences of
-    string/number/boolean[/object/array]) get added to parent first-in, first-added
+        string/number/boolean[/object/array]) get added to parent first-in, first-added
 1. The last item supplied to `jml()` is usually the parent node to which to
-append the contents, with the following exceptions:
+    append the contents, with the following exceptions:
     1. If there are no other elements (i.e., only an element name with
-    optional attributes and children), the element is returned.
+        optional attributes and children), the element is returned.
     1. `null` (at the end) will cause an element or fragment to be returned
 1. The first created element will be returned unless `null` is the last
-argument, in which case, it returns a fragment of all added elements or,
-if only one element was present, the element itself.
+    argument, in which case, it returns a fragment of all added elements or,
+    if only one element was present, the element itself.
 
 # Schema
 
@@ -609,28 +628,28 @@ of the Arabic name of my family's newly-born daughter.
 # Design goals
 
 1. Be as succinct as possible while being sufficiently functional; avoid
-null place-holders, etc.
+    null place-holders, etc.
 2. Allow reliable iteration order (i.e., use arrays over objects except
-where order is not needed).
+    where order is not needed).
 3. Allow for use as a template language, with the opportunity for
-function calls to easily add elements, attributes, child content, or
-fragments without needing to retool the entire structure or write
-complex functions to handle the merging.
+    function calls to easily add elements, attributes, child content, or
+    fragments without needing to retool the entire structure or write
+    complex functions to handle the merging.
 4. Use a syntax with a minimum of constructs not familiar to XML/HTML
-users (if any), allowing for near immediate adoption by any web developer.
+    users (if any), allowing for near immediate adoption by any web developer.
 5. Work with XML or HTML and optionally support faithful rebuilding of an
-entire XML document
+    entire XML document
 6. Ability to write libraries which support regular XML needs like XPath
-expressions (which are more appropriate for HTML than those targeted
-for open-ended JSON, such as JSONPath). Avoid need to convert to
-DOM where possible (and even implement DOM interfaces for it in a
-modular fashion).
+    expressions (which are more appropriate for HTML than those targeted
+    for open-ended JSON, such as JSONPath). Avoid need to convert to
+    DOM where possible (and even implement DOM interfaces for it in a
+    modular fashion).
 7. Work with JSON, but also allow flexible usage within full JavaScript,
-such as to allow dropping in DOM nodes or optional DOM mode for
-attachment of events (but with a preference or option toward internal
-string concatenation for speed).
+    such as to allow dropping in DOM nodes or optional DOM mode for
+    attachment of events (but with a preference or option toward internal
+    string concatenation for speed).
 8. Be intuitive so that one is not likely to be confused about whether
-one is looking at element siblings, children, text, etc.
+    one is looking at element siblings, children, text, etc.
 
 # Related work
 
@@ -659,12 +678,13 @@ in templates, and to my personal sensibilities, more clear in goal #8
 
 # Possible todos
 
-1. Namespaced elements and attributes and XML options (but move to own file)
+1. Namespaced elements and attributes and XML options (but move to own file
+    along with other XML-specific features)
 1. Implement a method building JML by string rather than DOM but create
-DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
-interfaces for direct manipulation.
+    DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
+    interfaces for direct manipulation.
 1. Allow configuration
     1. Allow auto-namespacing of class and/or dataset keys
 1. Allow DOM element as first item (for cloning or allowing style of
-appending (as in jQuery) that does not place the parent as the
-last item?); probably best as latter with method to clone.
+    appending (as in jQuery) that does not place the parent as the
+    last item?); probably best as latter with method to clone.

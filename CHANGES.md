@@ -1,3 +1,7 @@
+# 0.24.0
+
+- Refactoring: Rollup `jml-es6.js` to `jml.js`.
+
 # 0.23.0
 
 - For both files:

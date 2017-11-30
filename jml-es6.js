@@ -1,3 +1,4 @@
+/* globals require */
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -27,6 +28,12 @@ Other Todos:
 0. Support JsonML empty string element name to represent fragments?
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
+
+const isNode = typeof module !== 'undefined';
+
+const doc = isNode ? require('jsdom').jsdom('') : document;
+// let win = isNode ? document.parentWindow : window; // eslint-disable-line no-global-assign
+const {XmlSerializer} = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 
 // STATIC PROPERTIES
 const possibleOptions = [
@@ -93,11 +100,11 @@ function _getHTMLNodeName (node) {
 * @param {Node} node The element to check whether it is a style tag
 */
 function _applyAnyStylesheet (node) {
-    if (!document.createStyleSheet) {
+    if (!doc.createStyleSheet) {
         return;
     }
     if (_getHTMLNodeName(node) === 'style') { // IE
-        const ss = document.createStyleSheet(); // Create a stylesheet to actually do something useful
+        const ss = doc.createStyleSheet(); // Create a stylesheet to actually do something useful
         ss.cssText = node.cssText;
         // We continue to add the style tag, however
     }
@@ -114,7 +121,7 @@ function _appendNode (parent, child) {
     const parentName = _getHTMLNodeName(parent);
     const childName = _getHTMLNodeName(child);
 
-    if (document.createStyleSheet) {
+    if (doc.createStyleSheet) {
         if (parentName === 'script') {
             parent.text = child.nodeValue;
             return;
@@ -168,10 +175,10 @@ function _createSafeReference (type, prefix, arg) {
     if (!arg.match(/^\w+$/)) {
         throw new TypeError('Bad ' + type);
     }
-    const elContainer = document.createElement('div');
+    const elContainer = doc.createElement('div');
     // Todo: No workaround for XML?
     elContainer.innerHTML = '&' + prefix + arg + ';';
-    return document.createTextNode(elContainer.innerHTML);
+    return doc.createTextNode(elContainer.innerHTML);
 }
 
 /**
@@ -291,7 +298,7 @@ function _appendJML (node) {
 function _appendJMLOrText (node) {
     return function (childJML) {
         if (typeof childJML === 'string') {
-            node.appendChild(document.createTextNode(childJML));
+            node.appendChild(doc.createTextNode(childJML));
         } else {
             node.appendChild(jml(...childJML));
         }
@@ -303,7 +310,7 @@ function _appendJMLOrText (node) {
 * @static
 function _DOMfromJMLOrString (childNodeJML) {
     if (typeof childNodeJML === 'string') {
-        return document.createTextNode(childNodeJML);
+        return doc.createTextNode(childNodeJML);
     }
     return jml(...childNodeJML);
 }
@@ -328,7 +335,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
  */
 const jml = function jml (...args) {
-    let elem = document.createDocumentFragment();
+    let elem = doc.createDocumentFragment();
     function _checkAtts (atts) {
         let att;
         for (att in atts) {
@@ -349,12 +356,12 @@ const jml = function jml (...args) {
                 Todos:
                 0. JSON mode to prevent event addition
 
-                0. {$xmlDocument: []} // document.implementation.createDocument
+                0. {$xmlDocument: []} // doc.implementation.createDocument
 
                 0. Accept array for any attribute with first item as prefix and second as value?
                 0. {$: ['xhtml', 'div']} for prefixed elements
                     case '$': // Element with prefix?
-                        nodes[nodes.length] = elem = document.createElementNS(attVal[0], attVal[1]);
+                        nodes[nodes.length] = elem = doc.createElementNS(attVal[0], attVal[1]);
                         break;
                 */
                 case '#': { // Document fragment
@@ -369,12 +376,12 @@ const jml = function jml (...args) {
                     if (template) {
                         if (Array.isArray(template)) {
                             if (_getType(template[0]) === 'object') { // Has attributes
-                                template = jml('template', ...template, document.body);
+                                template = jml('template', ...template, doc.body);
                             } else { // Array is for the children
-                                template = jml('template', template, document.body);
+                                template = jml('template', template, doc.body);
                             }
                         } else if (typeof template === 'string') {
-                            template = document.querySelector(template);
+                            template = doc.querySelector(template);
                         }
                         jml(
                             template.content.cloneNode(true),
@@ -410,9 +417,9 @@ const jml = function jml (...args) {
                     }
                     const getConstructor = (cb) => {
                         const baseClass = options && options.extends
-                            ? document.createElement(options.extends).constructor
+                            ? doc.createElement(options.extends).constructor
                             : customizedBuiltIn
-                                ? document.createElement(localName).constructor
+                                ? doc.createElement(localName).constructor
                                 : HTMLElement;
                         return cb
                             ? class extends baseClass {
@@ -483,16 +490,16 @@ const jml = function jml (...args) {
                     setMap(attVal);
                     break;
                 } case '$attribute': { // Attribute node
-                    const node = attVal.length === 3 ? document.createAttributeNS(attVal[0], attVal[1]) : document.createAttribute(attVal[0]);
+                    const node = attVal.length === 3 ? doc.createAttributeNS(attVal[0], attVal[1]) : doc.createAttribute(attVal[0]);
                     node.value = attVal[attVal.length - 1];
                     nodes[nodes.length] = node;
                     break;
                 } case '$text': { // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
-                    const node = document.createTextNode(attVal);
+                    const node = doc.createTextNode(attVal);
                     nodes[nodes.length] = node;
                     break;
                 } case '$document': {
-                    const node = document.implementation.createHTMLDocument();
+                    const node = doc.implementation.createHTMLDocument();
                     if (attVal.childNodes) {
                         attVal.childNodes.forEach(_childrenToJML(node));
                         // Remove any extra nodes created by createHTMLDocument().
@@ -507,7 +514,7 @@ const jml = function jml (...args) {
                         const head = html.childNodes[0];
                         const body = html.childNodes[1];
                         if (attVal.title || attVal.head) {
-                            const meta = document.createElement('meta');
+                            const meta = doc.createElement('meta');
                             meta.charset = 'utf-8';
                             head.appendChild(meta);
                         }
@@ -544,7 +551,7 @@ const jml = function jml (...args) {
                             // internalSubset: // Todo
                         };
                     } else {
-                        node = document.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                        node = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
                     }
                     nodes[nodes.length] = node;
                     break;
@@ -714,13 +721,13 @@ const jml = function jml (...args) {
             if (i === argc - 1) {
                 _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
                 // Todo: Fix to allow application of stylesheets of style tags within fragments?
-                return nodes.length <= 1 ? nodes[0] : nodes.reduce(_fragReducer, document.createDocumentFragment()); // nodes;
+                return nodes.length <= 1 ? nodes[0] : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
             }
             break;
         case 'string': // Strings indicate elements
             switch (arg) {
             case '!':
-                nodes[nodes.length] = document.createComment(args[++i]);
+                nodes[nodes.length] = doc.createComment(args[++i]);
                 break;
             case '?':
                 arg = args[++i];
@@ -737,17 +744,17 @@ const jml = function jml (...args) {
                 }
                 // Firefox allows instructions with ">" in this method, but not if placed directly!
                 try {
-                    nodes[nodes.length] = document.createProcessingInstruction(arg, procValue);
+                    nodes[nodes.length] = doc.createProcessingInstruction(arg, procValue);
                 } catch (e) { // Getting NotSupportedError in IE, so we try to imitate a processing instruction with a comment
                     // innerHTML didn't work
-                    // var elContainer = document.createElement('div');
-                    // elContainer.innerHTML = '<?' + document.createTextNode(arg + ' ' + procValue).nodeValue + '?>';
+                    // var elContainer = doc.createElement('div');
+                    // elContainer.innerHTML = '<?' + doc.createTextNode(arg + ' ' + procValue).nodeValue + '?>';
                     // nodes[nodes.length] = elContainer.innerHTML;
                     // Todo: any other way to resolve? Just use XML?
-                    nodes[nodes.length] = document.createComment('?' + arg + ' ' + procValue + '?');
+                    nodes[nodes.length] = doc.createComment('?' + arg + ' ' + procValue + '?');
                 }
                 break;
-            // Browsers don't support document.createEntityReference, so we just use this as a convenience
+            // Browsers don't support doc.createEntityReference, so we just use this as a convenience
             case '&':
                 nodes[nodes.length] = _createSafeReference('entity', '', args[++i]);
                 break;
@@ -760,15 +767,15 @@ const jml = function jml (...args) {
             case '![':
                 // '![', ['escaped <&> text'] // <![CDATA[escaped <&> text]]>
                 // CDATA valid in XML only, so we'll just treat as text for mutual compatibility
-                // Todo: config (or detection via some kind of document.documentType property?) of whether in XML
+                // Todo: config (or detection via some kind of doc.documentType property?) of whether in XML
                 try {
-                    nodes[nodes.length] = document.createCDATASection(args[++i]);
+                    nodes[nodes.length] = doc.createCDATASection(args[++i]);
                 } catch (e2) {
-                    nodes[nodes.length] = document.createTextNode(args[i]); // i already incremented
+                    nodes[nodes.length] = doc.createTextNode(args[i]); // i already incremented
                 }
                 break;
             case '':
-                nodes[nodes.length] = document.createDocumentFragment();
+                nodes[nodes.length] = doc.createDocumentFragment();
                 break;
             default: { // An element
                 elStr = arg;
@@ -776,16 +783,16 @@ const jml = function jml (...args) {
                 // Todo: Fix this to depend on XML/config, not availability of methods
                 if (_getType(atts) === 'object' && atts.is) {
                     const {is} = atts;
-                    if (document.createElementNS) {
-                        elem = document.createElementNS(NS_HTML, elStr, {is});
+                    if (doc.createElementNS) {
+                        elem = doc.createElementNS(NS_HTML, elStr, {is});
                     } else {
-                        elem = document.createElement(elStr, {is});
+                        elem = doc.createElement(elStr, {is});
                     }
                 } else {
-                    if (document.createElementNS) {
-                        elem = document.createElementNS(NS_HTML, elStr);
+                    if (doc.createElementNS) {
+                        elem = doc.createElementNS(NS_HTML, elStr);
                     } else {
-                        elem = document.createElement(elStr);
+                        elem = doc.createElement(elStr);
                     }
                 }
                 nodes[nodes.length] = elem; // Add to parent
@@ -809,7 +816,7 @@ const jml = function jml (...args) {
                 // try {
                 // Also fix DOMParser to work with text/html
                 elem = nodes[nodes.length - 1] = new DOMParser().parseFromString(
-                    new XMLSerializer().serializeToString(elem)
+                    new XmlSerializer().serializeToString(elem)
                         // Mozilla adds XHTML namespace
                         .replace(' xmlns="' + NS_HTML + '"', replacer),
                     'application/xml'
@@ -851,7 +858,7 @@ const jml = function jml (...args) {
                 switch (childContentType) {
                 // Todo: determine whether null or function should have special handling or be converted to text
                 case 'string': case 'number': case 'boolean':
-                    _appendNode(elem, document.createTextNode(childContent));
+                    _appendNode(elem, doc.createTextNode(childContent));
                     break;
                 default:
                     if (Array.isArray(childContent)) { // Arrays representing child elements
@@ -1074,10 +1081,10 @@ jml.toJML = function (dom, config) {
             const docObj = {$document: {childNodes: []}};
 
             if (config.xmlDeclaration) {
-                docObj.$document.xmlDeclaration = {version: document.xmlVersion, encoding: document.xmlEncoding, standAlone: document.xmlStandalone};
+                docObj.$document.xmlDeclaration = {version: doc.xmlVersion, encoding: doc.xmlEncoding, standAlone: doc.xmlStandalone};
             }
 
-            set(docObj); // document.implementation.createHTMLDocument
+            set(docObj); // doc.implementation.createHTMLDocument
 
             // Set position to fragment's array children
             setObj('$document', 'childNodes');
@@ -1086,7 +1093,7 @@ jml.toJML = function (dom, config) {
             if (!children.length) {
                 invalidStateError();
             }
-            // set({$xmlDocument: []}); // document.implementation.createDocument // Todo: use this conditionally
+            // set({$xmlDocument: []}); // doc.implementation.createDocument // Todo: use this conditionally
 
             Array.from(children).forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
                 // No need for setChildren, as we have already built the container array
@@ -1097,7 +1104,7 @@ jml.toJML = function (dom, config) {
         case 10: // DOCUMENT TYPE
             setTemp();
 
-            // Can create directly by document.implementation.createDocumentType
+            // Can create directly by doc.implementation.createDocumentType
             start = {$DOCTYPE: {name: node.name}};
             if (node.internalSubset) {
                 start.internalSubset = node.internalSubset;
@@ -1181,7 +1188,7 @@ jml.toDOMString = function (...args) { // Alias for jml.toHTML for parity with j
 };
 jml.toXML = function (...args) {
     const ret = jml(...args);
-    return new XMLSerializer().serializeToString(ret);
+    return new XmlSerializer().serializeToString(ret);
 };
 jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with jml.toJMLString
     return jml.toXML(...args);
@@ -1189,29 +1196,29 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
 
 class JamilihMap extends Map {
     get (elem) {
-        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
         return super.get.call(this, elem);
     }
     set (elem, value) {
-        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
         return super.set.call(this, elem, value);
     }
     invoke (elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
 class JamilihWeakMap extends WeakMap {
     get (elem) {
-        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
         return super.get.call(this, elem);
     }
     set (elem, value) {
-        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
         return super.set.call(this, elem, value);
     }
     invoke (elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
@@ -1232,12 +1239,12 @@ jml.strong = function (obj, ...args) {
 };
 
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
-    elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
 jml.command = function (elem, symOrMap, methodName, ...args) {
-    elem = typeof elem === 'string' ? document.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
         func = jml.sym(elem, symOrMap);
@@ -1255,13 +1262,4 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
     // return func[methodName].call(elem, ...args);
 };
 
-// EXPORTS
-/*
-if (module !== undefined) { // Todo: Fix
-    document = require('jsdom').jsdom('');
-    window = document.parentWindow; // eslint-disable-line no-global-assign
-    XMLSerializer = require('xmldom').XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
-    module.exports = jml;
-}
-*/
 export default jml;
