@@ -70,9 +70,17 @@ The following functions are available:
     element used to find the associated object.
 - `jml.Map()` - Same as `jml.WeakMap` but is a subclass of `Map` instead.
 
-# Browser usage
+# Browser setup (Global)
 
-Simply access the above methods via the global `jml` function or import:
+```html
+<script src="node_modules/jamilih/jml.js"></script>
+```
+
+```js
+jml(...);
+```
+
+# Browser setup (ES6 Modules)
 
 ```js
 import jml from './node_modules/jamilih/jml-es6.js';
