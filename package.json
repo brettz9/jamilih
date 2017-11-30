@@ -34,21 +34,21 @@
     "node": ">=0.10"
   },
   "dependencies": {
-    "jsdom": "9.12.0",
+    "jsdom": "11.5.1",
     "xmldom": "https://github.com/brettz9/xmldom",
     "array.from": "1.0.3",
     "object-assign": "4.1.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "eslint": "4.6.1",
+    "eslint": "4.12.0",
     "eslint-config-standard": "10.2.1",
-    "eslint-plugin-compat": "1.0.4",
-    "eslint-plugin-import": "2.7.0",
-    "eslint-plugin-node": "5.1.1",
-    "eslint-plugin-promise": "3.5.0",
+    "eslint-plugin-compat": "2.1.0",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-node": "5.2.1",
+    "eslint-plugin-promise": "3.6.0",
     "eslint-plugin-standard": "3.0.1",
-    "nodeunit": "0.11.0",
+    "nodeunit": "0.11.2",
     "node-static": "0.7.10",
     "opn": "5.1.0",
     "rollup": "0.52.0",

@@ -31,8 +31,8 @@ Other Todos:
 
 const isNode = typeof module !== 'undefined';
 
-const doc = isNode ? require('jsdom').jsdom('') : document;
-// let win = isNode ? document.parentWindow : window; // eslint-disable-line no-global-assign
+const win = isNode ? new (require('jsdom').JSDOM)('') : window; // eslint-disable-line no-global-assign
+const doc = isNode ? win.document : document;
 const {XmlSerializer} = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 
 // STATIC PROPERTIES
