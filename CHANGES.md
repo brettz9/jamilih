@@ -1,3 +1,7 @@
+# 0.25.0
+
+- Fix: Add plugins apparently insisted on by babel-env
+
 # 0.24.0
 
 - Breaking change: Use `setAttribute` for `style` to ensure consistent

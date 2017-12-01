@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -43,6 +43,10 @@
     "babel-core": "^6.26.0",
     "babel-env": "^2.4.1",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-decorators": "^6.24.1",
+    "babel-plugin-transform-react-constant-elements": "^6.23.0",
+    "babel-plugin-transform-react-inline-elements": "^6.22.0",
     "eslint": "4.12.1",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-compat": "2.1.0",
