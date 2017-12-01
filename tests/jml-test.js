@@ -12,7 +12,8 @@ Todos:
 import jml from '../jml-es6.js';
 import * as assert from './assert.js';
 
-if (typeof module !== 'undefined') {
+const isNode = typeof module !== 'undefined';
+if (isNode) {
     const JSDOM = require('jsdom').JSDOM;
     global.window = new JSDOM('').window;
     global.Event = window.Event;
@@ -41,23 +42,27 @@ br.className = 'a>bc';
 
 assert.matchesXMLString(
     jml('input'),
-    '<input xmlns="http://www.w3.org/1999/xhtml" />'
+    '<input xmlns="http://www.w3.org/1999/xhtml" />',
+    'Single element argument element'
 );
 assert.matchesXMLString(
     jml('input', null),
-    '<input xmlns="http://www.w3.org/1999/xhtml" />'
+    '<input xmlns="http://www.w3.org/1999/xhtml" />',
+    'Single element argument with `null` at end'
 );
 
 assert.matchesXMLString(
     jml('input', {type: 'password', id: 'my_pass'}),
-    '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />'
+    '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
+    'Single element with two attributes'
 );
 
 assert.matchesXMLString(
     jml('div', [
         ['p', ['no attributes on the div']]
     ]),
-    '<div xmlns="http://www.w3.org/1999/xhtml"><p>no attributes on the div</p></div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml"><p>no attributes on the div</p></div>',
+    'Single element with single text-containing element child'
 );
 
 assert.matchesXMLString(
@@ -65,7 +70,8 @@ assert.matchesXMLString(
         ['p', ['Some inner text']],
         ['p', ['another child paragraph']]
     ]),
-    '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass"><p>Some inner text</p><p>another child paragraph</p></div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass"><p>Some inner text</p><p>another child paragraph</p></div>',
+    'Single element with attribute and two text-containing element children'
 );
 
 assert.matchesXMLString(
@@ -74,7 +80,8 @@ assert.matchesXMLString(
         ['p', ['Some inner text']],
         'text3'
     ]),
-    '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass">text1<p>Some inner text</p>text3</div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass">text1<p>Some inner text</p>text3</div>',
+    'Single element with attribute containing two next node children separated by an element child'
 );
 
 if (!document.body) {
@@ -85,7 +92,8 @@ jml('hr', document.body);
 
 assert.matchesXMLStringOnElement(
     document.getElementsByTagName('body')[0],
-    '<hr xmlns="http://www.w3.org/1999/xhtml" />'
+    '<hr xmlns="http://www.w3.org/1999/xhtml" />',
+    'Single (empty) DOM element (with body parent)'
 );
 
 let table = jml('table', {style: 'position:absolute; left: -1000px;'}, document.body);
@@ -102,7 +110,8 @@ table);
 
 assert.matchesXMLStringWithinElement(
     table,
-    '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>'
+    '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>',
+    'Single element with attribute and body parent with separate jml call appending to it two sibling elements each containing text-containing element children (and one with attribute)'
 );
 
 table = jml('table', {style: 'position:absolute; left: -1000px;'}, document.body); // Rebuild
@@ -119,9 +128,16 @@ null);
 const ser = new XMLSerializer();
 ser.$overrideNative = true;
 
+assert.matches(
+    ser.serializeToString(trsFragment.childNodes[0]) +
+    ser.serializeToString(trsFragment.childNodes[1]),
+    '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>',
+    'XMLSerialized fragment children (`null` parent) are equal'
+);
+
 const parent = document.body;
 
-assert.matches(parent, jml(parent));
+assert.matches(parent, jml(parent), 'Wrapping single pre-existing DOM element');
 
 const div = jml(
     'div', {style: 'position:absolute !important; left: -1000px;'}, [
@@ -134,16 +150,11 @@ const div = jml(
 
 assert.matchesXMLString(
     div,
-    '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>',
     // '<div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; left: -1000px;"><div id="DOMChildrenMustBeInArray" style="display:none;">test1</div></div><div id="anotherElementToAddToParent" style="display:none;">test2</div><div id="yetAnotherSiblingToAddToParent" style="display:none;">test3</div>'
+    'Single element with attribute and DOM child and two DOM siblings'
 );
 // throw '';
-
-assert.matches(
-    ser.serializeToString(trsFragment.childNodes[0]) +
-    ser.serializeToString(trsFragment.childNodes[1]),
-    '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>'
-);
 
 assert.matchesXMLString(
     jml('div', [
@@ -151,27 +162,31 @@ assert.matchesXMLString(
         {'#': ['text1', ['span', ['inner text']], 'text2']},
         'text3'
     ]),
-    '<div xmlns="http://www.w3.org/1999/xhtml">text0text1<span>inner text</span>text2text3</div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml">text0text1<span>inner text</span>text2text3</div>',
+    'Single element with text children separated by fragment (of text nodes separated by element with text child)'
 );
 
-// Allow the following form (fragment INSTEAD of child array rather than the fragment as the only argument of a child array)? If so, add to README as well.
+// Todo: Allow the following form? If so, add to README as well.
 /*
 assert.matchesXMLString(
     jml('div',
         {'#': ['text1', ['span', ['inner text']], 'text2']}
     ),
-    '<div xmlns="http://www.w3.org/1999/xhtml">text1<span>inner text</span>text2</div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml">text1<span>inner text</span>text2</div>',
+    'Single element with fragment in place of children'
 );
 */
 
 assert.matchesXMLString(
     jml('div', {dataset: {'abcDefGh': 'fff', 'jkl-mno-pq': 'ggg'}}),
-    '<div xmlns="http://www.w3.org/1999/xhtml" data-abc-def-gh="fff" data-jkl-mno-pq="ggg"></div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" data-abc-def-gh="fff" data-jkl-mno-pq="ggg"></div>',
+    'Single element using dataset with two properties'
 );
 
 assert.matchesXMLString(
     jml('div', {style: {'float': 'left', 'border-color': 'red'}}, ['test']),
-    '<div xmlns="http://www.w3.org/1999/xhtml" style="float: left; border-color: red;">test</div>'
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="float: left; border-color: red;">test</div>',
+    'Single element with style object and text child'
 );
 
 let str;
@@ -184,7 +199,7 @@ const input = jml('input', {
 }, document.body);
 input.click(); // IE won't activate unless the above element is appended to the DOM
 
-assert.matches(str, 'worked1');
+assert.matches(str, 'worked1', 'Single empty element with attributes and triggered click listener added to body');
 
 const input2 = jml('input', {
     style: 'position:absolute; left: -1000px;',
@@ -204,10 +219,10 @@ if (input2.fireEvent) {
     const event = new Event('change');
     input2.dispatchEvent(event);
 }
-assert.matches(str, 'worked2');
+assert.matches(str, 'worked2', 'Single element with attributes and triggered change listener (alongside click) added to body');
 
 input2.click();
-assert.matches(str, 'worked3');
+assert.matches(str, 'worked3', 'Single elemnent with attributes and triggered click listener (alongside change) added to body');
 
 assert.matchesXMLString(
     jml('div', [
@@ -224,27 +239,32 @@ assert.matchesXMLString(
     (isIE ? '!--' : '') +
     '?customPI a processing instruction?' +
     (isIE ? '--' : '') +
-    '>\u00A9\u04D2\u0AB3&amp;test &lt;CDATA&gt; content</div>'
+    '>\u00A9\u04D2\u0AB3&amp;test &lt;CDATA&gt; content</div>',
+    'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
 );
 
 assert.matches(
     jml('abc', {xmlns: 'def'}).namespaceURI,
-    'def'
+    'def',
+    'Single custom element with non-HTML default namespace declaration'
 );
 
 assert.matchesXMLString(
     jml('abc', {z: 3, xmlns: {'prefix3': 'zzz', 'prefix1': 'def', 'prefix2': 'ghi'}, b: 7, a: 6}),
-    '<abc xmlns="http://www.w3.org/1999/xhtml" xmlns:prefix3="zzz" xmlns:prefix1="def" xmlns:prefix2="ghi" z="3" b="7" a="6"></abc>'
+    '<abc xmlns="http://www.w3.org/1999/xhtml" xmlns:prefix3="zzz" xmlns:prefix1="def" xmlns:prefix2="ghi" z="3" b="7" a="6"></abc>',
+    'Single element with attributes and prefixed (non-HTML) namespace declarations'
 );
 
 assert.matchesXMLString(
     jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}}),
-    '<abc xmlns="newdefault" xmlns:prefix1="def" xmlns:prefix2="ghi"/>'
+    '<abc xmlns="newdefault" xmlns:prefix1="def" xmlns:prefix2="ghi"/>',
+    'Single element with non-HTML default namespace declaration and prefixed declarations'
 );
 
 assert.matches(
     jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}}).namespaceURI,
-    'newdefault'
+    'newdefault',
+    'Single element with non-HTML default namespace declaration and prefixed declarations (confirming namespaceURI)'
 );
 /*
 // lookupNamespaceURI(prefix) is not working in Mozilla, so we test this way
@@ -252,7 +272,8 @@ assert.matches(
     jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi'}}, [
         {$: {prefix2: ['prefixedElement']}}
     ]).firstChild.namespaceURI,
-    ''
+    '',
+    'Single element with prefixed namesapce declarations and element child using one of the prefixes'
 );
 */
 
@@ -289,15 +310,17 @@ assert.matchesXMLString(
     '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color: red;">First Item</li>' +
     '<li title="Some hover text." style="color: green;">Second Item</li>' +
     '<li><span class="Remove-Me" style="font-weight: bold;">Not Filtered</span> Item</li>' +
-    '<li><a href="#NewWindow">Special Link</a></li></ul>'
+    '<li><a href="#NewWindow">Special Link</a></li></ul>',
+    'Single element with element children containing siblings and null final argument added to body'
 );
 
 assert.matchesXMLString(
     jml('style', {id: 'myStyle'}, ['p.test {color:red;}'], document.body),
-    '<style xmlns="http://www.w3.org/1999/xhtml" id="myStyle">p.test {color:red;}</style>'
+    '<style xmlns="http://www.w3.org/1999/xhtml" id="myStyle">p.test {color:red;}</style>',
+    'Single style element with attribute and text content added to body'
 );
 
-jml('p', {'class': 'test'}, ['test'], document.body);
+// jml('p', {'class': 'test'}, ['test'], document.body);
 
 assert.matchesXMLString(
     jml('div', {dataset: {
@@ -305,12 +328,14 @@ assert.matchesXMLString(
         'anotherResult': 'world', 'aNullishToIgnore': null, aNum: 8
     }}),
     '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" ' +
-    'data-a-camel-case-result2="helloTwo" data-another-result="world" data-a-num="8"></div>'
+    'data-a-camel-case-result2="helloTwo" data-another-result="world" data-a-num="8"></div>',
+    'Single element with mixed and nested CamelCase dataset objects'
 );
 
 assert.matchesXMLString(
     jml('script', {'class': 'test'}, ['console.log("hello!");'], document.body),
-    '<script xmlns="http://www.w3.org/1999/xhtml" class="test">console.log("hello!");</script>'
+    '<script xmlns="http://www.w3.org/1999/xhtml" class="test">console.log("hello!");</script>',
+    'Single script element with attribute and text content (check console for "hello!")'
 );
 
 const [myMap, elem] = jml.weak({
@@ -323,7 +348,8 @@ const [myMap, elem] = jml.weak({
         input () {
             assert.matches(
                 myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
-                'internal test localValue 1001'
+                'internal test localValue 1001',
+                'JamilihWeakMap `invoke` method with arguments and `this`'
             );
         }
     }}],
@@ -332,7 +358,8 @@ const [myMap, elem] = jml.weak({
         test (el, arg1) {
             assert.matches(
                 arg1 + ' ' + el.id + this.localVariable,
-                'arg1 clickArea8'
+                'arg1 clickArea8',
+                'Attached JamilihWeakMap $data method invoked by click listener with arguments and `this`'
             );
         }
     }, $on: {
@@ -343,11 +370,13 @@ const [myMap, elem] = jml.weak({
 ], document.body);
 assert.matches(
     myMap.invoke(elem, 'myMethod', 'external test'),
-    'external test localValue 100'
+    'external test localValue 100',
+    'Externally invoke JamilihWeakMap `invoke` method with arguments and `this`'
 );
 assert.matches(
     myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
-    'localValue'
+    'localValue',
+    'Externally retrieve JamilihWeakMap-associated element by selector'
 );
 
 const mapInput = $('#mapTest').firstElementChild;
@@ -375,35 +404,43 @@ const el = jml({$map: [weakMap1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
 ], document.body);
 assert.matches(
     weakMap1.get(el),
-    testObj1
+    testObj1,
+    'Externally retrieve element with Jamilih-returned element associated with normal WeakMap (alongside a JamilihWeakMap); using default map and object'
 );
 assert.matches(
     weakMap1.get($('#input1')),
-    testObj1
+    testObj1,
+    'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using default map and object'
 );
 assert.matches(
     weakMap2.get($('#input2')),
-    testObj2
+    testObj2,
+    'Externally retrieve element with DOM retrieved element associated with JamilihWeakMap (alongside a normal WeakMap); using array-based map and object'
 );
 assert.matches(
     weakMap1.get($('#input3')),
-    testObj1
+    testObj1,
+    'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using single map defaulting object'
 );
 assert.matches(
     weakMap1.get($('#input4')),
-    testObj2
+    testObj2,
+    'Externally retrieve element with DOM retrieved element associated with JamilihWeakMap (alongside a normal WeakMap); using single object defaulting map'
 );
 assert.matches(
     weakMap1.get($('#input5')),
-    testObj1
+    testObj1,
+    'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map attachment with empty default map and single object'
 );
 assert.matches(
     weakMap1.get($('#input6')),
-    testObj1
+    testObj1,
+    'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using single-item array map (defaulting object)'
 );
 assert.matches(
     jml.command($('#input7'), weakMap1, 'arg1'),
-    'input7 ok arg1'
+    'input7 ok arg1',
+    'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map and function'
 );
 // Todo: Add tests for array of map strings
 
@@ -412,7 +449,8 @@ jml('div', [
     ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
         assert.matches(
             this.id + ' ' + arg1,
-            'symInput1 arg1'
+            'symInput1 arg1',
+            'Public symbol-attached function with `this` and argument'
         );
     }]}],
     ['div', {id: 'divSymbolTest', $on: {
@@ -431,7 +469,8 @@ jml('div', [
         // No `this` available as using arrow function, but would give element
         assert.matches(
             arg1,
-            'arg2'
+            'arg2',
+            'Private symbol-attached arrow function with argument'
         );
     }]}],
     ['input', {id: 'symInput3', $symbol: [privateSym, {
@@ -439,11 +478,13 @@ jml('div', [
         test (arg1) {
             assert.matches(
                 this.localValue,
-                5
+                5,
+                'Private-symbol attached object method with `this`'
             );
             assert.matches(
                 this.elem.id + ' ' + arg1,
-                'symInput3 arg3'
+                'symInput3 arg3',
+                'Private-symbol attached object method with `this.elem` and argument'
             );
         }
     }]}]
@@ -461,13 +502,35 @@ $('#divSymbolTest').dispatchEvent(new Event('click'));
 jml.command('#symInput1', 'publicForSym1', 'arg1');
 jml.command('#symInput3', privateSym, 'test', 'arg3');
 
-jml('section', {
-    id: 'myElem',
-    $shadow: {
-        open: true, // Default (can also use `closed`)
-        template: [
-            {id: 'myTemplate'},
-            [
+if (isNode) {
+    assert.skip("SKIPPING: JSDOM DOESN'T SUPPORT attachShadow");
+} else {
+    jml('section', {
+        id: 'myElem',
+        $shadow: {
+            open: true, // Default (can also use `closed`)
+            template: [
+                {id: 'myTemplate'},
+                [
+                    ['style', [`
+                        :host {color: red;}
+                        ::slotted(p) {color: blue;}
+                    `]],
+                    ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+                    ['h2', ['Heading level 2']],
+                    ['slot', ['DEFAULT CONTENT HERE']]
+                ]
+            ]
+        }
+    }, [
+        ['h1', {slot: 'h'}, ['Heading level 1']],
+        ['p', ['Other content']]
+    ], document.body);
+
+    jml('section', {
+        id: 'myElem2',
+        $shadow: {
+            content: [ // Could also define as `open: []`
                 ['style', [`
                     :host {color: red;}
                     ::slotted(p) {color: blue;}
@@ -476,142 +539,136 @@ jml('section', {
                 ['h2', ['Heading level 2']],
                 ['slot', ['DEFAULT CONTENT HERE']]
             ]
-        ]
-    }
-}, [
-    ['h1', {slot: 'h'}, ['Heading level 1']],
-    ['p', ['Other content']]
-], document.body);
-
-jml('section', {
-    id: 'myElem2',
-    $shadow: {
-        content: [ // Could also define as `open: []`
-            ['style', [`
-                :host {color: red;}
-                ::slotted(p) {color: blue;}
-            `]],
-            ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
-            ['h2', ['Heading level 2']],
-            ['slot', ['DEFAULT CONTENT HERE']]
-        ]
-    }
-}, [
-    ['h1', {slot: 'h'}, ['Heading level 1']],
-    ['p', ['Other content']]
-], document.body);
-
-const myEl = jml('my-el', {
-    id: 'myEl',
-    $define: {
-        test () {
-            return this.id;
         }
-    }
-}, document.body);
-assert.matches(
-    myEl.test(),
-    'myEl'
-);
+    }, [
+        ['h1', {slot: 'h'}, ['Heading level 1']],
+        ['p', ['Other content']]
+    ], document.body);
+}
 
-let constructorSetVar2;
-jml('my-el2', {
-    id: 'myEl2',
-    $define: function () {
-        constructorSetVar2 = this.id;
-    }
-}, document.body);
-assert.matches(
-    constructorSetVar2,
-    'myEl2'
-);
+if (isNode) {
+    assert.skip("SKIPPING: JSDOM DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
+} else {
+    const myEl = jml('my-el', {
+        id: 'myEl',
+        $define: {
+            test () {
+                return this.id;
+            }
+        }
+    }, document.body);
+    assert.matches(
+        myEl.test(),
+        'myEl',
+        'Custom element object method with `this`'
+    );
 
-let constructorSetVar3;
-jml('my-el3', {
-    id: 'myEl3',
-    $define: class extends HTMLElement {
-        constructor () {
-            super();
-            constructorSetVar3 = this.id;
+    let constructorSetVar2;
+    jml('my-el2', {
+        id: 'myEl2',
+        $define: function () {
+            constructorSetVar2 = this.id;
         }
-    }
-}, document.body);
-assert.matches(
-    constructorSetVar3,
-    'myEl3'
-);
+    }, document.body);
+    assert.matches(
+        constructorSetVar2,
+        'myEl2',
+        'Custom element with invoked constructor with `this`'
+    );
 
-let constructorSetVar4;
-const myel4 = jml('my-el4', {
-    id: 'myEl4',
-    $define: [function () {
-        constructorSetVar4 = this.id;
-    }, {
-        test () {
-            assert.matches(this.id, 'myEl4');
-        },
-        test2 () {
-            this.test();
+    let constructorSetVar3;
+    jml('my-el3', {
+        id: 'myEl3',
+        $define: class extends HTMLElement {
+            constructor () {
+                super();
+                constructorSetVar3 = this.id;
+            }
         }
-    }]
-}, document.body);
-assert.matches(
-    constructorSetVar4,
-    'myEl4'
-);
-myel4.test();
-myel4.test2();
+    }, document.body);
+    assert.matches(
+        constructorSetVar3,
+        'myEl3',
+        'Custom element with class-based invoked constructor with `this`'
+    );
 
-let constructorSetVar5;
-const myel5 = jml('my-el5', {
-    id: 'myEl5',
-    $define: [class extends HTMLElement {
-        constructor () {
-            super();
-            constructorSetVar5 = this.id;
-        }
-    }, {
-        test () {
-            assert.matches(this.id, 'myEl5');
-        },
-        test2 () {
-            this.test();
-        }
-    }]
-}, document.body);
-assert.matches(
-    constructorSetVar5,
-    'myEl5'
-);
-myel5.test();
-myel5.test2();
+    let constructorSetVar4;
+    const myel4 = jml('my-el4', {
+        id: 'myEl4',
+        $define: [function () {
+            constructorSetVar4 = this.id;
+        }, {
+            test (arg1) {
+                assert.matches(this.id + arg1, 'myEl4arg1', 'Custom element with array of constructor and object method invoked with `this` and argument');
+            },
+            test2 (arg1) {
+                this.test(arg1);
+            }
+        }]
+    }, document.body);
+    assert.matches(
+        constructorSetVar4,
+        'myEl4',
+        'Custom element with array of constructor and object, with constructor invoked with `this`'
+    );
+    myel4.test('arg1');
+    myel4.test2('arg1');
+
+    let constructorSetVar5;
+    const myel5 = jml('my-el5', {
+        id: 'myEl5',
+        $define: [class extends HTMLElement {
+            constructor () {
+                super();
+                constructorSetVar5 = this.id;
+            }
+        }, {
+            test (arg1) {
+                assert.matches(this.id + arg1, 'myEl5arg1', 'Custom element with array of class-based constructor and object method invoked with `this` and argument');
+            },
+            test2 (arg1) {
+                this.test(arg1);
+            }
+        }]
+    }, document.body);
+    assert.matches(
+        constructorSetVar5,
+        'myEl5',
+        'Custom element with array of class-based constructor and object, with constructor invoked with `this`'
+    );
+    myel5.test('arg1');
+    myel5.test2('arg1');
+}
 
 const mySelect = jml('select', {
     id: 'mySelect',
     $custom: {
-        [Symbol.for('testCustom')] () {
-            return this.test();
+        [Symbol.for('testCustom')] (arg1) {
+            return this.test(arg1);
         },
-        test () {
-            return this.id;
+        test (arg1) {
+            return this.id + arg1;
         },
-        test2 () {
-            return this.test();
+        test2 (arg1) {
+            return this.test(arg1);
         }
     }
 }, document.body);
 
 assert.matches(
-    mySelect.test(),
-    'mySelect'
+    mySelect.test('Arg1'),
+    'mySelectArg1',
+    'Invoke `$custom`-attached object with regular method with argument and `this`'
 );
 assert.matches(
-    mySelect.test2(),
-    'mySelect'
+    mySelect.test2('Arg1'),
+    'mySelectArg1',
+    'Invoke `$custom`-attached object with regular method with argument and `this` (calling another regular object method)'
 );
 assert.matches(
-    mySelect[Symbol.for('testCustom')](),
-    'mySelect'
+    mySelect[Symbol.for('testCustom')]('Arg1'),
+    'mySelectArg1',
+    'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
 );
 
 /*

@@ -34,9 +34,9 @@ let JSDOM;
 if (isNode) {
     JSDOM = require('jsdom').JSDOM;
 }
-const win = isNode ? new JSDOM('').window : window;
-const doc = isNode ? win.document : document;
-const XmlSerializer = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+const win = isNode && typeof window === 'undefined' ? new JSDOM('').window : window;
+const doc = isNode && typeof document === 'undefined' ? win.document : document;
+const XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 
 // STATIC PROPERTIES
 const possibleOptions = [
@@ -1214,11 +1214,11 @@ class JamilihMap extends Map {
 class JamilihWeakMap extends WeakMap {
     get (elem) {
         elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
-        return super.get.call(this, elem);
+        return super.get(elem);
     }
     set (elem, value) {
         elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
-        return super.set.call(this, elem, value);
+        return super.set(elem, value);
     }
     invoke (elem, methodName, ...args) {
         elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;

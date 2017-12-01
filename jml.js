@@ -209,9 +209,9 @@ var JSDOM = void 0;
 if (isNode) {
     JSDOM = require('jsdom').JSDOM;
 }
-var win = isNode ? new JSDOM('').window : window;
-var doc = isNode ? win.document : document;
-var XmlSerializer = isNode ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+var win = isNode && typeof window === 'undefined' ? new JSDOM('').window : window;
+var doc = isNode && typeof document === 'undefined' ? win.document : document;
+var XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 
 // STATIC PROPERTIES
 var possibleOptions = ['$map' // Add any other options here
