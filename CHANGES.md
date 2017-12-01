@@ -1,6 +1,13 @@
 # 0.24.0
 
-- Refactoring: Rollup `jml-es6.js` to `jml.js`.
+- Breaking change (Node): Rather than always creating a new jsdom window,
+    document (and XMLSerializer), look first for global ones (in case
+    user wants to interact with same document object
+- Fix: For Jamilih Maps, stop calling `super` on `this` (not needed
+    and problematic in jsdom)
+- Refactoring: Rollup `jml-es6.js` to `jml.js` with Babel.
+- Testing: Add messages to tests, skipping some tests known to be not
+    supported by jsdom (INCOMPLETE)
 
 # 0.23.0
 
