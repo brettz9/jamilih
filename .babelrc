@@ -3,14 +3,11 @@
     ["env", {
       "modules": false
     }],
-    "react",
     "stage-0"
   ],
   "plugins": [
     "external-helpers",
     "transform-class-properties",
-    "transform-decorators",
-    "transform-react-constant-elements",
-    "transform-react-inline-elements"
+    "transform-decorators"
   ]
 }
