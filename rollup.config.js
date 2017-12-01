@@ -8,6 +8,8 @@ export default {
         name: 'jml'
     },
     plugins: [
-        babel()
+        babel({
+            exclude: 'node_modules/**'
+        })
     ]
 };
