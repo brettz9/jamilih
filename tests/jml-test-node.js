@@ -1032,9 +1032,9 @@ const jml = function jml (...args) {
                             }
                             break;
                         }
+                        // setAttribute unfortunately erases any existing styles
                         elem.setAttribute(att, attVal);
                         /*
-                        // setAttribute will work, but erases any existing styles
                         // The following reorders which is troublesome for serialization, e.g., as used in our testing
                         if (elem.style.cssText !== undefined) {
                             elem.style.cssText += attVal;
@@ -1906,7 +1906,7 @@ matches(str, 'worked1', 'Single empty element with attributes and triggered clic
 const input2 = jml('input', {
     style: 'position:absolute; left: -1000px;',
     $on: {
-        click: function () {
+        click () {
             str = 'worked3';
         },
         change: [function () {
@@ -2204,8 +2204,8 @@ $('#divSymbolTest').dispatchEvent(new Event('click'));
 jml.command('#symInput1', 'publicForSym1', 'arg1');
 jml.command('#symInput3', privateSym, 'test', 'arg3');
 
-if (isNode) {
-    skip("SKIPPING: JSDOM DOESN'T SUPPORT attachShadow");
+if (isNode && !document.body.attachShadow) {
+    skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT attachShadow");
 } else {
     jml('section', {
         id: 'myElem',
@@ -2248,8 +2248,8 @@ if (isNode) {
     ], document.body);
 }
 
-if (isNode) {
-    skip("SKIPPING: JSDOM DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
+if (isNode && !window.customElements) {
+    skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
 } else {
     const myEl = jml('my-el', {
         id: 'myEl',
@@ -2268,7 +2268,7 @@ if (isNode) {
     let constructorSetVar2;
     jml('my-el2', {
         id: 'myEl2',
-        $define: function () {
+        $define () {
             constructorSetVar2 = this.id;
         }
     }, document.body);

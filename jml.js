@@ -1250,9 +1250,9 @@ var jml = function jml() {
                                 }
                                 break;
                             }
+                            // setAttribute unfortunately erases any existing styles
                             elem.setAttribute(att, attVal);
                             /*
-                            // setAttribute will work, but erases any existing styles
                             // The following reorders which is troublesome for serialization, e.g., as used in our testing
                             if (elem.style.cssText !== undefined) {
                                 elem.style.cssText += attVal;
