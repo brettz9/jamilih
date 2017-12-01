@@ -49,6 +49,7 @@
     "babel-plugin-transform-react-inline-elements": "^6.22.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "eslint": "4.12.1",
     "eslint-config-standard": "10.2.1",
     "eslint-plugin-compat": "2.1.0",
