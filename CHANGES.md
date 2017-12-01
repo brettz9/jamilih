@@ -1,3 +1,7 @@
+# 0.26.0
+
+- Fix: Add plugins apparently insisted on by babel
+
 # 0.25.0
 
 - Fix: Add plugins apparently insisted on by babel-env
