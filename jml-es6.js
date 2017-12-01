@@ -29,6 +29,8 @@ Other Todos:
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
 
+import xmlser from './polyfills/XMLSerializer.js';
+
 const isNode = typeof module !== 'undefined';
 let JSDOM;
 if (isNode) {
@@ -36,7 +38,9 @@ if (isNode) {
 }
 let win = isNode && typeof window === 'undefined' ? new JSDOM('').window : window;
 let doc = isNode && typeof document === 'undefined' ? win.document : document;
-let XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+// let XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+
+let XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? xmlser : XMLSerializer;
 
 // STATIC PROPERTIES
 const possibleOptions = [
@@ -643,7 +647,7 @@ const jml = function jml (...args) {
                         // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
                         break;
                     }
-                    if (att === 'style') { // setAttribute will work, but erases any existing styles
+                    if (att === 'style') {
                         if (attVal == null) {
                             break;
                         }
@@ -659,7 +663,10 @@ const jml = function jml (...args) {
                                     }
                                 }
                             }
-                        } else if (elem.style.cssText !== undefined) {
+                            break;
+                        }
+                        // setAttribute will work, but erases any existing styles
+                        if (elem.style.cssText !== undefined) {
                             elem.style.cssText += attVal;
                         } else { // Opera
                             elem.style += attVal;

@@ -1,4 +1,4 @@
-/* globals global, require */
+/* globals global */
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); fix IE8 with dataset; remove IE8 processing instruction hack?
@@ -18,7 +18,7 @@ if (isNode) {
     global.Event = window.Event;
     global.document = window.document;
     global.DOMParser = window.DOMParser;
-    global.XMLSerializer = require('xmldom').XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+    global.XMLSerializer = jml.getXMLSerializer(); // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 }
 
 // HELPERS
@@ -221,7 +221,7 @@ if (input2.fireEvent) {
 assert.matches(str, 'worked2', 'Single element with attributes and triggered change listener (alongside click) added to body');
 
 input2.click();
-assert.matches(str, 'worked3', 'Single elemnent with attributes and triggered click listener (alongside change) added to body');
+assert.matches(str, 'worked3', 'Single element with attributes and triggered click listener (alongside change) added to body');
 
 assert.matchesXMLString(
     jml('div', [

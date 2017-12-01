@@ -35,7 +35,6 @@ const matchesXMLStringOnElement = (element, item2, msg) => {
 };
 const matchesXMLString = (item1, item2, msg) => {
     const ser = new XMLSerializer();
-    ser.$overrideNative = true;
     item1 = ser.serializeToString(item1);
     matches(item1, item2, msg);
 };
