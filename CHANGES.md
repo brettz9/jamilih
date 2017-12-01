@@ -1,6 +1,10 @@
+# 0.27.0
+
+- Fix: Actually add plugin apparently insisted on by Babel
+
 # 0.26.0
 
-- Fix: Add plugins apparently insisted on by babel
+- Fix: Add plugins apparently insisted on by Babel
 
 # 0.25.0
 
