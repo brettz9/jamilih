@@ -34,9 +34,9 @@ let JSDOM;
 if (isNode) {
     JSDOM = require('jsdom').JSDOM;
 }
-const win = isNode && typeof window === 'undefined' ? new JSDOM('').window : window;
-const doc = isNode && typeof document === 'undefined' ? win.document : document;
-const XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
+let win = isNode && typeof window === 'undefined' ? new JSDOM('').window : window;
+let doc = isNode && typeof document === 'undefined' ? win.document : document;
+let XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
 
 // STATIC PROPERTIES
 const possibleOptions = [
@@ -1263,6 +1263,26 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
         return func[methodName](elem, ...args);
     }
     // return func[methodName].call(elem, ...args);
+};
+
+jml.setWindow = (wind) => {
+    win = wind;
+};
+jml.setDocument = (docum) => {
+    doc = docum;
+};
+jml.setXMLSerializer = (xmls) => {
+    XmlSerializer = xmls;
+};
+
+jml.getWindow = () => {
+    return win;
+};
+jml.getDocument = () => {
+    return doc;
+};
+jml.getXMLSerializer = () => {
+    return XmlSerializer;
 };
 
 export default jml;

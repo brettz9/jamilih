@@ -14,8 +14,7 @@ import * as assert from './assert.js';
 
 const isNode = typeof module !== 'undefined';
 if (isNode) {
-    const JSDOM = require('jsdom').JSDOM;
-    global.window = new JSDOM('').window;
+    global.window = jml.getWindow();
     global.Event = window.Event;
     global.document = window.document;
     global.DOMParser = window.DOMParser;

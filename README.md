@@ -96,6 +96,11 @@ npm install jamilih
 const jml = require('jamilih');
 ```
 
+Note that while we check for preexisting globals (`window`, `document`, and `XMLSerializer`),
+we attempt to maintain modularity by not injecting our own global. If you want to
+import Jamilih and then operate on the same `window`, etc. that we create, use the methods,
+`getWindow`, `getDocument`, and `getXMLSerizlier`. There are also corresponding setters.
+
 # Examples
 
 Simple element...

@@ -1584,6 +1584,26 @@ jml.command = function (elem, symOrMap, methodName) {
     // return func[methodName].call(elem, ...args);
 };
 
+jml.setWindow = function (wind) {
+    win = wind;
+};
+jml.setDocument = function (docum) {
+    doc = docum;
+};
+jml.setXMLSerializer = function (xmls) {
+    XmlSerializer = xmls;
+};
+
+jml.getWindow = function () {
+    return win;
+};
+jml.getDocument = function () {
+    return doc;
+};
+jml.getXMLSerializer = function () {
+    return XmlSerializer;
+};
+
 return jml;
 
 })));
