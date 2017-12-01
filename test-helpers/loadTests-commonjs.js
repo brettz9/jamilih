@@ -1,9 +1,5 @@
 'use strict';
 
-var global$1 = typeof global !== "undefined" ? global :
-            typeof self !== "undefined" ? self :
-            typeof window !== "undefined" ? window : {};
-
 // From https://github.com/brettz9/jamilih/blob/master/polyfills/XMLSerializer.js
 /* globals DOMException */
 /**
@@ -1665,12 +1661,12 @@ jml.getXMLSerializer = () => {
 
 /* globals require, global */
 
-if (typeof global$1 !== 'undefined') {
+if (typeof global !== 'undefined') {
     const JSDOM = require('jsdom').JSDOM;
-    global$1.window = new JSDOM('').window;
-    global$1.document = window.document;
-    global$1.DOMParser = window.DOMParser;
-    global$1.Node = window.Node;
+    global.window = new JSDOM('').window;
+    global.document = window.document;
+    global.DOMParser = window.DOMParser;
+    global.Node = window.Node;
 }
 
 // const divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
@@ -1708,15 +1704,15 @@ const testCase = {
 
 /* globals require, global */
 
-if (typeof global$1 !== 'undefined') {
+if (typeof global !== 'undefined') {
     const JSDOM = require('jsdom').JSDOM;
-    global$1.window = new JSDOM('').window;
-    global$1.document = window.document;
-    global$1.Event = window.Event;
-    global$1.window = document.defaultView;
-    global$1.DOMParser = window.DOMParser;
-    global$1.Node = window.Node;
-    global$1.XMLSerializer = jml.getXMLSerializer();
+    global.window = new JSDOM('').window;
+    global.document = window.document;
+    global.Event = window.Event;
+    global.window = document.defaultView;
+    global.DOMParser = window.DOMParser;
+    global.Node = window.Node;
+    global.XMLSerializer = jml.getXMLSerializer();
 }
 
 // const divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
@@ -1784,11 +1780,11 @@ const testCase$1 = {
 
 /* globals require, global */
 
-if (typeof global$1 !== 'undefined') {
+if (typeof global !== 'undefined') {
     const JSDOM = require('jsdom').JSDOM;
-    global$1.window = new JSDOM('').window;
-    global$1.document = window.document;
-    global$1.DOMParser = window.DOMParser;
+    global.window = new JSDOM('').window;
+    global.document = window.document;
+    global.DOMParser = window.DOMParser;
 }
 
 const divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
