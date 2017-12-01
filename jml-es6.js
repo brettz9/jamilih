@@ -665,12 +665,16 @@ const jml = function jml (...args) {
                             }
                             break;
                         }
-                        // setAttribute will work, but erases any existing styles
+                        // setAttribute unfortunately erases any existing styles
+                        elem.setAttribute(att, attVal);
+                        /*
+                        // The following reorders which is troublesome for serialization, e.g., as used in our testing
                         if (elem.style.cssText !== undefined) {
                             elem.style.cssText += attVal;
                         } else { // Opera
                             elem.style += attVal;
                         }
+                        */
                         break;
                     }
                     elem.setAttribute(att, attVal);

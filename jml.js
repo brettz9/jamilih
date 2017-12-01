@@ -203,17 +203,10 @@ var serializeToString = function serializeToString(nodeArg) {
                     // Had to add before
                     // && !tagAttributes[i].name.match(/^xmlns:?\w*$/) // Avoid adding these (e.g., from Firefox) as we add above
                     tagAttributes[i].name !== 'xmlns') {
-                        // let value;
-
-                        if (tagAttributes[i].name === 'style') {
-                            console.log('elem.style.cssText', node.style.cssText);
-                            // value = tagAttributes[i].value.split(/;\s+/).sort().join(' ');
-                        }
+                        // value = tagAttributes[i].value.split(/;\s+/).sort().join(' ');
                         // else { */
-                        var value = tagAttributes[i].value;
-                        // }
                         string += ' ' + tagAttributes[i].name + // .toLowerCase() +
-                        '="' + entify(value) + '"'; // .toLowerCase()
+                        '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                     }
                 }
 
@@ -1257,13 +1250,16 @@ var jml = function jml() {
                                 }
                                 break;
                             }
+                            elem.setAttribute(att, attVal);
+                            /*
                             // setAttribute will work, but erases any existing styles
+                            // The following reorders which is troublesome for serialization, e.g., as used in our testing
                             if (elem.style.cssText !== undefined) {
                                 elem.style.cssText += attVal;
-                            } else {
-                                // Opera
+                            } else { // Opera
                                 elem.style += attVal;
                             }
+                            */
                             break;
                         }
                         elem.setAttribute(att, attVal);

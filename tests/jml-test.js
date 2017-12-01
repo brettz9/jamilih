@@ -149,7 +149,7 @@ const div = jml(
 
 assert.matchesXMLString(
     div,
-    '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>',
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="position:absolute !important; left: -1000px;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>',
     // '<div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; left: -1000px;"><div id="DOMChildrenMustBeInArray" style="display:none;">test1</div></div><div id="anotherElementToAddToParent" style="display:none;">test2</div><div id="yetAnotherSiblingToAddToParent" style="display:none;">test3</div>'
     'Single element with attribute and DOM child and two DOM siblings'
 );
@@ -306,9 +306,9 @@ assert.matchesXMLString(
             null
         ]
     ], document.body),
-    '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color: red;">First Item</li>' +
-    '<li title="Some hover text." style="color: green;">Second Item</li>' +
-    '<li><span class="Remove-Me" style="font-weight: bold;">Not Filtered</span> Item</li>' +
+    '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color:red;">First Item</li>' +
+    '<li title="Some hover text." style="color:green;">Second Item</li>' +
+    '<li><span class="Remove-Me" style="font-weight:bold;">Not Filtered</span> Item</li>' +
     '<li><a href="#NewWindow">Special Link</a></li></ul>',
     'Single element with element children containing siblings and null final argument added to body'
 );

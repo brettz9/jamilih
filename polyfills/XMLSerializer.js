@@ -188,17 +188,10 @@ const serializeToString = function (nodeArg) {
                     // && !tagAttributes[i].name.match(/^xmlns:?\w*$/) // Avoid adding these (e.g., from Firefox) as we add above
                     tagAttributes[i].name !== 'xmlns'
                 ) {
-                    // let value;
-
-                    if (tagAttributes[i].name === 'style') {
-                        console.log('elem.style.cssText', node.style.cssText);
-                        // value = tagAttributes[i].value.split(/;\s+/).sort().join(' ');
-                    }
+                    // value = tagAttributes[i].value.split(/;\s+/).sort().join(' ');
                     // else { */
-                    const value = tagAttributes[i].value;
-                    // }
                     string += ' ' + tagAttributes[i].name + // .toLowerCase() +
-                        '="' + entify(value) + '"'; // .toLowerCase()
+                        '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                 }
             }
 

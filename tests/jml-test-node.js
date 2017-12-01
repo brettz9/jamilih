@@ -194,17 +194,10 @@ const serializeToString = function (nodeArg) {
                     // && !tagAttributes[i].name.match(/^xmlns:?\w*$/) // Avoid adding these (e.g., from Firefox) as we add above
                     tagAttributes[i].name !== 'xmlns'
                 ) {
-                    // let value;
-
-                    if (tagAttributes[i].name === 'style') {
-                        console.log('elem.style.cssText', node.style.cssText);
-                        // value = tagAttributes[i].value.split(/;\s+/).sort().join(' ');
-                    }
+                    // value = tagAttributes[i].value.split(/;\s+/).sort().join(' ');
                     // else { */
-                    const value = tagAttributes[i].value;
-                    // }
                     string += ' ' + tagAttributes[i].name + // .toLowerCase() +
-                        '="' + entify(value) + '"'; // .toLowerCase()
+                        '="' + entify(tagAttributes[i].value) + '"'; // .toLowerCase()
                 }
             }
 
@@ -1039,12 +1032,16 @@ const jml = function jml (...args) {
                             }
                             break;
                         }
+                        elem.setAttribute(att, attVal);
+                        /*
                         // setAttribute will work, but erases any existing styles
+                        // The following reorders which is troublesome for serialization, e.g., as used in our testing
                         if (elem.style.cssText !== undefined) {
                             elem.style.cssText += attVal;
                         } else { // Opera
                             elem.style += attVal;
                         }
+                        */
                         break;
                     }
                     elem.setAttribute(att, attVal);
@@ -1855,7 +1852,7 @@ const div = jml(
 
 matchesXMLString(
     div,
-    '<div xmlns="http://www.w3.org/1999/xhtml" style="left: -1000px; position: absolute !important;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>',
+    '<div xmlns="http://www.w3.org/1999/xhtml" style="position:absolute !important; left: -1000px;"><div style="display:none;" id="DOMChildrenMustBeInArray">test1</div></div>',
     // '<div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; left: -1000px;"><div id="DOMChildrenMustBeInArray" style="display:none;">test1</div></div><div id="anotherElementToAddToParent" style="display:none;">test2</div><div id="yetAnotherSiblingToAddToParent" style="display:none;">test3</div>'
     'Single element with attribute and DOM child and two DOM siblings'
 );
@@ -2012,9 +2009,9 @@ matchesXMLString(
             null
         ]
     ], document.body),
-    '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color: red;">First Item</li>' +
-    '<li title="Some hover text." style="color: green;">Second Item</li>' +
-    '<li><span class="Remove-Me" style="font-weight: bold;">Not Filtered</span> Item</li>' +
+    '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color:red;">First Item</li>' +
+    '<li title="Some hover text." style="color:green;">Second Item</li>' +
+    '<li><span class="Remove-Me" style="font-weight:bold;">Not Filtered</span> Item</li>' +
     '<li><a href="#NewWindow">Special Link</a></li></ul>',
     'Single element with element children containing siblings and null final argument added to body'
 );
