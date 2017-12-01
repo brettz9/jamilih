@@ -13,7 +13,7 @@
     "test-build": "rollup -c rollup.config.test.js",
     "browser-test": "npm run build && npm start tests/",
     "test": "npm run build && npm run test-build && node tests/jml-test-node.js",
-    "nodeunit": "npm run build && npm run test-build && nodeunit test-helpers/loadTests-commonjs.js"
+    "nodeunit": "npm run build && npm run test-build && node test-helpers/loadTests-commonjs.js"
   },
   "description": "Provide round-trippable JSON/JavaScript serialization",
   "main": "./jml.js",
@@ -57,6 +57,7 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-globals": "^1.1.0",
     "rollup-plugin-node-resolve": "^3.0.0"
   },
   "readmeFilename": "README.md",

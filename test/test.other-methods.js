@@ -42,7 +42,7 @@ const testCase = {
     // ============================================================================
         test.expect(1);
         // Todo: Fix xmldom's XMLSerializer (or wait for jsdom version) to give same result as browser
-        const expected = typeof process !== 'undefined' ? '<BR/>' : '<br xmlns="http://www.w3.org/1999/xhtml" />';
+        const expected = '<br xmlns="http://www.w3.org/1999/xhtml" />';
         const result = jml.toXML('br');
         test.deepEqual(expected, result);
         test.done();

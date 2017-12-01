@@ -8,7 +8,6 @@ if (typeof global !== 'undefined') {
     global.document = window.document;
     global.DOMParser = window.DOMParser;
     global.Node = window.Node;
-    global.XMLSerializer = jml.getXMLSerializer();
 }
 
 // const divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
