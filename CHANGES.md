@@ -21,9 +21,10 @@
 - npm: Add `module` property for sake of Rollup/Webpack
 - npm: Update deps and devDeps
 - npm: Add ESLint to test routines
+- npm: Remove xmldom dep., add Rollup plugins for testing
 - Testing: Add messages to tests, skipping some tests known to be not
     supported by jsdom
-- Testing: Support one Node/browser polyglot testing
+- Testing: Support one Node/browser polyglot testing, using Rollup
 - Testing: Update tests to current browser expectations
 - Docs: Document some newer features and other improvements
 
