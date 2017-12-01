@@ -2,3 +2,4 @@ jml.js
 tests/html5shiv-ie.js
 tests/testing-junk.js
 tests/jml-test-node.js
+test-helpers/loadTests-commonjs.js

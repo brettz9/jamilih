@@ -1,12 +1,11 @@
 /* globals require, global */
 
 import jml from '../jml-es6.js';
-import {testCase} from 'nodeunit';
 
 if (typeof global !== 'undefined') {
-    const jsdom = global.jsdom = require('jsdom').jsdom;
-    global.document = jsdom('');
-    global.window = document.defaultView;
+    const JSDOM = require('jsdom').JSDOM;
+    global.window = new JSDOM('').window;
+    global.document = window.document;
     global.DOMParser = window.DOMParser;
 }
 
@@ -16,8 +15,7 @@ const divDOM = html.documentElement.querySelector('.test');
 
 const xml = document.implementation.createDocument('', 'xml', null);
 
-export default testCase({
-
+const testCase = {
     // ============================================================================
     'element with text content': function (test) {
     // ============================================================================
@@ -155,4 +153,5 @@ export default testCase({
         test.deepEqual(expected, result);
         test.done();
     }
-});
+};
+export default testCase;

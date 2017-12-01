@@ -1,22 +1,21 @@
 /* globals require, global */
 
 import jml from '../jml-es6.js';
-import {testCase} from 'nodeunit';
 
 if (typeof global !== 'undefined') {
-    global.XMLSerializer = require('xmldom').XMLSerializer;
-    const jsdom = global.jsdom = require('jsdom').jsdom;
-    global.document = jsdom('');
-    global.window = document.defaultView;
+    const JSDOM = require('jsdom').JSDOM;
+    global.window = new JSDOM('').window;
+    global.document = window.document;
     global.DOMParser = window.DOMParser;
     global.Node = window.Node;
+    global.XMLSerializer = jml.getXMLSerializer();
 }
 
 // const divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
 // const html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
 // const divDOM = html.documentElement.querySelector('.test');
 
-export default testCase({
+const testCase = {
     // Todo: Add more tests (and harmonize with browser tests)
 
     // ============================================================================
@@ -43,4 +42,5 @@ export default testCase({
         // test.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641
         test.done();
     }
-});
+};
+export default testCase;

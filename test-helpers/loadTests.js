@@ -1,16 +1,11 @@
-/* globals global, require */
+import * as nodeunit from 'nodeunit';
 
-import {runSuites} from './testLoading.js';
+import jmlTests from '../test/test.jml.js';
+import otherMethodsTests from '../test/test.other-methods.js';
+import toJMLTests from '../test/test.toJML.js';
 
-if (typeof module !== 'undefined') {
-    const JSDOM = require('jsdom').JSDOM;
-    global.window = new JSDOM('').window;
-    global.document = window.document;
-    global.XMLSerializer = require('xmldom').XMLSerializer; // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
-}
-
-runSuites(
-    'test.toJML.js',
-    'test.jml.js',
-    'test.other-methods.js'
-);
+nodeunit.runModules({
+    jmlTests,
+    otherMethodsTests,
+    toJMLTests
+}, {});

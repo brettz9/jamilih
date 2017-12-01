@@ -1,13 +1,31 @@
 # 0.24.0
 
+- Breaking change: Use `setAttribute` for `style` to ensure consistent
+    serialization; could break if had been using to add styles to an
+    existing element
+- Breaking change (Browser): Remove most polyfills (no longer as concerned
+    about old IE support, Babel or others can polyfill, and some are now
+    better standardized, e.g., `XMLSerializer`)
 - Breaking change (Node): Rather than always creating a new jsdom window,
     document (and XMLSerializer), look first for global ones (in case
     user wants to interact with same document object
+- Breaking change (Node): Adjust and apply our own more browser-up-to-date
+    `XMLSerializer` polyfill in place of `xmldom`.
+- Enhancement: Allow for getting/setting of `window`, `document`, and
+    `XMLSerializer` objects so we don't need to inject globals in Node.
 - Fix: For Jamilih Maps, stop calling `super` on `this` (not needed
     and problematic in jsdom)
-- Refactoring: Rollup `jml-es6.js` to `jml.js` with Babel.
+- Refactoring: Rollup and apply Babel to `jml-es6.js` to `jml.js`
+    (ensuring older browsers and Node can support new features)
+- Refactoring: Use new jsdom API
+- npm: Add `module` property for sake of Rollup/Webpack
+- npm: Update deps and devDeps
+- npm: Add ESLint to test routines
 - Testing: Add messages to tests, skipping some tests known to be not
-    supported by jsdom (INCOMPLETE)
+    supported by jsdom
+- Testing: Support one Node/browser polyglot testing
+- Testing: Update tests to current browser expectations
+- Docs: Document some newer features and other improvements
 
 # 0.23.0
 
