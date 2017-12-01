@@ -263,6 +263,8 @@ jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}})
 ## Shadow DOM
 
 The `$shadow` property can be added to an element to attach Shadow DOM content.
+(Note: This is not currently supported in jsdom or
+[certain browsers](https://caniuse.com/#feat=shadowdomv1).)
 
 Its allowable properties include:
 
@@ -446,6 +448,9 @@ version of these methods `jml.Map` and `jml.WeakMap`).
 (TODO: Adapt examples from [tests](tests/jml-test.js))
 
 ## Custom elements
+
+(Note: This is not currently supported in jsdom or
+[certain browsers](https://caniuse.com/#feat=custom-elementsv1).)
 
 While there is some extra overhead to creating a custom element (in
 terms of performance at registering an element and for the need to
