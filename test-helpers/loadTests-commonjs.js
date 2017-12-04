@@ -2662,7 +2662,6 @@ const testCase$2 = {
 };
 
 /* eslint-env node */
-// import {JSDOM} from 'jsdom';
 global.window = jml$2.getWindow();
 global.Event = window.Event;
 global.DOMParser = window.DOMParser;
