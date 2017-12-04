@@ -9,6 +9,8 @@ window.jml = jml;
 
 const tests = {jmlTests, otherMethodsTests, toJMLTests};
 
+// Todo:
+// see loadTests-node file on problems compiling nodeunit
 nodeunit.run(
     Object.entries(tests).reduce((suites, [suiteName, suite]) => {
         const tests = nodeunit.testCase(suite); // Calls `setup`

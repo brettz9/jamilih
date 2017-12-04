@@ -13,6 +13,7 @@ global.document = jml.getDocument();
 global.XMLSerializer = jml.getXMLSerializer();
 global.jml = jml;
 
+// Todo:
 // This has problems as a regular `import` even when compiling
 //   with node-globals plugin (a `this` context issue which
 //   I could not seem to fix); if we could fix this, then our
