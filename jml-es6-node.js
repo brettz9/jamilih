@@ -4,8 +4,8 @@
 import xmlser from './polyfills/XMLSerializer.js';
 import jml from './jml-es6.js';
 
-// import {JSDOM} from 'jsdom';
-const {JSDOM} = require('jsdom');
+import {JSDOM} from 'jsdom';
+// const {JSDOM} = require('jsdom');
 
 const win = new JSDOM('').window;
 

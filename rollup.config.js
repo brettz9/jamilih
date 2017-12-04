@@ -1,5 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
+import builtins from 'rollup-plugin-node-builtins';
+import globals from 'rollup-plugin-node-globals';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 
@@ -11,8 +13,20 @@ export default [{
         name: 'jml'
     },
     plugins: [
+        globals(),
+        builtins(),
         babel({
             exclude: 'node_modules/**'
+        }),
+        json(),
+        resolve({
+            preferBuiltins: true
+        }),
+        commonjs({
+            include: 'node_modules/**',
+            namedExports: {
+                'node_modules/jsdom/lib/api.js': ['JSDOM']
+            }
         })
     ]
 }, {
@@ -30,6 +44,8 @@ export default [{
         'child_process', 'os'
     ],
     plugins: [
+        globals(),
+        builtins(),
         babel({
             exclude: 'node_modules/**'
         }),
@@ -37,6 +53,11 @@ export default [{
         resolve({
             preferBuiltins: true
         }),
-        commonjs()
+        commonjs({
+            include: 'node_modules/**',
+            namedExports: {
+                'node_modules/jsdom/lib/api.js': ['JSDOM']
+            }
+        })
     ]
 }];
