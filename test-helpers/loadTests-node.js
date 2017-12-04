@@ -5,7 +5,6 @@ import jmlTests from '../test/test.jml.js';
 import otherMethodsTests from '../test/test.other-methods.js';
 import toJMLTests from '../test/test.toJML.js';
 
-// import {JSDOM} from 'jsdom';
 global.window = jml.getWindow();
 global.Event = window.Event;
 global.DOMParser = window.DOMParser;
