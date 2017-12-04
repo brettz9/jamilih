@@ -1,44 +1,34 @@
-/* globals require, global */
-
-import jml from '../jml-es6.js';
-
-if (typeof global !== 'undefined') {
-    const JSDOM = require('jsdom').JSDOM;
-    global.window = new JSDOM('').window;
-    global.document = window.document;
-    global.DOMParser = window.DOMParser;
-}
-
-const divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
-const html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
-const divDOM = html.documentElement.querySelector('.test');
-
-const xml = document.implementation.createDocument('', 'xml', null);
+/* globals jml */
 
 const testCase = {
-    // ============================================================================
-    'element with text content': function (test) {
-    // ============================================================================
+    setUp (callback) {
+        this.divJamilih = ['div', {'class': 'test', 'xmlns': 'http://www.w3.org/1999/xhtml'}, ['someContent']];
+        const html = new DOMParser().parseFromString('<div class="test">someContent</div>', 'text/html');
+        this.divDOM = html.documentElement.querySelector('.test');
+        callback();
+    },
+    'element with text content' (test) {
         test.expect(1);
-        const expected = divJamilih;
-        const result = jml.toJML(divDOM);
-        test.deepEqual(expected, result);
+        const expected = this.divJamilih;
+        const result = jml.toJML(this.divDOM);
+        test.deepEqual(
+            expected,
+            result,
+            'Builds Jamilih array for single element with attribute, namespace declaration, and text content'
+        );
         test.done();
     },
-    /*
     // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641
-    // ============================================================================
-    'attribute node': function(test) {
-    // ============================================================================
+    'attribute node' (test) {
         test.expect(2);
         const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
 
-        const expected = {$attribute: xlink};
-        const att = document.createAttributeNS.apply(document, xlink.slice(0, -1));
+        let expected = {$attribute: xlink};
+        let att = document.createAttributeNS.apply(document, xlink.slice(0, -1));
         att.value = xlink.slice(-1);
 
-        const result = jml.toJML(att);
-        test.deepEqual(expected, result);
+        let result = jml.toJML(att);
+        test.deepEqual(expected, result, 'Namespaced attribute node to Jamilih');
 
         xlink[0] = null;
         expected = {$attribute: xlink};
@@ -46,36 +36,30 @@ const testCase = {
         att.value = xlink.slice(-1);
 
         result = jml.toJML(att);
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Non-namespaced attribute node to Jamilih');
 
         test.done();
     },
-    */
-    // ============================================================================
-    'text node': function (test) {
-    // ============================================================================
+    'text node' (test) {
         test.expect(1);
         const expected = 'text node content';
 
         const result = jml.toJML(document.createTextNode(expected));
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Text node to Jamilih');
         test.done();
     },
-    // ============================================================================
-    'CDATA section': function (test) {
-    // ============================================================================
+    'CDATA section' (test) {
         const content = 'CDATA <>&\'" content';
         const expected = ['![', content];
         test.expect(1);
+        const xml = document.implementation.createDocument('', 'xml', null);
         const result = jml.toJML(xml.createCDATASection(content));
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'CDATA to Jamilih');
         test.done();
     },
     /*
     // Currently removed from spec: https://dom.spec.whatwg.org/#dom-core-changes
-    // ============================================================================
-    'entity reference': function(test) {
-    // ============================================================================
+    'entity reference' (test) {
         test.expect(1);
         const expected = ['&', 'anEntity'];
 
@@ -84,9 +68,7 @@ const testCase = {
         test.done();
     },
     */
-    // ============================================================================
-    'entity': function (test) {
-    // ============================================================================
+    'entity' (test) {
         test.expect(1);
         const expected = {$ENTITY: {name: 'copy', childNodes: ['\u00a9']}};
 
@@ -99,58 +81,48 @@ const testCase = {
         // As per the above, we need to simulate an entity
         const result = jml.toJML({nodeType: 6, nodeName: 'copy', childNodes: [{nodeType: 3, nodeValue: '\u00a9'}]});
 
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, '(Simulated) entity to Jamilih');
         test.done();
     },
-    // ============================================================================
-    'processing instruction': function (test) {
-    // ============================================================================
+    'processing instruction' (test) {
         test.expect(1);
         const expected = ['?', 'aTarget', 'a processing instruction'];
 
         const result = jml.toJML(document.createProcessingInstruction('aTarget', 'a processing instruction'));
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Processing instruction to Jamilih');
         test.done();
     },
-    // ============================================================================
-    'comment': function (test) {
-    // ============================================================================
+    'comment' (test) {
         test.expect(1);
         const expected = ['!', 'a comment'];
 
         const result = jml.toJML(document.createComment('a comment'));
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Comment to Jamilih');
         test.done();
     },
-    // ============================================================================
-    'document': function (test) {
-    // ============================================================================
+    'document' (test) {
         test.expect(1);
         const expected = {$document: {childNodes: [{$DOCTYPE: {name: 'html'}}, ['html', {xmlns: 'http://www.w3.org/1999/xhtml'}, [['head', [['title', ['a title']]]], ['body']]]]}};
         const doc = document.implementation.createHTMLDocument('a title');
         const result = jml.toJML(doc);
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Document node to Jamilih');
         test.done();
     },
-    // ============================================================================
-    'document type': function (test) {
-    // ============================================================================
+    'document type' (test) {
         test.expect(1);
         const expected = {$DOCTYPE: {name: 'a-prefix:a-name', publicId: 'a-pub-id', systemId: 'a-sys-id'}};
 
         const result = jml.toJML(document.implementation.createDocumentType('a-prefix:a-name', 'a-pub-id', 'a-sys-id'));
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Document type node to Jamilih');
         test.done();
     },
-    // ============================================================================
-    'document fragment': function (test) {
-    // ============================================================================
+    'document fragment' (test) {
         test.expect(1);
-        const expected = {'#': [divJamilih]};
+        const expected = {'#': [this.divJamilih]};
         const frag = document.createDocumentFragment();
-        frag.appendChild(divDOM.cloneNode(true));
+        frag.appendChild(this.divDOM.cloneNode(true));
         const result = jml.toJML(frag);
-        test.deepEqual(expected, result);
+        test.deepEqual(expected, result, 'Document fragment node to Jamilih');
         test.done();
     }
 };

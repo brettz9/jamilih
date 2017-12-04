@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.27.0",
+  "version": "0.28.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -8,15 +8,15 @@
   },
   "contributors": [],
   "scripts": {
-    "eslint": "eslint jml-es6.js test-helpers/ test/ tests/",
+    "eslint": "eslint jml-es6.js test-helpers/ test/",
     "build": "npm run eslint && rollup -c",
     "test-build": "rollup -c rollup.config.test.js",
-    "browser-test": "npm run build && npm start tests/",
-    "test": "npm run build && npm run test-build && node tests/jml-test-node.js",
-    "nodeunit": "npm run build && npm run test-build && node test-helpers/loadTests-commonjs.js"
+    "browser-test": "npm run build && npm start test/",
+    "test": "npm run build && npm run test-build && node test-helpers/loadTests-commonjs.js"
   },
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "main": "./jml.js",
+  "main": "./jml-node.js",
+  "browser": "./jml-es6.js",
   "module": "./jml-es6.js",
   "repository": {
     "type": "git",
@@ -35,9 +35,7 @@
     "node": ">=0.10"
   },
   "dependencies": {
-    "jsdom": "11.5.1",
-    "array.from": "1.0.3",
-    "object-assign": "4.1.1"
+    "jsdom": "11.5.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -55,7 +53,10 @@
     "nodeunit": "0.11.2",
     "opn": "5.1.0",
     "rollup": "0.52.0",
-    "rollup-plugin-babel": "^3.0.2"
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-resolve": "^3.0.0"
   },
   "readmeFilename": "README.md",
   "bugs": {

@@ -1,4 +1,3 @@
-/* globals require */
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -29,18 +28,9 @@ Other Todos:
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
 
-import xmlser from './polyfills/XMLSerializer.js';
-
-const isNode = typeof module !== 'undefined';
-let JSDOM;
-if (isNode) {
-    JSDOM = require('jsdom').JSDOM;
-}
-let win = isNode && typeof window === 'undefined' ? new JSDOM('').window : window;
-let doc = isNode && typeof document === 'undefined' ? win.document : document;
-// let XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? require('xmldom').XMLSerializer : XMLSerializer // Can remove xmldom dependency once jsdom may implement: https://github.com/tmpvar/jsdom/issues/1368
-
-let XmlSerializer = isNode && typeof XMLSerializer === 'undefined' ? xmlser : XMLSerializer;
+let win = typeof window !== 'undefined' && window;
+let doc = typeof document !== 'undefined' && document;
+let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
 const possibleOptions = [
@@ -1023,6 +1013,7 @@ jml.toJML = function (dom, config) {
             }
             resetTemp();
             break;
+        case undefined: // Treat as attribute node until this is fixed: https://github.com/tmpvar/jsdom/issues/1641 / https://github.com/tmpvar/jsdom/pull/1822
         case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
             set({$attribute: [node.namespaceURI, node.name, node.value]});
             break;

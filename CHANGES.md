@@ -1,3 +1,19 @@
+# 0.28.0
+
+- Breaking change: Don't throw if encountering `Node.nodeType` as `undefined`;
+    temporarily treat as `Node.ATTRIBUTE_NODE` for jsdom
+- Breaking change: Remove an unused IE Shiv polyfill from `tests` directory
+- npm: Add `browser` to `package.json` (and change `main` to point to
+    Node-specific file)
+- npm: Remove unused dependencies; add Rollup ones
+- Build: Move Node code into separate entry file
+- Build: Add Rollup code to potentially handle JSDOM as import (incomplete
+    and may not work)
+- Testing: Convert non-Nodeunit tests to Nodeunit and merge two test
+    directories into one; simplify testing and leverage `setUp`; fix all broken
+    tests; rename our assert code and have it accept a test object; make
+    separate entry files for Node and browser; add test messages
+
 # 0.27.0
 
 - Fix: Actually add plugin apparently insisted on by Babel

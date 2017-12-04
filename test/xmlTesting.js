@@ -1,5 +1,11 @@
+let currentTester;
+
 const nbsp = '\u00a0';
 const write = (...msgs) => {
+    if (currentTester) {
+        currentTester.ok(...msgs);
+        return;
+    }
     if (typeof module === 'undefined') {
         document.body.append(
             ...msgs, ...Array.from({length: 2}, () => document.createElement('br'))
@@ -39,5 +45,12 @@ const matchesXMLString = (item1, item2, msg) => {
     matches(item1, item2, msg);
 };
 
+const init = (test, expected) => {
+    if (expected) {
+        test.expect(expected);
+    }
+    currentTester = test;
+};
+
 export {write, skip, matches, matchesXMLStringWithinElement,
-    matchesXMLStringOnElement, matchesXMLString};
+    matchesXMLStringOnElement, matchesXMLString, init};
