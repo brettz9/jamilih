@@ -1,6 +1,9 @@
+/*.*
 test
-tests
 test-helpers
-.gitignore
-.remarkrc
-bower.json
+!jml.js
+!jml-node.js
+!jml-es6.js
+!jml-es6-node.js
+!LICENSE-MIT.txt
+!jamilih.jsonschema

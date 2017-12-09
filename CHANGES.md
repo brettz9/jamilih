@@ -1,3 +1,7 @@
+# 0.29.1
+
+- Fix: npmignore
+
 # 0.29.0
 
 - Build: Add yarn
