@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.28.0",
+  "version": "0.29.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -39,7 +39,6 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
-    "babel-env": "^2.4.1",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
     "eslint": "4.13.0",

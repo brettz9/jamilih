@@ -1,3 +1,9 @@
+# 0.29.0
+
+- Build: Add yarn
+- npm: Remove babel-env
+- npm: Update dev deps
+
 # 0.28.0
 
 - Breaking change: Don't throw if encountering `Node.nodeType` as `undefined`;
