@@ -7,6 +7,8 @@
 
 # Jamilih
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/brettz9/jamilih.svg)](https://greenkeeper.io/)
+
 If you are seeking an even lighter version (e.g., for inclusion in a
 stand-alone library) while still getting some benefits of the
 syntax-highlighter-friendly pure JS approach for DOM construction,
