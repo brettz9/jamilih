@@ -733,8 +733,13 @@ in templates, and to my personal sensibilities, more clear in goal #8
     1. Allow for fragments and other out-of-place objects
     1. Get working with JSONEditor
 1. See "todo"'s within code.
-1. Migrate `tests` folder into nodeunit `test` folder
 1. Ensure setting of `select` `value` can take place *after* the options are added
+1. Plugins: Move any current functionality out into default-included plugins and
+    make this repository a collection of plugins and a separate core to be moved
+    elsewhere?
+1. Try to append children to their parent immediately (before attribute/property
+    processing code is run) so plug-ins (like `i18nizeElement`) can rely on the
+    immediate ancestor context.
 
 # Possible todos
 
