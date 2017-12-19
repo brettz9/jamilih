@@ -17,6 +17,13 @@ const write = (...msgs) => {
 const skip = (...msgs) => { // Todo: Could track and report on test count
     return write(...msgs);
 };
+const assert = (ok, msg) => {
+    if (!ok) {
+        const err = new Error('Stack');
+        console.log('Assertion not ok:', err);
+    }
+    write(!!ok, ` ${nbsp}` + msg);
+};
 const matches = (item1, item2, msg) => {
     if (!item2) { // For convenience in debugging
         console.log('Missing item2\n', item1);
@@ -52,5 +59,14 @@ const init = (test, expected) => {
     currentTester = test;
 };
 
-export {write, skip, matches, matchesXMLStringWithinElement,
+const throws = (cb, msg) => {
+    try {
+        cb();
+        assert(false, `Should throw: ${msg}`);
+    } catch (err) {
+        assert(true, msg);
+    }
+};
+
+export {write, skip, throws, assert, matches, matchesXMLStringWithinElement,
     matchesXMLStringOnElement, matchesXMLString, init};

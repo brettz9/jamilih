@@ -707,6 +707,63 @@ const testCase = {
             'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
         );
         test.done();
+    },
+    '$plugins' (test) {
+        xmlTesting.init(test, 7);
+        const options = {$plugins: [
+            {
+                name: '$_myplugin',
+                set ({element, attribute: {name, value}}) {
+                    console.log('vvv', value, '::', element, '::', name);
+                    // Add code here to modify the element
+                    // element.setAttribute(name, value);
+                    if (value.blueAndRed) {
+                        element.style.color = 'blue';
+                        element.style.backgroundColor = 'red';
+                    }
+                }
+            }
+        ]};
+        const div = jml(options, 'div', {id: 'myDiv', $_myplugin: {
+            blueAndRed: true
+        }}, document.body);
+        xmlTesting.matches(
+            div.style.color,
+            'blue',
+            'Should have text set to a blue color'
+        );
+        xmlTesting.matches(
+            div.style.backgroundColor,
+            'red',
+            'Should have text set to a red background color'
+        );
+        xmlTesting.matches(
+            div.nodeName.toLowerCase(),
+            'div',
+            'Should be a `div` element'
+        );
+        xmlTesting.matches(
+            div.id,
+            'myDiv',
+            'Should allow other non-plugin attributes'
+        );
+        xmlTesting.throws(() => {
+            jml({$plugins: [{
+                set () {}
+            }]}, 'div');
+        }, 'Should throw when no `name` ');
+        xmlTesting.throws(() => {
+            jml({$plugins: [{
+                name: '$_myplugin'
+            }]}, 'div');
+        }, 'Should throw when no `set` method');
+        xmlTesting.throws(() => {
+            jml({$plugins: [{
+                name: 'myplugin',
+                set () {}
+            }]}, 'div');
+        }, 'Should throw with bad `name`');
+        test.done();
     }
 };
 export default testCase;

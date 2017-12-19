@@ -1,3 +1,7 @@
+# 0.30.0
+
+- Enhancement: Support plugins
+
 # 0.29.1
 
 - Fix: npmignore

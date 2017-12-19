@@ -533,6 +533,44 @@ myel4.test();
 myel4.test2();
 ```
 
+## Plugins
+
+Plugins may be supplied within an array passed on an object as the first
+argument to Jamilih. Plugins must contain both a `name` and `set` property
+and the name must begin with `$_`. When used within jamilih, the value
+for the plugin property can be set to a string, an object, or whatever
+you prefer.
+
+```js
+const options = {$plugins: [
+    {
+        name: '$_myplugin',
+        set ({element, attribute: {name, value}}) {
+            // Add code here to modify the element
+            // element.setAttribute(name, value);
+            if (value.blueAndRed) {
+                element.style.color = 'blue';
+                element.style.backgroundColor = 'red';
+            }
+        }
+    }
+]};
+jml(options, 'div', {id: 'myDiv', $_myplugin: {
+    blueAndRed: true
+}}, document.body);
+
+// If reusing, you may wish to bind the options
+const j = jml.bind(null, options);
+
+// Then you can reuse without needing to resupply the
+//    options (including its plugins)
+j('div', {id: 'myDiv', $_myplugin: {
+    blueAndRed: true
+}}, document.body);
+```
+
+For a list of plugins, see [docs/PLUGINS.md](./docs/PLUGINS.md).
+
 # Rules (summary)
 
 1. String element name (or array of 1-4)
@@ -561,6 +599,8 @@ myel4.test2();
             one wishes jml()
             to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
             children array).
+        1. A property beginning with `$` has a special purpose and if it begins with `$_`,
+            it is a plugin.
         1. A property `$a` set to an array of attribute name-value arrays (this is only necessary if
             one requires
             and the environment allows a fixed attribute order but may not support

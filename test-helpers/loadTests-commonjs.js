@@ -399,6 +399,7 @@ let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
 const possibleOptions = [
+    '$plugins',
     '$map' // Add any other options here
 ];
 
@@ -701,340 +702,348 @@ const jml$2 = function jml (...args) {
     function _checkAtts (atts) {
         let att;
         for (att in atts) {
-            if (atts.hasOwnProperty(att)) {
-                const attVal = atts[att];
-                att = att in ATTR_MAP ? ATTR_MAP[att] : att;
-                if (NULLABLES.includes(att)) {
-                    if (attVal != null) {
-                        elem[att] = attVal;
-                    }
-                    continue;
-                } else if (ATTR_DOM.includes(att)) {
+            if (!atts.hasOwnProperty(att)) {
+                continue;
+            }
+            const attVal = atts[att];
+            att = att in ATTR_MAP ? ATTR_MAP[att] : att;
+            if (NULLABLES.includes(att)) {
+                if (attVal != null) {
                     elem[att] = attVal;
-                    continue;
                 }
-                switch (att) {
+                continue;
+            } else if (ATTR_DOM.includes(att)) {
+                elem[att] = attVal;
+                continue;
+            }
+            switch (att) {
+            /*
+            Todos:
+            0. JSON mode to prevent event addition
+
+            0. {$xmlDocument: []} // doc.implementation.createDocument
+
+            0. Accept array for any attribute with first item as prefix and second as value?
+            0. {$: ['xhtml', 'div']} for prefixed elements
+                case '$': // Element with prefix?
+                    nodes[nodes.length] = elem = doc.createElementNS(attVal[0], attVal[1]);
+                    break;
+            */
+            case '#': { // Document fragment
+                nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
+                break;
+            } case '$shadow': {
+                const {open, closed} = attVal;
+                let {content, template} = attVal;
+                const shadowRoot = elem.attachShadow({
+                    mode: closed || open === false ? 'closed' : 'open'
+                });
+                if (template) {
+                    if (Array.isArray(template)) {
+                        if (_getType(template[0]) === 'object') { // Has attributes
+                            template = jml('template', ...template, doc.body);
+                        } else { // Array is for the children
+                            template = jml('template', template, doc.body);
+                        }
+                    } else if (typeof template === 'string') {
+                        template = doc.querySelector(template);
+                    }
+                    jml(
+                        template.content.cloneNode(true),
+                        shadowRoot
+                    );
+                } else {
+                    if (!content) {
+                        content = open || closed;
+                    }
+                    if (content && typeof content !== 'boolean') {
+                        if (Array.isArray(content)) {
+                            jml({'#': content}, shadowRoot);
+                        } else {
+                            jml(content, shadowRoot);
+                        }
+                    }
+                }
+                break;
+            } case 'is': { // Not yet supported in browsers
+                // Handled during element creation
+                break;
+            } case '$custom': {
+                Object.assign(elem, attVal);
+                break;
+            } case '$define': {
+                const localName = elem.localName.toLowerCase();
+                // Note: customized built-ins sadly not working yet
+                const customizedBuiltIn = !localName.includes('-');
+
+                const def = customizedBuiltIn ? elem.getAttribute('is') : localName;
+                if (customElements.get(def)) {
+                    break;
+                }
+                const getConstructor = (cb) => {
+                    const baseClass = options && options.extends
+                        ? doc.createElement(options.extends).constructor
+                        : customizedBuiltIn
+                            ? doc.createElement(localName).constructor
+                            : HTMLElement;
+                    return cb
+                        ? class extends baseClass {
+                            constructor () {
+                                super();
+                                cb.call(this);
+                            }
+                        }
+                        : class extends baseClass {};
+                };
+
+                let constructor, options, prototype;
+                if (Array.isArray(attVal)) {
+                    if (attVal.length <= 2) {
+                        [constructor, options] = attVal;
+                        if (typeof options === 'string') {
+                            options = {extends: options};
+                        } else if (!options.hasOwnProperty('extends')) {
+                            prototype = options;
+                        }
+                        if (typeof constructor === 'object') {
+                            prototype = constructor;
+                            constructor = getConstructor();
+                        }
+                    } else {
+                        [constructor, prototype, options] = attVal;
+                        if (typeof options === 'string') {
+                            options = {extends: options};
+                        }
+                    }
+                } else if (typeof attVal === 'function') {
+                    constructor = attVal;
+                } else {
+                    prototype = attVal;
+                    constructor = getConstructor();
+                }
+                if (!constructor.toString().startsWith('class')) {
+                    constructor = getConstructor(constructor);
+                }
+                if (!options && customizedBuiltIn) {
+                    options = {extends: localName};
+                }
+                if (prototype) {
+                    Object.assign(constructor.prototype, prototype);
+                }
+                customElements.define(def, constructor, customizedBuiltIn ? options : undefined);
+                break;
+            } case '$symbol': {
+                const [symbol, func] = attVal;
+                if (typeof func === 'function') {
+                    const funcBound = func.bind(elem);
+                    if (typeof symbol === 'string') {
+                        elem[Symbol.for(symbol)] = funcBound;
+                    } else {
+                        elem[symbol] = funcBound;
+                    }
+                } else {
+                    const obj = func;
+                    obj.elem = elem;
+                    if (typeof symbol === 'string') {
+                        elem[Symbol.for(symbol)] = obj;
+                    } else {
+                        elem[symbol] = obj;
+                    }
+                }
+                break;
+            } case '$data' : {
+                setMap(attVal);
+                break;
+            } case '$attribute': { // Attribute node
+                const node = attVal.length === 3 ? doc.createAttributeNS(attVal[0], attVal[1]) : doc.createAttribute(attVal[0]);
+                node.value = attVal[attVal.length - 1];
+                nodes[nodes.length] = node;
+                break;
+            } case '$text': { // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
+                const node = doc.createTextNode(attVal);
+                nodes[nodes.length] = node;
+                break;
+            } case '$document': {
+                const node = doc.implementation.createHTMLDocument();
+                if (attVal.childNodes) {
+                    attVal.childNodes.forEach(_childrenToJML(node));
+                    // Remove any extra nodes created by createHTMLDocument().
+                    let j = attVal.childNodes.length;
+                    while (node.childNodes[j]) {
+                        const cn = node.childNodes[j];
+                        cn.parentNode.removeChild(cn);
+                        j++;
+                    }
+                } else {
+                    const html = node.childNodes[1];
+                    const head = html.childNodes[0];
+                    const body = html.childNodes[1];
+                    if (attVal.title || attVal.head) {
+                        const meta = doc.createElement('meta');
+                        meta.charset = 'utf-8';
+                        head.appendChild(meta);
+                    }
+                    if (attVal.title) {
+                        node.title = attVal.title; // Appends after meta
+                    }
+                    if (attVal.head) {
+                        attVal.head.forEach(_appendJML(head));
+                    }
+                    if (attVal.body) {
+                        attVal.body.forEach(_appendJMLOrText(body));
+                    }
+                }
+                break;
+            } case '$DOCTYPE': {
                 /*
-                Todos:
-                0. JSON mode to prevent event addition
-
-                0. {$xmlDocument: []} // doc.implementation.createDocument
-
-                0. Accept array for any attribute with first item as prefix and second as value?
-                0. {$: ['xhtml', 'div']} for prefixed elements
-                    case '$': // Element with prefix?
-                        nodes[nodes.length] = elem = doc.createElementNS(attVal[0], attVal[1]);
-                        break;
+                // Todo:
+                if (attVal.internalSubset) {
+                    node = {};
+                }
+                else
                 */
-                case '#': { // Document fragment
-                    nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
-                    break;
-                } case '$shadow': {
-                    const {open, closed} = attVal;
-                    let {content, template} = attVal;
-                    const shadowRoot = elem.attachShadow({
-                        mode: closed || open === false ? 'closed' : 'open'
-                    });
-                    if (template) {
-                        if (Array.isArray(template)) {
-                            if (_getType(template[0]) === 'object') { // Has attributes
-                                template = jml('template', ...template, doc.body);
-                            } else { // Array is for the children
-                                template = jml('template', template, doc.body);
-                            }
-                        } else if (typeof template === 'string') {
-                            template = doc.querySelector(template);
-                        }
-                        jml(
-                            template.content.cloneNode(true),
-                            shadowRoot
-                        );
-                    } else {
-                        if (!content) {
-                            content = open || closed;
-                        }
-                        if (content && typeof content !== 'boolean') {
-                            if (Array.isArray(content)) {
-                                jml({'#': content}, shadowRoot);
-                            } else {
-                                jml(content, shadowRoot);
-                            }
-                        }
-                    }
-                    break;
-                } case 'is': { // Not yet supported in browsers
-                    // Handled during element creation
-                    break;
-                } case '$custom': {
-                    Object.assign(elem, attVal);
-                    break;
-                } case '$define': {
-                    const localName = elem.localName.toLowerCase();
-                    // Note: customized built-ins sadly not working yet
-                    const customizedBuiltIn = !localName.includes('-');
-
-                    const def = customizedBuiltIn ? elem.getAttribute('is') : localName;
-                    if (customElements.get(def)) {
-                        break;
-                    }
-                    const getConstructor = (cb) => {
-                        const baseClass = options && options.extends
-                            ? doc.createElement(options.extends).constructor
-                            : customizedBuiltIn
-                                ? doc.createElement(localName).constructor
-                                : HTMLElement;
-                        return cb
-                            ? class extends baseClass {
-                                constructor () {
-                                    super();
-                                    cb.call(this);
-                                }
-                            }
-                            : class extends baseClass {};
-                    };
-
-                    let constructor, options, prototype;
-                    if (Array.isArray(attVal)) {
-                        if (attVal.length <= 2) {
-                            [constructor, options] = attVal;
-                            if (typeof options === 'string') {
-                                options = {extends: options};
-                            } else if (!options.hasOwnProperty('extends')) {
-                                prototype = options;
-                            }
-                            if (typeof constructor === 'object') {
-                                prototype = constructor;
-                                constructor = getConstructor();
-                            }
-                        } else {
-                            [constructor, prototype, options] = attVal;
-                            if (typeof options === 'string') {
-                                options = {extends: options};
-                            }
-                        }
-                    } else if (typeof attVal === 'function') {
-                        constructor = attVal;
-                    } else {
-                        prototype = attVal;
-                        constructor = getConstructor();
-                    }
-                    if (!constructor.toString().startsWith('class')) {
-                        constructor = getConstructor(constructor);
-                    }
-                    if (!options && customizedBuiltIn) {
-                        options = {extends: localName};
-                    }
-                    if (prototype) {
-                        Object.assign(constructor.prototype, prototype);
-                    }
-                    customElements.define(def, constructor, customizedBuiltIn ? options : undefined);
-                    break;
-                } case '$symbol': {
-                    const [symbol, func] = attVal;
-                    if (typeof func === 'function') {
-                        const funcBound = func.bind(elem);
-                        if (typeof symbol === 'string') {
-                            elem[Symbol.for(symbol)] = funcBound;
-                        } else {
-                            elem[symbol] = funcBound;
-                        }
-                    } else {
-                        const obj = func;
-                        obj.elem = elem;
-                        if (typeof symbol === 'string') {
-                            elem[Symbol.for(symbol)] = obj;
-                        } else {
-                            elem[symbol] = obj;
-                        }
-                    }
-                    break;
-                } case '$data' : {
-                    setMap(attVal);
-                    break;
-                } case '$attribute': { // Attribute node
-                    const node = attVal.length === 3 ? doc.createAttributeNS(attVal[0], attVal[1]) : doc.createAttribute(attVal[0]);
-                    node.value = attVal[attVal.length - 1];
-                    nodes[nodes.length] = node;
-                    break;
-                } case '$text': { // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
-                    const node = doc.createTextNode(attVal);
-                    nodes[nodes.length] = node;
-                    break;
-                } case '$document': {
-                    const node = doc.implementation.createHTMLDocument();
-                    if (attVal.childNodes) {
-                        attVal.childNodes.forEach(_childrenToJML(node));
-                        // Remove any extra nodes created by createHTMLDocument().
-                        let j = attVal.childNodes.length;
-                        while (node.childNodes[j]) {
-                            const cn = node.childNodes[j];
-                            cn.parentNode.removeChild(cn);
-                            j++;
-                        }
-                    } else {
-                        const html = node.childNodes[1];
-                        const head = html.childNodes[0];
-                        const body = html.childNodes[1];
-                        if (attVal.title || attVal.head) {
-                            const meta = doc.createElement('meta');
-                            meta.charset = 'utf-8';
-                            head.appendChild(meta);
-                        }
-                        if (attVal.title) {
-                            node.title = attVal.title; // Appends after meta
-                        }
-                        if (attVal.head) {
-                            attVal.head.forEach(_appendJML(head));
-                        }
-                        if (attVal.body) {
-                            attVal.body.forEach(_appendJMLOrText(body));
-                        }
-                    }
-                    break;
-                } case '$DOCTYPE': {
-                    /*
-                    // Todo:
-                    if (attVal.internalSubset) {
-                        node = {};
-                    }
-                    else
-                    */
-                    let node;
-                    if (attVal.entities || attVal.notations) {
-                        node = {
-                            name: attVal.name,
-                            nodeName: attVal.name,
-                            nodeValue: null,
-                            nodeType: 10,
-                            entities: attVal.entities.map(_jmlSingleArg),
-                            notations: attVal.notations.map(_jmlSingleArg),
-                            publicId: attVal.publicId,
-                            systemId: attVal.systemId
-                            // internalSubset: // Todo
-                        };
-                    } else {
-                        node = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
-                    }
-                    nodes[nodes.length] = node;
-                    break;
-                } case '$ENTITY': {
-                    /*
-                    // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
-                    const node = {
+                let node;
+                if (attVal.entities || attVal.notations) {
+                    node = {
+                        name: attVal.name,
                         nodeName: attVal.name,
                         nodeValue: null,
+                        nodeType: 10,
+                        entities: attVal.entities.map(_jmlSingleArg),
+                        notations: attVal.notations.map(_jmlSingleArg),
                         publicId: attVal.publicId,
-                        systemId: attVal.systemId,
-                        notationName: attVal.notationName,
-                        nodeType: 6,
-                        childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
+                        systemId: attVal.systemId
+                        // internalSubset: // Todo
                     };
-                    */
-                    break;
-                } case '$NOTATION': {
-                    // Todo: We could add further properties/methods, but unlikely to be used as is.
-                    const node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
-                    nodes[nodes.length] = node;
-                    break;
-                } case '$on': { // Events
-                    for (const p2 in attVal) {
-                        if (attVal.hasOwnProperty(p2)) {
-                            let val = attVal[p2];
-                            if (typeof val === 'function') {
-                                val = [val, false];
-                            }
-                            if (typeof val[0] === 'function') {
-                                _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
-                            }
+                } else {
+                    node = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                }
+                nodes[nodes.length] = node;
+                break;
+            } case '$ENTITY': {
+                /*
+                // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
+                const node = {
+                    nodeName: attVal.name,
+                    nodeValue: null,
+                    publicId: attVal.publicId,
+                    systemId: attVal.systemId,
+                    notationName: attVal.notationName,
+                    nodeType: 6,
+                    childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
+                };
+                */
+                break;
+            } case '$NOTATION': {
+                // Todo: We could add further properties/methods, but unlikely to be used as is.
+                const node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
+                nodes[nodes.length] = node;
+                break;
+            } case '$on': { // Events
+                for (const p2 in attVal) {
+                    if (attVal.hasOwnProperty(p2)) {
+                        let val = attVal[p2];
+                        if (typeof val === 'function') {
+                            val = [val, false];
+                        }
+                        if (typeof val[0] === 'function') {
+                            _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
                         }
                     }
-                    break;
-                } case 'className': case 'class':
+                }
+                break;
+            } case 'className': case 'class':
+                if (attVal != null) {
+                    elem.className = attVal;
+                }
+                break;
+            case 'dataset': {
+                // Map can be keyed with hyphenated or camel-cased properties
+                const recurse = (attVal, startProp) => {
+                    let prop = '';
+                    const pastInitialProp = startProp !== '';
+                    Object.keys(attVal).forEach((key) => {
+                        const value = attVal[key];
+                        if (pastInitialProp) {
+                            prop = startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/, _upperCase);
+                        } else {
+                            prop = startProp + key.replace(hyphenForCamelCase, _upperCase);
+                        }
+                        if (value === null || typeof value !== 'object') {
+                            if (value != null) {
+                                elem.dataset[prop] = value;
+                            }
+                            prop = startProp;
+                            return;
+                        }
+                        recurse(value, prop);
+                    });
+                };
+                recurse(attVal, '');
+                break;
+            // Todo: Disable this by default unless configuration explicitly allows (for security)
+            } case 'innerHTML':
+                if (attVal != null) {
+                    elem.innerHTML = attVal;
+                }
+                break;
+            case 'htmlFor': case 'for':
+                if (elStr === 'label') {
                     if (attVal != null) {
-                        elem.className = attVal;
+                        elem.htmlFor = attVal;
                     }
-                    break;
-                case 'dataset': {
-                    // Map can be keyed with hyphenated or camel-cased properties
-                    const recurse = (attVal, startProp) => {
-                        let prop = '';
-                        const pastInitialProp = startProp !== '';
-                        Object.keys(attVal).forEach((key) => {
-                            const value = attVal[key];
-                            if (pastInitialProp) {
-                                prop = startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/, _upperCase);
-                            } else {
-                                prop = startProp + key.replace(hyphenForCamelCase, _upperCase);
-                            }
-                            if (value === null || typeof value !== 'object') {
-                                if (value != null) {
-                                    elem.dataset[prop] = value;
-                                }
-                                prop = startProp;
-                                return;
-                            }
-                            recurse(value, prop);
-                        });
-                    };
-                    recurse(attVal, '');
-                    break;
-                // Todo: Disable this by default unless configuration explicitly allows (for security)
-                } case 'innerHTML':
-                    if (attVal != null) {
-                        elem.innerHTML = attVal;
-                    }
-                    break;
-                case 'htmlFor': case 'for':
-                    if (elStr === 'label') {
-                        if (attVal != null) {
-                            elem.htmlFor = attVal;
-                        }
-                        break;
-                    }
-                    elem.setAttribute(att, attVal);
-                    break;
-                case 'xmlns':
-                    // Already handled
-                    break;
-                default:
-                    if (att.match(/^on/)) {
-                        elem[att] = attVal;
-                        // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
-                        break;
-                    }
-                    if (att === 'style') {
-                        if (attVal == null) {
-                            break;
-                        }
-                        if (typeof attVal === 'object') {
-                            for (const p2 in attVal) {
-                                if (attVal.hasOwnProperty(p2) && attVal[p2] != null) {
-                                    // Todo: Handle aggregate properties like "border"
-                                    if (p2 === 'float') {
-                                        elem.style.cssFloat = attVal[p2];
-                                        elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
-                                    } else {
-                                        elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                        // setAttribute unfortunately erases any existing styles
-                        elem.setAttribute(att, attVal);
-                        /*
-                        // The following reorders which is troublesome for serialization, e.g., as used in our testing
-                        if (elem.style.cssText !== undefined) {
-                            elem.style.cssText += attVal;
-                        } else { // Opera
-                            elem.style += attVal;
-                        }
-                        */
-                        break;
-                    }
-                    elem.setAttribute(att, attVal);
                     break;
                 }
+                elem.setAttribute(att, attVal);
+                break;
+            case 'xmlns':
+                // Already handled
+                break;
+            default:
+                if (att.match(/^on/)) {
+                    elem[att] = attVal;
+                    // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
+                    break;
+                }
+                if (att === 'style') {
+                    if (attVal == null) {
+                        break;
+                    }
+                    if (typeof attVal === 'object') {
+                        for (const p2 in attVal) {
+                            if (attVal.hasOwnProperty(p2) && attVal[p2] != null) {
+                                // Todo: Handle aggregate properties like "border"
+                                if (p2 === 'float') {
+                                    elem.style.cssFloat = attVal[p2];
+                                    elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
+                                } else {
+                                    elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                                }
+                            }
+                        }
+                        break;
+                    }
+                    // setAttribute unfortunately erases any existing styles
+                    elem.setAttribute(att, attVal);
+                    /*
+                    // The following reorders which is troublesome for serialization, e.g., as used in our testing
+                    if (elem.style.cssText !== undefined) {
+                        elem.style.cssText += attVal;
+                    } else { // Opera
+                        elem.style += attVal;
+                    }
+                    */
+                    break;
+                }
+                const matchingPlugin = opts && opts.$plugins && opts.$plugins.find((p) => {
+                    return p.name === att;
+                });
+                if (matchingPlugin) {
+                    matchingPlugin.set({element: elem, attribute: {name: att, value: attVal}});
+                    break;
+                }
+                elem.setAttribute(att, attVal);
+                break;
             }
         }
     }
@@ -1051,6 +1060,22 @@ const jml$2 = function jml (...args) {
         }
         if (opts.$map && !opts.$map.root && opts.$map.root !== false) {
             opts.$map = {root: opts.$map};
+        }
+        if ('$plugins' in opts) {
+            if (!Array.isArray(opts.$plugins)) {
+                throw new Error('$plugins must be an array');
+            }
+            opts.$plugins.forEach((pluginObj) => {
+                if (!pluginObj) {
+                    throw new TypeError('Plugin must be an object');
+                }
+                if (!pluginObj.name || !pluginObj.name.startsWith('$_')) {
+                    throw new TypeError('Plugin object name must be present and begin with `$_`');
+                }
+                if (typeof pluginObj.set !== 'function') {
+                    throw new TypeError('Plugin object must have a `set` method');
+                }
+            });
         }
         args = args.slice(1);
     }
@@ -1684,6 +1709,13 @@ const write = (...msgs) => {
 const skip = (...msgs) => { // Todo: Could track and report on test count
     return write(...msgs);
 };
+const assert = (ok, msg) => {
+    if (!ok) {
+        const err = new Error('Stack');
+        console.log('Assertion not ok:', err);
+    }
+    write(!!ok, ` ${nbsp}` + msg);
+};
 const matches = (item1, item2, msg) => {
     if (!item2) { // For convenience in debugging
         console.log('Missing item2\n', item1);
@@ -1717,6 +1749,15 @@ const init = (test, expected) => {
         test.expect(expected);
     }
     currentTester = test;
+};
+
+const throws = (cb, msg) => {
+    try {
+        cb();
+        assert(false, `Should throw: ${msg}`);
+    } catch (err) {
+        assert(true, msg);
+    }
 };
 
 /* globals jml */
@@ -2425,6 +2466,63 @@ const testCase = {
             'mySelectArg1',
             'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
         );
+        test.done();
+    },
+    '$plugins' (test) {
+        init(test, 7);
+        const options = {$plugins: [
+            {
+                name: '$_myplugin',
+                set ({element, attribute: {name, value}}) {
+                    console.log('vvv', value, '::', element, '::', name);
+                    // Add code here to modify the element
+                    // element.setAttribute(name, value);
+                    if (value.blueAndRed) {
+                        element.style.color = 'blue';
+                        element.style.backgroundColor = 'red';
+                    }
+                }
+            }
+        ]};
+        const div = jml(options, 'div', {id: 'myDiv', $_myplugin: {
+            blueAndRed: true
+        }}, document.body);
+        matches(
+            div.style.color,
+            'blue',
+            'Should have text set to a blue color'
+        );
+        matches(
+            div.style.backgroundColor,
+            'red',
+            'Should have text set to a red background color'
+        );
+        matches(
+            div.nodeName.toLowerCase(),
+            'div',
+            'Should be a `div` element'
+        );
+        matches(
+            div.id,
+            'myDiv',
+            'Should allow other non-plugin attributes'
+        );
+        throws(() => {
+            jml({$plugins: [{
+                set () {}
+            }]}, 'div');
+        }, 'Should throw when no `name` ');
+        throws(() => {
+            jml({$plugins: [{
+                name: '$_myplugin'
+            }]}, 'div');
+        }, 'Should throw when no `set` method');
+        throws(() => {
+            jml({$plugins: [{
+                name: 'myplugin',
+                set () {}
+            }]}, 'div');
+        }, 'Should throw with bad `name`');
         test.done();
     }
 };

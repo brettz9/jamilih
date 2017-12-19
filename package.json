@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.29.1",
+  "version": "0.30.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -38,11 +38,11 @@
     "jsdom": "11.5.1"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-core": "6.26.0",
+    "babel-plugin-external-helpers": "6.22.0",
+    "babel-preset-env": "1.6.1",
     "eslint": "4.13.1",
-    "eslint-config-standard": "10.2.1",
+    "eslint-config-standard": "11.0.0-beta.0",
     "eslint-plugin-compat": "2.1.0",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-node": "5.2.1",
@@ -51,11 +51,12 @@
     "node-static": "0.7.10",
     "nodeunit": "0.11.2",
     "opn": "5.1.0",
-    "rollup": "0.52.1",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-commonjs": "^8.2.6",
-    "rollup-plugin-json": "^2.3.0",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "remark-lint": "6.0.1",
+    "rollup": "0.52.2",
+    "rollup-plugin-babel": "3.0.3",
+    "rollup-plugin-commonjs": "8.2.6",
+    "rollup-plugin-json": "2.3.0",
+    "rollup-plugin-node-resolve": "3.0.0"
   },
   "readmeFilename": "README.md",
   "bugs": {
