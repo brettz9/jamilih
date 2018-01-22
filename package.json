@@ -35,7 +35,7 @@
     "node": ">=0.10"
   },
   "dependencies": {
-    "jsdom": "11.5.1"
+    "jsdom": "11.6.0"
   },
   "devDependencies": {
     "babel-core": "6.26.0",
