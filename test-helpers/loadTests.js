@@ -1,5 +1,5 @@
 /* globals nodeunit */
-import jml from '../jml-es6.js';
+import jml from '../src/jml.js';
 
 import jmlTests from '../test/test.jml.js';
 import otherMethodsTests from '../test/test.other-methods.js';

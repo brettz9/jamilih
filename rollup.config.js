@@ -4,9 +4,9 @@ import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 
 export default [{
-    input: 'jml-es6.js',
+    input: 'src/jml.js',
     output: {
-        file: 'jml.js',
+        file: 'dist/jml.js',
         format: 'umd',
         name: 'jml'
     },
@@ -16,9 +16,9 @@ export default [{
         })
     ]
 }, {
-    input: 'jml-es6-node.js',
+    input: 'src/jml-node.js',
     output: {
-        file: 'jml-node.js',
+        file: 'dist/jml-node.js',
         format: 'cjs',
         name: 'jml'
     },

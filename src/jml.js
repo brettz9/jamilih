@@ -985,7 +985,7 @@ jml.toJML = function (dom, config) {
         const type = node.nodeType;
         namespaces = Object.assign({}, namespaces);
 
-        const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/;
+        const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/; // eslint-disable-line no-control-regex
         if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
             invalidStateError();
         }
@@ -1139,7 +1139,7 @@ jml.toJML = function (dom, config) {
             if (node.internalSubset) {
                 start.internalSubset = node.internalSubset;
             }
-            const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/;
+            const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/; // eslint-disable-line no-control-regex
             if (!pubIdChar.test(node.publicId)) {
                 invalidStateError();
             }

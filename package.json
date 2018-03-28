@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.30.0",
+  "version": "0.31.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -8,16 +8,19 @@
   },
   "contributors": [],
   "scripts": {
-    "eslint": "eslint jml-es6.js test-helpers/ test/",
-    "build": "npm run eslint && rollup -c",
-    "test-build": "rollup -c rollup.config.test.js",
-    "browser-test": "npm run build && npm start test/",
-    "test": "npm run build && npm run test-build && node test-helpers/loadTests-commonjs.js"
+    "eslint": "eslint .",
+    "rollup": "npm run eslint && rollup -c",
+    "test-rollup": "rollup -c rollup.config.test.js",
+    "browser-test": "npm run rollup && npm start test/",
+    "test": "npm run rollup && npm run test-rollup && node test-helpers/loadTests-commonjs.js",
+    "test-no-open": "pkill -f \".bin/static -p\" ; npm run eslint && npm run rollup && npm run start",
+    "start": "static -p 8091",
+    "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
   },
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "main": "./jml-node.js",
-  "browser": "./jml-es6.js",
-  "module": "./jml-es6.js",
+  "main": "dist/jml-node.js",
+  "browser": "src/jml-es6.js",
+  "module": "src/jml-es6-node.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/brettz9/jamilih"
@@ -35,28 +38,29 @@
     "node": ">=0.10"
   },
   "dependencies": {
-    "jsdom": "11.5.1"
+    "jsdom": "11.6.2"
   },
   "devDependencies": {
     "babel-core": "6.26.0",
     "babel-plugin-external-helpers": "6.22.0",
     "babel-preset-env": "1.6.1",
-    "eslint": "4.13.1",
-    "eslint-config-standard": "11.0.0-beta.0",
-    "eslint-plugin-compat": "2.1.0",
-    "eslint-plugin-import": "2.8.0",
-    "eslint-plugin-node": "5.2.1",
-    "eslint-plugin-promise": "3.6.0",
+    "chokidar-cli": "^1.2.0",
+    "eslint": "4.19.1",
+    "eslint-config-standard": "11.0.0",
+    "eslint-plugin-compat": "2.2.0",
+    "eslint-plugin-import": "2.9.0",
+    "eslint-plugin-node": "6.0.1",
+    "eslint-plugin-promise": "3.7.0",
     "eslint-plugin-standard": "3.0.1",
     "node-static": "0.7.10",
     "nodeunit": "0.11.2",
-    "opn": "5.1.0",
+    "opn": "5.3.0",
     "remark-lint": "6.0.1",
-    "rollup": "0.52.3",
+    "rollup": "0.57.1",
     "rollup-plugin-babel": "3.0.3",
-    "rollup-plugin-commonjs": "8.2.6",
+    "rollup-plugin-commonjs": "9.1.0",
     "rollup-plugin-json": "2.3.0",
-    "rollup-plugin-node-resolve": "3.0.0"
+    "rollup-plugin-node-resolve": "3.3.0"
   },
   "readmeFilename": "README.md",
   "bugs": {

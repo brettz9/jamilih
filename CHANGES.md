@@ -1,3 +1,15 @@
+# 0.31.0
+
+- Breaking change (file locations): Move files to `dist` or `src`
+    subdirectories accordingly (and move demo file to own directory)
+- Breaking change (Bower): Remove `bower.json` (service is deprecated; use
+    npm instead as is also usable for browser)
+- Linting: ESLint
+- Testing: Make conditional check for Firefox in test
+- npm: Add chokidar watch script
+- npm: Update deps and devDeps
+- npm: Fix scripts to avoid building upon install
+
 # 0.30.0
 
 - Enhancement: Support plugins

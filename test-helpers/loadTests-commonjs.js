@@ -14,13 +14,13 @@
 */
 const XMLSerializer$1 = function () {};
 const xhtmlNS = 'http://www.w3.org/1999/xhtml';
-const prohibitHTMLOnly = true;
-const emptyElements = '|basefont|frame|isindex' + // Deprecated
-    '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|';
-const nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
-    'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|';
-const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/;
-const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/;
+const prohibitHTMLOnly = true,
+    emptyElements = '|basefont|frame|isindex' + // Deprecated
+    '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
+    nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
+    'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
+    pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/, // eslint-disable-line no-control-regex
+    xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/; // eslint-disable-line no-control-regex
 
 const entify = function (str) { // FIX: this is probably too many replaces in some cases and a call to it may not be needed at all in some cases
     return str.replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -393,7 +393,7 @@ Other Todos:
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
 
-let win$1 = typeof window !== 'undefined' && window;
+let win = typeof window !== 'undefined' && window;
 let doc = typeof document !== 'undefined' && document;
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
@@ -403,8 +403,8 @@ const possibleOptions = [
     '$map' // Add any other options here
 ];
 
-const NS_HTML = 'http://www.w3.org/1999/xhtml';
-const hyphenForCamelCase = /-([a-z])/g;
+const NS_HTML = 'http://www.w3.org/1999/xhtml',
+    hyphenForCamelCase = /-([a-z])/g;
 
 const ATTR_MAP = {
     'readonly': 'readOnly'
@@ -607,7 +607,7 @@ function _replaceDefiner (xmlnsObj) {
 }
 
 function _optsOrUndefinedJML (...args) {
-    return jml$2(...(
+    return jml$1(...(
         args[0] === undefined
             ? args.slice(1)
             : args
@@ -619,7 +619,7 @@ function _optsOrUndefinedJML (...args) {
 * @static
 */
 function _jmlSingleArg (arg) {
-    return jml$2(arg);
+    return jml$1(arg);
 }
 
 /**
@@ -640,7 +640,7 @@ function _copyOrderedAtts (attArr) {
 function _childrenToJML (node) {
     return function (childNodeJML, i) {
         const cn = node.childNodes[i];
-        cn.parentNode.replaceChild(jml$2(...childNodeJML), cn);
+        cn.parentNode.replaceChild(jml$1(...childNodeJML), cn);
     };
 }
 
@@ -650,7 +650,7 @@ function _childrenToJML (node) {
 */
 function _appendJML (node) {
     return function (childJML) {
-        node.appendChild(jml$2(...childJML));
+        node.appendChild(jml$1(...childJML));
     };
 }
 
@@ -663,7 +663,7 @@ function _appendJMLOrText (node) {
         if (typeof childJML === 'string') {
             node.appendChild(doc.createTextNode(childJML));
         } else {
-            node.appendChild(jml$2(...childJML));
+            node.appendChild(jml$1(...childJML));
         }
     };
 }
@@ -697,7 +697,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @param {null} [returning] Can use null to indicate an array of elements should be returned
  * @returns {DOMElement} The newly created (and possibly already appended) element or array of elements
  */
-const jml$2 = function jml (...args) {
+const jml$1 = function jml (...args) {
     let elem = doc.createDocumentFragment();
     function _checkAtts (atts) {
         let att;
@@ -1284,7 +1284,7 @@ const jml$2 = function jml (...args) {
                             if `stringOutput` is true, it will be the stringified version of
                             such an object
 */
-jml$2.toJML = function (dom, config) {
+jml$1.toJML = function (dom, config) {
     config = config || {stringOutput: false};
     if (typeof dom === 'string') {
         dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
@@ -1350,7 +1350,7 @@ jml$2.toJML = function (dom, config) {
         const type = node.nodeType;
         namespaces = Object.assign({}, namespaces);
 
-        const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/;
+        const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/; // eslint-disable-line no-control-regex
         if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
             invalidStateError();
         }
@@ -1504,7 +1504,7 @@ jml$2.toJML = function (dom, config) {
             if (node.internalSubset) {
                 start.internalSubset = node.internalSubset;
             }
-            const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/;
+            const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/; // eslint-disable-line no-control-regex
             if (!pubIdChar.test(node.publicId)) {
                 invalidStateError();
             }
@@ -1567,26 +1567,26 @@ jml$2.toJML = function (dom, config) {
     }
     return ret[0];
 };
-jml$2.toJMLString = function (dom, config) {
-    return jml$2.toJML(dom, Object.assign(config || {}, {stringOutput: true}));
+jml$1.toJMLString = function (dom, config) {
+    return jml$1.toJML(dom, Object.assign(config || {}, {stringOutput: true}));
 };
-jml$2.toDOM = function (...args) { // Alias for jml()
-    return jml$2(...args);
+jml$1.toDOM = function (...args) { // Alias for jml()
+    return jml$1(...args);
 };
-jml$2.toHTML = function (...args) { // Todo: Replace this with version of jml() that directly builds a string
-    const ret = jml$2(...args);
+jml$1.toHTML = function (...args) { // Todo: Replace this with version of jml() that directly builds a string
+    const ret = jml$1(...args);
     // Todo: deal with serialization of properties like 'selected', 'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*', 'style'! (i.e., need to build a string ourselves)
     return ret.outerHTML;
 };
-jml$2.toDOMString = function (...args) { // Alias for jml.toHTML for parity with jml.toJMLString
-    return jml$2.toHTML(...args);
+jml$1.toDOMString = function (...args) { // Alias for jml.toHTML for parity with jml.toJMLString
+    return jml$1.toHTML(...args);
 };
-jml$2.toXML = function (...args) {
-    const ret = jml$2(...args);
+jml$1.toXML = function (...args) {
+    const ret = jml$1(...args);
     return new XmlSerializer().serializeToString(ret);
 };
-jml$2.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with jml.toJMLString
-    return jml$2.toXML(...args);
+jml$1.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with jml.toJMLString
+    return jml$1.toXML(...args);
 };
 
 class JamilihMap extends Map {
@@ -1618,31 +1618,31 @@ class JamilihWeakMap extends WeakMap {
     }
 }
 
-jml$2.Map = JamilihMap;
-jml$2.WeakMap = JamilihWeakMap;
+jml$1.Map = JamilihMap;
+jml$1.WeakMap = JamilihWeakMap;
 
-jml$2.weak = function (obj, ...args) {
+jml$1.weak = function (obj, ...args) {
     const map = new JamilihWeakMap();
-    const elem = jml$2({$map: [map, obj]}, ...args);
+    const elem = jml$1({$map: [map, obj]}, ...args);
     return [map, elem];
 };
 
-jml$2.strong = function (obj, ...args) {
+jml$1.strong = function (obj, ...args) {
     const map = new JamilihMap();
-    const elem = jml$2({$map: [map, obj]}, ...args);
+    const elem = jml$1({$map: [map, obj]}, ...args);
     return [map, elem];
 };
 
-jml$2.symbol = jml$2.sym = jml$2.for = function (elem, sym) {
+jml$1.symbol = jml$1.sym = jml$1.for = function (elem, sym) {
     elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
-jml$2.command = function (elem, symOrMap, methodName, ...args) {
+jml$1.command = function (elem, symOrMap, methodName, ...args) {
     elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
-        func = jml$2.sym(elem, symOrMap);
+        func = jml$1.sym(elem, symOrMap);
         if (typeof func === 'function') {
             return func(methodName, ...args); // Already has `this` bound to `elem`
         }
@@ -1657,38 +1657,37 @@ jml$2.command = function (elem, symOrMap, methodName, ...args) {
     // return func[methodName].call(elem, ...args);
 };
 
-jml$2.setWindow = (wind) => {
-    win$1 = wind;
+jml$1.setWindow = (wind) => {
+    win = wind;
 };
-jml$2.setDocument = (docum) => {
+jml$1.setDocument = (docum) => {
     doc = docum;
 };
-jml$2.setXMLSerializer = (xmls) => {
+jml$1.setXMLSerializer = (xmls) => {
     XmlSerializer = xmls;
 };
 
-jml$2.getWindow = () => {
-    return win$1;
+jml$1.getWindow = () => {
+    return win;
 };
-jml$2.getDocument = () => {
+jml$1.getDocument = () => {
     return doc;
 };
-jml$2.getXMLSerializer = () => {
+jml$1.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
 /* eslint-env node */
-// Can remove own XMLSerializer dependency once jsdom may
-//    implement: https://github.com/tmpvar/jsdom/issues/1368
+
 // import {JSDOM} from 'jsdom';
 const {JSDOM} = require('jsdom');
 
-const win = new JSDOM('').window;
+const win$1 = new JSDOM('').window;
 
-jml$2.setWindow(win);
-jml$2.setDocument(win.document);
+jml$1.setWindow(win$1);
+jml$1.setDocument(win$1.document);
 // jml.setXMLSerializer(require('xmldom').XMLSerializer);
-jml$2.setXMLSerializer(XMLSerializer$1);
+jml$1.setXMLSerializer(XMLSerializer$1);
 
 let currentTester;
 
@@ -1762,14 +1761,6 @@ const throws = (cb, msg) => {
 
 /* globals jml */
 
-/*
-Todos:
-0. Confirm working cross-browser (all browsers); remove IE8 processing instruction hack?
-0. Add test cases for properties: innerHTML, selected, checked, value, htmlFor, for
-0. When CDATA XML-check added, add check for CDATA section in XML
-0. Fix bug with IE 10 (but not IE 8) when testing $on events (race condition)
-*/
-
 const $ = (sel) => { return document.querySelector(sel); };
 
 const testCase = {
@@ -1801,11 +1792,22 @@ const testCase = {
             'Single element argument with `null` at end'
         );
 
-        matchesXMLString(
-            jml('input', {type: 'password', id: 'my_pass'}),
-            '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
-            'Single element with two attributes'
-        );
+        // Still no fixed order for attributes, so deal with this present exception
+        if (typeof navigator !== 'undefined' && // Avoid problems for Node
+            navigator.userAgent.toLowerCase().includes('firefox')
+        ) {
+            matchesXMLString(
+                jml('input', {type: 'password', id: 'my_pass'}),
+                '<input xmlns="http://www.w3.org/1999/xhtml" id="my_pass" type="password" />',
+                'Single element with two attributes'
+            );
+        } else {
+            matchesXMLString(
+                jml('input', {type: 'password', id: 'my_pass'}),
+                '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
+                'Single element with two attributes'
+            );
+        }
         test.done();
     },
     'DOM wrapping' (test) {
@@ -2528,7 +2530,6 @@ const testCase = {
 };
 
 /* globals jml */
-
 const $$1 = (sel) => { return document.querySelector(sel); };
 
 const testCase$1 = {
@@ -2760,13 +2761,14 @@ const testCase$2 = {
 };
 
 /* eslint-env node */
-global.window = jml$2.getWindow();
+
+global.window = jml$1.getWindow();
 global.Event = window.Event;
 global.DOMParser = window.DOMParser;
 global.Node = window.Node;
-global.document = jml$2.getDocument();
-global.XMLSerializer = jml$2.getXMLSerializer();
-global.jml = jml$2;
+global.document = jml$1.getDocument();
+global.XMLSerializer = jml$1.getXMLSerializer();
+global.jml = jml$1;
 
 // Todo:
 // This has problems as a regular `import` even when compiling
