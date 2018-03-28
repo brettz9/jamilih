@@ -19,6 +19,18 @@ export default [{
 }, {
     input: 'src/jml.js',
     output: {
+        file: 'dist/jml-es.js',
+        format: 'es',
+        name: 'jml'
+    },
+    plugins: [
+        babel({
+            exclude: 'node_modules/**'
+        })
+    ]
+}, {
+    input: 'src/jml.js',
+    output: {
         file: 'dist/jml-noinnerh.js',
         format: 'umd',
         name: 'jml'

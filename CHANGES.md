@@ -1,3 +1,10 @@
+# 0.32.0
+
+- Fix: `browser` and `module` not pointing to updated file names
+- Docs: Fix paths in docs
+- Enhancement: Add "es" dist file
+- npm: Fix browser-test script
+
 # 0.31.0
 
 - Breaking change (file locations): Move files to `dist` or `src`

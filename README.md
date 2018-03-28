@@ -73,7 +73,7 @@ The following functions are available:
 # Browser setup (Global)
 
 ```html
-<script src="node_modules/jamilih/jml.js"></script>
+<script src="node_modules/jamilih/dist/jml.js"></script>
 ```
 
 ```js
@@ -82,8 +82,16 @@ jml(...);
 
 # Browser setup (ES6 Modules)
 
+If compiling:
+
 ```js
-import jml from './node_modules/jamilih/jml-es6.js';
+import jml from 'jamilih';
+```
+
+If not compiling:
+
+```js
+import jml from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 # Node installation and usage

@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -11,7 +11,7 @@
     "eslint": "eslint .",
     "rollup": "npm run eslint && rollup -c",
     "test-rollup": "rollup -c rollup.config.test.js",
-    "browser-test": "npm run rollup && npm start test/",
+    "browser-test": "npm run rollup && npm run start",
     "test": "npm run rollup && npm run test-rollup && node test-helpers/loadTests-commonjs.js",
     "kill-static": "pkill -f \".bin/static -p\"",
     "test-no-open": "npm run kill-static ; npm run eslint && npm run rollup && npm run start",
@@ -20,8 +20,8 @@
   },
   "description": "Provide round-trippable JSON/JavaScript serialization",
   "main": "dist/jml-node.js",
-  "browser": "src/jml-es6.js",
-  "module": "src/jml-es6-node.js",
+  "browser": "src/jml.js",
+  "module": "src/jml-node.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/brettz9/jamilih"
