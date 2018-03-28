@@ -1158,11 +1158,15 @@ var jml = function jml() {
                         }();
 
                         if (_ret2 === 'break') break;
-                    }case 'innerHTML':
+                    }
+                // #if IS_REMOVE
+                // Don't remove this `if` block (for sake of no-innerHTML build)
+                case 'innerHTML':
                     if (attVal != null) {
                         elem.innerHTML = attVal;
                     }
                     break;
+                // #endif
                 case 'htmlFor':case 'for':
                     if (elStr === 'label') {
                         if (attVal != null) {

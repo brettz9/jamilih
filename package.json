@@ -13,7 +13,8 @@
     "test-rollup": "rollup -c rollup.config.test.js",
     "browser-test": "npm run rollup && npm start test/",
     "test": "npm run rollup && npm run test-rollup && node test-helpers/loadTests-commonjs.js",
-    "test-no-open": "pkill -f \".bin/static -p\" ; npm run eslint && npm run rollup && npm run start",
+    "kill-static": "pkill -f \".bin/static -p\"",
+    "test-no-open": "npm run kill-static ; npm run eslint && npm run rollup && npm run start",
     "start": "static -p 8091",
     "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
   },
@@ -60,7 +61,8 @@
     "rollup-plugin-babel": "3.0.3",
     "rollup-plugin-commonjs": "9.1.0",
     "rollup-plugin-json": "2.3.0",
-    "rollup-plugin-node-resolve": "3.3.0"
+    "rollup-plugin-node-resolve": "3.3.0",
+    "rollup-plugin-re": "^1.0.6"
   },
   "readmeFilename": "README.md",
   "bugs": {

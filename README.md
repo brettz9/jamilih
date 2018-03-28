@@ -7,8 +7,6 @@
 
 # Jamilih
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/brettz9/jamilih.svg)](https://greenkeeper.io/)
-
 If you are seeking an even lighter version (e.g., for inclusion in a
 stand-alone library) while still getting some benefits of the
 syntax-highlighter-friendly pure JS approach for DOM construction,
@@ -237,14 +235,18 @@ The events attached via `$on` are added through `addEventListener`.
 Comments, processing instructions, entities, decimal and hexadecimal
 character references, CDATA sections...
 
+Note that the last three types, relying as they do on `innerHTML`,
+will not work properly in the `innerHTML` build (they will use
+`textContent` instead).
+
 ```js
 const div = jml('div', [
     ['!', 'a comment'],
     ['?', 'customPI', 'a processing instruction'],
+    ['![', '&test <CDATA> content'],
     ['&', 'copy'],
     ['#', '1234'],
-    ['#x', 'ab3'],
-    ['![', '&test <CDATA> content']
+    ['#x', 'ab3']
 ]);
 ```
 
@@ -635,7 +637,8 @@ For a list of plugins, see [docs/PLUGINS.md](./docs/PLUGINS.md).
             they will be unset (rather than would be the case with `setAttribute` which would
             always set them if present).
          1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`,
-            `defaultValue`, `style`
+            `defaultValue`, `style` (Note that `innerHTML` won't work on the
+            "no innerHTML" build.)
         1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved   
             keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).

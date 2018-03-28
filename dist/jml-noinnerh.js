@@ -283,8 +283,8 @@
       }
       var elContainer = doc.createElement('div');
       // Todo: No workaround for XML?
-      elContainer.innerHTML = '&' + prefix + arg + ';';
-      return doc.createTextNode(elContainer.innerHTML);
+      elContainer.textContent = '&' + prefix + arg + ';';
+      return doc.createTextNode(elContainer.textContent);
   }
 
   /**
@@ -783,14 +783,7 @@
 
                           if (_ret2 === 'break') break;
                       }
-                  // #if IS_REMOVE
-                  // Don't remove this `if` block (for sake of no-innerHTML build)
-                  case 'innerHTML':
-                      if (attVal != null) {
-                          elem.innerHTML = attVal;
-                      }
-                      break;
-                  // #endif
+
                   case 'htmlFor':case 'for':
                       if (elStr === 'label') {
                           if (attVal != null) {
@@ -954,8 +947,8 @@
                               // Getting NotSupportedError in IE, so we try to imitate a processing instruction with a comment
                               // innerHTML didn't work
                               // var elContainer = doc.createElement('div');
-                              // elContainer.innerHTML = '<?' + doc.createTextNode(arg + ' ' + procValue).nodeValue + '?>';
-                              // nodes[nodes.length] = elContainer.innerHTML;
+                              // elContainer.textContent = '<?' + doc.createTextNode(arg + ' ' + procValue).nodeValue + '?>';
+                              // nodes[nodes.length] = elContainer.textContent;
                               // Todo: any other way to resolve? Just use XML?
                               nodes[nodes.length] = doc.createComment('?' + arg + ' ' + procValue + '?');
                           }

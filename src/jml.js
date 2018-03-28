@@ -617,11 +617,15 @@ const jml = function jml (...args) {
                 recurse(attVal, '');
                 break;
             // Todo: Disable this by default unless configuration explicitly allows (for security)
-            } case 'innerHTML':
+            }
+            // #if IS_REMOVE
+            // Don't remove this `if` block (for sake of no-innerHTML build)
+            case 'innerHTML':
                 if (attVal != null) {
                     elem.innerHTML = attVal;
                 }
                 break;
+            // #endif
             case 'htmlFor': case 'for':
                 if (elStr === 'label') {
                     if (attVal != null) {

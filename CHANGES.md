@@ -4,6 +4,7 @@
     subdirectories accordingly (and move demo file to own directory)
 - Breaking change (Bower): Remove `bower.json` (service is deprecated; use
     npm instead as is also usable for browser)
+- Enhancement: Add "no innerHTML" distribution for sake of add-on validators
 - Linting: ESLint
 - Testing: Make conditional check for Firefox in test
 - npm: Add chokidar watch script
