@@ -203,11 +203,13 @@ function _getType (item) {
         if (Array.isArray(item)) {
             return 'array';
         }
-        if (item.nodeType === 1) {
-            return 'element';
-        }
-        if (item.nodeType === 11) {
-            return 'fragment';
+        if ('nodeType' in item) {
+            if (item.nodeType === 1) {
+                return 'element';
+            }
+            if (item.nodeType === 11) {
+                return 'fragment';
+            }
         }
         return 'object';
     }
@@ -986,7 +988,7 @@ jml.toJML = function (dom, config) {
         }
         */
 
-        const type = node.nodeType;
+        const type = 'nodeType' in node ? node.nodeType : null;
         namespaces = Object.assign({}, namespaces);
 
         const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/; // eslint-disable-line no-control-regex
