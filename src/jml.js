@@ -59,18 +59,28 @@ const BOOL_ATTS = [
     'selected'
 ];
 const ATTR_DOM = BOOL_ATTS.concat([ // From JsonML
+    'accessKey', // HTMLElement
     'async',
+    'autocapitalize', // HTMLElement
     'autofocus',
+    'contentEditable', // HTMLElement through ElementContentEditable
     'defaultValue',
     'defer',
+    'draggable', // HTMLElement
+    'dir', // HTMLElement
     'formnovalidate',
-    'hidden',
+    'hidden', // HTMLElement
+    'innerText', // HTMLElement
+    'inputMode', // HTMLElement through ElementContentEditable
     'ismap',
+    'lang', // HTMLElement
     'multiple',
     'novalidate',
     'pattern',
     'required',
-    'spellcheck',
+    'spellcheck', // HTMLElement
+    'title', // HTMLElement
+    'translate', // HTMLElement
     'value',
     'willvalidate'
 ]);

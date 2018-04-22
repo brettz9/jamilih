@@ -1,3 +1,11 @@
+# 0.33.0
+
+- Enhancement: Add global `HTMLElement` DOM-settable properties (for
+    `undefined` to have no effect)
+- Build: Add `nodeType` existence check (avoiding strict warnings)
+- npm: Update devDeps
+- Testing: Fix test to exclude attribute nodes (depends still on jsdom fixing)
+
 # 0.32.0
 
 - Fix: `browser` and `module` not pointing to updated file names

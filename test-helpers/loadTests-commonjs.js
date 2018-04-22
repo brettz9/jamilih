@@ -424,18 +424,28 @@ const BOOL_ATTS = [
     'selected'
 ];
 const ATTR_DOM = BOOL_ATTS.concat([ // From JsonML
+    'accessKey', // HTMLElement
     'async',
+    'autocapitalize', // HTMLElement
     'autofocus',
+    'contentEditable', // HTMLElement through ElementContentEditable
     'defaultValue',
     'defer',
+    'draggable', // HTMLElement
+    'dir', // HTMLElement
     'formnovalidate',
-    'hidden',
+    'hidden', // HTMLElement
+    'innerText', // HTMLElement
+    'inputMode', // HTMLElement through ElementContentEditable
     'ismap',
+    'lang', // HTMLElement
     'multiple',
     'novalidate',
     'pattern',
     'required',
-    'spellcheck',
+    'spellcheck', // HTMLElement
+    'title', // HTMLElement
+    'translate', // HTMLElement
     'value',
     'willvalidate'
 ]);
@@ -568,11 +578,13 @@ function _getType (item) {
         if (Array.isArray(item)) {
             return 'array';
         }
-        if (item.nodeType === 1) {
-            return 'element';
-        }
-        if (item.nodeType === 11) {
-            return 'fragment';
+        if ('nodeType' in item) {
+            if (item.nodeType === 1) {
+                return 'element';
+            }
+            if (item.nodeType === 11) {
+                return 'fragment';
+            }
         }
         return 'object';
     }
@@ -1351,7 +1363,7 @@ jml$1.toJML = function (dom, config) {
         }
         */
 
-        const type = node.nodeType;
+        const type = 'nodeType' in node ? node.nodeType : null;
         namespaces = Object.assign({}, namespaces);
 
         const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/; // eslint-disable-line no-control-regex
@@ -2655,6 +2667,7 @@ const testCase$2 = {
         );
         test.done();
     },
+    /*
     // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641
     'attribute node' (test) {
         test.expect(2);
@@ -2677,6 +2690,7 @@ const testCase$2 = {
 
         test.done();
     },
+    */
     'text node' (test) {
         test.expect(1);
         const expected = 'text node content';
