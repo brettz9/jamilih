@@ -1,3 +1,7 @@
+# 0.33.1
+
+- 
+
 # 0.33.0
 
 - Enhancement: Add global `HTMLElement` DOM-settable properties (for

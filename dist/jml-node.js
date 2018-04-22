@@ -562,18 +562,18 @@ var ATTR_DOM = BOOL_ATTS.concat([// From JsonML
 'async', 'autocapitalize', // HTMLElement
 'autofocus', 'contentEditable', // HTMLElement through ElementContentEditable
 'defaultValue', 'defer', 'draggable', // HTMLElement
-'dir', // HTMLElement
 'formnovalidate', 'hidden', // HTMLElement
 'innerText', // HTMLElement
 'inputMode', // HTMLElement through ElementContentEditable
-'ismap', 'lang', // HTMLElement
-'multiple', 'novalidate', 'pattern', 'required', 'spellcheck', // HTMLElement
-'title', // HTMLElement
+'ismap', 'multiple', 'novalidate', 'pattern', 'required', 'spellcheck', // HTMLElement
 'translate', // HTMLElement
 'value', 'willvalidate']);
 // Todo: Add more to this as useful for templating
-//   to avoid setting with nullish value
-var NULLABLES = ['lang', 'max', 'min'];
+//   to avoid setting through nullish value
+var NULLABLES = ['dir', // HTMLElement
+'lang', // HTMLElement
+'max', 'min', 'title' // HTMLElement
+];
 
 /**
 * Retrieve the (lower-cased) HTML name of a node

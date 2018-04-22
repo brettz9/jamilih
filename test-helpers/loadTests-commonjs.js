@@ -432,29 +432,28 @@ const ATTR_DOM = BOOL_ATTS.concat([ // From JsonML
     'defaultValue',
     'defer',
     'draggable', // HTMLElement
-    'dir', // HTMLElement
     'formnovalidate',
     'hidden', // HTMLElement
     'innerText', // HTMLElement
     'inputMode', // HTMLElement through ElementContentEditable
     'ismap',
-    'lang', // HTMLElement
     'multiple',
     'novalidate',
     'pattern',
     'required',
     'spellcheck', // HTMLElement
-    'title', // HTMLElement
     'translate', // HTMLElement
     'value',
     'willvalidate'
 ]);
 // Todo: Add more to this as useful for templating
-//   to avoid setting with nullish value
+//   to avoid setting through nullish value
 const NULLABLES = [
-    'lang',
+    'dir', // HTMLElement
+    'lang', // HTMLElement
     'max',
-    'min'
+    'min',
+    'title' // HTMLElement
 ];
 
 /**
