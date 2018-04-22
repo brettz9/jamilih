@@ -1,6 +1,8 @@
+# ?
+
 # 0.33.1
 
-- 
+- Fix: Move `dir`, `lang`, and `title` to nullables
 
 # 0.33.0
 
