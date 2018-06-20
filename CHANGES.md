@@ -1,4 +1,7 @@
-# ?
+# 0.34.0
+
+- npm: Update deps (jsdom), devDeps; fixes security vulnerability
+- Testing: Add opn-cli
 
 # 0.33.1
 

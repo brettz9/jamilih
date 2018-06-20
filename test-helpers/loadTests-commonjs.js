@@ -14,8 +14,7 @@
 */
 const XMLSerializer$1 = function () {};
 const xhtmlNS = 'http://www.w3.org/1999/xhtml';
-const prohibitHTMLOnly = true,
-    emptyElements = '|basefont|frame|isindex' + // Deprecated
+const emptyElements = '|basefont|frame|isindex' + // Deprecated
     '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
     nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
     'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
@@ -36,7 +35,7 @@ const clone = function (obj) { // We don't need a deep clone, so this should be 
     return JSON.parse(JSON.stringify(newObj));
 };
 const invalidStateError = function () { // These are probably only necessary if working with text/html
-    if (prohibitHTMLOnly) {
+    {
         // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
         throw window.DOMException && DOMException.create
             ? DOMException.create(11)
@@ -78,11 +77,7 @@ const serializeToString = function (nodeArg) {
     //   return nodeArg.xml;
     // }
     const that = this,
-        // mode = this.$mode || 'html',
-        ieFix = true, // Todo: Make conditional on IE and processing of HTML
-        mozilla = true, // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
         namespaces = {},
-        xmlDeclaration = true,
         nodeType = nodeArg.nodeType;
     let emptyElement;
     let htmlElement = true; // Todo: Make conditional on namespace?
@@ -113,7 +108,7 @@ const serializeToString = function (nodeArg) {
         case 1: // ELEMENT
             tagName = node.tagName;
 
-            if (ieFix) {
+            {
                 tagName = tagName.toLowerCase();
             }
 
@@ -159,7 +154,7 @@ const serializeToString = function (nodeArg) {
             string += '<' + tagName;
             /**/
             // Do the attributes above cover our namespaces ok? What if unused but in the DOM?
-            if ((mozilla || !node.lookupNamespaceURI || node.lookupNamespaceURI(prefix) !== null) && namespaces[prefix || '$'] === undefined) {
+            if (namespaces[prefix || '$'] === undefined) {
                 namespaces[prefix || '$'] = node.namespaceURI || xhtmlNS;
                 string += ' xmlns' + (prefix ? ':' + prefix : '') +
                             '="' + entify(namespaces[prefix || '$']) + '"';
@@ -335,7 +330,7 @@ const serializeToString = function (nodeArg) {
         return string;
     }
 
-    if (xmlDeclaration && document.xmlVersion && nodeType === 9) { // DOCUMENT - Faster to do it here without first calling serializeDOM
+    if (document.xmlVersion && nodeType === 9) { // DOCUMENT - Faster to do it here without first calling serializeDOM
         string += '<?xml version="' + document.xmlVersion + '"';
         if (document.xmlEncoding !== undefined && document.xmlEncoding !== null) {
             string += ' encoding="' + document.xmlEncoding + '"';
@@ -1305,15 +1300,13 @@ jml$1.toJML = function (dom, config) {
         dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
     }
 
-    const prohibitHTMLOnly = true;
-
     const ret = [];
     let parent = ret;
     let parentIdx = 0;
 
     function invalidStateError () { // These are probably only necessary if working with text/html
         function DOMException () { return this; }
-        if (prohibitHTMLOnly) {
+        {
             // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
             // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
             const e = new DOMException();

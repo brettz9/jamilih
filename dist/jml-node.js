@@ -14,8 +14,7 @@
 */
 var XMLSerializer$1 = function XMLSerializer() {};
 var xhtmlNS = 'http://www.w3.org/1999/xhtml';
-var prohibitHTMLOnly = true,
-    emptyElements = '|basefont|frame|isindex' + // Deprecated
+var emptyElements = '|basefont|frame|isindex' + // Deprecated
 '|area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr|',
     nonEmptyElements = 'article|aside|audio|bdi|canvas|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|rp|rt|ruby|section|summary|time|video' + // new in HTML5
 'html|body|p|h1|h2|h3|h4|h5|h6|form|button|fieldset|label|legend|select|option|optgroup|textarea|table|tbody|colgroup|tr|td|tfoot|thead|th|caption|abbr|acronym|address|b|bdo|big|blockquote|center|code|cite|del|dfn|em|font|i|ins|kbd|pre|q|s|samp|small|strike|strong|sub|sup|tt|u|var|ul|ol|li|dd|dl|dt|dir|menu|frameset|iframe|noframes|head|title|a|map|div|span|style|script|noscript|applet|object|',
@@ -40,7 +39,7 @@ var clone = function clone(obj) {
 };
 var invalidStateError = function invalidStateError() {
     // These are probably only necessary if working with text/html
-    if (prohibitHTMLOnly) {
+    {
         // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
         throw window.DOMException && DOMException.create ? DOMException.create(11)
         // If the (nonstandard) polyfill plugin helper is not loaded (e.g., to reduce overhead and/or modifying a global's property), we'll throw our own light DOMException
@@ -81,13 +80,8 @@ var serializeToString = function serializeToString(nodeArg) {
     // }
     var that = this,
 
-    // mode = this.$mode || 'html',
-    ieFix = true,
-        // Todo: Make conditional on IE and processing of HTML
-    mozilla = true,
-        // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
+    // Todo: Detect (since built-in lookupNamespaceURI() appears to always return null now for HTML elements),
     namespaces = {},
-        xmlDeclaration = true,
         nodeType = nodeArg.nodeType;
     var emptyElement = void 0;
     var htmlElement = true; // Todo: Make conditional on namespace?
@@ -126,7 +120,7 @@ var serializeToString = function serializeToString(nodeArg) {
                 // ELEMENT
                 tagName = node.tagName;
 
-                if (ieFix) {
+                {
                     tagName = tagName.toLowerCase();
                 }
 
@@ -173,7 +167,7 @@ var serializeToString = function serializeToString(nodeArg) {
                 string += '<' + tagName;
                 /**/
                 // Do the attributes above cover our namespaces ok? What if unused but in the DOM?
-                if ((mozilla || !node.lookupNamespaceURI || node.lookupNamespaceURI(prefix) !== null) && namespaces[prefix || '$'] === undefined) {
+                if (namespaces[prefix || '$'] === undefined) {
                     namespaces[prefix || '$'] = node.namespaceURI || xhtmlNS;
                     string += ' xmlns' + (prefix ? ':' + prefix : '') + '="' + entify(namespaces[prefix || '$']) + '"';
                 }
@@ -349,7 +343,7 @@ var serializeToString = function serializeToString(nodeArg) {
         return string;
     }
 
-    if (xmlDeclaration && document.xmlVersion && nodeType === 9) {
+    if (document.xmlVersion && nodeType === 9) {
         // DOCUMENT - Faster to do it here without first calling serializeDOM
         string += '<?xml version="' + document.xmlVersion + '"';
         if (document.xmlEncoding !== undefined && document.xmlEncoding !== null) {
@@ -1503,8 +1497,6 @@ jml.toJML = function (dom, config) {
         dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
     }
 
-    var prohibitHTMLOnly = true;
-
     var ret = [];
     var parent = ret;
     var parentIdx = 0;
@@ -1514,7 +1506,7 @@ jml.toJML = function (dom, config) {
         function DOMException() {
             return this;
         }
-        if (prohibitHTMLOnly) {
+        {
             // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
             // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
             var e = new DOMException();

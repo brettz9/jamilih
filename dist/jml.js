@@ -1127,8 +1127,6 @@
           dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
       }
 
-      var prohibitHTMLOnly = true;
-
       var ret = [];
       var parent = ret;
       var parentIdx = 0;
@@ -1138,7 +1136,7 @@
           function DOMException() {
               return this;
           }
-          if (prohibitHTMLOnly) {
+          {
               // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
               // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
               var e = new DOMException();
