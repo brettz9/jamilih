@@ -4,6 +4,36 @@ import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 
+function noInnerHTML (format) {
+    return {
+        input: 'src/jml.js',
+        output: {
+            file: `dist/jml${format === 'es' ? '-es' : ''}-noinnerh.js`,
+            format,
+            name: 'jml'
+        },
+        plugins: [
+            replace({
+                defines: {
+                    IS_REMOVE: false
+                }
+            }),
+            replace({
+                patterns: [
+                    {
+                        include: ['src/jml.js'],
+                        test: 'elContainer.innerHTML',
+                        replace: 'elContainer.textContent'
+                    }
+                ]
+            }),
+            babel({
+                exclude: 'node_modules/**'
+            })
+        ]
+    };
+}
+
 export default [{
     input: 'src/jml.js',
     output: {
@@ -16,7 +46,7 @@ export default [{
             exclude: 'node_modules/**'
         })
     ]
-}, {
+}, noInnerHTML('umd'), noInnerHTML('es'), {
     input: 'src/jml.js',
     output: {
         file: 'dist/jml-es.js',
@@ -24,32 +54,6 @@ export default [{
         name: 'jml'
     },
     plugins: [
-        babel({
-            exclude: 'node_modules/**'
-        })
-    ]
-}, {
-    input: 'src/jml.js',
-    output: {
-        file: 'dist/jml-noinnerh.js',
-        format: 'umd',
-        name: 'jml'
-    },
-    plugins: [
-        replace({
-            defines: {
-                IS_REMOVE: false
-            }
-        }),
-        replace({
-            patterns: [
-                {
-                    include: ['src/jml.js'],
-                    test: 'elContainer.innerHTML',
-                    replace: 'elContainer.textContent'
-                }
-            ]
-        }),
         babel({
             exclude: 'node_modules/**'
         })

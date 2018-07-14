@@ -1,3 +1,8 @@
+# 0.35.0
+
+- Enhancement: Support no-innerHTML ES6 Module dist file
+- npm: Update devDeps
+
 # 0.34.0
 
 - npm: Update deps (jsdom), devDeps; fixes security vulnerability
