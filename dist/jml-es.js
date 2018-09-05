@@ -797,7 +797,7 @@ var jml = function jml() {
                             // Todo: Disable this by default unless configuration explicitly allows (for security)
                         }();
 
-                        if (_ret2 === 'break') break;
+                        break;
                     }
                 // #if IS_REMOVE
                 // Don't remove this `if` block (for sake of no-innerHTML build)

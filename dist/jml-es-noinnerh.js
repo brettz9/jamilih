@@ -797,7 +797,7 @@ var jml = function jml() {
                             // Todo: Disable this by default unless configuration explicitly allows (for security)
                         }();
 
-                        if (_ret2 === 'break') break;
+                        break;
                     }
 
                 case 'htmlFor':case 'for':
