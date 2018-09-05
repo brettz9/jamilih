@@ -1,3 +1,8 @@
+# 0.36.0
+
+- Deprecated: Default ES6 export deprecated over new named export
+- Enhancement: Add `$` and `$$` utilities for `querySelector`/`querySelectorAll`.
+
 # 0.35.0
 
 - Enhancement: Support no-innerHTML ES6 Module dist file

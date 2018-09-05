@@ -393,6 +393,7 @@ let doc = typeof document !== 'undefined' && document;
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
+
 const possibleOptions = [
     '$plugins',
     '$map' // Add any other options here
@@ -450,6 +451,8 @@ const NULLABLES = [
     'min',
     'title' // HTMLElement
 ];
+
+const $ = (sel) => doc.querySelector(sel);
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -752,7 +755,7 @@ const jml$1 = function jml (...args) {
                             template = jml('template', template, doc.body);
                         }
                     } else if (typeof template === 'string') {
-                        template = doc.querySelector(template);
+                        template = $(template);
                     }
                     jml(
                         template.content.cloneNode(true),
@@ -1599,29 +1602,29 @@ jml$1.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity wi
 
 class JamilihMap extends Map {
     get (elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get.call(this, elem);
     }
     set (elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set.call(this, elem, value);
     }
     invoke (elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
 class JamilihWeakMap extends WeakMap {
     get (elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get(elem);
     }
     set (elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set(elem, value);
     }
     invoke (elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
@@ -1642,12 +1645,12 @@ jml$1.strong = function (obj, ...args) {
 };
 
 jml$1.symbol = jml$1.sym = jml$1.for = function (elem, sym) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
 jml$1.command = function (elem, symOrMap, methodName, ...args) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
         func = jml$1.sym(elem, symOrMap);
@@ -1769,15 +1772,15 @@ const throws = (cb, msg) => {
 
 /* globals jml */
 
-const $ = (sel) => { return document.querySelector(sel); };
+const $$1 = (sel) => { return document.querySelector(sel); };
 
 const testCase = {
     setUp (callback) {
-        let jmlTestContent = $('#jmlTestContent');
+        let jmlTestContent = $$1('#jmlTestContent');
         if (!jmlTestContent) {
             jmlTestContent = document.createElement('div');
             jmlTestContent.id = 'jmlTestContent';
-            $('body').append(jmlTestContent);
+            $$1('body').append(jmlTestContent);
         }
         jmlTestContent.innerHTML = `
             <div style="display:none;" id="DOMChildrenMustBeInArray">test1</div>
@@ -1823,11 +1826,11 @@ const testCase = {
 
         const div = jml(
             'div', {style: 'position:absolute !important; left: -1000px;'}, [
-                $('#DOMChildrenMustBeInArray')
+                $$1('#DOMChildrenMustBeInArray')
             ],
-            $('#anotherElementToAddToParent'),
-            $('#yetAnotherSiblingToAddToParent'),
-            $('body')
+            $$1('#anotherElementToAddToParent'),
+            $$1('#yetAnotherSiblingToAddToParent'),
+            $$1('body')
         );
 
         matchesXMLString(
@@ -1837,9 +1840,9 @@ const testCase = {
             'Single element with attribute and DOM child and two DOM siblings'
         );
 
-        jml('hr', $('body'));
+        jml('hr', $$1('body'));
         matchesXMLStringOnElement(
-            $('body'),
+            $$1('body'),
             '<hr xmlns="http://www.w3.org/1999/xhtml" />',
             'Single (empty) DOM element (with body parent)'
         );
@@ -1879,7 +1882,7 @@ const testCase = {
             '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass">text1<p>Some inner text</p>text3</div>',
             'Single element with attribute containing two next node children separated by an element child'
         );
-        const table = jml('table', {style: 'position:absolute; left: -1000px;'}, $('body'));
+        const table = jml('table', {style: 'position:absolute; left: -1000px;'}, $$1('body'));
         /* const firstTr = */
         jml(
             'tr', [
@@ -1902,7 +1905,7 @@ const testCase = {
     },
     'Single element wrapped' (test) {
         init(test, 1);
-        matches($('body'), jml($('body')), 'Wrapping single pre-existing DOM element');
+        matches($$1('body'), jml($$1('body')), 'Wrapping single pre-existing DOM element');
         test.done();
     },
     'Namespace declarations' (test) {
@@ -1948,7 +1951,7 @@ const testCase = {
     'fragment' (test) {
         init(test, 3);
 
-        jml('table', {style: 'position:absolute; left: -1000px;'}, $('body')); // Rebuild
+        jml('table', {style: 'position:absolute; left: -1000px;'}, $$1('body')); // Rebuild
         const trsFragment = jml('tr', [
             ['td', ['row 1 cell 1']],
             ['td', ['row 1 cell 2']]
@@ -2007,7 +2010,7 @@ const testCase = {
                     ],
                     null
                 ]
-            ], $('body')),
+            ], $$1('body')),
             '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color:red;">First Item</li>' +
             '<li title="Some hover text." style="color:green;">Second Item</li>' +
             '<li><span class="Remove-Me" style="font-weight:bold;">Not Filtered</span> Item</li>' +
@@ -2079,7 +2082,7 @@ const testCase = {
             $on: {click: [function () {
                 str = 'worked1';
             }, true]}
-        }, $('body'));
+        }, $$1('body'));
         input.click(); // IE won't activate unless the above element is appended to the DOM
 
         matches(str, 'worked1', 'Single empty element with attributes and triggered click listener added to body');
@@ -2094,7 +2097,7 @@ const testCase = {
                     str = 'worked2';
                 }, true]
             }
-        }, $('body')); // For focus (or select) event to work, we need to append to the document
+        }, $$1('body')); // For focus (or select) event to work, we need to append to the document
 
         if (input2.fireEvent) {
             input2.fireEvent('onchange');
@@ -2139,7 +2142,7 @@ const testCase = {
     'Style element' (test) {
         init(test, 1);
         matchesXMLString(
-            jml('style', {id: 'myStyle'}, ['p.test {color:red;}'], $('body')),
+            jml('style', {id: 'myStyle'}, ['p.test {color:red;}'], $$1('body')),
             '<style xmlns="http://www.w3.org/1999/xhtml" id="myStyle">p.test {color:red;}</style>',
             'Single style element with attribute and text content added to body'
         );
@@ -2148,7 +2151,7 @@ const testCase = {
     'Script element' (test) {
         init(test, 1);
         matchesXMLString(
-            jml('script', {'class': 'test'}, ['console.log("hello!");'], $('body')),
+            jml('script', {'class': 'test'}, ['console.log("hello!");'], $$1('body')),
             '<script xmlns="http://www.w3.org/1999/xhtml" class="test">console.log("hello!");</script>',
             'Single script element with attribute and text content (check console for "hello!")'
         );
@@ -2171,44 +2174,44 @@ const testCase = {
             ['input', {id: 'input5', $data: [, testObj1]}], // eslint-disable-line no-sparse-arrays
             ['input', {id: 'input6', $data: [weakMap1]}],
             ['input', {id: 'input7', $data: [weakMap1, testFunc]}]
-        ], $('body'));
+        ], $$1('body'));
         matches(
             weakMap1.get(el),
             testObj1,
             'Externally retrieve element with Jamilih-returned element associated with normal WeakMap (alongside a JamilihWeakMap); using default map and object'
         );
         matches(
-            weakMap1.get($('#input1')),
+            weakMap1.get($$1('#input1')),
             testObj1,
             'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using default map and object'
         );
         matches(
-            weakMap2.get($('#input2')),
+            weakMap2.get($$1('#input2')),
             testObj2,
             'Externally retrieve element with DOM retrieved element associated with JamilihWeakMap (alongside a normal WeakMap); using array-based map and object'
         );
         matches(
-            weakMap1.get($('#input3')),
+            weakMap1.get($$1('#input3')),
             testObj1,
             'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using single map defaulting object'
         );
         matches(
-            weakMap1.get($('#input4')),
+            weakMap1.get($$1('#input4')),
             testObj2,
             'Externally retrieve element with DOM retrieved element associated with JamilihWeakMap (alongside a normal WeakMap); using single object defaulting map'
         );
         matches(
-            weakMap1.get($('#input5')),
+            weakMap1.get($$1('#input5')),
             testObj1,
             'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map attachment with empty default map and single object'
         );
         matches(
-            weakMap1.get($('#input6')),
+            weakMap1.get($$1('#input6')),
             testObj1,
             'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using single-item array map (defaulting object)'
         );
         matches(
-            jml.command($('#input7'), weakMap1, 'arg1'),
+            jml.command($$1('#input7'), weakMap1, 'arg1'),
             'input7 ok arg1',
             'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map and function'
         );
@@ -2229,12 +2232,12 @@ const testCase = {
                 click () {
                     // Can supply element or selector to `jml.sym` utility
                     jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
-                    jml.sym($('#symInput2'), privateSym)('arg2');
+                    jml.sym($$1('#symInput2'), privateSym)('arg2');
                     jml.sym('#symInput3', privateSym).test('arg3');
 
                     // Or add symbol directly:
                     this.previousElementSibling[Symbol.for('publicForSym1')]('arg1');
-                    $('#symInput2')[privateSym]('arg2');
+                    $$1('#symInput2')[privateSym]('arg2');
                 }
             }}],
             ['input', {id: 'symInput2', $symbol: [privateSym, (arg1) => {
@@ -2260,24 +2263,24 @@ const testCase = {
                     );
                 }
             }]}]
-        ], $('body'));
+        ], $$1('body'));
 
-        $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
-        jml.sym($('#symInput1'), 'publicForSym1')('arg1');
+        $$1('#symInput1')[Symbol.for('publicForSym1')]('arg1');
+        jml.sym($$1('#symInput1'), 'publicForSym1')('arg1');
         jml.sym('#symInput1', 'publicForSym1')('arg1');
 
-        $('#symInput2')[privateSym]('arg2');
+        $$1('#symInput2')[privateSym]('arg2');
 
-        $('#symInput3')[privateSym].test('arg3');
+        $$1('#symInput3')[privateSym].test('arg3');
         jml.sym('#symInput3', privateSym).test('arg3');
-        $('#divSymbolTest').dispatchEvent(new Event('click'));
+        $$1('#divSymbolTest').dispatchEvent(new Event('click'));
         jml.command('#symInput1', 'publicForSym1', 'arg1');
         jml.command('#symInput3', privateSym, 'test', 'arg3');
 
         test.done();
     },
     'Shadow DOM' (test) {
-        if (!$('body').attachShadow) {
+        if (!$$1('body').attachShadow) {
             init(test, 0);
             skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT attachShadow");
         } else {
@@ -2304,7 +2307,7 @@ const testCase = {
                 }, [
                     ['h1', {slot: 'h'}, ['Heading level 1']],
                     ['p', ['Other content']]
-                ], $('body'));
+                ], $$1('body'));
             }, null, 'Adding Shadow DOM (via `open`/`template`) does not throw');
 
             test.doesNotThrow(function () {
@@ -2324,7 +2327,7 @@ const testCase = {
                 }, [
                     ['h1', {slot: 'h'}, ['Heading level 1']],
                     ['p', ['Other content']]
-                ], $('body'));
+                ], $$1('body'));
             }, null, 'Adding Shadow DOM (via `content`) does not throw');
         }
         test.done();
@@ -2342,7 +2345,7 @@ const testCase = {
                         return this.id;
                     }
                 }
-            }, $('body'));
+            }, $$1('body'));
             matches(
                 myEl.test(),
                 'myEl',
@@ -2355,7 +2358,7 @@ const testCase = {
                 $define () {
                     constructorSetVar2 = this.id;
                 }
-            }, $('body'));
+            }, $$1('body'));
             matches(
                 constructorSetVar2,
                 'myEl2',
@@ -2371,7 +2374,7 @@ const testCase = {
                         constructorSetVar3 = this.id;
                     }
                 }
-            }, $('body'));
+            }, $$1('body'));
             matches(
                 constructorSetVar3,
                 'myEl3',
@@ -2391,7 +2394,7 @@ const testCase = {
                         this.test(arg1);
                     }
                 }]
-            }, $('body'));
+            }, $$1('body'));
             matches(
                 constructorSetVar4,
                 'myEl4',
@@ -2416,7 +2419,7 @@ const testCase = {
                         this.test(arg1);
                     }
                 }]
-            }, $('body'));
+            }, $$1('body'));
             matches(
                 constructorSetVar5,
                 'myEl5',
@@ -2459,7 +2462,7 @@ const testCase = {
                     return this.test(arg1);
                 }
             }
-        }, $('body'));
+        }, $$1('body'));
 
         matches(
             mySelect.test('Arg1'),
@@ -2538,7 +2541,7 @@ const testCase = {
 };
 
 /* globals jml */
-const $$1 = (sel) => { return document.querySelector(sel); };
+const $$2 = (sel) => { return document.querySelector(sel); };
 
 const testCase$1 = {
     'jml.toJMLString()' (test) {
@@ -2616,7 +2619,7 @@ const testCase$1 = {
                     myMap.invoke(this, 'test', 'arg1');
                 }
             }}]
-        ], $$1('body'));
+        ], $$2('body'));
         matches(
             myMap.invoke(elem, 'myMethod', 'external test'),
             'external test localValue 100',
@@ -2628,12 +2631,12 @@ const testCase$1 = {
             'Externally retrieve JamilihWeakMap-associated element by selector'
         );
 
-        const mapInput = $$1('#mapTest').firstElementChild;
+        const mapInput = $$2('#mapTest').firstElementChild;
         mapInput.value = '1001';
         mapInput.dispatchEvent(
             new Event('input')
         );
-        const mapDiv = $$1('#clickArea');
+        const mapDiv = $$2('#clickArea');
         mapDiv.dispatchEvent(new Event('click'));
         test.done();
     }

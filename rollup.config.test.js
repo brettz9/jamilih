@@ -8,7 +8,8 @@ export default [{
     output: {
         file: 'test-helpers/loadTests-commonjs.js',
         format: 'cjs',
-        name: 'testJamilihNodeunit'
+        name: 'testJamilihNodeunit',
+        exports: 'named'
     },
     external: [
         // jsdom

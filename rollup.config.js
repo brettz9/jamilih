@@ -10,7 +10,8 @@ function noInnerHTML (format) {
         output: {
             file: `dist/jml${format === 'es' ? '-es' : ''}-noinnerh.js`,
             format,
-            name: 'jml'
+            name: 'jml',
+            exports: 'named'
         },
         plugins: [
             replace({
@@ -39,7 +40,8 @@ export default [{
     output: {
         file: 'dist/jml.js',
         format: 'umd',
-        name: 'jml'
+        name: 'jml',
+        exports: 'named'
     },
     plugins: [
         babel({
@@ -51,7 +53,8 @@ export default [{
     output: {
         file: 'dist/jml-es.js',
         format: 'es',
-        name: 'jml'
+        name: 'jml',
+        exports: 'named'
     },
     plugins: [
         babel({
@@ -63,7 +66,8 @@ export default [{
     output: {
         file: 'dist/jml-node.js',
         format: 'cjs',
-        name: 'jml'
+        name: 'jml',
+        exports: 'named'
     },
     external: [
         // jsdom

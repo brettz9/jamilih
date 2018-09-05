@@ -82,13 +82,19 @@ jml(...);
 
 # Browser setup (ES6 Modules)
 
-If compiling:
+If compiling, select from any of `jml`, `$`, and/or `$$`:
 
 ```js
-import jml from 'jamilih';
+import {jml, $, $$} from 'jamilih';
 ```
 
 If not compiling:
+
+```js
+import {jml, $, $$} from './node_modules/jamilih/dist/jml-es.js';
+```
+
+For backward compatibility, a default export is provided, but this is now deprecated:
 
 ```js
 import jml from './node_modules/jamilih/dist/jml-es.js';
@@ -580,6 +586,18 @@ j('div', {id: 'myDiv', $_myplugin: {
 ```
 
 For a list of plugins, see [docs/PLUGINS.md](./docs/PLUGINS.md).
+
+# Utilities
+
+## `$(selector)`
+
+This is just a alias for `document.querySelector` (which is often
+needed within templates for attaching behaviors).
+
+## `$$(selector)`
+
+This is just a alias for `document.querySelectorAll`, with the return
+result converted to an array.
 
 # Rules (summary)
 

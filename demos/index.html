@@ -7,21 +7,21 @@
 </head>
 <body>
 <script type="module">
-import jml from '../dist/jml.js';
+import {jml} from '../dist/jml-es.js';
 
 function s (s) {return (JSON.stringify(s));}
 function o (o) {alert(o.outerHTML);}
 
 alert(
     s(
-        jml.toJML((jml.apply(null, jml.toJML(document.documentElement))))
+        jml.toJML((jml(...jml.toJML(document.documentElement))))
     ) ===
     s(
         jml.toJML(document.documentElement)
     )
 );
 
-//alert(jml.toJMLString(document.documentElement));
+// alert(jml.toJMLString(document.documentElement));
 </script>
 </body>
 </html>

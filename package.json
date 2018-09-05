@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.35.0",
+  "version": "0.36.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "babel-core": "6.26.3",
+    "babel-plugin-add-module-exports": "^0.3.3",
     "babel-plugin-external-helpers": "6.22.0",
     "babel-preset-env": "1.7.0",
     "chokidar-cli": "^1.2.0",

@@ -5,6 +5,9 @@
     }]
   ],
   "plugins": [
-    "external-helpers"
+    "external-helpers",
+    ["add-module-exports", {
+        "addDefaultProperty": true
+    }]
   ]
 }

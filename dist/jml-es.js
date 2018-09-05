@@ -160,6 +160,7 @@ var doc = typeof document !== 'undefined' && document;
 var XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
+
 var possibleOptions = ['$plugins', '$map' // Add any other options here
 ];
 
@@ -192,6 +193,13 @@ var NULLABLES = ['dir', // HTMLElement
 'lang', // HTMLElement
 'max', 'min', 'title' // HTMLElement
 ];
+
+var $ = function $(sel) {
+    return doc.querySelector(sel);
+};
+var $$ = function $$(sel) {
+    return [].concat(toConsumableArray(doc.querySelectorAll(sel)));
+};
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -507,7 +515,7 @@ var jml = function jml() {
                                     template = jml('template', template, doc.body);
                                 }
                             } else if (typeof template === 'string') {
-                                template = doc.querySelector(template);
+                                template = $(template);
                             }
                             jml(template.content.cloneNode(true), shadowRoot);
                         } else {
@@ -1453,13 +1461,13 @@ var JamilihMap = function (_Map) {
     createClass(JamilihMap, [{
         key: 'get',
         value: function get$$1(elem) {
-            elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+            elem = typeof elem === 'string' ? $(elem) : elem;
             return get(JamilihMap.prototype.__proto__ || Object.getPrototypeOf(JamilihMap.prototype), 'get', this).call(this, elem);
         }
     }, {
         key: 'set',
         value: function set$$1(elem, value) {
-            elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+            elem = typeof elem === 'string' ? $(elem) : elem;
             return get(JamilihMap.prototype.__proto__ || Object.getPrototypeOf(JamilihMap.prototype), 'set', this).call(this, elem, value);
         }
     }, {
@@ -1467,7 +1475,7 @@ var JamilihMap = function (_Map) {
         value: function invoke(elem, methodName) {
             var _get;
 
-            elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+            elem = typeof elem === 'string' ? $(elem) : elem;
 
             for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
                 args[_key3 - 2] = arguments[_key3];
@@ -1490,13 +1498,13 @@ var JamilihWeakMap = function (_WeakMap) {
     createClass(JamilihWeakMap, [{
         key: 'get',
         value: function get$$1(elem) {
-            elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+            elem = typeof elem === 'string' ? $(elem) : elem;
             return get(JamilihWeakMap.prototype.__proto__ || Object.getPrototypeOf(JamilihWeakMap.prototype), 'get', this).call(this, elem);
         }
     }, {
         key: 'set',
         value: function set$$1(elem, value) {
-            elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+            elem = typeof elem === 'string' ? $(elem) : elem;
             return get(JamilihWeakMap.prototype.__proto__ || Object.getPrototypeOf(JamilihWeakMap.prototype), 'set', this).call(this, elem, value);
         }
     }, {
@@ -1504,7 +1512,7 @@ var JamilihWeakMap = function (_WeakMap) {
         value: function invoke(elem, methodName) {
             var _get2;
 
-            elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+            elem = typeof elem === 'string' ? $(elem) : elem;
 
             for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
                 args[_key4 - 2] = arguments[_key4];
@@ -1542,12 +1550,12 @@ jml.strong = function (obj) {
 };
 
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return elem[(typeof sym === 'undefined' ? 'undefined' : _typeof(sym)) === 'symbol' ? sym : Symbol.for(sym)];
 };
 
 jml.command = function (elem, symOrMap, methodName) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     var func = void 0;
 
     for (var _len7 = arguments.length, args = Array(_len7 > 3 ? _len7 - 3 : 0), _key7 = 3; _key7 < _len7; _key7++) {
@@ -1597,3 +1605,4 @@ jml.getXMLSerializer = function () {
 };
 
 export default jml;
+export { jml, $, $$ };

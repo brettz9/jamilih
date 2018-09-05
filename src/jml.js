@@ -33,6 +33,7 @@ let doc = typeof document !== 'undefined' && document;
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
+
 const possibleOptions = [
     '$plugins',
     '$map' // Add any other options here
@@ -90,6 +91,9 @@ const NULLABLES = [
     'min',
     'title' // HTMLElement
 ];
+
+const $ = (sel) => doc.querySelector(sel);
+const $$ = (sel) => [...doc.querySelectorAll(sel)];
 
 /**
 * Retrieve the (lower-cased) HTML name of a node
@@ -392,7 +396,7 @@ const jml = function jml (...args) {
                             template = jml('template', template, doc.body);
                         }
                     } else if (typeof template === 'string') {
-                        template = doc.querySelector(template);
+                        template = $(template);
                     }
                     jml(
                         template.content.cloneNode(true),
@@ -1241,29 +1245,29 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
 
 class JamilihMap extends Map {
     get (elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get.call(this, elem);
     }
     set (elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set.call(this, elem, value);
     }
     invoke (elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
 class JamilihWeakMap extends WeakMap {
     get (elem) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.get(elem);
     }
     set (elem, value) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return super.set(elem, value);
     }
     invoke (elem, methodName, ...args) {
-        elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+        elem = typeof elem === 'string' ? $(elem) : elem;
         return this.get(elem)[methodName](elem, ...args);
     }
 }
@@ -1284,12 +1288,12 @@ jml.strong = function (obj, ...args) {
 };
 
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
 jml.command = function (elem, symOrMap, methodName, ...args) {
-    elem = typeof elem === 'string' ? doc.querySelector(elem) : elem;
+    elem = typeof elem === 'string' ? $(elem) : elem;
     let func;
     if (['symbol', 'string'].includes(typeof symOrMap)) {
         func = jml.sym(elem, symOrMap);
@@ -1326,5 +1330,7 @@ jml.getDocument = () => {
 jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
+
+export {jml, $, $$};
 
 export default jml;
