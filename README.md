@@ -81,16 +81,16 @@ jml(...);
 
 # Browser setup (ES6 Modules)
 
-If compiling, select from any of `jml`, `$`, and/or `$$`:
+If compiling, select from any of `jml`, `$`, `$$`, and/or `nbsp`:
 
 ```js
-import {jml, $, $$} from 'jamilih';
+import {jml, $, $$, nbsp} from 'jamilih';
 ```
 
 If not compiling:
 
 ```js
-import {jml, $, $$} from './node_modules/jamilih/dist/jml-es.js';
+import {jml, $, $$, nbsp} from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 For backward compatibility, a default export is provided, but this is now deprecated:
@@ -588,6 +588,11 @@ For a list of plugins, see [docs/PLUGINS.md](./docs/PLUGINS.md).
 
 # Utilities
 
+The following are for small but very frequently used template items.
+I do not expect to make Jamilih into a full-blown template utility
+library, but I believe some very common uses ought to be available out of
+the box.
+
 ## `$(selector)`
 
 This is just a alias for `document.querySelector` (which is often
@@ -597,6 +602,12 @@ needed within templates for attaching behaviors).
 
 This is just a alias for `document.querySelectorAll`, with the return
 result converted to an array.
+
+## `nbsp`
+
+This is just equivalent to `U+00a0` (or in HTML, `&nbsp;`), the
+non-breaking-space. As a very frequently needed item in templates,
+this tiny item is easily available by default as well.
 
 # Rules (summary)
 
