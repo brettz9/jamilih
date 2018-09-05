@@ -1,3 +1,7 @@
+# 0.38.0 (unreleased)
+
+- Enhancement: Add `nbsp` as export (for another very frequently needed template item)
+
 # 0.37.0
 
 - Breaking change: Remove `yarn.lock`

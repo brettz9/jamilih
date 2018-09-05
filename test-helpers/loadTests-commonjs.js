@@ -1702,7 +1702,7 @@ jml$1.setXMLSerializer(XMLSerializer$1);
 
 let currentTester;
 
-const nbsp = '\u00a0';
+const nbsp$1 = '\u00a0';
 const write = (...msgs) => {
     if (currentTester) {
         currentTester.ok(...msgs);
@@ -1724,7 +1724,7 @@ const assert = (ok, msg) => {
         const err = new Error('Stack');
         console.log('Assertion not ok:', err);
     }
-    write(!!ok, ` ${nbsp}` + msg);
+    write(!!ok, ` ${nbsp$1}` + msg);
 };
 const matches = (item1, item2, msg) => {
     if (!item2) { // For convenience in debugging
@@ -1735,7 +1735,7 @@ const matches = (item1, item2, msg) => {
         console.log('Items not equal:', err);
         console.log(item1 + '\n\n' + item2);
     }
-    write(item1 === item2, ` ${nbsp}` + msg);
+    write(item1 === item2, ` ${nbsp$1}` + msg);
 };
 const matchesXMLStringWithinElement = (element, item2, msg) => {
     const docFrag = document.createDocumentFragment();

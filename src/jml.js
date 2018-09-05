@@ -1331,6 +1331,8 @@ jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
-export {jml, $, $$};
+const nbsp = '\u00a0'; // Very commonly needed in templates
+
+export {jml, $, $$, nbsp};
 
 export default jml;

@@ -1603,9 +1603,12 @@
       return XmlSerializer;
   };
 
+  var nbsp = '\xA0'; // Very commonly needed in templates
+
   exports.jml = jml;
   exports.$ = $;
   exports.$$ = $$;
+  exports.nbsp = nbsp;
   exports.default = jml;
 
   Object.defineProperty(exports, '__esModule', { value: true });
