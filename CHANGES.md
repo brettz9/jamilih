@@ -1,3 +1,7 @@
+# 0.37.0
+
+- Breaking change: Remove `yarn.lock`
+
 # 0.36.0
 
 - Deprecated: Default ES6 export deprecated over new named export
