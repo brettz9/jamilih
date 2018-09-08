@@ -1,4 +1,10 @@
-# 0.38.0 (unreleased)
+# 0.38.1
+
+- Security fix: Bump versions as part of npm security audit
+- Fix: Ensure `nbsp` exported in Node as well
+- npm: Update devDeps
+
+# 0.38.0
 
 - Enhancement: Add `nbsp` as export (for another very frequently needed template item)
 

@@ -1982,6 +1982,8 @@ jml.getXMLSerializer = function () {
     return XmlSerializer;
 };
 
+var nbsp = '\xA0'; // Very commonly needed in templates
+
 /* eslint-env node */
 
 // import {JSDOM} from 'jsdom';
@@ -1999,4 +2001,5 @@ jml.setXMLSerializer(XMLSerializer$1);
 exports.jml = jml;
 exports.$ = $;
 exports.$$ = $$;
+exports.nbsp = nbsp;
 exports.default = jml;
