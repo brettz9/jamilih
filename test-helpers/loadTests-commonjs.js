@@ -1673,6 +1673,9 @@ jml$1.setWindow = (wind) => {
 };
 jml$1.setDocument = (docum) => {
     doc = docum;
+    if (docum && docum.body) {
+        body = docum.body;
+    }
 };
 jml$1.setXMLSerializer = (xmls) => {
     XmlSerializer = xmls;
@@ -1687,6 +1690,8 @@ jml$1.getDocument = () => {
 jml$1.getXMLSerializer = () => {
     return XmlSerializer;
 };
+
+let body = doc && doc.body;
 
 /* eslint-env node */
 
@@ -1803,22 +1808,11 @@ const testCase = {
             'Single element argument with `null` at end'
         );
 
-        // Still no fixed order for attributes, so deal with this present exception
-        if (typeof navigator !== 'undefined' && // Avoid problems for Node
-            navigator.userAgent.toLowerCase().includes('firefox')
-        ) {
-            matchesXMLString(
-                jml('input', {type: 'password', id: 'my_pass'}),
-                '<input xmlns="http://www.w3.org/1999/xhtml" id="my_pass" type="password" />',
-                'Single element with two attributes'
-            );
-        } else {
-            matchesXMLString(
-                jml('input', {type: 'password', id: 'my_pass'}),
-                '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
-                'Single element with two attributes'
-            );
-        }
+        matchesXMLString(
+            jml('input', {type: 'password', id: 'my_pass'}),
+            '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
+            'Single element with two attributes'
+        );
         test.done();
     },
     'DOM wrapping' (test) {

@@ -689,7 +689,7 @@
                           } else {
                               var html = _node2.childNodes[1];
                               var head = html.childNodes[0];
-                              var body = html.childNodes[1];
+                              var _body = html.childNodes[1];
                               if (attVal.title || attVal.head) {
                                   var meta = doc.createElement('meta');
                                   meta.charset = 'utf-8';
@@ -702,7 +702,7 @@
                                   attVal.head.forEach(_appendJML(head));
                               }
                               if (attVal.body) {
-                                  attVal.body.forEach(_appendJMLOrText(body));
+                                  attVal.body.forEach(_appendJMLOrText(_body));
                               }
                           }
                           break;
@@ -1588,6 +1588,9 @@
   };
   jml.setDocument = function (docum) {
       doc = docum;
+      if (docum && docum.body) {
+          exports.body = docum.body;
+      }
   };
   jml.setXMLSerializer = function (xmls) {
       XmlSerializer = xmls;
@@ -1602,6 +1605,8 @@
   jml.getXMLSerializer = function () {
       return XmlSerializer;
   };
+
+  exports.body = doc && doc.body;
 
   var nbsp = '\xA0'; // Very commonly needed in templates
 

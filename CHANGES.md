@@ -1,3 +1,10 @@
+# 0.39.0
+
+- Enhancement: Export `body` for `document.body` (frequently
+    targeted for appending)
+- Testing: Avoid Firefox-specific exception for password input
+    attribute serialization order (now passing)
+
 # 0.38.1
 
 - Security fix: Bump versions as part of npm security audit

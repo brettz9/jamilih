@@ -2,7 +2,7 @@
 // Can remove own XMLSerializer dependency once jsdom may
 //    implement: https://github.com/tmpvar/jsdom/issues/1368
 import xmlser from '../polyfills/XMLSerializer.js';
-import {jml, $, $$, nbsp} from './jml.js';
+import {jml, $, $$, nbsp, body} from './jml.js';
 
 // import {JSDOM} from 'jsdom';
 const {JSDOM} = require('jsdom');
@@ -14,5 +14,5 @@ jml.setDocument(win.document);
 // jml.setXMLSerializer(require('xmldom').XMLSerializer);
 jml.setXMLSerializer(xmlser);
 
-export {jml, $, $$, nbsp};
+export {jml, $, $$, nbsp, body};
 export default jml;

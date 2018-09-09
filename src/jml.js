@@ -1316,6 +1316,9 @@ jml.setWindow = (wind) => {
 };
 jml.setDocument = (docum) => {
     doc = docum;
+    if (docum && docum.body) {
+        body = docum.body;
+    }
 };
 jml.setXMLSerializer = (xmls) => {
     XmlSerializer = xmls;
@@ -1331,8 +1334,10 @@ jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
+let body = doc && doc.body;
+
 const nbsp = '\u00a0'; // Very commonly needed in templates
 
-export {jml, $, $$, nbsp};
+export {jml, $, $$, nbsp, body};
 
 export default jml;

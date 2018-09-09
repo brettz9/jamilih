@@ -41,22 +41,11 @@ const testCase = {
             'Single element argument with `null` at end'
         );
 
-        // Still no fixed order for attributes, so deal with this present exception
-        if (typeof navigator !== 'undefined' && // Avoid problems for Node
-            navigator.userAgent.toLowerCase().includes('firefox')
-        ) {
-            xmlTesting.matchesXMLString(
-                jml('input', {type: 'password', id: 'my_pass'}),
-                '<input xmlns="http://www.w3.org/1999/xhtml" id="my_pass" type="password" />',
-                'Single element with two attributes'
-            );
-        } else {
-            xmlTesting.matchesXMLString(
-                jml('input', {type: 'password', id: 'my_pass'}),
-                '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
-                'Single element with two attributes'
-            );
-        }
+        xmlTesting.matchesXMLString(
+            jml('input', {type: 'password', id: 'my_pass'}),
+            '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
+            'Single element with two attributes'
+        );
         test.done();
     },
     'DOM wrapping' (test) {

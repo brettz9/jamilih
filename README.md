@@ -81,16 +81,16 @@ jml(...);
 
 # Browser setup (ES6 Modules)
 
-If compiling, select from any of `jml`, `$`, `$$`, and/or `nbsp`:
+If compiling, select from any or all of `jml`, `$`, `$$`, `nbsp`, and `body`:
 
 ```js
-import {jml, $, $$, nbsp} from 'jamilih';
+import {jml, $, $$, nbsp, body} from 'jamilih';
 ```
 
 If not compiling:
 
 ```js
-import {jml, $, $$, nbsp} from './node_modules/jamilih/dist/jml-es.js';
+import {jml, $, $$, nbsp, body} from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 For backward compatibility, a default export is provided, but this is now deprecated:
@@ -608,6 +608,11 @@ result converted to an array.
 This is just equivalent to `U+00a0` (or in HTML, `&nbsp;`), the
 non-breaking-space. As a very frequently needed item in templates,
 this tiny item is easily available by default as well.
+
+## `body`
+
+This is an alias for `document.body` if available. Frequently used as
+a target for appending.
 
 # Rules (summary)
 
