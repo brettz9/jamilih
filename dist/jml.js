@@ -731,7 +731,7 @@
                                   // internalSubset: // Todo
                               };
                           } else {
-                              _node3 = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                              _node3 = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
                           }
                           nodes[nodes.length] = _node3;
                           break;

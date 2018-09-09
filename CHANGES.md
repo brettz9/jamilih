@@ -1,3 +1,10 @@
+# 0.40.2
+
+- Fix: Call `createDocumentType` with empty strings for empty `systemId`
+    or `publicId`
+- Testing: Undo adding `XMLSerializer` to browser environment (ok if we
+    create the document type correctly)
+
 # 0.40.1
 
 - Fix: Allow for falsey or string "undefined" `publicId`/`systemId`

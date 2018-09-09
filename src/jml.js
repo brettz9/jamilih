@@ -568,7 +568,7 @@ const jml = function jml (...args) {
                         // internalSubset: // Todo
                     };
                 } else {
-                    node = doc.implementation.createDocumentType(attVal.name, attVal.publicId, attVal.systemId);
+                    node = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
                 }
                 nodes[nodes.length] = node;
                 break;
