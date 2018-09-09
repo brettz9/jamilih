@@ -1,3 +1,9 @@
+# 0.40.0
+
+- Fix: Undo logging
+- Fix: `$document` to handle non-array arguments and properly set node
+- Testing: Add `$document`/`$DOCTYPE` creation test
+
 # 0.39.0
 
 - Enhancement: Export `body` for `document.body` (frequently

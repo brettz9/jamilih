@@ -300,6 +300,29 @@ const testCase = {
         );
         test.done();
     },
+    'Document and doctype' (test) {
+        xmlTesting.init(test, 2);
+        const doc = jml({$document: {
+            childNodes: [
+                {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
+                ['html', [
+                    ['head', [
+                        ['meta', {charset: 'utf-8'}]
+                    ]],
+                    ['body']
+                ]]
+            ]
+        }});
+        xmlTesting.matchesXMLString(
+            doc.documentElement,
+            '<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>'
+        );
+        xmlTesting.matches(
+            doc.firstChild.name,
+            'NETSCAPE-Bookmark-file-1'
+        );
+        test.done();
+    },
     'Event listeners' (test) {
         xmlTesting.init(test, 3);
         let str;
@@ -714,7 +737,7 @@ const testCase = {
             {
                 name: '$_myplugin',
                 set ({element, attribute: {name, value}}) {
-                    console.log('vvv', value, '::', element, '::', name);
+                    // console.log('vvv', value, '::', element, '::', name);
                     // Add code here to modify the element
                     // element.setAttribute(name, value);
                     if (value.blueAndRed) {

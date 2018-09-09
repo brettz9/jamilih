@@ -777,7 +777,8 @@ function _copyOrderedAtts(attArr) {
 function _childrenToJML(node) {
     return function (childNodeJML, i) {
         var cn = node.childNodes[i];
-        cn.parentNode.replaceChild(jml.apply(undefined, toConsumableArray(childNodeJML)), cn);
+        var j = Array.isArray(childNodeJML) ? jml.apply(undefined, toConsumableArray(childNodeJML)) : jml(childNodeJML);
+        cn.parentNode.replaceChild(j, cn);
     };
 }
 
@@ -1077,6 +1078,7 @@ var jml = function jml() {
                                 attVal.body.forEach(_appendJMLOrText(_body));
                             }
                         }
+                        nodes[nodes.length] = _node2;
                         break;
                     }case '$DOCTYPE':
                     {

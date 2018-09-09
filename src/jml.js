@@ -290,7 +290,8 @@ function _copyOrderedAtts (attArr) {
 function _childrenToJML (node) {
     return function (childNodeJML, i) {
         const cn = node.childNodes[i];
-        cn.parentNode.replaceChild(jml(...childNodeJML), cn);
+        const j = Array.isArray(childNodeJML) ? jml(...childNodeJML) : jml(childNodeJML);
+        cn.parentNode.replaceChild(j, cn);
     };
 }
 
@@ -543,6 +544,7 @@ const jml = function jml (...args) {
                         attVal.body.forEach(_appendJMLOrText(body));
                     }
                 }
+                nodes[nodes.length] = node;
                 break;
             } case '$DOCTYPE': {
                 /*

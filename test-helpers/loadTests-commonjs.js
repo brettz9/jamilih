@@ -649,7 +649,8 @@ function _copyOrderedAtts (attArr) {
 function _childrenToJML (node) {
     return function (childNodeJML, i) {
         const cn = node.childNodes[i];
-        cn.parentNode.replaceChild(jml$1(...childNodeJML), cn);
+        const j = Array.isArray(childNodeJML) ? jml$1(...childNodeJML) : jml$1(childNodeJML);
+        cn.parentNode.replaceChild(j, cn);
     };
 }
 
@@ -902,6 +903,7 @@ const jml$1 = function jml (...args) {
                         attVal.body.forEach(_appendJMLOrText(body));
                     }
                 }
+                nodes[nodes.length] = node;
                 break;
             } case '$DOCTYPE': {
                 /*
@@ -2067,6 +2069,29 @@ const testCase = {
         );
         test.done();
     },
+    'Document and doctype' (test) {
+        init(test, 2);
+        const doc = jml({$document: {
+            childNodes: [
+                {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
+                ['html', [
+                    ['head', [
+                        ['meta', {charset: 'utf-8'}]
+                    ]],
+                    ['body']
+                ]]
+            ]
+        }});
+        matchesXMLString(
+            doc.documentElement,
+            '<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>'
+        );
+        matches(
+            doc.firstChild.name,
+            'NETSCAPE-Bookmark-file-1'
+        );
+        test.done();
+    },
     'Event listeners' (test) {
         init(test, 3);
         let str;
@@ -2481,7 +2506,7 @@ const testCase = {
             {
                 name: '$_myplugin',
                 set ({element, attribute: {name, value}}) {
-                    console.log('vvv', value, '::', element, '::', name);
+                    // console.log('vvv', value, '::', element, '::', name);
                     // Add code here to modify the element
                     // element.setAttribute(name, value);
                     if (value.blueAndRed) {
