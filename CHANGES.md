@@ -1,3 +1,11 @@
+# 0.40.1
+
+- Fix: Allow for falsey or string "undefined" `publicId`/`systemId`
+- Refactoring: Use `includes` for strings and arrays in `XMLSerializer`
+    polyfill
+- Testing: Add document test; add `XMLSerializer` to browser environment
+    for consistency for Firefox
+
 # 0.40.0
 
 - Fix: Undo logging

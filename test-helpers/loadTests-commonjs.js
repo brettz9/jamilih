@@ -44,20 +44,20 @@ const invalidStateError = function () { // These are probably only necessary if 
     }
 };
 const addExternalID = function (node, all) {
-    if (node.systemId.indexOf('"') !== -1 && node.systemId.indexOf("'") !== -1) {
+    if (node.systemId.includes('"') && node.systemId.includes("'")) {
         invalidStateError();
     }
     let string = '';
     const
-        publicId = node.publicId,
-        systemId = node.systemId,
-        publicQuote = publicId && publicId.indexOf("'") !== -1 ? "'" : '"', // Don't need to check for quotes here, since not allowed with public
-        systemQuote = systemId && systemId.indexOf("'") !== -1 ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
-    if (systemId !== null && publicId !== null) {
+        publicId = node.publicId !== 'undefined' && node.publicId,
+        systemId = node.systemId !== 'undefined' && node.systemId,
+        publicQuote = publicId && publicId.includes("'") ? "'" : '"', // Don't need to check for quotes here, since not allowed with public
+        systemQuote = systemId && systemId.includes("'") ? "'" : '"'; // If as "entity" inside, will it return quote or entity? If former, we need to entify here (should be an error per section 9.3 of http://www.w3.org/TR/html5/the-xhtml-syntax.html )
+    if (systemId && publicId) {
         string += ' PUBLIC ' + publicQuote + publicId + publicQuote + ' ' + systemQuote + systemId + systemQuote;
-    } else if (publicId !== null) {
+    } else if (publicId) {
         string += ' PUBLIC ' + publicQuote + publicId + publicQuote;
-    } else if (all || systemId !== null) {
+    } else if (all || systemId) {
         string += ' SYSTEM ' + systemQuote + systemId + systemQuote;
     }
     return string;
@@ -92,7 +92,7 @@ const serializeToString = function (nodeArg) {
             type = node.nodeType;
         namespaces = clone(namespaces) || {}; // Ensure we're working with a copy, so different levels in the hierarchy can treat it differently
 
-        if ((node.prefix && node.prefix.indexOf(':') !== -1) || (node.localName && node.localName.indexOf(':') !== -1)) {
+        if ((node.prefix && node.prefix.includes(':')) || (node.localName && node.localName.includes(':'))) {
             invalidStateError();
         }
 
@@ -114,7 +114,7 @@ const serializeToString = function (nodeArg) {
 
             if (that.$formSerialize) {
                 // Firefox serializes certain properties even if only set via JavaScript ("disabled", "readonly") and it sometimes even adds the "value" property in certain cases (<input type=hidden>)
-                if ('|input|button|object|'.indexOf('|' + tagName + '|') > -1) {
+                if ('|input|button|object|'.includes('|' + tagName + '|')) {
                     if (node.value !== node.defaultValue) { // May be undefined for an object, or empty string for input, etc.
                         node.setAttribute('value', node.value);
                     }
@@ -192,9 +192,8 @@ const serializeToString = function (nodeArg) {
                 }
             }
 
-            // Todo: Faster to use array with Array.prototype.indexOf polyfill?
-            emptyElement = emptyElements.indexOf('|' + tagName + '|') > -1;
-            htmlElement = node.namespaceURI === xhtmlNS || nonEmptyElements.indexOf('|' + tagName + '|') > -1; // || emptyElement;
+            emptyElement = emptyElements.includes('|' + tagName + '|');
+            htmlElement = node.namespaceURI === xhtmlNS || nonEmptyElements.includes('|' + tagName + '|'); // || emptyElement;
 
             if (!node.firstChild && (emptyElement || !htmlElement)) {
                 // string += mode === 'xml' || node.namespaceURI !== xhtmlNS ? ' />' : '>';
@@ -229,7 +228,7 @@ const serializeToString = function (nodeArg) {
         case 3: // TEXT
             return entify(nodeValue); // Todo: only entify for XML
         case 4: // CDATA
-            if (nodeValue.indexOf(']]' + '>') !== -1) {
+            if (nodeValue.includes(']]' + '>')) {
                 invalidStateError();
             }
             return '<' + '![CDATA[' +
@@ -281,18 +280,18 @@ const serializeToString = function (nodeArg) {
             if (/^xml$/i.test(node.target)) {
                 invalidStateError();
             }
-            if (node.target.indexOf('?>') !== -1) {
+            if (node.target.includes('?>')) {
                 invalidStateError();
             }
-            if (node.target.indexOf(':') !== -1) {
+            if (node.target.includes(':')) {
                 invalidStateError();
             }
-            if (node.data.indexOf('?>') !== -1) {
+            if (node.data.includes('?>')) {
                 invalidStateError();
             }
             return '<?' + node.target + ' ' + nodeValue + '?>';
         case 8: // COMMENT
-            if (nodeValue.indexOf('--') !== -1 ||
+            if (nodeValue.includes('--') ||
                 (nodeValue.length && nodeValue.lastIndexOf('-') === nodeValue.length - 1)
             ) {
                 invalidStateError();
@@ -2070,7 +2069,7 @@ const testCase = {
         test.done();
     },
     'Document and doctype' (test) {
-        init(test, 2);
+        init(test, 3);
         const doc = jml({$document: {
             childNodes: [
                 {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
@@ -2089,6 +2088,11 @@ const testCase = {
         matches(
             doc.firstChild.name,
             'NETSCAPE-Bookmark-file-1'
+        );
+        matchesXMLString(
+            doc,
+            `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
         );
         test.done();
     },
