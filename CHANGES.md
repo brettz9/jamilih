@@ -1,3 +1,8 @@
+# 0.41.0
+
+- Fix: Set charset attribute on `meta`
+- Enhancement: Allow `$DOCTYPE` shorthand
+
 # 0.40.2
 
 - Fix: Call `createDocumentType` with empty strings for empty `systemId`

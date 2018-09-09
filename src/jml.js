@@ -515,6 +515,7 @@ const jml = function jml (...args) {
                 nodes[nodes.length] = node;
                 break;
             } case '$document': {
+                // Todo: Conditionally create XML document
                 const node = doc.implementation.createHTMLDocument();
                 if (attVal.childNodes) {
                     attVal.childNodes.forEach(_childrenToJML(node));
@@ -526,12 +527,17 @@ const jml = function jml (...args) {
                         j++;
                     }
                 } else {
+                    if (attVal.$DOCTYPE) {
+                        const dt = {$DOCTYPE: attVal.$DOCTYPE};
+                        const doctype = jml(dt);
+                        node.firstChild.replaceWith(doctype);
+                    }
                     const html = node.childNodes[1];
                     const head = html.childNodes[0];
                     const body = html.childNodes[1];
                     if (attVal.title || attVal.head) {
                         const meta = doc.createElement('meta');
-                        meta.charset = 'utf-8';
+                        meta.setAttribute('charset', 'utf-8');
                         head.appendChild(meta);
                     }
                     if (attVal.title) {

@@ -301,7 +301,7 @@ const testCase = {
         test.done();
     },
     'Document and doctype' (test) {
-        xmlTesting.init(test, 3);
+        xmlTesting.init(test, 4);
         const doc = jml({$document: {
             childNodes: [
                 {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
@@ -325,6 +325,20 @@ const testCase = {
             doc,
             `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
+        );
+        const doc2 = jml({$document: {
+            $DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'},
+            head: [
+                ['meta', {name: 'webappfind'}]
+            ],
+            body: [
+                ['p']
+            ]
+        }});
+        xmlTesting.matchesXMLString(
+            doc2,
+            `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
         );
         test.done();
     },

@@ -873,6 +873,7 @@ const jml$1 = function jml (...args) {
                 nodes[nodes.length] = node;
                 break;
             } case '$document': {
+                // Todo: Conditionally create XML document
                 const node = doc.implementation.createHTMLDocument();
                 if (attVal.childNodes) {
                     attVal.childNodes.forEach(_childrenToJML(node));
@@ -884,12 +885,17 @@ const jml$1 = function jml (...args) {
                         j++;
                     }
                 } else {
+                    if (attVal.$DOCTYPE) {
+                        const dt = {$DOCTYPE: attVal.$DOCTYPE};
+                        const doctype = jml(dt);
+                        node.firstChild.replaceWith(doctype);
+                    }
                     const html = node.childNodes[1];
                     const head = html.childNodes[0];
                     const body = html.childNodes[1];
                     if (attVal.title || attVal.head) {
                         const meta = doc.createElement('meta');
-                        meta.charset = 'utf-8';
+                        meta.setAttribute('charset', 'utf-8');
                         head.appendChild(meta);
                     }
                     if (attVal.title) {
@@ -2069,7 +2075,7 @@ const testCase = {
         test.done();
     },
     'Document and doctype' (test) {
-        init(test, 3);
+        init(test, 4);
         const doc = jml({$document: {
             childNodes: [
                 {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
@@ -2093,6 +2099,20 @@ const testCase = {
             doc,
             `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
+        );
+        const doc2 = jml({$document: {
+            $DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'},
+            head: [
+                ['meta', {name: 'webappfind'}]
+            ],
+            body: [
+                ['p']
+            ]
+        }});
+        matchesXMLString(
+            doc2,
+            `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
         );
         test.done();
     },

@@ -671,6 +671,7 @@ var jml = function jml() {
                         break;
                     }case '$document':
                     {
+                        // Todo: Conditionally create XML document
                         var _node2 = doc.implementation.createHTMLDocument();
                         if (attVal.childNodes) {
                             attVal.childNodes.forEach(_childrenToJML(_node2));
@@ -682,12 +683,17 @@ var jml = function jml() {
                                 j++;
                             }
                         } else {
+                            if (attVal.$DOCTYPE) {
+                                var dt = { $DOCTYPE: attVal.$DOCTYPE };
+                                var doctype = jml(dt);
+                                _node2.firstChild.replaceWith(doctype);
+                            }
                             var html = _node2.childNodes[1];
                             var head = html.childNodes[0];
                             var _body = html.childNodes[1];
                             if (attVal.title || attVal.head) {
                                 var meta = doc.createElement('meta');
-                                meta.charset = 'utf-8';
+                                meta.setAttribute('charset', 'utf-8');
                                 head.appendChild(meta);
                             }
                             if (attVal.title) {
