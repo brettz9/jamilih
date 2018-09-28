@@ -1,0 +1,6 @@
+extraction:
+  javascript:
+    index:
+      filters:
+        - exclude: "dist"
+        - exclude: "test-helpers/loadTests-commonjs.js"

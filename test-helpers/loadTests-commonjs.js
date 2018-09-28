@@ -1151,7 +1151,12 @@ const jml$1 = function jml (...args) {
                     procValue = [];
                     for (const p in val) {
                         if (val.hasOwnProperty(p)) {
-                            procValue.push(p + '=' + '"' + val[p].replace(/"/g, '\\"') + '"');
+                            procValue.push(
+                                p + '=' + '"' +
+                                // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
+                                val[p].replace(/"/g, '&quot;') +
+                                '"'
+                            );
                         }
                     }
                     procValue = procValue.join(' ');
@@ -1570,7 +1575,7 @@ jml$1.toJML = function (dom, config) {
             break;
         case 12: // NOTATION
             start = {$NOTATION: {name: node.nodeName}};
-            addExternalID(start.$NOTATION, node, true);
+            addExternalID(start.$NOTATION, node);
             set(start);
             break;
         default:

@@ -1,3 +1,9 @@
+# 0.42.0
+
+- Fix: Properly escape processing instructions (LGTM-inspired)
+- Refactoring: Remove unused function in demo, avoid passing extra arg (LGTM-inspired)
+- Linting (LGTM): Add lgtm.yml exclusions of bundles
+
 # 0.41.0
 
 - Fix: Set charset attribute on `meta`
