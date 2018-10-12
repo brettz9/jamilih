@@ -24,19 +24,156 @@
             "title": "Element name",
             "type": "string"
         },
+        "boolAtts": {
+            "checked": {
+                "type": "boolean"
+            },
+            "defaultChecked": {
+                "type": "boolean"
+            },
+            "defaultSelected": {
+                "type": "boolean"
+            },
+            "disabled": {
+                "type": "boolean"
+            },
+            "indeterminate": {
+                "type": "boolean"
+            },
+            "open": {
+                "type": "boolean"
+            },
+            "readOnly": {
+                "type": "boolean"
+            },
+            "selected": {
+                "type": "boolean"
+            }
+        },
+        "attrDOM": {
+            "accessKey": {
+                "type": "boolean"
+            },
+            "async": {
+                "type": "boolean"
+            },
+            "autocapitalize": {
+                "type": "boolean"
+            },
+            "autofocus": {
+                "type": "boolean"
+            },
+            "contentEditable": {
+                "type": "boolean"
+            },
+            "defaultValue": {
+                "type": "boolean"
+            },
+            "defer": {
+                "type": "boolean"
+            },
+            "draggable": {
+                "type": "boolean"
+            },
+            "formnovalidate": {
+                "type": "boolean"
+            },
+            "hidden": {
+                "type": "boolean"
+            },
+            "innerText": {
+                "type": "boolean"
+            },
+            "inputMode": {
+                "type": "boolean"
+            },
+            "ismap": {
+                "type": "boolean"
+            },
+            "multiple": {
+                "type": "boolean"
+            },
+            "novalidate": {
+                "type": "boolean"
+            },
+            "pattern": {
+                "type": "boolean"
+            },
+            "required": {
+                "type": "boolean"
+            },
+            "spellcheck": {
+                "type": "boolean"
+            },
+            "translate": {
+                "type": "boolean"
+            },
+            "value": {
+                "type": "boolean"
+            },
+            "willvalidate": {
+                "type": "boolean"
+            }
+        },
+        "nullables": {
+            "dir": {
+                "anyOf": ["null", "string"]
+            },
+            "lang": {
+                "anyOf": ["null", "string"]
+            },
+            "title": {
+                "anyOf": ["null", "string"]
+            },
+            "max": {
+                "anyOf": ["null", "string", "number"]
+            },
+            "min": {
+                "anyOf": ["null", "string", "number"]
+            }
+        },
         "attributes": {
             "title": "Attributes",
-            "type": "object"
+            "type": "object",
+            "properties": {"anyOf": [{"$ref": "#/definitions/boolAtts"}, {"$ref": "#/definitions/attrDOM"}, {"$ref": "#/definitions/nullables"}]}
         },
         "elementChildren": {
             "title": "Element children",
             "type": "array",
-            "items": {"anyOf": [{"$ref": "#/definitions/Element"}, {"$ref": "#/definitions/textNode"}]}
+            "items": {"anyOf": [{"$ref": "#/definitions/Element"}, {"$ref": "#/definitions/textNode"}, {"$ref": "#/definitions/comment"}, {"$ref": "#/definitions/entity"}, {"$ref": "#/definitions/decimalCharacterReference"}, {"$ref": "#/definitions/hexadecimalCharacterReference"}, {"$ref": "#/definitions/cdata"}, {"$ref": "#/definitions/processingInstruction"}, {"$ref": "#/definitions/fragment"}]}
         },
         "textNode": {
             "title": "Text node",
             "type": "string"
+        },
+        "comment": {
+            "type": "array",
+            "items": [{"type": "string", "enum": ["!"]}, {"type": "string"}]
+        },
+        "entity": {
+            "type": "array",
+            "items": [{"type": "string", "enum": ["&"]}, {"type": "string"}]
+        },
+        "decimalCharacterReference": {
+            "type": "array",
+            "items": [{"type": "string", "enum": ["#"]}, {"type": "string"}]
+        },
+        "hexadecimalCharacterReference": {
+            "type": "array",
+            "items": [{"type": "string", "enum": ["#x"]}, {"type": "string"}]
+        },
+        "cdata": {
+            "type": "array",
+            "items": [{"type": "string", "enum": ["!["]}, {"type": "string"}]
+        },
+        "processingInstruction": {
+            "type": "array",
+            "items": [{"type": "string", "enum": ["?"]}, {"type": "string"}, {"type": "string"}]
+        },
+        "fragment": {
+            "type": "array",
+            "items": [{"type": "string", "enum": [""]}, {"$ref": "#/definitions/elementChildren"}]
         }
     },
-    "$ref": "#/definitions/element"
+    "$ref": "#/definitions/elementChildren"
 }
