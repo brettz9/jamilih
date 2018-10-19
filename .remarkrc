@@ -1,7 +1,4 @@
 {
     "plugins": {
-        "lint": {
-            "list-item-indent": false
-        }
     }
 }
