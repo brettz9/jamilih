@@ -1,3 +1,10 @@
+# 0.43.0
+
+- Enhancement: Add `@babel/polyfill` dependency
+- jsonchema: Add some attributes and other node types
+- Linting (Markdown): Fix linting format
+- npm: Update to Babel 7; update other devDeps and jsdom dep
+
 # 0.42.0
 
 - Fix: Properly escape processing instructions (LGTM-inspired)
