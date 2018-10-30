@@ -72,6 +72,7 @@ The following functions are available:
 # Browser setup (Global)
 
 ```html
+<script src="node_modules/jamilih/@babel/polyfill/dist/polyfill.js"></script>
 <script src="node_modules/jamilih/dist/jml.js"></script>
 ```
 
