@@ -1,3 +1,9 @@
+# 0.44.0
+
+- Fix: Ensure pointing to dist files in `package.json`
+- Enhancement: In case using `main` in bundlers for browser use,
+    make Node version polyglot-capable
+
 # 0.43.0
 
 - Enhancement: Add `@babel/polyfill` dependency

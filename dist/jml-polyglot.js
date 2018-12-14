@@ -2470,14 +2470,17 @@ var nbsp = "\xA0"; // Very commonly needed in templates
 
 /* eslint-env node */
 
-var _require = require('jsdom'),
-    JSDOM = _require.JSDOM;
+if (typeof process !== 'undefined') {
+  // import {JSDOM} from 'jsdom';
+  var _require = require('jsdom'),
+      JSDOM = _require.JSDOM;
 
-var win$1 = new JSDOM('').window;
-jml.setWindow(win$1);
-jml.setDocument(win$1.document); // jml.setXMLSerializer(require('xmldom').XMLSerializer);
+  var win$1 = new JSDOM('').window;
+  jml.setWindow(win$1);
+  jml.setDocument(win$1.document); // jml.setXMLSerializer(require('xmldom').XMLSerializer);
 
-jml.setXMLSerializer(XMLSerializer$1);
+  jml.setXMLSerializer(XMLSerializer$1);
+}
 
 exports.jml = jml;
 exports.$ = $;

@@ -1,5 +1,5 @@
 /* eslint-env node */
-import {jml} from '../src/jml-node.js';
+import {jml} from '../src/jml-polyglot.js';
 
 import jmlTests from '../test/test.jml.js';
 import otherMethodsTests from '../test/test.other-methods.js';

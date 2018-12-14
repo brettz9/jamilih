@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.43.0",
+  "version": "0.44.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -19,9 +19,9 @@
     "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
   },
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "main": "dist/jml-node.js",
-  "browser": "src/jml.js",
-  "module": "src/jml-node.js",
+  "main": "dist/jml-polyglot.js",
+  "browser": "dist/jml.js",
+  "module": "dist/jml-es.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/brettz9/jamilih"

@@ -1707,15 +1707,17 @@ let body = doc && doc.body;
 
 /* eslint-env node */
 
-// import {JSDOM} from 'jsdom';
-const {JSDOM} = require('jsdom');
+if (typeof process !== 'undefined') {
+    // import {JSDOM} from 'jsdom';
+    const {JSDOM} = require('jsdom');
 
-const win$1 = new JSDOM('').window;
+    const win = new JSDOM('').window;
 
-jml$1.setWindow(win$1);
-jml$1.setDocument(win$1.document);
-// jml.setXMLSerializer(require('xmldom').XMLSerializer);
-jml$1.setXMLSerializer(XMLSerializer$1);
+    jml$1.setWindow(win);
+    jml$1.setDocument(win.document);
+    // jml.setXMLSerializer(require('xmldom').XMLSerializer);
+    jml$1.setXMLSerializer(XMLSerializer$1);
+}
 
 let currentTester;
 
