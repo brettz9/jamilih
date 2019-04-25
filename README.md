@@ -234,7 +234,7 @@ const input = jml('input', {
 const input2 = jml('input', {
     style: 'position:absolute; left: -1000px;',
     $on: {
-        click: function () {
+        click () {
             alert('worked2');
         },
         focus: [function () {
@@ -267,7 +267,7 @@ const div = jml('div', [
 Namespace definitions (default or prefixed)...
 
 ```js
-jml('abc', {xmlns:'def'})
+jml('abc', {xmlns: 'def'})
 ```
 
 ```js
@@ -502,7 +502,7 @@ constructor (it will be executed after a call to the dynamically-created class'
 let constructorSetVar2;
 jml('my-el2', {
     id: 'myEl2',
-    $define: function () {
+    $define () {
         constructorSetVar2 = this.id;
     }
 }, document.body);
