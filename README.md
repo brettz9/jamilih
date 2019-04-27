@@ -615,6 +615,13 @@ this tiny item is easily available by default as well.
 This is an alias for `document.body` if available. Frequently used as
 a target for appending.
 
+### `glue(arr, glu)`
+
+This takes an array (any array) and intersperses the `glu` (a suitable
+repeating item for Jamilih, including a string, DOM element, or
+Jamilih array). Useful, e.g., for joining elements with `nbsp`, a comma,
+or some recurring item, without the need for a special `map` or `reduce`.
+
 ## Rules (summary)
 
 1. String element name (or array of 1-4)
@@ -776,7 +783,6 @@ in templates, and to my personal sensibilities, more clear in goal #8
 1. Implement a method building JML by string rather than DOM but create
     DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
     interfaces for direct manipulation.
-1. Add `jml.join(jmlStringArrayOrElement, glue)` (e.g., to intersperse with nbsp)
 
 ### Medium priority to-dos
 
@@ -791,8 +797,11 @@ in templates, and to my personal sensibilities, more clear in goal #8
         last item?); probably best as latter with method to clone.
     1. Ensure setting of `select` `value` can take place *after* the options are
         added
-1. Document binding DOM to `Map`/`WeakMap` Templates to define and invoke
-    functions/objects tied to an element
+1. Associating content
+    1. Document binding DOM to `Map`/`WeakMap` Templates to define and invoke
+        functions/objects tied to an element
+    1. Allow `$symbol` to accept array of arrays for attaching multiple symbols
+        to an element
 1. Allow configuration
     1. Allow auto-namespacing of class and/or dataset keys
 1. Plugins: Move any current functionality out into default-included plugins and
@@ -801,8 +810,6 @@ in templates, and to my personal sensibilities, more clear in goal #8
 
 ## Lower priority to-dos
 
-1. Allow `$symbol` to accept array of arrays for attaching multiple symbols
-    to an element
 1. JSON Schema todos
     1. Specify types of allowable properties on attributes object in JSON Schema.
     1. Allow for fragments and other out-of-place objects

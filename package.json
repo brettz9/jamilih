@@ -14,6 +14,8 @@
     "browser-test": "npm run rollup && opn http://localhost:8091/test/ && npm run start",
     "test": "npm run rollup && npm run test-rollup && node test-helpers/loadTests-commonjs.js",
     "kill-static": "pkill -f \".bin/static -p\"",
+    "build-docs": "rm -rf docs/jsdoc/*;jsdoc --pedantic -c docs/jsdoc-config.js .",
+    "open-docs": "opn http://localhost:8091/docs/jsdoc/ && npm start",
     "test-no-open": "npm run kill-static ; npm run eslint && npm run rollup && npm run start",
     "start": "static -p 8091",
     "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
@@ -54,6 +56,7 @@
     "eslint-plugin-node": "8.0.0",
     "eslint-plugin-promise": "4.0.1",
     "eslint-plugin-standard": "4.0.0",
+    "jsdoc": "^3.5.5",
     "node-static": "0.7.11",
     "nodeunit": "0.11.3",
     "opn-cli": "^3.1.0",

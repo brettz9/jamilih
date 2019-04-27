@@ -270,7 +270,8 @@ var win = typeof window !== 'undefined' && window;
 var doc = typeof document !== 'undefined' && document;
 var XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer; // STATIC PROPERTIES
 
-var possibleOptions = ['$plugins', '$map' // Add any other options here
+var possibleOptions = ['$plugins', // '$mode', // Todo (SVG/XML)
+'$map' // Add any other options here
 ];
 var NS_HTML = 'http://www.w3.org/1999/xhtml',
     hyphenForCamelCase = /-([a-z])/g;
@@ -2018,9 +2019,23 @@ jml.getDocument = function () {
 jml.getXMLSerializer = function () {
   return XmlSerializer;
 };
+/**
+ * Does not run Jamilih so can be further processed.
+ * @param {Array} jmlArray
+ * @param {string|Array|Element} glu
+ * @returns {Element}
+ */
+
+
+function glue(jmlArray, glu) {
+  return _toConsumableArray(jmlArray).reduce(function (arr, item) {
+    arr.push(item, glu);
+    return arr;
+  }, []).slice(0, -1);
+}
 
 var body = doc && doc.body;
 var nbsp = "\xA0"; // Very commonly needed in templates
 
 export default jml;
-export { jml, $, $$, nbsp, body };
+export { jml, $, $$, nbsp, body, glue };

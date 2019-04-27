@@ -395,6 +395,7 @@ let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 const possibleOptions = [
     '$plugins',
+    // '$mode', // Todo (SVG/XML)
     '$map' // Add any other options here
 ];
 
@@ -1703,7 +1704,22 @@ jml$1.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
+/**
+ * Does not run Jamilih so can be further processed.
+ * @param {Array} jmlArray
+ * @param {string|Array|Element} glu
+ * @returns {Element}
+ */
+function glue$1 (jmlArray, glu) {
+    return [...jmlArray].reduce((arr, item) => {
+        arr.push(item, glu);
+        return arr;
+    }, []).slice(0, -1);
+}
+
 let body = doc && doc.body;
+
+const nbsp$1 = '\u00a0'; // Very commonly needed in templates
 
 /* eslint-env node */
 
@@ -1721,7 +1737,7 @@ if (typeof process !== 'undefined') {
 
 let currentTester;
 
-const nbsp$1 = '\u00a0';
+const nbsp$2 = '\u00a0';
 const write = (...msgs) => {
     if (currentTester) {
         currentTester.ok(...msgs);
@@ -1743,7 +1759,7 @@ const assert = (ok, msg) => {
         const err = new Error('Stack');
         console.log('Assertion not ok:', err);
     }
-    write(!!ok, ` ${nbsp$1}` + msg);
+    write(!!ok, ` ${nbsp$2}` + msg);
 };
 const matches = (item1, item2, msg) => {
     if (!item2) { // For convenience in debugging
@@ -1754,7 +1770,7 @@ const matches = (item1, item2, msg) => {
         console.log('Items not equal:', err);
         console.log(item1 + '\n\n' + item2);
     }
-    write(item1 === item2, ` ${nbsp$1}` + msg);
+    write(item1 === item2, ` ${nbsp$2}` + msg);
 };
 const matchesXMLStringWithinElement = (element, item2, msg) => {
     const docFrag = document.createDocumentFragment();
@@ -2823,6 +2839,18 @@ const testCase$2 = {
     }
 };
 
+/* globals glue, nbsp */
+
+const testCase$3 = {
+    'glue()' (test) {
+        test.expect(1);
+        const expected = ['a', '\u00A0', 'b', '\u00A0', 'c'];
+        const result = glue(['a', 'b', 'c'], nbsp);
+        test.deepEqual(expected, result, 'Simple glue');
+        test.done();
+    }
+};
+
 /* eslint-env node */
 
 global.window = jml$1.getWindow();
@@ -2832,6 +2860,8 @@ global.Node = window.Node;
 global.document = jml$1.getDocument();
 global.XMLSerializer = jml$1.getXMLSerializer();
 global.jml = jml$1;
+global.glue = glue$1;
+global.nbsp = nbsp$1;
 
 // Todo:
 // This has problems as a regular `import` even when compiling
@@ -2841,5 +2871,6 @@ global.jml = jml$1;
 require('nodeunit').reporters.default.run({
     jmlTests: testCase,
     otherMethodsTests: testCase$1,
-    toJMLTests: testCase$2
+    toJMLTests: testCase$2,
+    glueTests: testCase$3
 });

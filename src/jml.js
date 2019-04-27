@@ -36,6 +36,7 @@ let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 const possibleOptions = [
     '$plugins',
+    // '$mode', // Todo (SVG/XML)
     '$map' // Add any other options here
 ];
 
@@ -1347,10 +1348,23 @@ jml.getXMLSerializer = () => {
     return XmlSerializer;
 };
 
+/**
+ * Does not run Jamilih so can be further processed.
+ * @param {Array} jmlArray
+ * @param {string|Array|Element} glu
+ * @returns {Element}
+ */
+function glue (jmlArray, glu) {
+    return [...jmlArray].reduce((arr, item) => {
+        arr.push(item, glu);
+        return arr;
+    }, []).slice(0, -1);
+}
+
 let body = doc && doc.body;
 
 const nbsp = '\u00a0'; // Very commonly needed in templates
 
-export {jml, $, $$, nbsp, body};
+export {jml, $, $$, nbsp, body, glue};
 
 export default jml;

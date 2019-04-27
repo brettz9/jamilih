@@ -1,9 +1,10 @@
 /* eslint-env node */
-import {jml} from '../src/jml-polyglot.js';
+import {jml, glue, nbsp} from '../src/jml-polyglot.js';
 
 import jmlTests from '../test/test.jml.js';
 import otherMethodsTests from '../test/test.other-methods.js';
 import toJMLTests from '../test/test.toJML.js';
+import glueTests from '../test/test.glue.js';
 
 global.window = jml.getWindow();
 global.Event = window.Event;
@@ -12,6 +13,8 @@ global.Node = window.Node;
 global.document = jml.getDocument();
 global.XMLSerializer = jml.getXMLSerializer();
 global.jml = jml;
+global.glue = glue;
+global.nbsp = nbsp;
 
 // Todo:
 // This has problems as a regular `import` even when compiling
@@ -21,5 +24,6 @@ global.jml = jml;
 require('nodeunit').reporters.default.run({
     jmlTests,
     otherMethodsTests,
-    toJMLTests
+    toJMLTests,
+    glueTests
 });
