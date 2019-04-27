@@ -13,7 +13,7 @@ see [Jamilih Lite](https://gist.github.com/brettz9/ac4c18f51c0af8003a41).
 
 Note that it is our intent to move the XML-specific features into a new file.
 
-# Separation of concerns
+## Separation of concerns
 
 For templating,
 `separation_of_concerns !== separation_of_syntaxes`!
@@ -26,7 +26,7 @@ own JavaScript (and/or your own custom template functions) as long as
 the designer can maintain the discipline to avoid adding business
 logic. (A future "JSON mode" should allow more security but less control.)
 
-# Some advantages/Uses
+## Some advantages/Uses
 
 - Templates with the full expressive power of JavaScript (Why start in
 HTML when you will probably need JavaScript anyways and why use a
@@ -35,7 +35,7 @@ for those already familiar with HTML and JavaScript?)
 - Syntax highlighting out of the box (unlike embedded string-based templates)
 - Could restrict to JSON for declarative but easily parseable templates
 
-# Overview
+## Overview
 
 The following functions are available:
 
@@ -69,7 +69,7 @@ The following functions are available:
     element used to find the associated object.
 - `jml.Map()` - Same as `jml.WeakMap` but is a subclass of `Map` instead.
 
-# Browser setup (Global)
+## Browser setup (Global)
 
 ```html
 <script src="node_modules/jamilih/@babel/polyfill/dist/polyfill.js"></script>
@@ -80,7 +80,7 @@ The following functions are available:
 jml(...);
 ```
 
-# Browser setup (ES6 Modules)
+## Browser setup (ES6 Modules)
 
 If compiling, select from any or all of `jml`, `$`, `$$`, `nbsp`, and `body`:
 
@@ -100,7 +100,7 @@ For backward compatibility, a default export is provided, but this is now deprec
 import jml from './node_modules/jamilih/dist/jml-es.js';
 ```
 
-# Node installation and usage
+## Node installation and usage
 
 ```
 npm install jamilih
@@ -115,7 +115,7 @@ we attempt to maintain modularity by not injecting our own global. If you want t
 import Jamilih and then operate on the same `window`, etc. that we create, use the methods,
 `getWindow`, `getDocument`, and `getXMLSerizlier`. There are also corresponding setters.
 
-# Examples
+## Examples
 
 Simple element...
 
@@ -159,7 +159,7 @@ const div = jml('div', {'class': 'myClass'}, [
 DOM attachment...
 
 ```js
-const simpleAttachToParent = jml('hr', document.body);
+const simpleAttachToParent = jml('hr', body);
 ```
 
 Returning first element among siblings when appending them to a
@@ -241,7 +241,7 @@ const input2 = jml('input', {
             alert('worked3');
         }, true]
     }
-}, document.body);
+}, body);
 ```
 
 The events attached via `$on` are added through `addEventListener`.
@@ -312,7 +312,7 @@ jml('div', {
 }, [
     ['h1', {slot: 'h'}, ['Heading level 1']],
     ['p', ['Other content']]
-], document.body);
+], body);
 
 jml('div', {
     id: 'myElem',
@@ -330,7 +330,7 @@ jml('div', {
 }, [
     ['h1', {slot: 'h'}, ['Heading level 1']],
     ['p', ['Other content']]
-], document.body);
+], body);
 ```
 
 ## Symbols
@@ -353,7 +353,7 @@ jml('input', {
             (this.id + ' ' + arg1) === 'symInput1 arg1'
         );
     }]
-}, document.body)
+}, body)
 
 // Then elsewhere get and use the symbol function for the DOM object
 $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
@@ -377,7 +377,7 @@ jml('input', {id: 'symInput3', $symbol: [privateSym, {
             (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
         );
     }
-}]}, document.body);
+}]}, body);
 
 // Obtaining the element with symbol or using the utility:
 $('#symInput3')[privateSym].test('arg3');
@@ -415,7 +415,7 @@ jml('div', [
             );
         }
     }]}]
-], document.body);
+], body);
 ```
 
 ## Custom addition of DOM properties
@@ -440,7 +440,7 @@ const mySelect = jml('select', {
             return this.test();
         }
     }
-}, document.body);
+}, body);
 console.log(mySelect.test() === 'mySelect');
 console.log(mySelect.test2() === 'mySelect');
 ```
@@ -490,7 +490,7 @@ const myEl = jml('my-el', {
             return this.id;
         }
     }
-}, document.body);
+}, body);
 console.log(myEl.test() === 'myEl');
 ```
 
@@ -505,7 +505,7 @@ jml('my-el2', {
     $define () {
         constructorSetVar2 = this.id;
     }
-}, document.body);
+}, body);
 console.log(constructorSetVar2 === 'myEl2');
 ```
 
@@ -523,7 +523,7 @@ jml('my-el3', {
             constructorSetVar3 = this.id;
         }
     }
-}, document.body);
+}, body);
 console.log(constructorSetVar3 === 'myEl3');
 ```
 
@@ -543,7 +543,7 @@ const myel4 = jml('my-el4', {
             this.test();
         }
     }]
-}, document.body);
+}, body);
 console.log(constructorSetVar4 === 'myEl4');
 myel4.test();
 myel4.test2();
@@ -573,7 +573,7 @@ const options = {$plugins: [
 ]};
 jml(options, 'div', {id: 'myDiv', $_myplugin: {
     blueAndRed: true
-}}, document.body);
+}}, body);
 
 // If reusing, you may wish to bind the options
 const j = jml.bind(null, options);
@@ -582,40 +582,40 @@ const j = jml.bind(null, options);
 //    options (including its plugins)
 j('div', {id: 'myDiv', $_myplugin: {
     blueAndRed: true
-}}, document.body);
+}}, body);
 ```
 
 For a list of plugins, see [docs/PLUGINS.md](./docs/PLUGINS.md).
 
-# Utilities
+## Utilities
 
 The following are for small but very frequently used template items.
 I do not expect to make Jamilih into a full-blown template utility
 library, but I believe some very common uses ought to be available out of
 the box.
 
-## `$(selector)`
+### `$(selector)`
 
 This is just a alias for `document.querySelector` (which is often
 needed within templates for attaching behaviors).
 
-## `$$(selector)`
+### `$$(selector)`
 
 This is just a alias for `document.querySelectorAll`, with the return
 result converted to an array.
 
-## `nbsp`
+### `nbsp`
 
 This is just equivalent to `U+00a0` (or in HTML, `&nbsp;`), the
 non-breaking-space. As a very frequently needed item in templates,
 this tiny item is easily available by default as well.
 
-## `body`
+### `body`
 
 This is an alias for `document.body` if available. Frequently used as
 a target for appending.
 
-# Rules (summary)
+## Rules (summary)
 
 1. String element name (or array of 1-4)
 2. Optional object with attributes
@@ -623,7 +623,7 @@ a target for appending.
     text nodes, and arrays encapsulating elements (repeat step no. 1)
 4. Optionally repeat for siblings
 
-# Rules (detailed)
+## Rules (detailed)
 
 1. Currently, the first item supplied to `jml()` must be either:
     1. An element name as a string (to create an element
@@ -709,11 +709,12 @@ a target for appending.
     argument, in which case, it returns a fragment of all added elements or,
     if only one element was present, the element itself.
 
-# Schema
+## Schema
 
-A tentative [JSON Schema](http://json-schema.org/) is available [here](jamilih.jsonschema).
+A tentative [JSON Schema](http://json-schema.org/) is available
+[here](jamilih.jsonschema).
 
-# Design Rationale
+## Design Rationale
 
 Provide round-trippable JSON/JavaScript serialization as with JsonML,
 but with all items at a given array level being the same type of item
@@ -721,7 +722,7 @@ but with all items at a given array level being the same type of item
 template-friendly capacity to inline insert fragments or child nodes
 (e.g., as by function return).
 
-# Naming
+## Naming
 
 I originally named the project JML (for JavaScript or Json Markup
 Language) and have still kept the abbreviation when used as a global
@@ -730,7 +731,7 @@ have used the name or similar ones, I am renaming the project to
 "Jamilih" for the Arabic word meaning "Beauty". It is named in honor
 of the Arabic name of my family's newly-born daughter.
 
-# Design goals
+## Design goals
 
 1. Be as succinct as possible while being sufficiently functional; avoid
     null place-holders, etc.
@@ -756,7 +757,7 @@ of the Arabic name of my family's newly-born daughter.
 8. Be intuitive so that one is not likely to be confused about whether
     one is looking at element siblings, children, text, etc.
 
-# Related work
+## Related work
 
 The only work which comes close to meeting these goals as far as I
 have been able to find is JsonML. JsonML even does a better job of
@@ -766,35 +767,43 @@ for goal #3, I believe Jamilih is slightly more flexible for regular usage
 in templates, and to my personal sensibilities, more clear in goal #8
 (and with a plan for goal #5 and #7?).
 
-# To-dos
+## To-dos
 
+### High priority to-dos
+
+1. Namespaced elements and attributes and XML options (esp. SVG), using an
+    options mode
+1. Implement a method building JML by string rather than DOM but create
+    DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
+    interfaces for direct manipulation.
 1. Add `jml.join(jmlStringArrayOrElement, glue)` (e.g., to intersperse with nbsp)
+
+### Medium priority to-dos
+
+1. See "todo"'s within code.
+1. Timing of appending
+    1. Add element before processing properties? Try to append children to their
+        parent immediately (before attribute/property processing code is run) so
+        plug-ins (like [i18nizeElement](https://github.com/brettz9/i18nizeElement))
+        can rely on the immediate ancestor context.
+    1. Allow DOM element as first item (for cloning or allowing style of
+        appending (as in jQuery) that does not place the parent as the
+        last item?); probably best as latter with method to clone.
+    1. Ensure setting of `select` `value` can take place *after* the options are
+        added
 1. Document binding DOM to `Map`/`WeakMap` Templates to define and invoke
     functions/objects tied to an element
+1. Allow configuration
+    1. Allow auto-namespacing of class and/or dataset keys
+1. Plugins: Move any current functionality out into default-included plugins and
+    make this repository a collection of plugins and a separate core to be moved
+    elsewhere?
+
+## Lower priority to-dos
+
 1. Allow `$symbol` to accept array of arrays for attaching multiple symbols
     to an element
 1. JSON Schema todos
     1. Specify types of allowable properties on attributes object in JSON Schema.
     1. Allow for fragments and other out-of-place objects
     1. Get working with JSONEditor
-1. See "todo"'s within code.
-1. Ensure setting of `select` `value` can take place *after* the options are added
-1. Plugins: Move any current functionality out into default-included plugins and
-    make this repository a collection of plugins and a separate core to be moved
-    elsewhere?
-1. Try to append children to their parent immediately (before attribute/property
-    processing code is run) so plug-ins (like `i18nizeElement`) can rely on the
-    immediate ancestor context.
-
-# Possible todos
-
-1. Namespaced elements and attributes and XML options (but move to own file
-    along with other XML-specific features)
-1. Implement a method building JML by string rather than DOM but create
-    DOM (including [XPath](https://github.com/goto100/xpath/blob/master/xpath.js))
-    interfaces for direct manipulation.
-1. Allow configuration
-    1. Allow auto-namespacing of class and/or dataset keys
-1. Allow DOM element as first item (for cloning or allowing style of
-    appending (as in jQuery) that does not place the parent as the
-    last item?); probably best as latter with method to clone.
