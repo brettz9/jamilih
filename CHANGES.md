@@ -1,35 +1,37 @@
-# 0.44.0
+# CHANGES for jamilih
+
+## 0.44.0
 
 - Fix: Ensure pointing to dist files in `package.json`
 - Enhancement: In case using `main` in bundlers for browser use,
     make Node version polyglot-capable
 
-# 0.43.0
+## 0.43.0
 
 - Enhancement: Add `@babel/polyfill` dependency
 - jsonchema: Add some attributes and other node types
 - Linting (Markdown): Fix linting format
 - npm: Update to Babel 7; update other devDeps and jsdom dep
 
-# 0.42.0
+## 0.42.0
 
 - Fix: Properly escape processing instructions (LGTM-inspired)
 - Refactoring: Remove unused function in demo, avoid passing extra arg (LGTM-inspired)
 - Linting (LGTM): Add lgtm.yml exclusions of bundles
 
-# 0.41.0
+## 0.41.0
 
 - Fix: Set charset attribute on `meta`
 - Enhancement: Allow `$DOCTYPE` shorthand
 
-# 0.40.2
+## 0.40.2
 
 - Fix: Call `createDocumentType` with empty strings for empty `systemId`
     or `publicId`
 - Testing: Undo adding `XMLSerializer` to browser environment (ok if we
     create the document type correctly)
 
-# 0.40.1
+## 0.40.1
 
 - Fix: Allow for falsey or string "undefined" `publicId`/`systemId`
 - Refactoring: Use `includes` for strings and arrays in `XMLSerializer`
@@ -37,53 +39,53 @@
 - Testing: Add document test; add `XMLSerializer` to browser environment
     for consistency for Firefox
 
-# 0.40.0
+## 0.40.0
 
 - Fix: Undo logging
 - Fix: `$document` to handle non-array arguments and properly set node
 - Testing: Add `$document`/`$DOCTYPE` creation test
 
-# 0.39.0
+## 0.39.0
 
 - Enhancement: Export `body` for `document.body` (frequently
     targeted for appending)
 - Testing: Avoid Firefox-specific exception for password input
     attribute serialization order (now passing)
 
-# 0.38.1
+## 0.38.1
 
 - Security fix: Bump versions as part of npm security audit
 - Fix: Ensure `nbsp` exported in Node as well
 - npm: Update devDeps
 
-# 0.38.0
+## 0.38.0
 
 - Enhancement: Add `nbsp` as export (for another very frequently needed template item)
 
-# 0.37.0
+## 0.37.0
 
 - Breaking change: Remove `yarn.lock`
 
-# 0.36.0
+## 0.36.0
 
 - Deprecated: Default ES6 export deprecated over new named export
 - Enhancement: Add `$` and `$$` utilities for `querySelector`/`querySelectorAll`.
 
-# 0.35.0
+## 0.35.0
 
 - Enhancement: Support no-innerHTML ES6 Module dist file
 - npm: Update devDeps
 
-# 0.34.0
+## 0.34.0
 
 - npm: Update deps (jsdom), devDeps; fixes security vulnerability
 - Testing: Add opn-cli
 
-# 0.33.1
+## 0.33.1
 
 - Fix: Move `dir`, `lang`, and `title` to nullables
 
-# 0.33.0
+## 0.33.0
 
 - Enhancement: Add global `HTMLElement` DOM-settable properties (for
     `undefined` to have no effect)
@@ -91,14 +93,14 @@
 - npm: Update devDeps
 - Testing: Fix test to exclude attribute nodes (depends still on jsdom fixing)
 
-# 0.32.0
+## 0.32.0
 
 - Fix: `browser` and `module` not pointing to updated file names
 - Docs: Fix paths in docs
 - Enhancement: Add "es" dist file
 - npm: Fix browser-test script
 
-# 0.31.0
+## 0.31.0
 
 - Breaking change (file locations): Move files to `dist` or `src`
     subdirectories accordingly (and move demo file to own directory)
@@ -111,21 +113,21 @@
 - npm: Update deps and devDeps
 - npm: Fix scripts to avoid building upon install
 
-# 0.30.0
+## 0.30.0
 
 - Enhancement: Support plugins
 
-# 0.29.1
+## 0.29.1
 
 - Fix: npmignore
 
-# 0.29.0
+## 0.29.0
 
 - Build: Add yarn
 - npm: Remove babel-env
 - npm: Update dev deps
 
-# 0.28.0
+## 0.28.0
 
 - Breaking change: Don't throw if encountering `Node.nodeType` as `undefined`;
     temporarily treat as `Node.ATTRIBUTE_NODE` for jsdom
@@ -141,19 +143,19 @@
     tests; rename our assert code and have it accept a test object; make
     separate entry files for Node and browser; add test messages
 
-# 0.27.0
+## 0.27.0
 
 - Fix: Actually add plugin apparently insisted on by Babel
 
-# 0.26.0
+## 0.26.0
 
 - Fix: Add plugins apparently insisted on by Babel
 
-# 0.25.0
+## 0.25.0
 
 - Fix: Add plugins apparently insisted on by babel-env
 
-# 0.24.0
+## 0.24.0
 
 - Breaking change: Use `setAttribute` for `style` to ensure consistent
     serialization; could break if had been using to add styles to an
@@ -183,7 +185,7 @@
 - Testing: Update tests to current browser expectations
 - Docs: Document some newer features and other improvements
 
-# 0.23.0
+## 0.23.0
 
 - For both files:
     - Breaking change: Support reasonable dynamic `template` creation
@@ -200,11 +202,11 @@
     - Enhancement: Override `jml.Map` and `jml.WeakMap` `get` and `set` to accept selectors in
         place of elements; also allow in custom `invoke`
 
-# 0.22.1
+## 0.22.1
 
 - Fix: For jml-es6.js file, avoid error if `opts.$map` doesn't exist!
 
-# 0.22.0
+## 0.22.0
 
 - For jml-es6.js file, add `jml.sym` (and aliases `jml.symbol`
     and `jml.for`) utilities for retrieving a `Symbol` (or `Symbol.for`)
@@ -218,27 +220,27 @@
 - For jml-es6.js file, allow `$data` attribute (and `$map` in config)
     (as yet undocumented)
 
-# 0.21.0
+## 0.21.0
 
 - For jml-es6.js file, add `jml.weak`, `jml.strong`, `jml.Map`,
     and `jml.WeakMap` for easier association of elements to
     `Map` or `WeakMap` maps.
 
-# 0.20.0
+## 0.20.0
 
 - For jml-es6.js file, `dataset` recursive objects fixed
     to always repeat prefix when other properties on same sub-object
 
-# 0.19.0
+## 0.19.0
 
 - For jml-es6.js file, `dataset` recursive objects now support non-string
     primitive values (with null/undefined ignoring)
 
-# 0.18.0
+## 0.18.0
 
 - For jml-es6.js file, support recursive objects under `dataset`.
 
-# 0.17.0
+## 0.17.0
 
 - Refactoring: Add jml-es6.js file for ES6 module support
 - Linting: ESLint ES6 module file and tests
@@ -247,11 +249,11 @@
 - Testing: Use ES6 modules in HTML tests and demo file
 - Testing: Simplify suite running API
 
-# 0.16.0
+## 0.16.0
 
 - Add `lang` to `NULLABLE` att group
 
-# 0.15.0
+## 0.15.0
 
 - Add `pattern` to DOM properties
 - Add new internal group `NON_NULL` for attributes that if set to `null`
@@ -259,17 +261,17 @@
     that can use the ternary operator to avoid setting)
 - Add `max`, `min` to `NON_NULL` att group
 
-# 0.14.0
+## 0.14.0
 
 - Avoid having nully dataset value set `dataset`, `class`/`className`,
     `style`, `for`/`htmlFor`, `innerHTML`, and `$on` handlers (as
     setting by DOM alone sets it to the string "undefined" or "null").
 
-# 0.13.1
+## 0.13.1
 
 - Fix `readOnly` in map and bool check
 
-# 0.13.0
+## 0.13.0
 
 - Add ATTR_MAP (inspired by JsonML): Only `readOnly`->`readonly` for now
 - Add ATTR_DOM (inspired by JsonML): Attributes to be set in DOM along
@@ -280,36 +282,45 @@
 - Test refactoring (minor): Switch from `GLOBAL` to `global` in tests
 - npm: Update deps
 
-# 0.12.0
+## 0.12.0
+
 - Add `defaultChecked` and `defaultSelected` support as properties
 
-# 0.11.1
+## 0.11.1
+
 - npm: apply correct branch!
 
-# 0.11.0
+## 0.11.0
+
 - npm: Upgrade jsdom version
 - Demo: Fix
 - Testing: Unskip `createCDATASection` test for `jsdom` now that implemented
 
-# 0.10.5
+## 0.10.5
+
 - Bower: Shrink description as per npm
 
-# 0.10.4
+## 0.10.4
+
 - npm: Shrink description to fit limit
 
-# 0.10.3
+## 0.10.3
+
 - Rename MIT license file to LICENSE-MIT.txt
 
-# 0.10.2
+## 0.10.2
+
 - Docs: Fix license text displayed
 - Travis: Add dependencies status to README
 
-# 0.10.1 (skipped 0.10.0)
+## 0.10.1 (skipped 0.10.0)
+
 - npm: Update dependencies
 - Travis: Add support and display build status
 - Testing: Workaround` nodeunit` in browser issue
 
-# 0.9.0
+## 0.9.0
+
 - npm: Lint, add scripts for browser/Node testing
 - npm: Rely on latest `jsdom` rather than my now outdated fork
 - Refactoring: Avoid `DOMParser` from `xmldom` since `jsdom` supports (still need its `XMLSerializer` however)
@@ -320,30 +331,36 @@
 - Testing: Temporarily provide workaround for `xmldom` in testing (non-namespaced serialization)
 - Schema: Provided tentative JSON Schema
 
-# 0.8.0
+## 0.8.0
+
 - Actual Node support
 - Add document, document type, notation, entity, attribute node support
 - Add ordered attribute support
 - New methods on jml: toJML(), toJMLString(), toHTML() (or toDOMString()), toXML() (or toXMLDOMString()), toDOM() (an alias for jml()).
 - Added unit tests
 
-# 0.7.0
+## 0.7.0
+
 - Support appending of attributes/properties and children to existing
 DOM element
 - Support style as object (with hyphenated or CamelCase keys)
 - Append style string attributes rather than replacing
 
-# 0.6.0
+## 0.6.0
+
 - Breaking change to allow `on`-prefixed event handlers to become
 set as direct properties rather than through `addEventListener`. If
 you need the latter, use the `$on` object syntax.
 - Allow decimal character references to be supplied as numbers
 
-# 0.5.0
+## 0.5.0
+
 - Number and boolean children converted to text nodes
 
-# 0.4.0
+## 0.4.0
+
 - Better error reporting
 
-# 0.3.0
+## 0.3.0
+
 - Support "defaultValue" property setting

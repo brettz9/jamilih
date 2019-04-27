@@ -1,5 +1,3 @@
-/* globals jml */
-
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); remove IE8 processing instruction hack?
@@ -12,8 +10,8 @@ import * as xmlTesting from './xmlTesting.js';
 
 const $ = (sel) => { return document.querySelector(sel); };
 
-const testCase = {
-    setUp (callback) {
+describe('Jamilih - jml', function () {
+    beforeEach(() => {
         let jmlTestContent = $('#jmlTestContent');
         if (!jmlTestContent) {
             jmlTestContent = document.createElement('div');
@@ -25,11 +23,8 @@ const testCase = {
             <div style="display:none;" id="anotherElementToAddToParent">test2</div>
             <div style="display:none;" id="yetAnotherSiblingToAddToParent">test3</div>
         `;
-        callback();
-    },
-    'Single element with no children' (test) {
-        xmlTesting.init(test, 3);
-
+    });
+    it('Single element with no children', () => {
         xmlTesting.matchesXMLString(
             jml('input'),
             '<input xmlns="http://www.w3.org/1999/xhtml" />',
@@ -46,11 +41,8 @@ const testCase = {
             '<input xmlns="http://www.w3.org/1999/xhtml" type="password" id="my_pass" />',
             'Single element with two attributes'
         );
-        test.done();
-    },
-    'DOM wrapping' (test) {
-        xmlTesting.init(test, 2);
-
+    });
+    it('DOM wrapping', () => {
         const div = jml(
             'div', {style: 'position:absolute !important; left: -1000px;'}, [
                 $('#DOMChildrenMustBeInArray')
@@ -73,11 +65,8 @@ const testCase = {
             '<hr xmlns="http://www.w3.org/1999/xhtml" />',
             'Single (empty) DOM element (with body parent)'
         );
-
-        test.done();
-    },
-    'Single element with children' (test) {
-        xmlTesting.init(test, 5);
+    });
+    it('Single element with children', () => {
         xmlTesting.matchesXMLString(
             jml('div', [
                 'no attributes on the div'
@@ -93,7 +82,7 @@ const testCase = {
             'Single element with single text-containing element child'
         );
         xmlTesting.matchesXMLString(
-            jml('div', {'class': 'myClass'}, [
+            jml('div', {class: 'myClass'}, [
                 ['p', ['Some inner text']],
                 ['p', ['another child paragraph']]
             ]),
@@ -101,7 +90,7 @@ const testCase = {
             'Single element with attribute and two text-containing element children'
         );
         xmlTesting.matchesXMLString(
-            jml('div', {'class': 'myClass'}, [
+            jml('div', {class: 'myClass'}, [
                 'text1',
                 ['p', ['Some inner text']],
                 'text3'
@@ -128,16 +117,11 @@ const testCase = {
             '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>',
             'Single element with attribute and body parent with separate jml call appending to it two sibling elements each containing text-containing element children (and one with attribute)'
         );
-        test.done();
-    },
-    'Single element wrapped' (test) {
-        xmlTesting.init(test, 1);
+    });
+    it('Single element wrapped', () => {
         xmlTesting.matches($('body'), jml($('body')), 'Wrapping single pre-existing DOM element');
-        test.done();
-    },
-    'Namespace declarations' (test) {
-        xmlTesting.init(test, 4);
-
+    });
+    it('Namespace declarations', () => {
         xmlTesting.matches(
             jml('abc', {xmlns: 'def'}).namespaceURI,
             'def',
@@ -145,19 +129,23 @@ const testCase = {
         );
 
         xmlTesting.matchesXMLString(
-            jml('abc', {z: 3, xmlns: {'prefix3': 'zzz', 'prefix1': 'def', 'prefix2': 'ghi'}, b: 7, a: 6}),
+            jml('abc', {
+                z: 3, xmlns: {
+                    prefix3: 'zzz', prefix1: 'def', prefix2: 'ghi'
+                }, b: 7, a: 6
+            }),
             '<abc xmlns="http://www.w3.org/1999/xhtml" xmlns:prefix3="zzz" xmlns:prefix1="def" xmlns:prefix2="ghi" z="3" b="7" a="6"></abc>',
             'Single element with attributes and prefixed (non-HTML) namespace declarations'
         );
 
         xmlTesting.matchesXMLString(
-            jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}}),
+            jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}}),
             '<abc xmlns="newdefault" xmlns:prefix1="def" xmlns:prefix2="ghi"/>',
             'Single element with non-HTML default namespace declaration and prefixed declarations'
         );
 
         xmlTesting.matches(
-            jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}}).namespaceURI,
+            jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}}).namespaceURI,
             'newdefault',
             'Single element with non-HTML default namespace declaration and prefixed declarations (confirming namespaceURI)'
         );
@@ -172,12 +160,8 @@ const testCase = {
             'Single element with prefixed namesapce declarations and element child using one of the prefixes'
         );
         */
-
-        test.done();
-    },
-    'fragment' (test) {
-        xmlTesting.init(test, 3);
-
+    });
+    it('fragment', () => {
         jml('table', {style: 'position:absolute; left: -1000px;'}, $('body')); // Rebuild
         const trsFragment = jml('tr', [
             ['td', ['row 1 cell 1']],
@@ -211,29 +195,23 @@ const testCase = {
         xmlTesting.matchesXMLString(
             jml('ul', [
                 [
-                    'li', {'style': 'color:red;'}, ['First Item'],
+                    'li', {style: 'color:red;'}, ['First Item'],
                     'li', {
-                        'title': 'Some hover text.',
-                        'style': 'color:green;'
+                        title: 'Some hover text.',
+                        style: 'color:green;'
                     },
                     ['Second Item'],
                     'li', [
-                        ['span',
-                            {
-                                'class': 'Remove-Me',
-                                'style': 'font-weight:bold;'
-                            },
-                            ['Not Filtered']
-                        ],
+                        ['span', {
+                            class: 'Remove-Me',
+                            style: 'font-weight:bold;'
+                        }, ['Not Filtered']],
                         ' Item'
                     ],
                     'li', [
-                        ['a',
-                            {
-                                'href': '#NewWindow'
-                            },
-                            ['Special Link']
-                        ]
+                        ['a', {
+                            href: '#NewWindow'
+                        }, ['Special Link']]
                     ],
                     null
                 ]
@@ -255,30 +233,24 @@ const testCase = {
             'Single element with fragment in place of children'
         );
         */
-        test.done();
-    },
-    'text node' (test) {
-        test.expect(2);
+    });
+    it('text node', () => {
         const expected = document.createTextNode('abc');
         const result = jml({$text: 'abc'});
-        test.deepEqual(expected.nodeType, result.nodeType, 'Equal `nodeType`');
-        test.deepEqual(expected.nodeValue, result.nodeValue, 'Equal `nodeValue`');
-        test.done();
-    },
-    'attribute node' (test) {
-        test.expect(3);
+        assert.deepEqual(expected.nodeType, result.nodeType, 'Equal `nodeType`');
+        assert.deepEqual(expected.nodeValue, result.nodeValue, 'Equal `nodeValue`');
+    });
+    it('attribute node', () => {
         const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
-        const expected = document.createAttributeNS.apply(document, xlink.slice(0, -1));
+        const expected = document.createAttributeNS(...xlink.slice(0, -1));
         expected.value = xlink[2];
         const result = jml({$attribute: xlink});
-        test.deepEqual(expected.name, result.name, 'Equal `name`');
-        test.deepEqual(expected.value, result.value, 'Equal `value`');
-        test.deepEqual(expected.namespaceURI, result.namespaceURI, 'Equal `namespaceURI`');
-        // test.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641 / https://github.com/tmpvar/jsdom/pull/1822
-        test.done();
-    },
-    'Comments, processing instructions, entities, character references, CDATA' (test) {
-        xmlTesting.init(test, 1);
+        assert.deepEqual(expected.name, result.name, 'Equal `name`');
+        assert.deepEqual(expected.value, result.value, 'Equal `value`');
+        assert.deepEqual(expected.namespaceURI, result.namespaceURI, 'Equal `namespaceURI`');
+        // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641 / https://github.com/tmpvar/jsdom/pull/1822
+    });
+    it('Comments, processing instructions, entities, character references, CDATA', () => {
         const isIE = window.navigator && window.navigator.appName === 'Microsoft Internet Explorer';
         xmlTesting.matchesXMLString(
             jml('div', [
@@ -298,10 +270,8 @@ const testCase = {
             '>\u00A9\u04D2\u0AB3&amp;test &lt;CDATA&gt; content</div>',
             'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
         );
-        test.done();
-    },
-    'Document and doctype' (test) {
-        xmlTesting.init(test, 4);
+    });
+    it('Document and doctype', () => {
         const doc = jml({$document: {
             childNodes: [
                 {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
@@ -321,11 +291,19 @@ const testCase = {
             doc.firstChild.name,
             'NETSCAPE-Bookmark-file-1'
         );
-        xmlTesting.matchesXMLString(
-            doc,
-            `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+        try {
+            xmlTesting.matchesXMLString(
+                doc,
+                `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
-        );
+            );
+        } catch (err) {
+            // Node's implementation omits the line break
+            xmlTesting.matchesXMLString(
+                doc,
+                `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
+            );
+        }
         const doc2 = jml({$document: {
             $DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'},
             head: [
@@ -335,15 +313,21 @@ const testCase = {
                 ['p']
             ]
         }});
-        xmlTesting.matchesXMLString(
-            doc2,
-            `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+        try {
+            xmlTesting.matchesXMLString(
+                doc2,
+                `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
-        );
-        test.done();
-    },
-    'Event listeners' (test) {
-        xmlTesting.init(test, 3);
+            );
+        } catch (err) {
+            // Node's implementation omits the line break
+            xmlTesting.matchesXMLString(
+                doc2,
+                `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
+            );
+        }
+    });
+    it('Event listeners', () => {
         let str;
         const input = jml('input', {
             type: 'button',
@@ -371,63 +355,52 @@ const testCase = {
         if (input2.fireEvent) {
             input2.fireEvent('onchange');
         } else {
-            const event = new Event('change');
-            input2.dispatchEvent(event);
+            const ev = new Event('change');
+            input2.dispatchEvent(ev);
         }
         xmlTesting.matches(str, 'worked2', 'Single element with attributes and triggered change listener (alongside click) added to body');
 
         input2.click();
         xmlTesting.matches(str, 'worked3', 'Single element with attributes and triggered click listener (alongside change) added to body');
-
-        test.done();
-    },
-    'style attribute object' (test) {
-        xmlTesting.init(test, 1);
+    });
+    it('style attribute object', () => {
         xmlTesting.matchesXMLString(
-            jml('div', {style: {'float': 'left', 'border-color': 'red'}}, ['test']),
+            jml('div', {style: {float: 'left', 'border-color': 'red'}}, ['test']),
             '<div xmlns="http://www.w3.org/1999/xhtml" style="float: left; border-color: red;">test</div>',
             'Single element with style object and text child'
         );
-        test.done();
-    },
-    'dataset' (test) {
-        xmlTesting.init(test, 2);
+    });
+    it('dataset', () => {
         xmlTesting.matchesXMLString(
-            jml('div', {dataset: {'abcDefGh': 'fff', 'jkl-mno-pq': 'ggg'}}),
+            jml('div', {dataset: {abcDefGh: 'fff', 'jkl-mno-pq': 'ggg'}}),
             '<div xmlns="http://www.w3.org/1999/xhtml" data-abc-def-gh="fff" data-jkl-mno-pq="ggg"></div>',
             'Single element using dataset with two properties'
         );
         xmlTesting.matchesXMLString(
             jml('div', {dataset: {
                 'aCamel-case': {result: 'hello', result2: 'helloTwo'},
-                'anotherResult': 'world', 'aNullishToIgnore': null, aNum: 8
+                anotherResult: 'world', aNullishToIgnore: null, aNum: 8
             }}),
             '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" ' +
             'data-a-camel-case-result2="helloTwo" data-another-result="world" data-a-num="8"></div>',
             'Single element with mixed and nested CamelCase dataset objects'
         );
-        test.done();
-    },
-    'Style element' (test) {
-        xmlTesting.init(test, 1);
+    });
+    it('Style element', () => {
         xmlTesting.matchesXMLString(
             jml('style', {id: 'myStyle'}, ['p.test {color:red;}'], $('body')),
             '<style xmlns="http://www.w3.org/1999/xhtml" id="myStyle">p.test {color:red;}</style>',
             'Single style element with attribute and text content added to body'
         );
-        test.done();
-    },
-    'Script element' (test) {
-        xmlTesting.init(test, 1);
+    });
+    it('Script element', () => {
         xmlTesting.matchesXMLString(
-            jml('script', {'class': 'test'}, ['console.log("hello!");'], $('body')),
+            jml('script', {class: 'test'}, ['console.log("hello!");'], $('body')),
             '<script xmlns="http://www.w3.org/1999/xhtml" class="test">console.log("hello!");</script>',
             'Single script element with attribute and text content (check console for "hello!")'
         );
-        test.done();
-    },
-    'Maps' (test) {
-        xmlTesting.init(test, 8);
+    });
+    it('Maps', () => {
         // Todo: Let `$map` accept an array of map-object arrays (and add tests)
         // Todo: Add tests for array of map strings
         const weakMap1 = new WeakMap();
@@ -484,10 +457,8 @@ const testCase = {
             'input7 ok arg1',
             'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map and function'
         );
-        test.done();
-    },
-    'Symbol' (test) {
-        xmlTesting.init(test, 17);
+    });
+    it('Symbol', () => {
         const privateSym = Symbol('Test symbol');
         jml('div', [
             ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
@@ -545,17 +516,13 @@ const testCase = {
         $('#divSymbolTest').dispatchEvent(new Event('click'));
         jml.command('#symInput1', 'publicForSym1', 'arg1');
         jml.command('#symInput3', privateSym, 'test', 'arg3');
-
-        test.done();
-    },
-    'Shadow DOM' (test) {
+    });
+    it('Shadow DOM', () => {
         if (!$('body').attachShadow) {
-            xmlTesting.init(test, 0);
             xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT attachShadow");
         } else {
-            xmlTesting.init(test, 2);
             // Todo: Need a more precise check than this
-            test.doesNotThrow(function () {
+            assert.doesNotThrow(function () {
                 jml('section', {
                     id: 'myElem',
                     $shadow: {
@@ -579,11 +546,12 @@ const testCase = {
                 ], $('body'));
             }, null, 'Adding Shadow DOM (via `open`/`template`) does not throw');
 
-            test.doesNotThrow(function () {
+            assert.doesNotThrow(function () {
                 jml('section', {
                     id: 'myElem2',
                     $shadow: {
-                        content: [ // Could also define as `open: []`
+                        // Could also define as `open: []`
+                        content: [
                             ['style', [`
                                 :host {color: red;}
                                 ::slotted(p) {color: blue;}
@@ -599,14 +567,11 @@ const testCase = {
                 ], $('body'));
             }, null, 'Adding Shadow DOM (via `content`) does not throw');
         }
-        test.done();
-    },
-    'Custom elements' (test) {
+    });
+    it('Custom elements', () => {
         if (!window.customElements) {
-            xmlTesting.init(test, 0);
             xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
         } else {
-            xmlTesting.init(test, 9);
             const myEl = jml('my-el', {
                 id: 'myEl',
                 $define: {
@@ -714,10 +679,8 @@ const testCase = {
             'mySelect'
         );
         */
-        test.done();
-    },
-    '$custom properties' (test) {
-        xmlTesting.init(test, 3);
+    });
+    it('$custom properties', () => {
         const mySelect = jml('select', {
             id: 'mySelect',
             $custom: {
@@ -748,10 +711,8 @@ const testCase = {
             'mySelectArg1',
             'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
         );
-        test.done();
-    },
-    '$plugins' (test) {
-        xmlTesting.init(test, 7);
+    });
+    it('$plugins', () => {
         const options = {$plugins: [
             {
                 name: '$_myplugin',
@@ -791,7 +752,9 @@ const testCase = {
         );
         xmlTesting.throws(() => {
             jml({$plugins: [{
-                set () {}
+                set () {
+                    /* */
+                }
             }]}, 'div');
         }, 'Should throw when no `name` ');
         xmlTesting.throws(() => {
@@ -802,10 +765,10 @@ const testCase = {
         xmlTesting.throws(() => {
             jml({$plugins: [{
                 name: 'myplugin',
-                set () {}
+                set () {
+                    /* */
+                }
             }]}, 'div');
         }, 'Should throw with bad `name`');
-        test.done();
-    }
-};
-export default testCase;
+    });
+});

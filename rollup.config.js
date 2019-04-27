@@ -4,6 +4,16 @@ import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 
+/**
+ * @external RollupConfig
+ * @type {PlainObject}
+ * @see {@link https://rollupjs.org/guide/en#big-list-of-options}
+ */
+
+/**
+ * @param {"es"|"umd"} format Rollup format
+ * @returns {external:RollupConfig}
+ */
 function noInnerHTML (format) {
     return {
         input: 'src/jml.js',
@@ -35,6 +45,7 @@ function noInnerHTML (format) {
     };
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [{
     input: 'src/jml.js',
     output: {

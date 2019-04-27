@@ -72,12 +72,12 @@ The following functions are available:
 ## Browser setup (Global)
 
 ```html
-<script src="node_modules/jamilih/@babel/polyfill/dist/polyfill.js"></script>
+<script src="node_modules/core-js-bundle/minified.js"></script>
 <script src="node_modules/jamilih/dist/jml.js"></script>
 ```
 
 ```js
-jml(...);
+jml(...args);
 ```
 
 ## Browser setup (ES6 Modules)
@@ -85,28 +85,32 @@ jml(...);
 If compiling, select from any or all of `jml`, `$`, `$$`, `nbsp`, and `body`:
 
 ```js
+import 'core-js-bundle';
 import {jml, $, $$, nbsp, body} from 'jamilih';
 ```
 
 If not compiling:
 
 ```js
+import './node_modules/core-js-bundle/minified.js';
 import {jml, $, $$, nbsp, body} from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 For backward compatibility, a default export is provided, but this is now deprecated:
 
 ```js
+import './node_modules/core-js-bundle/minified.js';
 import jml from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 ## Node installation and usage
 
 ```
-npm install jamilih
+npm install jamilih core-js-bundle
 ```
 
-```
+```js
+require('core-js-bundle');
 const jml = require('jamilih');
 ```
 
@@ -126,7 +130,7 @@ const input = jml('input');
 Simple element with attributes...
 
 ```js
-const input = jml('input', {type:'password', id:'my_pass'});
+const input = jml('input', {type: 'password', id: 'my_pass'});
 ```
 
 Simple element with just child elements...
@@ -140,7 +144,7 @@ const div = jml('div', [
 Simple element with attributes and child elements...
 
 ```js
-const div = jml('div', {'class': 'myClass'}, [
+const div = jml('div', {class: 'myClass'}, [
     ['p', ['Some inner text']],
     ['p', ['another child paragraph']]
 ]);
@@ -149,7 +153,7 @@ const div = jml('div', {'class': 'myClass'}, [
 Simple element with attributes, child elements, and text nodes...
 
 ```js
-const div = jml('div', {'class': 'myClass'}, [
+const div = jml('div', {class: 'myClass'}, [
     'text1',
     ['p', ['Some inner text']],
     'text3'
@@ -166,7 +170,8 @@ Returning first element among siblings when appending them to a
 DOM element (API unstable)...
 
 ```js
-const firstTr = jml('tr', [
+const firstTr = jml(
+    'tr', [
         ['td', ['row 1 cell 1']],
         ['td', ['row 1 cell 2']]
     ],
@@ -181,7 +186,8 @@ const firstTr = jml('tr', [
 Returning element siblings as an array (API unstable)...
 
 ```js
-const trsFragment = jml('tr', [
+const trsFragment = jml(
+    'tr', [
         ['td', ['row 1 cell 1']],
         ['td', ['row 1 cell 2']]
     ],
@@ -213,7 +219,7 @@ jml('div', [
     'text0',
     {'#': ['text1', ['span', ['inner text']], 'text2']},
     'text3'
-])
+]);
 ```
 
 Event attachment...
@@ -225,9 +231,9 @@ const input = jml('input', {
     $on: {
         click: [function () {
             alert('worked1');
-        }
-    }, true] // Capturing
-}});
+        }, true] // Capturing
+    }
+});
 ```
 
 ```js
@@ -267,15 +273,15 @@ const div = jml('div', [
 Namespace definitions (default or prefixed)...
 
 ```js
-jml('abc', {xmlns: 'def'})
+jml('abc', {xmlns: 'def'});
 ```
 
 ```js
-jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi'}})
+jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi'}});
 ```
 
 ```js
-jml('abc', {xmlns: {'prefix1': 'def', 'prefix2': 'ghi', '': 'newdefault'}})
+jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}});
 ```
 
 ## Shadow DOM
@@ -317,7 +323,8 @@ jml('div', {
 jml('div', {
     id: 'myElem',
     $shadow: {
-        content: [ // Could also define as `open: []`
+        // Could also define as `open: []`
+        content: [
             ['style', [`
                 :host {color: red;}
                 ::slotted(p) {color: blue;}
@@ -353,7 +360,7 @@ jml('input', {
             (this.id + ' ' + arg1) === 'symInput1 arg1'
         );
     }]
-}, body)
+}, body);
 
 // Then elsewhere get and use the symbol function for the DOM object
 $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
@@ -563,7 +570,7 @@ const options = {$plugins: [
         name: '$_myplugin',
         set ({element, attribute: {name, value}}) {
             // Add code here to modify the element
-            // element.setAttribute(name, value);
+            element.setAttribute(name, value + 'Changed');
             if (value.blueAndRed) {
                 element.style.color = 'blue';
                 element.style.backgroundColor = 'red';

@@ -1,59 +1,44 @@
-/* globals jml */
-
 import * as xmlTesting from './xmlTesting.js';
+
 const $ = (sel) => { return document.querySelector(sel); };
 
-const testCase = {
-    'jml.toJMLString()' (test) {
-        test.expect(1);
+describe('Jamilih - Other Methods', function () {
+    it('jml.toJMLString()', () => {
         const br = document.createElement('br');
         const expected = '["br",{"xmlns":"http://www.w3.org/1999/xhtml"}]';
         const result = jml.toJMLString(br);
-        test.deepEqual(expected, result, 'Empty element with no attributes');
-        test.done();
-    },
-    'jml.toHTML()' (test) {
-        test.expect(1);
+        assert.deepEqual(expected, result, 'Empty element with no attributes');
+    });
+    it('jml.toHTML()', () => {
         const expected = '<br>';
         const result = jml.toHTML('br');
-        test.deepEqual(expected, result, 'Empty element with no attributes');
-        test.done();
-    },
-    'jml.toXML()' (test) {
-        test.expect(1);
+        assert.deepEqual(expected, result, 'Empty element with no attributes');
+    });
+    it('jml.toXML()', () => {
         const expected = '<br xmlns="http://www.w3.org/1999/xhtml" />';
         const result = jml.toXML('br');
-        test.deepEqual(expected, result, 'Empty element with no attributes');
-        test.done();
-    },
-    'jml.toDOM()' (test) {
-        test.expect(1);
+        assert.deepEqual(expected, result, 'Empty element with no attributes');
+    });
+    it('jml.toDOM()', () => {
         const expected = jml('br');
         const result = jml.toDOM('br');
-        test.deepEqual(expected.nodeName, result.nodeName, '`nodeName` equal');
-        test.done();
-    },
-    'jml.toXMLDOMString()' (test) {
-        test.expect(1);
+        assert.deepEqual(expected.nodeName, result.nodeName, '`nodeName` equal');
+    });
+    it('jml.toXMLDOMString()', () => {
         const expected = jml.toXMLDOMString('br');
         const result = jml.toXML('br');
-        test.deepEqual(expected, result, 'Empty element with no attributes');
-        test.done();
-    },
-    'jml.toDOMString()' (test) {
-        test.expect(1);
+        assert.deepEqual(expected, result, 'Empty element with no attributes');
+    });
+    it('jml.toDOMString()', () => {
         const expected = jml.toDOMString('br');
         const result = jml.toHTML('br');
-        test.deepEqual(expected, result, 'Empty element with no attributes');
-        test.done();
-    },
-    'jml.weak()' (test) {
-        xmlTesting.init(test, 0);
-
+        assert.deepEqual(expected, result, 'Empty element with no attributes');
+    });
+    it('jml.weak()', () => {
         const [myMap, elem] = jml.weak({
             localVar: 'localValue',
-            myMethod (elem, arg1) {
-                return arg1 + ' ' + this.localVar + ' ' + elem.querySelector('input').value;
+            myMethod (el, arg1) {
+                return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input').value;
             }
         }, 'div', {id: 'mapTest'}, [
             ['input', {value: '100', $on: {
@@ -98,7 +83,5 @@ const testCase = {
         );
         const mapDiv = $('#clickArea');
         mapDiv.dispatchEvent(new Event('click'));
-        test.done();
-    }
-};
-export default testCase;
+    });
+});

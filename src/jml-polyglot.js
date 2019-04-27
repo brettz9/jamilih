@@ -1,19 +1,15 @@
 /* eslint-env node */
-// Can remove own XMLSerializer dependency once jsdom may
-//    implement: https://github.com/tmpvar/jsdom/issues/1368
-import xmlser from '../polyfills/XMLSerializer.js';
 import {jml, $, $$, nbsp, body, glue} from './jml.js';
 
 if (typeof process !== 'undefined') {
     // import {JSDOM} from 'jsdom';
-    const {JSDOM} = require('jsdom');
+    const {JSDOM} = require('jsdom'); // eslint-disable-line global-require
 
     const win = new JSDOM('').window;
 
     jml.setWindow(win);
     jml.setDocument(win.document);
-    // jml.setXMLSerializer(require('xmldom').XMLSerializer);
-    jml.setXMLSerializer(xmlser);
+    jml.setXMLSerializer(win.XMLSerializer);
 }
 
 export {jml, $, $$, nbsp, body, glue};

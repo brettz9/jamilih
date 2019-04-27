@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* eslint-disable strict, import/unambiguous, import/no-commonjs */
 'use strict';
 
 module.exports = {

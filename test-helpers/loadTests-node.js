@@ -1,10 +1,8 @@
 /* eslint-env node */
+import {assert} from 'chai';
 import {jml, glue, nbsp} from '../src/jml-polyglot.js';
 
-import jmlTests from '../test/test.jml.js';
-import otherMethodsTests from '../test/test.other-methods.js';
-import toJMLTests from '../test/test.toJML.js';
-import glueTests from '../test/test.glue.js';
+global.assert = assert;
 
 global.window = jml.getWindow();
 global.Event = window.Event;
@@ -15,15 +13,3 @@ global.XMLSerializer = jml.getXMLSerializer();
 global.jml = jml;
 global.glue = glue;
 global.nbsp = nbsp;
-
-// Todo:
-// This has problems as a regular `import` even when compiling
-//   with node-globals plugin (a `this` context issue which
-//   I could not seem to fix); if we could fix this, then our
-//   item above could be removed
-require('nodeunit').reporters.default.run({
-    jmlTests,
-    otherMethodsTests,
-    toJMLTests,
-    glueTests
-});

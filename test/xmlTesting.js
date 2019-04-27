@@ -1,14 +1,16 @@
-let currentTester;
+/* eslint-disable no-console */
+/* globals assert */
 
-const nbsp = '\u00a0';
+const nbsp = '\u00A0';
 const write = (...msgs) => {
-    if (currentTester) {
-        currentTester.ok(...msgs);
+    if (assert) {
+        assert(...msgs);
         return;
     }
     if (typeof module === 'undefined') {
         document.body.append(
-            ...msgs, ...Array.from({length: 2}, () => document.createElement('br'))
+            ...msgs,
+            ...Array.from({length: 2}, () => document.createElement('br'))
         );
     } else {
         console.log(...msgs);
@@ -17,12 +19,12 @@ const write = (...msgs) => {
 const skip = (...msgs) => { // Todo: Could track and report on test count
     return write(...msgs);
 };
-const assert = (ok, msg) => {
+const xmlAssert = (ok, msg) => {
     if (!ok) {
         const err = new Error('Stack');
         console.log('Assertion not ok:', err);
     }
-    write(!!ok, ` ${nbsp}` + msg);
+    write(Boolean(ok), ` ${nbsp + msg}`);
 };
 const matches = (item1, item2, msg) => {
     if (!item2) { // For convenience in debugging
@@ -38,7 +40,7 @@ const matches = (item1, item2, msg) => {
 const matchesXMLStringWithinElement = (element, item2, msg) => {
     const docFrag = document.createDocumentFragment();
     for (let i = 0; i < element.childNodes.length; i++) {
-        docFrag.appendChild(element.childNodes[i].cloneNode(true));
+        docFrag.append(element.childNodes[i].cloneNode(true));
     }
     matchesXMLString(docFrag, item2, msg);
 };
@@ -52,21 +54,14 @@ const matchesXMLString = (item1, item2, msg) => {
     matches(item1, item2, msg);
 };
 
-const init = (test, expected) => {
-    if (expected) {
-        test.expect(expected);
-    }
-    currentTester = test;
-};
-
-const throws = (cb, msg) => {
+const throws = (testCb, msg) => {
     try {
-        cb();
-        assert(false, `Should throw: ${msg}`);
+        testCb();
+        xmlAssert(false, `Should throw: ${msg}`);
     } catch (err) {
-        assert(true, msg);
+        xmlAssert(true, msg);
     }
 };
 
-export {write, skip, throws, assert, matches, matchesXMLStringWithinElement,
-    matchesXMLStringOnElement, matchesXMLString, init};
+export {write, skip, throws, xmlAssert, matches, matchesXMLStringWithinElement,
+    matchesXMLStringOnElement, matchesXMLString};

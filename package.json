@@ -10,16 +10,18 @@
   "scripts": {
     "eslint": "eslint .",
     "rollup": "npm run eslint && rollup -c",
-    "test-rollup": "rollup -c rollup.config.test.js",
-    "browser-test": "npm run rollup && opn http://localhost:8091/test/ && npm run start",
-    "test": "npm run rollup && npm run test-rollup && node test-helpers/loadTests-commonjs.js",
+    "browser-test": "npm run rollup && open-cli http://localhost:8091/test/ && npm run start",
+    "test": "npm run rollup && mocha --require esm test-helpers/loadTests-node.js test/test.*.js",
     "kill-static": "pkill -f \".bin/static -p\"",
     "build-docs": "rm -rf docs/jsdoc/*;jsdoc --pedantic -c docs/jsdoc-config.js .",
-    "open-docs": "opn http://localhost:8091/docs/jsdoc/ && npm start",
+    "open-docs": "open-cli http://localhost:8091/docs/jsdoc/ && npm start",
     "test-no-open": "npm run kill-static ; npm run eslint && npm run rollup && npm run start",
     "start": "static -p 8091",
     "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
   },
+  "browserslist": [
+    "cover 100%"
+  ],
   "description": "Provide round-trippable JSON/JavaScript serialization",
   "main": "dist/jml-polyglot.js",
   "browser": "dist/jml.js",
@@ -37,39 +39,52 @@
     "html"
   ],
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brettz9/jamilih/issues"
+  },
   "engines": {
     "node": ">=0.10"
   },
+  "peerDependencies": {
+    "core-js-bundle": "^3.1.3"
+  },
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "jsdom": "13.0.0"
+    "jsdom": "15.1.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
-    "babel-plugin-add-module-exports": "^1.0.0",
-    "chokidar-cli": "^1.2.1",
-    "eslint": "5.8.0",
-    "eslint-config-standard": "12.0.0",
-    "eslint-plugin-compat": "2.6.2",
-    "eslint-plugin-import": "2.14.0",
-    "eslint-plugin-node": "8.0.0",
-    "eslint-plugin-promise": "4.0.1",
-    "eslint-plugin-standard": "4.0.0",
-    "jsdoc": "^3.5.5",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@mysticatea/eslint-plugin": "^10.0.3",
+    "babel-plugin-add-module-exports": "^1.0.2",
+    "chai": "^4.2.0",
+    "chokidar-cli": "^1.2.2",
+    "core-js-bundle": "^3.1.3",
+    "eslint": "^5.16.0",
+    "eslint-config-ash-nazg": "^6.1.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-compat": "^3.1.1",
+    "eslint-plugin-eslint-comments": "^3.1.1",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsdoc": "^7.2.3",
+    "eslint-plugin-markdown": "^1.0.0",
+    "eslint-plugin-no-use-extend-native": "^0.4.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-unicorn": "^9.0.0",
+    "esm": "^3.2.25",
+    "jsdoc": "^3.6.2",
+    "mocha": "^6.1.4",
     "node-static": "0.7.11",
-    "nodeunit": "0.11.3",
-    "opn-cli": "^3.1.0",
-    "remark-lint": "6.0.3",
-    "rollup": "0.66.6",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "9.2.0",
-    "rollup-plugin-json": "3.1.0",
-    "rollup-plugin-node-resolve": "3.4.0",
-    "rollup-plugin-re": "^1.0.7"
-  },
-  "readmeFilename": "README.md",
-  "bugs": {
-    "url": "https://github.com/brettz9/jamilih/issues"
+    "open-cli": "^5.0.0",
+    "remark-lint": "6.0.4",
+    "rollup": "1.13.1",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "10.0.0",
+    "rollup-plugin-json": "4.0.0",
+    "rollup-plugin-node-resolve": "5.0.1",
+    "rollup-plugin-re": "^1.0.7",
+    "typescript": "^3.5.1"
   }
 }
