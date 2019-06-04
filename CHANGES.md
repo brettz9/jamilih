@@ -1,5 +1,23 @@
 # CHANGES for jamilih
 
+## 0.45.0
+
+- Breaking change: Require polyfills for ChildNode/ParentNode
+- Breaking change: Remove `XMLSerializer`: had become slightly buggy and now jsdom has own
+- Breaking change: Remove `@babel/polyfill` dep but add `core-js-bundle` peer dep.;
+    `@babel/polyfill` may continue to work, but should be more efficient and
+    future-proof to use `core-js-bundle`
+- Breaking change: Return `TypeError` if plugins not an array
+- Enhancement: `glue` utility
+- Linting: Switch to recommended rc file format; switch to
+    eslint-config-ash-nazg; lint; safer `hasOwnProperty` calls
+- Testing: Switch from end-of-lifed nodeunit to Mocha/Chai
+- npm: Update deps, devDeps; remove `readmeFilename` property in `package.json`
+- npm: Added `request` dep (peer dep now of jsdom)
+- npm: Switch from `opn-cli` to `open-cli`
+- npm: `open-docs`/`build-docs` scripts
+- Docs: JSDoc config; headings; todos; refactoring
+
 ## 0.44.0
 
 - Fix: Ensure pointing to dist files in `package.json`
