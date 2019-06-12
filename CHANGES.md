@@ -1,5 +1,10 @@
 # CHANGES for jamilih
 
+## ?
+
+- npm: Add Markdown files to linting routine
+- npm: Update devDeps
+
 ## 0.45.0
 
 - Breaking change: Require polyfills for ChildNode/ParentNode
