@@ -248,7 +248,7 @@ describe('Jamilih - jml', function () {
         assert.deepEqual(expected.name, result.name, 'Equal `name`');
         assert.deepEqual(expected.value, result.value, 'Equal `value`');
         assert.deepEqual(expected.namespaceURI, result.namespaceURI, 'Equal `namespaceURI`');
-        // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/tmpvar/jsdom/issues/1641 / https://github.com/tmpvar/jsdom/pull/1822
+        // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
     });
     it('Comments, processing instructions, entities, character references, CDATA', () => {
         const isIE = window.navigator && window.navigator.appName === 'Microsoft Internet Explorer';

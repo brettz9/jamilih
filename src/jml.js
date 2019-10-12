@@ -1203,7 +1203,7 @@ jml.toJML = function (dom, config) {
             }
             resetTemp();
             break;
-        } case undefined: // Treat as attribute node until this is fixed: https://github.com/tmpvar/jsdom/issues/1641 / https://github.com/tmpvar/jsdom/pull/1822
+        } case undefined: // Treat as attribute node until this is fixed: https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
         case 2: // ATTRIBUTE (should only get here if passing in an attribute node)
             set({$attribute: [node.namespaceURI, node.name, node.value]});
             break;
