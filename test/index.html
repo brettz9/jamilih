@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>Jamilih Tests</title>
-        <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
+  <head>
+    <meta charset="utf-8" />
+    <title>Jamilih Tests</title>
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
 
-        <!-- Babel dependencies -->
-        <script src="../node_modules/core-js-bundle/minified.js"></script>
-        <!-- <script src="../node_modules/regenerator-runtime/runtime.js"></script> -->
+    <!-- Babel dependencies -->
+    <script src="../node_modules/core-js-bundle/minified.js"></script>
+    <!-- <script src="../node_modules/regenerator-runtime/runtime.js"></script> -->
 
-        <!-- Testing dependencies -->
-        <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
-        <script src="../node_modules/mocha/mocha.js"></script>
-        <script src="../node_modules/chai/chai.js"></script>
+    <!-- Testing dependencies -->
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
 
-        <script>
-        mocha.setup('bdd');
-        window.assert = chai.assert;
-        mocha.globals(['jml', 'glue', 'nbsp']);
-        </script>
+    <script>
+    /* globals mocha, chai */
+    mocha.setup('bdd');
+    window.assert = chai.assert;
+    mocha.globals(['jml', 'glue', 'nbsp']);
+    </script>
 
-        <!-- Tests -->
-        <script type="module" src="../test-helpers/loadTests.js"></script>
+    <!-- Tests -->
+    <script type="module" src="../test-helpers/loadTests.js"></script>
 
-        <script type="module">
-        import './test.glue.js';
-        import './test.jml.js';
-        import './test.other-methods.js';
-        import './test.toJML.js';
-        </script>
-    </head>
-    <body>
-        <h1>Jamilih Tests</h1>
-        <div id="mocha"></div>
+    <script type="module">
+    import './test.glue.js';
+    import './test.jml.js';
+    import './test.other-methods.js';
+    import './test.toJML.js';
+    </script>
+  </head>
+  <body>
+    <h1>Jamilih Tests</h1>
+    <div id="mocha"></div>
 
-        <script type="module">
-        mocha.run();
-        </script>
-    </body>
+    <script type="module">
+    /* globals mocha */
+    mocha.run();
+    </script>
+  </body>
 </html>

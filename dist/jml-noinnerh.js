@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = global || self, factory(global.jml = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
   function _typeof(obj) {
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
@@ -55,20 +55,35 @@
     return obj;
   }
 
-  function _objectSpread(target) {
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+      if (enumerableOnly) symbols = symbols.filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+      });
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i] != null ? arguments[i] : {};
-      var ownKeys = Object.keys(source);
 
-      if (typeof Object.getOwnPropertySymbols === 'function') {
-        ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-        }));
+      if (i % 2) {
+        ownKeys(source, true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(source).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
       }
-
-      ownKeys.forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
     }
 
     return target;
@@ -244,6 +259,10 @@
   }
 
   function _iterableToArrayLimit(arr, i) {
+    if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+      return;
+    }
+
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -436,7 +455,7 @@
    * @static
    * @param {Element} el DOM element to which to attach the event
    * @param {string} type The DOM event (without 'on') to attach to the element
-   * @param {Function} handler The event handler to attach to the element
+   * @param {EventListener} handler The event handler to attach to the element
    * @param {boolean} [capturing] Whether or not the event should be
    *   capturing (W3C-browsers only); default is false; NOT IN USE
    * @returns {void}
@@ -478,7 +497,7 @@
   } // Todo: Make as public utility
 
   /**
-   * @param {*} o
+   * @param {any} o
    * @returns {boolean}
    */
 
@@ -490,7 +509,7 @@
   /**
   * @private
   * @static
-  * @param {string|object|Array|Element|DocumentFragment} item
+  * @param {string|JamilihAttributes|JamilihArray|Element|DocumentFragment} item
   * @returns {"string"|"null"|"array"|"element"|"fragment"|"object"}
   */
 
@@ -586,7 +605,7 @@
     return jml(arg);
   }
   /**
-  * @typedef {Array} AttributeArray
+  * @typedef {JamilihAttributes} AttributeArray
   * @property {string} 0 The key
   * @property {string} 1 The value
   */
@@ -674,10 +693,10 @@
   * @private
   * @static
   function _DOMfromJMLOrString (childNodeJML) {
-      if (typeof childNodeJML === 'string') {
-          return doc.createTextNode(childNodeJML);
-      }
-      return jml(...childNodeJML);
+    if (typeof childNodeJML === 'string') {
+      return doc.createTextNode(childNodeJML);
+    }
+    return jml(...childNodeJML);
   }
   */
 
@@ -686,11 +705,15 @@
   */
 
   /**
+  * @typedef {PlainObject} JamilihAttributes
+  */
+
+  /**
   * @typedef {GenericArray} JamilihArray
   * @property {string} 0 The element to create (by lower-case name)
-  * @property {Object} [1] Attributes to add with the key as the attribute name
-  *   and value as the attribute value; important for IE where the input
-  *   element's type cannot be added later after already added to the page
+  * @property {JamilihAttributes} [1] Attributes to add with the key as the
+  *   attribute name and value as the attribute value; important for IE where
+  *   the input element's type cannot be added later after already added to the page
   * @param {Element[]} [children] The optional children of this element
   *   (but raw DOM elements required to be specified within arrays since
   *   could not otherwise be distinguished from siblings being added)
@@ -752,9 +775,9 @@
            0. {$xmlDocument: []} // doc.implementation.createDocument
            0. Accept array for any attribute with first item as prefix and second as value?
           0. {$: ['xhtml', 'div']} for prefixed elements
-              case '$': // Element with prefix?
-                  nodes[nodes.length] = elem = doc.createElementNS(attVal[0], attVal[1]);
-                  break;
+            case '$': // Element with prefix?
+              nodes[nodes.length] = elem = doc.createElementNS(attVal[0], attVal[1]);
+              break;
           */
           case '#':
             {
@@ -1040,7 +1063,7 @@
               /*
               // Todo:
               if (attVal.internalSubset) {
-                  node = {};
+                node = {};
               }
               else
               */
@@ -1073,13 +1096,13 @@
               /*
               // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
               const node = {
-                  nodeName: attVal.name,
-                  nodeValue: null,
-                  publicId: attVal.publicId,
-                  systemId: attVal.systemId,
-                  notationName: attVal.notationName,
-                  nodeType: 6,
-                  childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
+                nodeName: attVal.name,
+                nodeValue: null,
+                publicId: attVal.publicId,
+                systemId: attVal.systemId,
+                notationName: attVal.notationName,
+                nodeType: 6,
+                childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
               };
               */
               break;
@@ -1215,9 +1238,9 @@
                 /*
                 // The following reorders which is troublesome for serialization, e.g., as used in our testing
                 if (elem.style.cssText !== undefined) {
-                    elem.style.cssText += attVal;
+                  elem.style.cssText += attVal;
                 } else { // Opera
-                    elem.style += attVal;
+                  elem.style += attVal;
                 }
                 */
 
@@ -1311,8 +1334,6 @@
           map = dataVal[0] || defaultMap[0];
           obj = dataVal[1] || defaultMap[1];
         } // Map
-
-        /* eslint-disable-next-line unicorn/no-unsafe-regex */
 
       } else if (/^\[object (?:Weak)?Map\]$/.test([].toString.call(dataVal))) {
         map = dataVal;
@@ -1566,11 +1587,11 @@
   /**
   * Converts a DOM object or a string of HTML into a Jamilih object (or string).
   * @param {string|HTMLElement} [dom=document.documentElement] Defaults to converting the current document.
-  * @param {object} [config={stringOutput:false}] Configuration object
+  * @param {PlainObject} [config] Configuration object
   * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string.
-  * @returns {Array|string} Array containing the elements which represent a Jamilih object, or,
-                              if `stringOutput` is true, it will be the stringified version of
-                              such an object
+  * @returns {JamilihArray|string} Array containing the elements which represent
+  * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
+  * version of such an object
   */
 
 
@@ -1632,7 +1653,7 @@
     }
     /**
      *
-     * @param {*} val
+     * @param {any} val
      * @returns {void}
      */
 
@@ -1680,11 +1701,11 @@
 
       /*
       if ((node.prefix && node.prefix.includes(':')) || (node.localName && node.localName.includes(':'))) {
-          invalidStateError();
+        invalidStateError();
       }
       */
       var type = 'nodeType' in node ? node.nodeType : null;
-      namespaces = _objectSpread({}, namespaces);
+      namespaces = _objectSpread2({}, namespaces);
       var xmlChars = /([\t\n\r -\uD7FF\uE000-\uFFFD]|(?:[\uD800-\uDBFF](?![\uDC00-\uDFFF]))(?:(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]))*$/; // eslint-disable-line no-control-regex
 
       if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
@@ -2244,8 +2265,8 @@
   };
   /**
    * Does not run Jamilih so can be further processed.
-   * @param {Array} jmlArray
-   * @param {string|Array|Element} glu
+   * @param {JamilihArray} jmlArray
+   * @param {string|JamilihArray|Element} glu
    * @returns {Element}
    */
 
@@ -2270,4 +2291,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));

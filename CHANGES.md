@@ -1,9 +1,11 @@
 # CHANGES for jamilih
 
-## ?
+## 0.46.0
 
-- npm: Add Markdown files to linting routine
-- npm: Update devDeps
+- Linting (ESLint): Update code per linting updates; reenable
+  `jsdoc/check-types`
+- npm: Add Markdown and HTML files to JS linting routine
+- npm: Update peerDeps, deps, devDeps
 
 ## 0.45.0
 

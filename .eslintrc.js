@@ -61,17 +61,21 @@ module.exports = {
           "indent": "off"
         }
       },
+      {
+        files: ["*.html"],
+        rules: {
+          "import/unambiguous": 0
+        }
+      }
   ],
   "env": {
       "node": false,
       "browser": true
   },
   "rules": {
-    "indent": ["error", 4, {"outerIIFEBody": 0}],
-    // Todo: Reenable after PR https://github.com/gajus/eslint-plugin-jsdoc/pull/270
-    "jsdoc/check-types": 0,
     // Todo: Reenable
     "max-len": 0,
-    "no-loop-func": 0
+    "no-loop-func": 0,
+    "prefer-named-capture-group": 0
   }
 };

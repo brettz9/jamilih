@@ -3,85 +3,85 @@ import * as xmlTesting from './xmlTesting.js';
 const $ = (sel) => { return document.querySelector(sel); };
 
 describe('Jamilih - Other Methods', function () {
-    it('jml.toJMLString()', () => {
-        const br = document.createElement('br');
-        const expected = '["br",{"xmlns":"http://www.w3.org/1999/xhtml"}]';
-        const result = jml.toJMLString(br);
-        assert.deepEqual(expected, result, 'Empty element with no attributes');
-    });
-    it('jml.toHTML()', () => {
-        const expected = '<br>';
-        const result = jml.toHTML('br');
-        assert.deepEqual(expected, result, 'Empty element with no attributes');
-    });
-    it('jml.toXML()', () => {
-        const expected = '<br xmlns="http://www.w3.org/1999/xhtml" />';
-        const result = jml.toXML('br');
-        assert.deepEqual(expected, result, 'Empty element with no attributes');
-    });
-    it('jml.toDOM()', () => {
-        const expected = jml('br');
-        const result = jml.toDOM('br');
-        assert.deepEqual(expected.nodeName, result.nodeName, '`nodeName` equal');
-    });
-    it('jml.toXMLDOMString()', () => {
-        const expected = jml.toXMLDOMString('br');
-        const result = jml.toXML('br');
-        assert.deepEqual(expected, result, 'Empty element with no attributes');
-    });
-    it('jml.toDOMString()', () => {
-        const expected = jml.toDOMString('br');
-        const result = jml.toHTML('br');
-        assert.deepEqual(expected, result, 'Empty element with no attributes');
-    });
-    it('jml.weak()', () => {
-        const [myMap, elem] = jml.weak({
-            localVar: 'localValue',
-            myMethod (el, arg1) {
-                return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input').value;
-            }
-        }, 'div', {id: 'mapTest'}, [
-            ['input', {value: '100', $on: {
-                input () {
-                    xmlTesting.matches(
-                        myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
-                        'internal test localValue 1001',
-                        'JamilihWeakMap `invoke` method with arguments and `this`'
-                    );
-                }
-            }}],
-            ['div', {id: 'clickArea', $data: {
-                localVariable: 8,
-                test (el, arg1) {
-                    xmlTesting.matches(
-                        arg1 + ' ' + el.id + this.localVariable,
-                        'arg1 clickArea8',
-                        'Attached JamilihWeakMap $data method invoked by click listener with arguments and `this`'
-                    );
-                }
-            }, $on: {
-                click () {
-                    myMap.invoke(this, 'test', 'arg1');
-                }
-            }}]
-        ], $('body'));
-        xmlTesting.matches(
-            myMap.invoke(elem, 'myMethod', 'external test'),
-            'external test localValue 100',
-            'Externally invoke JamilihWeakMap `invoke` method with arguments and `this`'
-        );
-        xmlTesting.matches(
-            myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
-            'localValue',
-            'Externally retrieve JamilihWeakMap-associated element by selector'
-        );
+  it('jml.toJMLString()', () => {
+    const br = document.createElement('br');
+    const expected = '["br",{"xmlns":"http://www.w3.org/1999/xhtml"}]';
+    const result = jml.toJMLString(br);
+    assert.deepEqual(expected, result, 'Empty element with no attributes');
+  });
+  it('jml.toHTML()', () => {
+    const expected = '<br>';
+    const result = jml.toHTML('br');
+    assert.deepEqual(expected, result, 'Empty element with no attributes');
+  });
+  it('jml.toXML()', () => {
+    const expected = '<br xmlns="http://www.w3.org/1999/xhtml" />';
+    const result = jml.toXML('br');
+    assert.deepEqual(expected, result, 'Empty element with no attributes');
+  });
+  it('jml.toDOM()', () => {
+    const expected = jml('br');
+    const result = jml.toDOM('br');
+    assert.deepEqual(expected.nodeName, result.nodeName, '`nodeName` equal');
+  });
+  it('jml.toXMLDOMString()', () => {
+    const expected = jml.toXMLDOMString('br');
+    const result = jml.toXML('br');
+    assert.deepEqual(expected, result, 'Empty element with no attributes');
+  });
+  it('jml.toDOMString()', () => {
+    const expected = jml.toDOMString('br');
+    const result = jml.toHTML('br');
+    assert.deepEqual(expected, result, 'Empty element with no attributes');
+  });
+  it('jml.weak()', () => {
+    const [myMap, elem] = jml.weak({
+      localVar: 'localValue',
+      myMethod (el, arg1) {
+        return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input').value;
+      }
+    }, 'div', {id: 'mapTest'}, [
+      ['input', {value: '100', $on: {
+        input () {
+          xmlTesting.matches(
+            myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
+            'internal test localValue 1001',
+            'JamilihWeakMap `invoke` method with arguments and `this`'
+          );
+        }
+      }}],
+      ['div', {id: 'clickArea', $data: {
+        localVariable: 8,
+        test (el, arg1) {
+          xmlTesting.matches(
+            arg1 + ' ' + el.id + this.localVariable,
+            'arg1 clickArea8',
+            'Attached JamilihWeakMap $data method invoked by click listener with arguments and `this`'
+          );
+        }
+      }, $on: {
+        click () {
+          myMap.invoke(this, 'test', 'arg1');
+        }
+      }}]
+    ], $('body'));
+    xmlTesting.matches(
+      myMap.invoke(elem, 'myMethod', 'external test'),
+      'external test localValue 100',
+      'Externally invoke JamilihWeakMap `invoke` method with arguments and `this`'
+    );
+    xmlTesting.matches(
+      myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
+      'localValue',
+      'Externally retrieve JamilihWeakMap-associated element by selector'
+    );
 
-        const mapInput = $('#mapTest').firstElementChild;
-        mapInput.value = '1001';
-        mapInput.dispatchEvent(
-            new Event('input')
-        );
-        const mapDiv = $('#clickArea');
-        mapDiv.dispatchEvent(new Event('click'));
-    });
+    const mapInput = $('#mapTest').firstElementChild;
+    mapInput.value = '1001';
+    mapInput.dispatchEvent(
+      new Event('input')
+    );
+    const mapDiv = $('#clickArea');
+    mapDiv.dispatchEvent(new Event('click'));
+  });
 });

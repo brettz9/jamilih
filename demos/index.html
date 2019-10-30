@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
-    <title>DOM to Jamilih demo</title>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
+  <meta charset="utf-8" />
+  <title>DOM to Jamilih demo</title>
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
 </head>
 <body>
 <script type="module">
 import {jml} from '../dist/jml-es.js';
 
-function s (s) {return (JSON.stringify(s));}
+/**
+ * @param {JSON} str
+ * @returns {string}
+ */
+function s (str) { return (JSON.stringify(str)); }
 
+// eslint-disable-next-line no-alert
 alert(
-    s(
-        jml.toJML((jml(...jml.toJML(document.documentElement))))
-    ) ===
-    s(
-        jml.toJML(document.documentElement)
-    )
+  s(
+    jml.toJML((jml(...jml.toJML(document.documentElement))))
+  ) ===
+  s(
+    jml.toJML(document.documentElement)
+  )
 );
 
 // alert(jml.toJMLString(document.documentElement));
