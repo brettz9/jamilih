@@ -175,5 +175,9 @@
             "items": [{"type": "string", "enum": [""]}, {"$ref": "#/definitions/elementChildren"}]
         }
     },
-    "$ref": "#/definitions/elementChildren"
+    "title": "Element children (root)",
+    "type": "array",
+    "items": {
+      "$ref": "#/definitions/elementChildren/items"
+    }
 }
