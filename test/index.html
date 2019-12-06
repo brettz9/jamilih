@@ -9,21 +9,13 @@
     <script src="../node_modules/core-js-bundle/minified.js"></script>
     <!-- <script src="../node_modules/regenerator-runtime/runtime.js"></script> -->
 
-    <!-- Testing dependencies -->
+    <!-- Testing dependencies and environment -->
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/chai/chai.js"></script>
-
-    <script>
-    /* globals mocha, chai */
-    mocha.setup('bdd');
-    window.assert = chai.assert;
-    mocha.globals(['jml', 'glue', 'nbsp']);
-    </script>
-
-    <!-- Tests -->
     <script type="module" src="../test-helpers/loadTests.js"></script>
 
+    <!-- Tests -->
     <script type="module">
     import './test.glue.js';
     import './test.jml.js';
