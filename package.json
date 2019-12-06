@@ -11,13 +11,24 @@
     "eslint": "eslint --ext=js,md,html .",
     "rollup": "npm run eslint && rollup -c",
     "browser-test": "npm run rollup && open-cli http://localhost:8091/test/ && npm run start",
-    "test": "npm run rollup && mocha --require esm test-helpers/loadTests-node.js test/test.*.js",
+    "test": "rm -Rf node_modules/.cache && nyc mocha --require esm test-helpers/loadTests-node.js test/test.*.js",
     "kill-static": "pkill -f \".bin/static -p\"",
     "build-docs": "rm -rf docs/jsdoc/*;jsdoc --pedantic -c docs/jsdoc-config.js .",
     "open-docs": "open-cli http://localhost:8091/docs/jsdoc/ && npm start",
+    "open-coverage": "open-cli http://localhost:8091/coverage/ && npm start",
     "test-no-open": "npm run kill-static ; npm run eslint && npm run rollup && npm run start",
     "start": "static -p 8091",
     "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
+  },
+  "nyc": {
+    "exclude": [
+      "test",
+      "test-helpers"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ]
   },
   "browserslist": [
     "cover 100%"
@@ -80,6 +91,7 @@
     "jsdoc": "^3.6.3",
     "mocha": "^6.2.2",
     "node-static": "0.7.11",
+    "nyc": "^14.1.1",
     "open-cli": "^5.0.0",
     "remark-lint": "6.0.5",
     "rollup": "1.27.8",

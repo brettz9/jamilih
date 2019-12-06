@@ -1,3 +1,4 @@
 dist
 test-helpers/loadTests-commonjs.js
 docs/jsdoc
+coverage

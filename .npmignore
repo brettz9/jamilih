@@ -5,3 +5,5 @@ test-helpers
 docs
 !LICENSE-MIT.txt
 !jamilih.jsonschema
+coverage
+.nyc_output

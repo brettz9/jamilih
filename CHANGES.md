@@ -2,6 +2,9 @@
 
 ## ?
 
+- Testing: Add code coverage
+- Testing: Move code out of HTML to bootstrap file
+- npm: Remove `rollup` from `test` script
 - npm: Update dep. jsom, peerDep core-js-bundle, and devDeps
 
 ## 0.46.0
