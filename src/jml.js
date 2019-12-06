@@ -386,7 +386,9 @@ function _appendJMLOrText (node) {
 /**
 * @private
 * @static
-function _DOMfromJMLOrString (childNodeJML) {
+*/
+/**
+* function _DOMfromJMLOrString (childNodeJML) {
   if (typeof childNodeJML === 'string') {
     return doc.createTextNode(childNodeJML);
   }

@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## ?
+
+- npm: Update dep. jsom, peerDep core-js-bundle, and devDeps
+
 ## 0.46.0
 
 - Linting (ESLint): Update code per linting updates; reenable
