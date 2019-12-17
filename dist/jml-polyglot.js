@@ -2294,6 +2294,7 @@ exports.body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 var nbsp = "\xA0"; // Very commonly needed in templates
 
 /* eslint-env node */
+/* istanbul ignore else */
 
 if (typeof process !== 'undefined') {
   // import {JSDOM} from 'jsdom';
