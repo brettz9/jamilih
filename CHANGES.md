@@ -1,7 +1,9 @@
 # CHANGES for jamilih
 
-## ?
+## 0.47.0
 
+- BREAKING CHANGE: Switch `jsdom` and `request` to `peerDependencies` so
+  they do not need to be downloaded for browser-only use.
 - Testing: Add code coverage
 - Testing: Move code out of HTML to bootstrap file
 - npm: Remove `rollup` from `test` script

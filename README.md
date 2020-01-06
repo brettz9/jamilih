@@ -57,7 +57,7 @@ The following functions are available:
 - `jml.toXMLDOMString()` - An alias for `jml.toXML()` (for parity with `toJMLString`).
 - `jml.weak(obj, ...args)` - Returns a two-item array with the first item as a new `jml.WeakMap` object
     on which an association is made between `obj` and a Jamilih element created out of passing
-    `args` to `jml()` and the second item is the new Jamilih elemnet  
+    `args` to `jml()` and the second item is the new Jamilih elemnet
 - `jml.strong(obj, ...args)` - Same as `jml.weak` but creates a new `jml.Map` object instead of a `jml.WeakMap`.
 - `jml.WeakMap()` - a `WeakMap` subclass with an `invoke` method that should be passed a DOM element
     (such as one created by `jml` or `jml.weak()`), the name of a method to invoke (on an object
@@ -105,8 +105,16 @@ import jml from './node_modules/jamilih/dist/jml-es.js';
 
 ## Node installation and usage
 
+If for browser only (the `core-js-bundle` is for any polyfilling needed):
+
 ```
 npm install jamilih core-js-bundle
+```
+
+If for Node use:
+
+```
+npm install jamilih core-js-bundle jsdom request
 ```
 
 ```js
@@ -695,7 +703,7 @@ or some recurring item, without the need for a special `map` or `reduce`.
          1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`,
             `defaultValue`, `style` (Note that `innerHTML` won't work on the
             "no innerHTML" build.)
-        1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved   
+        1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved
             keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
         1. `xmlns` for namespace declarations (not needed in HTML)

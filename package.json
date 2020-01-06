@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.46.0",
+  "version": "0.47.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -59,10 +59,7 @@
   "peerDependencies": {
     "core-js-bundle": "^3.4.7"
   },
-  "dependencies": {
-    "jsdom": "15.2.1",
-    "request": "^2.88.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.7.5",
     "@babel/preset-env": "^7.7.5",
@@ -90,11 +87,13 @@
     "eslint-plugin-unicorn": "^14.0.1",
     "esm": "^3.2.25",
     "jsdoc": "^3.6.3",
+    "jsdom": "15.2.1",
     "mocha": "^6.2.2",
     "node-static": "0.7.11",
     "nyc": "^14.1.1",
     "open-cli": "^5.0.0",
     "remark-lint": "6.0.5",
+    "request": "^2.88.0",
     "rollup": "1.27.8",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "10.1.0",
