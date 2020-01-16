@@ -272,6 +272,13 @@ describe('Jamilih - jml', function () {
       'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
     );
   });
+  it('throws with malformed entity reference', function () {
+    expect(() => {
+      jml('div', [
+        ['&', 'ab cd']
+      ]);
+    }).to.throw(TypeError, 'Bad entity');
+  });
   it('Document and doctype', () => {
     const doc = jml({$document: {
       childNodes: [
