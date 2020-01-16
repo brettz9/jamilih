@@ -155,6 +155,7 @@ function _appendNode (parent, child) {
   try {
     parent.append(child); // IE9 is now ok with this
   } catch (e) {
+    /* istanbul ignore next */
     if (parentName === 'select' && childName === 'option') {
       try { // Since this is now DOM Level 4 standard behavior (and what IE7+ can handle), we try it first
         parent.add(child);
@@ -1321,26 +1322,6 @@ jml.toJML = function (dom, config) {
       // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
       set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
 
-      const {entities} = node; // Currently deprecated
-      if (entities && entities.length) {
-        start.$DOCTYPE.entities = [];
-        setObj('$DOCTYPE', 'entities');
-        [...entities].forEach(function (entity) {
-          parseDOM(entity, namespaces);
-        });
-        // Reset for notations
-        parent = tmpParent;
-        parentIdx = tmpParentIdx + 1;
-      }
-
-      const {notations} = node; // Currently deprecated
-      if (notations && notations.length) {
-        start.$DOCTYPE.notations = [];
-        setObj('$DOCTYPE', 'notations');
-        [...notations].forEach(function (notation) {
-          parseDOM(notation, namespaces);
-        });
-      }
       resetTemp();
       break;
     } case 11: // DOCUMENT FRAGMENT

@@ -15,7 +15,7 @@
     "kill-static": "pkill -f \".bin/static -p\"",
     "build-docs": "rm -rf docs/jsdoc/*;jsdoc --pedantic -c docs/jsdoc-config.js .",
     "open-docs": "open-cli http://localhost:8091/docs/jsdoc/ && npm start",
-    "open-coverage": "open-cli http://localhost:8091/coverage/ && npm start",
+    "coverage": "open-cli http://localhost:8091/coverage/ && npm start",
     "test-no-open": "npm run kill-static ; npm run eslint && npm run rollup && npm run start",
     "start": "static -p 8091",
     "watch": "chokidar '**/*.js' -c 'npm run test-no-open' -i 'dist' -i 'node_modules' & npm run test-no-open"
