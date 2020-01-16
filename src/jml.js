@@ -310,20 +310,6 @@ function _optsOrUndefinedJML (...args) {
 */
 
 /**
-* @private
-* @static
-* @todo Deprecate as now there is predictable iteration order?
-* @param {AttributeArray} attArr
-* @returns {PlainObject}
-*/
-function _copyOrderedAtts (attArr) {
-  const obj = {};
-  // Todo: Fix if allow prefixed attributes
-  obj[attArr[0]] = attArr[1]; // array of ordered attribute-value arrays
-  return obj;
-}
-
-/**
 * @callback ChildrenToJMLCallback
 * @param {JamilihArray|Jamilih} childNodeJML
 * @param {Integer} i
@@ -945,10 +931,7 @@ const jml = function jml (...args) {
         ).documentElement;
         // }catch(e) {alert(elem.outerHTML);throw e;}
       }
-      // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-      const orderedArr = atts.$a ? atts.$a.map(_copyOrderedAtts) : [atts];
-      // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-      orderedArr.forEach(_checkAtts);
+      _checkAtts(atts);
       break;
     } case 'fragment':
     case 'element':
