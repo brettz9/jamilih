@@ -475,12 +475,14 @@
 
 
   function _createSafeReference(type, prefix, arg) {
-    // For security reasons related to innerHTML, we ensure this string only contains potential entity characters
+    // For security reasons related to innerHTML, we ensure this string only
+    //  contains potential entity characters
     if (!arg.match(/^[0-9A-Z_a-z]+$/)) {
       throw new TypeError('Bad ' + type);
     }
 
     var elContainer = doc.createElement('div'); // Todo: No workaround for XML?
+    // eslint-disable-next-line no-unsanitized/property
 
     elContainer.innerHTML = '&' + prefix + arg + ';';
     return doc.createTextNode(elContainer.innerHTML);
@@ -630,6 +632,7 @@
   * @callback ChildrenToJMLCallback
   * @param {JamilihArray|Jamilih} childNodeJML
   * @param {Integer} i
+  * @returns {void}
   */
 
   /**
@@ -694,8 +697,8 @@
   * @static
   */
 
-  /**
-  * function _DOMfromJMLOrString (childNodeJML) {
+  /*
+  function _DOMfromJMLOrString (childNodeJML) {
     if (typeof childNodeJML === 'string') {
       return doc.createTextNode(childNodeJML);
     }
@@ -708,7 +711,7 @@
   */
 
   /**
-  * @typedef {PlainObject} JamilihAttributes
+  * @typedef {PlainObject<string, string>} JamilihAttributes
   */
 
   /**
@@ -1194,6 +1197,7 @@
 
           case 'innerHTML':
             if (!_isNullish(attVal)) {
+              // eslint-disable-next-line no-unsanitized/property
               elem.innerHTML = attVal;
             }
 

@@ -1,5 +1,11 @@
 # CHANGES for jamilih
 
+## ?
+
+- Linting (ESLint): As per latest ash-nazg
+- Travis: Try adding builds 6, 10, 12
+- npm: Update devDeps, peerDep
+
 ## 0.47.0
 
 - BREAKING CHANGE: Switch `jsdom` and `request` to `peerDependencies` so

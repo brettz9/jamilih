@@ -189,12 +189,14 @@ function _addEvent (el, type, handler, capturing) {
 * @returns {Text} The text node of the resolved reference
 */
 function _createSafeReference (type, prefix, arg) {
-  // For security reasons related to innerHTML, we ensure this string only contains potential entity characters
+  // For security reasons related to innerHTML, we ensure this string only
+  //  contains potential entity characters
   if (!arg.match(/^\w+$/u)) {
     throw new TypeError('Bad ' + type);
   }
   const elContainer = doc.createElement('div');
   // Todo: No workaround for XML?
+  // eslint-disable-next-line no-unsanitized/property
   elContainer.innerHTML = '&' + prefix + arg + ';';
   return doc.createTextNode(elContainer.innerHTML);
 }
@@ -327,6 +329,7 @@ function _copyOrderedAtts (attArr) {
 * @callback ChildrenToJMLCallback
 * @param {JamilihArray|Jamilih} childNodeJML
 * @param {Integer} i
+* @returns {void}
 */
 
 /**
@@ -387,8 +390,8 @@ function _appendJMLOrText (node) {
 * @private
 * @static
 */
-/**
-* function _DOMfromJMLOrString (childNodeJML) {
+/*
+function _DOMfromJMLOrString (childNodeJML) {
   if (typeof childNodeJML === 'string') {
     return doc.createTextNode(childNodeJML);
   }
@@ -401,7 +404,7 @@ function _appendJMLOrText (node) {
 */
 
 /**
-* @typedef {PlainObject} JamilihAttributes
+* @typedef {PlainObject<string, string>} JamilihAttributes
 */
 
 /**
@@ -735,6 +738,7 @@ const jml = function jml (...args) {
       // Don't remove this `if` block (for sake of no-innerHTML build)
       case 'innerHTML':
         if (!_isNullish(attVal)) {
+          // eslint-disable-next-line no-unsanitized/property
           elem.innerHTML = attVal;
         }
         break;

@@ -1,4 +1,24 @@
 language: node_js
 node_js:
-  - "8.11.4"
-before_install: if [[ `npm -v` < 4* ]]; then npm i -g npm@4; fi
+  - 6
+  - 8.11
+  - 10
+  - 12
+
+before_install:
+  - if [[ `npm -v` < 4* ]]; then npm i -g npm@4; fi
+  - npm config set depth 0
+before_script: >
+  node_version=$(node -v);
+  if [ ${node_version:3:1} = "." ]; then
+    echo "Node 10+"
+    npm install --no-save "eslint@6"
+    else
+      if [ ${node_version:1:1} -ge 8 ]; then
+        echo "Node 8+"
+        npm install --no-save "eslint@6" jsdom@15.2
+      else
+        echo "Node <= 6"
+        npm install --no-save "eslint@5" jsdom@15.2 mocha@6.2.2 nyc@14.1.1 eslint-plugin-unicorn@8.0.2
+      fi
+  fi
