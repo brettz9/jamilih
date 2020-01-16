@@ -628,19 +628,6 @@ const jml = function jml (...args) {
         );
         nodes[nodes.length] = node;
         break;
-      } case '$ENTITY': {
-        /*
-        // Todo: Should we auto-copy another node's properties/methods (like DocumentType) excluding or changing its non-entity node values?
-        const node = {
-          nodeName: attVal.name,
-          nodeValue: null,
-          publicId: attVal.publicId,
-          systemId: attVal.systemId,
-          nodeType: 6,
-          childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
-        };
-        */
-        break;
       } case '$on': { // Events
         for (let [p2, val] of Object.entries(attVal)) {
           if (typeof val === 'function') {
@@ -1175,30 +1162,6 @@ jml.toJML = function (dom, config) {
       break;
     case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
       set(['&', node.nodeName]);
-      break;
-    case 6: // ENTITY (would need to pass in directly)
-      setTemp();
-      start = {};
-      if (node.xmlEncoding || node.xmlVersion) { // an external entity file?
-        start.$ENTITY = {name: node.nodeName, version: node.xmlVersion, encoding: node.xmlEncoding};
-      } else {
-        start.$ENTITY = {name: node.nodeName};
-        if (node.publicId || node.systemId) { // External Entity?
-          addExternalID(start.$ENTITY, node);
-        }
-      }
-      set(start);
-      children = node.childNodes;
-      if (children.length) {
-        start.$ENTITY.childNodes = [];
-        // Set position to $ENTITY's childNodes array children
-        setObj('$ENTITY', 'childNodes');
-
-        [...children].forEach(function (childNode) {
-          parseDOM(childNode, namespaces);
-        });
-      }
-      resetTemp();
       break;
     case 7: // PROCESSING INSTRUCTION
       if ((/^xml$/iu).test(node.target)) {

@@ -53,31 +53,6 @@ describe('Jamilih - toJML', function () {
     const result = jml.toJML(xml.createCDATASection(content));
     assert.deepEqual(expected, result, 'CDATA to Jamilih');
   });
-  /*
-  // Currently removed from spec: https://dom.spec.whatwg.org/#dom-core-changes
-  it('entity reference', () => {
-    const expected = ['&', 'anEntity'];
-
-    const result = jml.toJML(document.createEntityReference('anEntity'));
-    assert.deepEqual(expected, result);
-  });
-  */
-  it('entity', () => {
-    const expected = {$ENTITY: {name: 'copy', childNodes: ['\u00A9']}};
-
-    // xmldom is missing the "doctype" property, and even when we use childNodes, it is missing the "entities" NamedNodeMap (and there is no public DOM method to create entities)
-    /*
-    const doc = new DOMParser().parseFromString('<!DOCTYPE root [<!ENTITY copy "\u00a9">]><root/>', 'text/xml');
-    const result = doc.childNodes[0].entities[0];
-    */
-
-    // As per the above, we need to simulate an entity
-    const result = jml.toJML({
-      nodeType: 6, nodeName: 'copy', childNodes: [{nodeType: 3, nodeValue: '\u00A9'}]
-    });
-
-    assert.deepEqual(expected, result, '(Simulated) entity to Jamilih');
-  });
   it('processing instruction', () => {
     const expected = ['?', 'aTarget', 'a processing instruction'];
 
