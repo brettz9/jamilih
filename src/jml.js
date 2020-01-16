@@ -705,14 +705,14 @@ const jml = function jml (...args) {
             break;
           }
           if (typeof attVal === 'object') {
-            for (const p2 in attVal) {
-              if ({}.hasOwnProperty.call(attVal, p2) && !_isNullish(attVal[p2])) {
+            for (const [p2, styleVal] of Object.entries(attVal)) {
+              if (!_isNullish(styleVal)) {
                 // Todo: Handle aggregate properties like "border"
                 if (p2 === 'float') {
-                  elem.style.cssFloat = attVal[p2];
-                  elem.style.styleFloat = attVal[p2]; // Harmless though we could make conditional on older IE instead
+                  elem.style.cssFloat = styleVal;
+                  elem.style.styleFloat = styleVal; // Harmless though we could make conditional on older IE instead
                 } else {
-                  elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = attVal[p2];
+                  elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = styleVal;
                 }
               }
             }
@@ -820,7 +820,7 @@ const jml = function jml (...args) {
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
       }
       break;
-    case 'string': // Strings indicate elements
+    case 'string': // Strings normally indicate elements
       switch (arg) {
       case '!':
         nodes[nodes.length] = doc.createComment(args[++i]);
@@ -829,17 +829,15 @@ const jml = function jml (...args) {
         arg = args[++i];
         let procValue = args[++i];
         const val = procValue;
-        if (typeof val === 'object') {
+        if (val && typeof val === 'object') {
           procValue = [];
-          for (const p in val) {
-            if ({}.hasOwnProperty.call(val, p)) {
-              procValue.push(
-                p + '=' + '"' +
-                // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
-                val[p].replace(/"/gu, '&quot;') +
-                '"'
-              );
-            }
+          for (const [p, procInstVal] of Object.entries(val)) {
+            procValue.push(
+              p + '=' + '"' +
+              // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
+              procInstVal.replace(/"/gu, '&quot;') +
+              '"'
+            );
           }
           procValue = procValue.join(' ');
         }
