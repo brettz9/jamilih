@@ -281,11 +281,9 @@ function _fragReducer (frag, node) {
 function _replaceDefiner (xmlnsObj) {
   return function (n0) {
     let retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
-    for (const ns in xmlnsObj) {
-      if ({}.hasOwnProperty.call(xmlnsObj, ns)) {
-        if (ns !== '') {
-          retStr += ' xmlns:' + ns + '="' + xmlnsObj[ns] + '"';
-        }
+    for (const [ns, xmlnsVal] of Object.entries(xmlnsObj)) {
+      if (ns !== '') {
+        retStr += ' xmlns:' + ns + '="' + xmlnsVal + '"';
       }
     }
     return retStr;
@@ -439,12 +437,7 @@ const jml = function jml (...args) {
    * @returns {void}
    */
   function _checkAtts (atts) {
-    let att;
-    for (att in atts) {
-      if (!{}.hasOwnProperty.call(atts, att)) {
-        continue;
-      }
-      const attVal = atts[att];
+    for (let [att, attVal] of Object.entries(atts)) {
       att = att in ATTR_MAP ? ATTR_MAP[att] : att;
       if (NULLABLES.includes(att)) {
         if (!_isNullish(attVal)) {
@@ -663,15 +656,12 @@ const jml = function jml (...args) {
         */
         break;
       } case '$on': { // Events
-        for (const p2 in attVal) {
-          if ({}.hasOwnProperty.call(attVal, p2)) {
-            let val = attVal[p2];
-            if (typeof val === 'function') {
-              val = [val, false];
-            }
-            if (typeof val[0] === 'function') {
-              _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
-            }
+        for (let [p2, val] of Object.entries(attVal)) {
+          if (typeof val === 'function') {
+            val = [val, false];
+          }
+          if (typeof val[0] === 'function') {
+            _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
           }
         }
         break;
