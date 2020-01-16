@@ -253,7 +253,7 @@ describe('Jamilih - jml', function () {
     assert.deepEqual(expected.nodeType, result.nodeType, 'Equal `nodeType`');
     assert.deepEqual(expected.nodeValue, result.nodeValue, 'Equal `nodeValue`');
   });
-  it('attribute node', () => {
+  it('attribute node (namespaced)', () => {
     const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
     const expected = document.createAttributeNS(...xlink.slice(0, -1));
     expected.value = xlink[2];
@@ -261,6 +261,18 @@ describe('Jamilih - jml', function () {
     assert.deepEqual(expected.name, result.name, 'Equal `name`');
     assert.deepEqual(expected.value, result.value, 'Equal `value`');
     assert.deepEqual(expected.namespaceURI, result.namespaceURI, 'Equal `namespaceURI`');
+    // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
+  });
+  it('attribute node (non-namespaced)', () => {
+    const attInfo = ['aaa', 'eeefg'];
+    // eslint-disable-next-line compat/compat
+    const expected = document.createAttribute('aaa');
+    expected.value = 'eeefg';
+    const result = jml({$attribute: attInfo});
+    assert.deepEqual(expected.name, result.name, 'Equal `name`');
+    assert.deepEqual(expected.value, result.value, 'Equal `value`');
+    assert.deepEqual(null, result.prefix, 'Equal `prefix`');
+    assert.deepEqual(null, result.namespaceURI, 'Equal `namespaceURI`');
     // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
   });
   it('Comments, processing instructions, entities, character references, CDATA', () => {
