@@ -947,7 +947,7 @@ const jml = function jml (...args) {
         }
         break;
       case '':
-        nodes[nodes.length] = doc.createDocumentFragment();
+        nodes[nodes.length] = elem = doc.createDocumentFragment();
         break;
       default: { // An element
         elStr = arg;

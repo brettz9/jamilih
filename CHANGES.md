@@ -3,6 +3,7 @@
 ## ?
 
 - Fix: Throw proper `Error` on undefined child content
+- Fix: Allow previously undocumented fragment creation to accept children
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
 - Testing: Coverage

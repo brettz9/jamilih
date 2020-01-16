@@ -192,6 +192,18 @@ describe('Jamilih - jml', function () {
       'Single element with text children separated by fragment (of text nodes separated by element with text child)'
     );
 
+    xmlTesting.matchesXMLString(
+      jml('div', [
+        'text0',
+        ['', [
+          'text1', ['span', ['inner text']], 'text2'
+        ]],
+        'text3'
+      ]),
+      '<div xmlns="http://www.w3.org/1999/xhtml">text0text1<span>inner text</span>text2text3</div>',
+      'Single element with text children separated by fragment (of text nodes separated by element with text child)'
+    );
+
     // Todo: Do we want this in this format?
     xmlTesting.matchesXMLString(
       jml('ul', [
@@ -278,6 +290,12 @@ describe('Jamilih - jml', function () {
         ['&', 'ab cd']
       ]);
     }).to.throw(TypeError, 'Bad entity');
+  });
+  it('recovers with malformed processing instruction', function () {
+    const div = jml('div', [
+      ['?', 'ab><?', '?<>']
+    ]);
+    expect(div.childNodes[0].data).to.equal('?ab><? ?<>?');
   });
   it('Document and doctype', () => {
     const doc = jml({$document: {

@@ -230,6 +230,18 @@ jml('div', [
 ]);
 ```
 
+You can also use the JsonML style for fragments:
+
+```js
+jml('div', [
+    'text0',
+    ['', [
+      'text1', ['span', ['inner text']], 'text2'
+    ]],
+    'text3'
+]);
+```
+
 Event attachment...
 
 ```js
