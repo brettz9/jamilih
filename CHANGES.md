@@ -2,6 +2,7 @@
 
 ## ?
 
+- Fix: Throw proper `Error` on undefined child content
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
 - Testing: Coverage

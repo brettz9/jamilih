@@ -11,7 +11,7 @@
     "eslint": "eslint --ext=js,md,html .",
     "rollup": "rollup -c",
     "browser-test": "npm run rollup && open-cli http://localhost:8091/test/ && npm run start",
-    "test": "rm -Rf node_modules/.cache && nyc mocha --require esm test-helpers/loadTests-node.js test/test.*.js",
+    "test": "rm -Rf .nyc_output && rm -Rf coverage && rm -Rf node_modules/.cache && nyc mocha --require esm test-helpers/loadTests-node.js test/test.*.js",
     "kill-static": "pkill -f \".bin/static -p\"",
     "build-docs": "rm -rf docs/jsdoc/*;jsdoc --pedantic -c docs/jsdoc-config.js .",
     "open-docs": "open-cli http://localhost:8091/docs/jsdoc/ && npm start",

@@ -388,10 +388,13 @@
 
 
   function _applyAnyStylesheet(node) {
+    // Only used in IE
+    /* istanbul ignore else */
     if (!doc.createStyleSheet) {
       return;
     }
 
+    /* istanbul ignore next */
     if (_getHTMLNodeName(node) === 'style') {
       // IE
       var ss = doc.createStyleSheet(); // Create a stylesheet to actually do something useful
@@ -414,6 +417,8 @@
 
     var childName = _getHTMLNodeName(child);
 
+    // IE only
+    /* istanbul ignore if */
     if (doc.createStyleSheet) {
       if (parentName === 'script') {
         parent.text = child.nodeValue;
@@ -435,6 +440,7 @@
     try {
       parent.append(child); // IE9 is now ok with this
     } catch (e) {
+      /* istanbul ignore next */
       if (parentName === 'select' && childName === 'option') {
         try {
           // Since this is now DOM Level 4 standard behavior (and what IE7+ can handle), we try it first
@@ -447,6 +453,7 @@
         return;
       }
 
+      /* istanbul ignore next */
       throw e;
     }
   }

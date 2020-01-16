@@ -119,9 +119,12 @@ function _getHTMLNodeName (node) {
 * @returns {void}
 */
 function _applyAnyStylesheet (node) {
+  // Only used in IE
+  /* istanbul ignore else */
   if (!doc.createStyleSheet) {
     return;
   }
+  /* istanbul ignore next */
   if (_getHTMLNodeName(node) === 'style') { // IE
     const ss = doc.createStyleSheet(); // Create a stylesheet to actually do something useful
     ss.cssText = node.cssText;
@@ -141,6 +144,8 @@ function _appendNode (parent, child) {
   const parentName = _getHTMLNodeName(parent);
   const childName = _getHTMLNodeName(child);
 
+  // IE only
+  /* istanbul ignore if */
   if (doc.createStyleSheet) {
     if (parentName === 'script') {
       parent.text = child.nodeValue;
@@ -167,6 +172,7 @@ function _appendNode (parent, child) {
       }
       return;
     }
+    /* istanbul ignore next */
     throw e;
   }
 }
@@ -1019,7 +1025,7 @@ const jml = function jml (...args) {
         const childContent = child[j];
         const childContentType = typeof childContent;
         if (childContent === undefined) {
-          throw String('Parent array:' + JSON.stringify(args) + '; child: ' + child + '; index:' + j);
+          throw new Error('Parent array:' + JSON.stringify(args) + '; child: ' + child + '; index:' + j);
         }
         switch (childContentType) {
         // Todo: determine whether null or function should have special handling or be converted to text
@@ -1515,6 +1521,7 @@ function glue (jmlArray, glu) {
   }, []).slice(0, -1);
 }
 
+/* istanbulu ignore next */
 let body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 
 const nbsp = '\u00A0'; // Very commonly needed in templates
