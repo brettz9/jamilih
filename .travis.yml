@@ -4,7 +4,6 @@ node_js:
   - 8.11
   - 10
   - 12
-
 before_install:
   - npm config set depth 0
 before_script: >
@@ -21,5 +20,8 @@ before_script: >
         npm install --no-save "eslint@5" jsdom@15.2 mocha@6.2.2 nyc@14.1.1 append-transform@1 istanbul-lib-hook@2.0.7 eslint-plugin-unicorn@8.0.2
       fi
   fi
+notifications:
+  email: false
+sudo: false
 script:
   - npm run test
