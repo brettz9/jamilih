@@ -644,19 +644,9 @@ const jml = function jml (...args) {
         nodes[nodes.length] = node;
         break;
       } case '$DOCTYPE': {
-        let node;
-        if (attVal.entities || attVal.notations) {
-          node = {
-            name: attVal.name,
-            nodeName: attVal.name,
-            nodeValue: null,
-            nodeType: 10,
-            publicId: attVal.publicId,
-            systemId: attVal.systemId
-          };
-        } else {
-          node = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
-        }
+        const node = doc.implementation.createDocumentType(
+          attVal.name, attVal.publicId || '', attVal.systemId || ''
+        );
         nodes[nodes.length] = node;
         break;
       } case '$ENTITY': {
@@ -667,16 +657,10 @@ const jml = function jml (...args) {
           nodeValue: null,
           publicId: attVal.publicId,
           systemId: attVal.systemId,
-          notationName: attVal.notationName,
           nodeType: 6,
           childNodes: attVal.childNodes.map(_DOMfromJMLOrString)
         };
         */
-        break;
-      } case '$NOTATION': {
-        // Todo: We could add further properties/methods, but unlikely to be used as is.
-        const node = {nodeName: attVal[0], publicID: attVal[1], systemID: attVal[2], nodeValue: null, nodeType: 12};
-        nodes[nodes.length] = node;
         break;
       } case '$on': { // Events
         for (const p2 in attVal) {
@@ -1072,7 +1056,7 @@ jml.toJML = function (dom, config) {
 
   /**
    *
-   * @param {DocumentType|Entity|Notation} obj
+   * @param {DocumentType|Entity} obj
    * @param {Node} node
    * @returns {void}
    */
@@ -1228,9 +1212,6 @@ jml.toJML = function (dom, config) {
         start.$ENTITY = {name: node.nodeName};
         if (node.publicId || node.systemId) { // External Entity?
           addExternalID(start.$ENTITY, node);
-          if (node.notationName) {
-            start.$ENTITY.NDATA = node.notationName;
-          }
         }
       }
       set(start);
@@ -1304,7 +1285,7 @@ jml.toJML = function (dom, config) {
       }
       addExternalID(start.$DOCTYPE, node);
       // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD
-      set(start); // Auto-generate the internalSubset instead? Avoid entities/notations in favor of array to preserve order?
+      set(start); // Auto-generate the internalSubset instead?
 
       resetTemp();
       break;
@@ -1323,11 +1304,6 @@ jml.toJML = function (dom, config) {
       });
 
       resetTemp();
-      break;
-    case 12: // NOTATION
-      start = {$NOTATION: {name: node.nodeName}};
-      addExternalID(start.$NOTATION, node);
-      set(start);
       break;
     default:
       throw new TypeError('Not an XML type');
