@@ -306,16 +306,6 @@ function _optsOrUndefinedJML (...args) {
 }
 
 /**
-* @private
-* @static
-* @param {string} arg
-* @returns {Element}
-*/
-function _jmlSingleArg (arg) {
-  return jml(arg);
-}
-
-/**
 * @typedef {JamilihAttributes} AttributeArray
 * @property {string} 0 The key
 * @property {string} 1 The value
@@ -654,13 +644,6 @@ const jml = function jml (...args) {
         nodes[nodes.length] = node;
         break;
       } case '$DOCTYPE': {
-        /*
-        // Todo:
-        if (attVal.internalSubset) {
-          node = {};
-        }
-        else
-        */
         let node;
         if (attVal.entities || attVal.notations) {
           node = {
@@ -668,13 +651,8 @@ const jml = function jml (...args) {
             nodeName: attVal.name,
             nodeValue: null,
             nodeType: 10,
-            // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-            entities: attVal.entities.map(_jmlSingleArg),
-            // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-            notations: attVal.notations.map(_jmlSingleArg),
             publicId: attVal.publicId,
             systemId: attVal.systemId
-            // internalSubset: // Todo
           };
         } else {
           node = doc.implementation.createDocumentType(attVal.name, attVal.publicId || '', attVal.systemId || '');
@@ -1320,9 +1298,6 @@ jml.toJML = function (dom, config) {
 
       // Can create directly by doc.implementation.createDocumentType
       start = {$DOCTYPE: {name: node.name}};
-      if (node.internalSubset) {
-        start.internalSubset = node.internalSubset;
-      }
       const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
       if (!pubIdChar.test(node.publicId)) {
         invalidStateError();
