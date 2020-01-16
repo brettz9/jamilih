@@ -6,7 +6,6 @@ node_js:
   - 12
 
 before_install:
-  - if [[ `npm -v` < 4* ]]; then npm i -g npm@4; fi
   - npm config set depth 0
 before_script: >
   node_version=$(node -v);
