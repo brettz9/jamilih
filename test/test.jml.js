@@ -204,6 +204,16 @@ describe('Jamilih - jml', function () {
       'Single element with text children separated by fragment (of text nodes separated by element with text child)'
     );
 
+    /*
+    // Todo: Allow this to work (creating a fragment at root), then update README.
+    xmlTesting.matchesXMLString(
+      jml('', [
+        'text1', ['span', ['inner text']], 'text2'
+      ]),
+      'text1<span>inner text</span>text2'
+    );
+    */
+
     // Todo: Do we want this in this format?
     xmlTesting.matchesXMLString(
       jml('ul', [
@@ -294,6 +304,28 @@ describe('Jamilih - jml', function () {
       (isIE ? '--' : '') +
       '>\u00A9\u04D2\u0AB3&amp;test &lt;CDATA&gt; content</div>',
       'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
+    );
+  });
+  it('Comments, processing instructions, Text, and fragment as DOM nodes', () => {
+    const isIE = window.navigator && window.navigator.appName === 'Microsoft Internet Explorer';
+    const frag = document.createDocumentFragment();
+    frag.append('test');
+    xmlTesting.matchesXMLString(
+      jml('div', [
+        document.createComment('a comment'),
+        document.createProcessingInstruction('customPI', 'a processing instruction'),
+        // document.createCDATASection('&test <CDATA> content')
+        document.createTextNode('text node'),
+        frag
+      ]),
+      '<div xmlns="http://www.w3.org/1999/xhtml"><!--a comment--' +
+      '><' +
+      // Any way to overcome the IE problem with pseudo-processing instructions?
+      (isIE ? '!--' : '') +
+      '?customPI a processing instruction?' +
+      (isIE ? '--' : '') +
+      '>text nodetest</div>',
+      'Single element with comment, processing instruction, Text, and fragment'
     );
   });
   it('document node', function () {

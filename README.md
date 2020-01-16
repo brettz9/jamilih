@@ -713,8 +713,11 @@ or some recurring item, without the need for a special `map` or `reduce`.
             1. `dataset` is a (nestable) object whose keys are hyphenated or camel-cased properties used to set the dataset property (note that no polyfill for older browsers is provided out of the box)
 1. Arrays indicate children.
     1. They can be:
-        1. DOM Nodes
+        1. DOM Nodes (element, fragment, comment, processing instruction, or text node)
         1. Strings, numbers, or booleans (to become text nodes)
+        1. Array with an empty string, followed by an array with another Jamilih
+            structure (represents a fragment); start rule processing for the child
+            array over at no. 1
         1. Arrays encapsulating another Jamilih structure (start rule
             processing over at no. 1)
         1. An object with the key `#` with an array of children (following
