@@ -776,25 +776,25 @@ describe('Jamilih - jml', function () {
       'myDiv',
       'Should allow other non-plugin attributes'
     );
-    xmlTesting.throws(() => {
+    expect(() => {
       jml({$plugins: [{
         set () {
           /* */
         }
       }]}, 'div');
-    }, 'Should throw when no `name` ');
-    xmlTesting.throws(() => {
+    }).to.throw(Error, null, 'Should throw when no `name`');
+    expect(() => {
       jml({$plugins: [{
         name: '$_myplugin'
       }]}, 'div');
-    }, 'Should throw when no `set` method');
-    xmlTesting.throws(() => {
+    }).to.throw(Error, null, 'Should throw when no `set` method');
+    expect(() => {
       jml({$plugins: [{
         name: 'myplugin',
         set () {
           /* */
         }
       }]}, 'div');
-    }, 'Should throw with bad `name`');
+    }).to.throw(Error, null, 'Should throw with bad `name`');
   });
 });

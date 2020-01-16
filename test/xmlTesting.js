@@ -54,14 +54,5 @@ const matchesXMLString = (item1, item2, msg) => {
   matches(item1, item2, msg);
 };
 
-const throws = (testCb, msg) => {
-  try {
-    testCb();
-    xmlAssert(false, `Should throw: ${msg}`);
-  } catch (err) {
-    xmlAssert(true, msg);
-  }
-};
-
-export {write, skip, throws, xmlAssert, matches, matchesXMLStringWithinElement,
+export {write, skip, xmlAssert, matches, matchesXMLStringWithinElement,
   matchesXMLStringOnElement, matchesXMLString};
