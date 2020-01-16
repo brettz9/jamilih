@@ -1521,7 +1521,7 @@ function glue (jmlArray, glu) {
   }, []).slice(0, -1);
 }
 
-/* istanbulu ignore next */
+/* istanbul ignore next */
 let body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 
 const nbsp = '\u00A0'; // Very commonly needed in templates
