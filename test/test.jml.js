@@ -777,17 +777,25 @@ describe('Jamilih - jml', function () {
       'Should allow other non-plugin attributes'
     );
     expect(() => {
+      jml({$plugins: {}}, 'div');
+    }).to.throw(Error, null, 'should throw with non-array plugins');
+    expect(() => {
+      jml({$plugins: [
+        null
+      ]}, 'div');
+    }).to.throw(Error, null, 'should throw with non-object plugin');
+    expect(() => {
       jml({$plugins: [{
         set () {
           /* */
         }
       }]}, 'div');
-    }).to.throw(Error, null, 'Should throw when no `name`');
+    }).to.throw(Error, null, 'Should throw when no `name` on plugin');
     expect(() => {
       jml({$plugins: [{
         name: '$_myplugin'
       }]}, 'div');
-    }).to.throw(Error, null, 'Should throw when no `set` method');
+    }).to.throw(Error, null, 'Should throw when no `set` method on plugin');
     expect(() => {
       jml({$plugins: [{
         name: 'myplugin',
@@ -795,6 +803,6 @@ describe('Jamilih - jml', function () {
           /* */
         }
       }]}, 'div');
-    }).to.throw(Error, null, 'Should throw with bad `name`');
+    }).to.throw(Error, null, 'Should throw with bad `name` on plugin');
   });
 });

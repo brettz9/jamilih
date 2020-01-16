@@ -758,7 +758,7 @@ const jml = function jml (...args) {
         throw new TypeError('$plugins must be an array');
       }
       opts.$plugins.forEach((pluginObj) => {
-        if (!pluginObj) {
+        if (!pluginObj || typeof pluginObj !== 'object') {
           throw new TypeError('Plugin must be an object');
         }
         if (!pluginObj.name || !pluginObj.name.startsWith('$_')) {
