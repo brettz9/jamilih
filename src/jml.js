@@ -248,11 +248,15 @@ function _getType (item) {
       return 'array';
     }
     if ('nodeType' in item) {
-      if (item.nodeType === 1) {
+      switch (item.nodeType) {
+      case 1:
         return 'element';
-      }
-      if (item.nodeType === 11) {
+      case 9:
+        return 'document';
+      case 11:
         return 'fragment';
+      default:
+        return 'non-container node';
       }
     }
     return 'object';
@@ -802,10 +806,10 @@ const jml = function jml (...args) {
   };
   for (let i = 0; i < argc; i++) {
     let arg = args[i];
-    switch (_getType(arg)) {
+    const type = _getType(arg);
+    switch (type) {
     default:
-      // Todo: Throw here instead?
-      break;
+      throw new TypeError('Unexpected type: ' + type);
     case 'null': // null always indicates a place-holder (only needed for last argument if want array returned)
       if (i === argc - 1) {
         _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
@@ -920,13 +924,15 @@ const jml = function jml (...args) {
       }
       _checkAtts(atts);
       break;
-    } case 'fragment':
+    }
+    case 'document':
+    case 'fragment':
     case 'element':
       /*
       1) Last element always the parent (put null if don't want parent and want to return array) unless only atts and children (no other elements)
       2) Individual elements (DOM elements or sequences of string[/object/array]) get added to parent first-in, first-added
       */
-      if (i === 0) { // Allow wrapping of element
+      if (i === 0) { // Allow wrapping of element, fragment, or document
         elem = arg;
       }
       if (i === argc - 1 || (i === argc - 2 && args[i + 1] === null)) { // parent

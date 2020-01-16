@@ -284,6 +284,19 @@ describe('Jamilih - jml', function () {
       'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
     );
   });
+  it('document node', function () {
+    const wrappedDoc = jml(document, [
+      ['!', 'a comment']
+    ]);
+    const comment = wrappedDoc.childNodes[wrappedDoc.childNodes.length - 1];
+    expect(comment.data).to.equal('a comment');
+    expect(comment.nodeType).to.equal(8);
+  });
+  it('throws when trying to add non-container Node at top level', function () {
+    expect(() => {
+      jml(document.createComment('abc'));
+    }).to.throw(TypeError, 'Unexpected type: non-container node');
+  });
   it('throws with malformed entity reference', function () {
     expect(() => {
       jml('div', [

@@ -9,6 +9,7 @@
 - Fix: Throw proper `Error` on undefined child content
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Throw for all non-object plugins
+- Enhancement: Allow wrapping a document and inserting nodes
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
 - Testing: Coverage
