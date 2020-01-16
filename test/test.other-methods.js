@@ -1,8 +1,11 @@
 import * as xmlTesting from './xmlTesting.js';
 
-const $ = (sel) => { return document.querySelector(sel); };
-
 describe('Jamilih - Other Methods', function () {
+  beforeEach(() => {
+    while (body.firstChild) {
+      body.firstChild.remove();
+    }
+  });
   it('jml.toJMLString()', () => {
     const br = document.createElement('br');
     const expected = '["br",{"xmlns":"http://www.w3.org/1999/xhtml"}]';
@@ -64,7 +67,7 @@ describe('Jamilih - Other Methods', function () {
           myMap.invoke(this, 'test', 'arg1');
         }
       }}]
-    ], $('body'));
+    ], body);
     xmlTesting.matches(
       myMap.invoke(elem, 'myMethod', 'external test'),
       'external test localValue 100',
@@ -83,5 +86,26 @@ describe('Jamilih - Other Methods', function () {
     );
     const mapDiv = $('#clickArea');
     mapDiv.dispatchEvent(new Event('click'));
+  });
+});
+
+describe('Jamilih extras', function () {
+  beforeEach(() => {
+    while (body.firstChild) {
+      body.firstChild.remove();
+    }
+  });
+  it('$', function () {
+    body.append(jml('br'), jml('br'));
+    const br = $('br');
+    expect(br.localName).to.equal('br');
+  });
+  it('$$', function () {
+    body.append(jml('br'), jml('br'));
+    const brs = $$('br');
+    expect(brs.length).to.equal(2);
+  });
+  it('nbsp', function () {
+    expect(nbsp).to.equal('\u00A0');
   });
 });

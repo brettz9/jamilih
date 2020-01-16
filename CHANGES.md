@@ -3,7 +3,9 @@
 ## ?
 
 - Linting (ESLint): As per latest ash-nazg
-- Travis: Try adding builds 6, 10, 12
+- Travis: Adding builds 10, 12
+- Testing: Coverage
+- Testing: Use builtin body, $, $$, nbsp
 - npm: Update devDeps, peerDep
 
 ## 0.47.0

@@ -35,12 +35,20 @@ module.exports = {
           rules: {
               'import/unambiguous': 'off'
           },
+          extends: [
+            'plugin:chai-friendly/recommended',
+            'plugin:chai-expect/recommended'
+          ],
           env: {mocha: true},
           globals: {
               assert: 'readonly',
+              expect: 'readonly',
               jml: 'readonly',
               glue: 'readonly',
-              nbsp: 'readonly'
+              nbsp: 'readonly',
+              $: 'readonly',
+              $$: 'readonly',
+              body: 'readonly'
           }
       },
       {

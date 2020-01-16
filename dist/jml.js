@@ -2295,6 +2295,7 @@
     }, []).slice(0, -1);
   }
 
+  /* istanbulu ignore next */
   exports.body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 
   var nbsp = "\xA0"; // Very commonly needed in templates

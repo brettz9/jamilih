@@ -8,15 +8,16 @@ Todos:
 
 import * as xmlTesting from './xmlTesting.js';
 
-const $ = (sel) => { return document.querySelector(sel); };
-
 describe('Jamilih - jml', function () {
   beforeEach(() => {
+    while (body.firstChild) {
+      body.firstChild.remove();
+    }
     let jmlTestContent = $('#jmlTestContent');
     if (!jmlTestContent) {
       jmlTestContent = document.createElement('div');
       jmlTestContent.id = 'jmlTestContent';
-      $('body').append(jmlTestContent);
+      body.append(jmlTestContent);
     }
     jmlTestContent.innerHTML = `
       <div style="display:none;" id="DOMChildrenMustBeInArray">test1</div>
@@ -49,7 +50,7 @@ describe('Jamilih - jml', function () {
       ],
       $('#anotherElementToAddToParent'),
       $('#yetAnotherSiblingToAddToParent'),
-      $('body')
+      body
     );
 
     xmlTesting.matchesXMLString(
@@ -59,9 +60,9 @@ describe('Jamilih - jml', function () {
       'Single element with attribute and DOM child and two DOM siblings'
     );
 
-    jml('hr', $('body'));
+    jml('hr', body);
     xmlTesting.matchesXMLStringOnElement(
-      $('body'),
+      body,
       '<hr xmlns="http://www.w3.org/1999/xhtml" />',
       'Single (empty) DOM element (with body parent)'
     );
@@ -98,7 +99,7 @@ describe('Jamilih - jml', function () {
       '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass">text1<p>Some inner text</p>text3</div>',
       'Single element with attribute containing two next node children separated by an element child'
     );
-    const table = jml('table', {style: 'position:absolute; left: -1000px;'}, $('body'));
+    const table = jml('table', {style: 'position:absolute; left: -1000px;'}, body);
     /* const firstTr = */
     jml(
       'tr', [
@@ -119,7 +120,7 @@ describe('Jamilih - jml', function () {
     );
   });
   it('Single element wrapped', () => {
-    xmlTesting.matches($('body'), jml($('body')), 'Wrapping single pre-existing DOM element');
+    xmlTesting.matches(body, jml(body), 'Wrapping single pre-existing DOM element');
   });
   it('Namespace declarations', () => {
     xmlTesting.matches(
@@ -162,7 +163,7 @@ describe('Jamilih - jml', function () {
     */
   });
   it('fragment', () => {
-    jml('table', {style: 'position:absolute; left: -1000px;'}, $('body')); // Rebuild
+    jml('table', {style: 'position:absolute; left: -1000px;'}, body); // Rebuild
     const trsFragment = jml('tr', [
       ['td', ['row 1 cell 1']],
       ['td', ['row 1 cell 2']]
@@ -215,7 +216,7 @@ describe('Jamilih - jml', function () {
           ],
           null
         ]
-      ], $('body')),
+      ], body),
       '<ul xmlns="http://www.w3.org/1999/xhtml"><li style="color:red;">First Item</li>' +
       '<li title="Some hover text." style="color:green;">Second Item</li>' +
       '<li><span class="Remove-Me" style="font-weight:bold;">Not Filtered</span> Item</li>' +
@@ -335,7 +336,7 @@ describe('Jamilih - jml', function () {
       $on: {click: [function () {
         str = 'worked1';
       }, true]}
-    }, $('body'));
+    }, body);
     input.click(); // IE won't activate unless the above element is appended to the DOM
 
     xmlTesting.matches(str, 'worked1', 'Single empty element with attributes and triggered click listener added to body');
@@ -350,7 +351,7 @@ describe('Jamilih - jml', function () {
           str = 'worked2';
         }, true]
       }
-    }, $('body')); // For focus (or select) event to work, we need to append to the document
+    }, body); // For focus (or select) event to work, we need to append to the document
 
     if (input2.fireEvent) {
       input2.fireEvent('onchange');
@@ -388,14 +389,14 @@ describe('Jamilih - jml', function () {
   });
   it('Style element', () => {
     xmlTesting.matchesXMLString(
-      jml('style', {id: 'myStyle'}, ['p.test {color:red;}'], $('body')),
+      jml('style', {id: 'myStyle'}, ['p.test {color:red;}'], body),
       '<style xmlns="http://www.w3.org/1999/xhtml" id="myStyle">p.test {color:red;}</style>',
       'Single style element with attribute and text content added to body'
     );
   });
   it('Script element', () => {
     xmlTesting.matchesXMLString(
-      jml('script', {class: 'test'}, ['console.log("hello!");'], $('body')),
+      jml('script', {class: 'test'}, ['console.log("hello!");'], body),
       '<script xmlns="http://www.w3.org/1999/xhtml" class="test">console.log("hello!");</script>',
       'Single script element with attribute and text content (check console for "hello!")'
     );
@@ -416,7 +417,7 @@ describe('Jamilih - jml', function () {
       ['input', {id: 'input5', $data: [, testObj1]}], // eslint-disable-line no-sparse-arrays
       ['input', {id: 'input6', $data: [weakMap1]}],
       ['input', {id: 'input7', $data: [weakMap1, testFunc]}]
-    ], $('body'));
+    ], body);
     xmlTesting.matches(
       weakMap1.get(el),
       testObj1,
@@ -503,7 +504,7 @@ describe('Jamilih - jml', function () {
           );
         }
       }]}]
-    ], $('body'));
+    ], body);
 
     $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
     jml.sym($('#symInput1'), 'publicForSym1')('arg1');
@@ -518,7 +519,7 @@ describe('Jamilih - jml', function () {
     jml.command('#symInput3', privateSym, 'test', 'arg3');
   });
   it('Shadow DOM', () => {
-    if (!$('body').attachShadow) {
+    if (!body.attachShadow) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT attachShadow");
     } else {
       // Todo: Need a more precise check than this
@@ -543,7 +544,7 @@ describe('Jamilih - jml', function () {
         }, [
           ['h1', {slot: 'h'}, ['Heading level 1']],
           ['p', ['Other content']]
-        ], $('body'));
+        ], body);
       }, null, 'Adding Shadow DOM (via `open`/`template`) does not throw');
 
       assert.doesNotThrow(function () {
@@ -564,7 +565,7 @@ describe('Jamilih - jml', function () {
         }, [
           ['h1', {slot: 'h'}, ['Heading level 1']],
           ['p', ['Other content']]
-        ], $('body'));
+        ], body);
       }, null, 'Adding Shadow DOM (via `content`) does not throw');
     }
   });
@@ -579,7 +580,7 @@ describe('Jamilih - jml', function () {
             return this.id;
           }
         }
-      }, $('body'));
+      }, body);
       xmlTesting.matches(
         myEl.test(),
         'myEl',
@@ -592,7 +593,7 @@ describe('Jamilih - jml', function () {
         $define () {
           constructorSetVar2 = this.id;
         }
-      }, $('body'));
+      }, body);
       xmlTesting.matches(
         constructorSetVar2,
         'myEl2',
@@ -608,7 +609,7 @@ describe('Jamilih - jml', function () {
             constructorSetVar3 = this.id;
           }
         }
-      }, $('body'));
+      }, body);
       xmlTesting.matches(
         constructorSetVar3,
         'myEl3',
@@ -628,7 +629,7 @@ describe('Jamilih - jml', function () {
             this.test(arg1);
           }
         }]
-      }, $('body'));
+      }, body);
       xmlTesting.matches(
         constructorSetVar4,
         'myEl4',
@@ -653,7 +654,7 @@ describe('Jamilih - jml', function () {
             this.test(arg1);
           }
         }]
-      }, $('body'));
+      }, body);
       xmlTesting.matches(
         constructorSetVar5,
         'myEl5',
@@ -673,7 +674,7 @@ describe('Jamilih - jml', function () {
           return this.id;
         }
       }
-    }, $('body'));
+    }, body);
     xmlTesting.matches(
       mySelect.test(),
       'mySelect'
@@ -694,7 +695,7 @@ describe('Jamilih - jml', function () {
           return this.test(arg1);
         }
       }
-    }, $('body'));
+    }, body);
 
     xmlTesting.matches(
       mySelect.test('Arg1'),

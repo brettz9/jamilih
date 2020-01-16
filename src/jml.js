@@ -28,8 +28,11 @@ Other Todos:
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
 
+/* istanbul ignore next */
 let win = typeof window !== 'undefined' && window;
+/* istanbul ignore next */
 let doc = typeof document !== 'undefined' && document;
+/* istanbul ignore next */
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
