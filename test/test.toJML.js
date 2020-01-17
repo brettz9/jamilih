@@ -113,6 +113,35 @@ describe('Jamilih - toJML', function () {
     const result = jml.toJML(xml.createCDATASection(content));
     assert.deepEqual(result, expected, 'CDATA to Jamilih');
   });
+  it('Namespaced XML element', () => {
+    const expected = {$document: {
+      childNodes: [
+        ['def', {
+          xmlns: 'http://example.com'
+        }, [
+          ['ggg', {
+            xmlns: null
+          }]
+        ]]
+      ]
+    }};
+    const xml = document.implementation.createDocument('http://example.com', 'def', null);
+    xml.documentElement.append(document.createElementNS(null, 'ggg'));
+    const result = jml.toJML(xml);
+    assert.deepEqual(result, expected, 'Namespaced XML Jamilih');
+  });
+  it('Prefixed namespaced XML element', () => {
+    const expected = {$document: {
+      childNodes: [
+        ['abc:def', {
+          'xmlns:abc': 'http://example.com'
+        }]
+      ]
+    }};
+    const xml = document.implementation.createDocument('http://example.com', 'abc:def', null);
+    const result = jml.toJML(xml);
+    assert.deepEqual(result, expected, 'Namespaced XML Jamilih');
+  });
   it('Entity reference', function () {
     const expected = ['&', 'copy'];
     const result = jml.toJML({

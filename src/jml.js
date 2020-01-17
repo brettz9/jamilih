@@ -1135,6 +1135,8 @@ jml.toJML = function (dom, config) {
           start['xmlns:' + node.prefix] = node.namespaceURI;
         } else if (node.namespaceURI) {
           start.xmlns = node.namespaceURI;
+        } else {
+          start.xmlns = null;
         }
         hasNamespaceDeclaration = true;
       }

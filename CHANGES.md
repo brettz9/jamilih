@@ -13,6 +13,7 @@
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Ensure `stripWhitespace` on text node returns a text node (that is
   empty)
+- Fix: Ensure can reset to null namespace for namespaced elements
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes
