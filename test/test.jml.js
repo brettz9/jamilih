@@ -646,6 +646,15 @@ describe('Jamilih - jml', function () {
 
     input2.click();
     xmlTesting.matches(str, 'worked3', 'Single element with attributes and triggered click listener (alongside change) added to body');
+
+    expect(() => {
+      jml('input', {
+        style: 'position:absolute; left: -1000px;',
+        $on: [{
+          click () { /* */ }
+        }]
+      }, body);
+    }).to.throw(TypeError, 'Expect a function for `$on`');
   });
   it('style attribute object', () => {
     xmlTesting.matchesXMLString(

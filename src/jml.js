@@ -637,9 +637,10 @@ const jml = function jml (...args) {
           if (typeof val === 'function') {
             val = [val, false];
           }
-          if (typeof val[0] === 'function') {
-            _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
+          if (typeof val[0] !== 'function') {
+            throw new TypeError('Expect a function for `$on`');
           }
+          _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
         }
         break;
       } case 'className': case 'class':

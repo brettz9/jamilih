@@ -15,6 +15,7 @@
   empty)
 - Enhancement: Throw proper `TypeError` on undefined child content; throw
   also for `null`.
+- Enhancement: Throw if non-function added within `$on` array
 - Enhancement: Throw for all non-object plugins
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
