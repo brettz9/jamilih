@@ -19,13 +19,46 @@ describe('Jamilih - toJML', function () {
         'namespace declaration, and text content'
     );
   });
+  it('attribute node (simulated)', () => {
+    const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
+
+    let expected = {$attribute: xlink};
+
+    let result = jml.toJML({
+      namespaceURI: 'http://www.w3.org/1999/xlink',
+      name: 'href',
+      value: 'http://example.com',
+      nodeType: 2
+    });
+    assert.deepEqual(expected, result, 'Namespaced attribute node to Jamilih');
+
+    expected = {$attribute: [
+      null, 'href', 'http://example.com'
+    ]};
+
+    result = jml.toJML({
+      namespaceURI: null,
+      name: 'href',
+      value: 'http://example.com',
+      nodeType: 2
+    });
+    assert.deepEqual(expected, result, 'Non-namespaced attribute node to Jamilih');
+
+    result = jml.toJML({
+      namespaceURI: null,
+      name: 'href',
+      value: 'http://example.com',
+      nodeType: undefined
+    });
+    assert.deepEqual(expected, result, 'Non-namespaced attribute node to Jamilih');
+  });
   /*
   // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641
   it('attribute node', () => {
     const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
 
     let expected = {$attribute: xlink};
-    let att = document.createAttributeNS.apply(document, xlink.slice(0, -1));
+    let att = document.createAttributeNS(...xlink.slice(0, -1));
     att.value = xlink.slice(-1);
 
     let result = jml.toJML(att);
@@ -33,7 +66,8 @@ describe('Jamilih - toJML', function () {
 
     xlink[0] = null;
     expected = {$attribute: xlink};
-    att = document.createAttribute.apply(document, xlink.slice(1, -1));
+    // eslint-disable-next-line compat/compat
+    att = document.createAttribute(...xlink.slice(1, -1));
     att.value = xlink.slice(-1);
 
     result = jml.toJML(att);
