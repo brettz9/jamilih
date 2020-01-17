@@ -135,12 +135,75 @@ describe('Jamilih - toJML', function () {
   });
 
   it('Bad text node', () => {
-    const badElement = {
+    const badText = {
       nodeValue: '\u0000',
       nodeType: 3
     };
     try {
-      jml.toJML(badElement);
+      jml.toJML(badText);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+  });
+
+  it('Bad comment', () => {
+    const badComment = {
+      nodeValue: '--',
+      nodeType: 8
+    };
+    try {
+      jml.toJML(badComment);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+  });
+
+  it('Bad processing instructions', () => {
+    let badProcInst = {
+      target: 'xml',
+      data: 'something',
+      nodeType: 7
+    };
+    try {
+      jml.toJML(badProcInst);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+
+    badProcInst = {
+      target: '?>',
+      data: 'something',
+      nodeType: 7
+    };
+    try {
+      jml.toJML(badProcInst);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+
+    badProcInst = {
+      target: 'a:b',
+      data: 'something',
+      nodeType: 7
+    };
+    try {
+      jml.toJML(badProcInst);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+
+    badProcInst = {
+      target: 'ok',
+      data: '?>',
+      nodeType: 7
+    };
+    try {
+      jml.toJML(badProcInst);
       assert.ok(false);
     } catch (err) {
       expect(err.name).to.equal('INVALID_STATE_ERR');
