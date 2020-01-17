@@ -284,7 +284,7 @@ function _fragReducer (frag, node) {
 */
 function _replaceDefiner (xmlnsObj) {
   return function (n0) {
-    let retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : (n0 || ''); // Preserve XHTML
+    let retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : n0; // Preserve XHTML
     for (const [ns, xmlnsVal] of Object.entries(xmlnsObj)) {
       if (ns !== '') {
         retStr += ' xmlns:' + ns + '="' + xmlnsVal + '"';
