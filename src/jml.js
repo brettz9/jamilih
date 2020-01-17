@@ -1172,7 +1172,9 @@ jml.toJML = function (dom, config) {
       }
       set(['![', node.nodeValue]);
       break;
-    case 5: // ENTITY REFERENCE (probably not used in browsers since already resolved)
+    case 5:
+      // ENTITY REFERENCE (though not in browsers (was already resolved
+      //  anyways), ok to keep for parity with our "entity" shorthand)
       set(['&', node.nodeName]);
       break;
     case 7: // PROCESSING INSTRUCTION

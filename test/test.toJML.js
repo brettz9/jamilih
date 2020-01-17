@@ -113,6 +113,14 @@ describe('Jamilih - toJML', function () {
     const result = jml.toJML(xml.createCDATASection(content));
     assert.deepEqual(result, expected, 'CDATA to Jamilih');
   });
+  it('Entity reference', function () {
+    const expected = ['&', 'copy'];
+    const result = jml.toJML({
+      nodeType: 5,
+      nodeName: 'copy'
+    });
+    assert.deepEqual(result, expected, 'CDATA to Jamilih');
+  });
   it('processing instruction', () => {
     const expected = ['?', 'aTarget', 'a processing instruction'];
 
@@ -272,11 +280,28 @@ describe('Jamilih - toJML', function () {
       expect(err.name).to.equal('INVALID_STATE_ERR');
     }
   });
+
+  it('Bad CDATA section', function () {
+    const content = 'bad CDATA ]]> content';
+    expect(() => {
+      jml.toJML({
+        nodeType: 4,
+        nodeValue: content
+      });
+    }).to.throw(Error, 'CDATA cannot end with closing ]]>');
+  });
+
   it('with config (`stripWhitespace`)', () => {
-    const expected = '';
-    const result = jml.toJML(document.createTextNode('    '), {
+    let expected = '';
+    let result = jml.toJML(document.createTextNode('    '), {
       stripWhitespace: true
     });
     assert.deepEqual(result, expected, 'Whitespace-stripped text node to Jamilih');
+
+    expected = 'some text';
+    result = jml.toJML(document.createTextNode(expected), {
+      stripWhitespace: true
+    });
+    assert.deepEqual(result, expected, 'Not whitespace-only so unstripped text node to Jamilih');
   });
 });
