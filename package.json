@@ -97,7 +97,7 @@
     "jsdom": "16.0.0",
     "mocha": "^7.0.0",
     "mocha-badge-generator": "git+https://github.com/brettz9/mocha-badge-generator.git#updated-badge-up",
-    "mocha-multi-reporters": "^1.1.7",
+    "mocha-multi-reporters": "git+https://github.com/brettz9/mocha-multi-reporters.git#missing-reporter",
     "node-static": "0.7.11",
     "nyc": "^15.0.0",
     "open-cli": "^5.0.0",
