@@ -611,13 +611,13 @@ const jml = function jml (...args) {
             const meta = doc.createElement('meta');
             meta.setAttribute('charset', 'utf-8');
             head.append(meta);
-          }
-          if (attVal.title) {
-            node.title = attVal.title; // Appends after meta
-          }
-          if (attVal.head) {
-            // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-            attVal.head.forEach(_appendJML(head));
+            if (attVal.title) {
+              node.title = attVal.title; // Appends after meta
+            }
+            if (attVal.head) {
+              // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
+              attVal.head.forEach(_appendJML(head));
+            }
           }
           if (attVal.body) {
             // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
