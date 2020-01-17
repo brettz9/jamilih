@@ -839,6 +839,15 @@ describe('Jamilih - jml', function () {
     }
   });
   it('Custom elements', () => {
+    const mySelect = jml('select', {
+      id: 'mySelect',
+      is: 'my-select'
+    }, body);
+    xmlTesting.matchesXMLString(
+      mySelect,
+      '<select xmlns="http://www.w3.org/1999/xhtml" id="mySelect"></select>'
+    );
+
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
