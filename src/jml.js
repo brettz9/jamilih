@@ -1161,6 +1161,7 @@ jml.toJML = function (dom, config) {
       break;
     case 3: // TEXT
       if (config.stripWhitespace && (/^\s+$/u).test(node.nodeValue)) {
+        set('');
         return;
       }
       set(node.nodeValue);

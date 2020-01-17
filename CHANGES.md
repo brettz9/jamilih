@@ -13,6 +13,8 @@
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Throw proper `Error` on undefined child content
 - Fix: Throw for all non-object plugins
+- Fix: Ensure `stripWhitespace` on text node returns a text node (that is
+  empty)
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes

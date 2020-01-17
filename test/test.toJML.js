@@ -272,10 +272,11 @@ describe('Jamilih - toJML', function () {
       expect(err.name).to.equal('INVALID_STATE_ERR');
     }
   });
-  it('with config', () => {
-    const result = jml.toJML(this.divDOMEmpty, {
+  it('with config (`stripWhitespace`)', () => {
+    const expected = '';
+    const result = jml.toJML(document.createTextNode('    '), {
       stripWhitespace: true
     });
-    assert.deepEqual(result, this.divJamilihEmpty, 'Whitespace-stripped text node to Jamilih');
+    assert.deepEqual(result, expected, 'Whitespace-stripped text node to Jamilih');
   });
 });
