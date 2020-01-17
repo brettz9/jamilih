@@ -982,7 +982,7 @@ const jml = function jml (...args) {
 
 /**
 * Converts a DOM object or a string of HTML into a Jamilih object (or string).
-* @param {string|HTMLElement} [dom=document.documentElement] Defaults to converting the current document.
+* @param {string|HTMLElement} dom If a string, will parse as document
 * @param {PlainObject} [config] Configuration object
 * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string.
 * @returns {JamilihArray|string} Array containing the elements which represent

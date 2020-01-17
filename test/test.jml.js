@@ -90,6 +90,18 @@ describe('Jamilih - jml', function () {
     expect(custom.getAttribute('for')).to.equal('blah');
   });
 
+  it('DOM properties', function () {
+    const a = jml('a', {
+      onclick () {
+        // eslint-disable-next-line no-alert
+        alert('boo!');
+      }
+    }, [
+      'Test'
+    ]);
+    expect(a.onclick).to.be.a('function');
+  });
+
   it('test nullish properties', function () {
     let option = jml('option', {
       title: 'Hello'
@@ -108,6 +120,24 @@ describe('Jamilih - jml', function () {
       }),
       '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
     );
+
+    let div = jml('div', {style: 'abc'});
+    expect(div.getAttribute('style')).to.equal('abc');
+    div = jml('div');
+    expect(div.getAttribute('style')).to.equal(null);
+    div = jml('div', {style: undefined});
+    expect(div.getAttribute('style')).to.equal(null);
+
+    div = jml('div');
+    expect(div.style.color).to.equal('');
+    div = jml('div', {style: {
+      color: 'red'
+    }});
+    expect(div.style.color).to.equal('red');
+    div = jml('div', {style: {
+      color: null
+    }});
+    expect(div.style.color).to.equal('');
   });
 
   it('DOM wrapping', () => {

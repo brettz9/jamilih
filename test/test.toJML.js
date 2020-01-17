@@ -19,6 +19,25 @@ describe('Jamilih - toJML', function () {
         'namespace declaration, and text content'
     );
   });
+  it('element with text content (as string)', () => {
+    const expected = this.divJamilih;
+    const result = jml.toJML('<div xmlns="http://www.w3.org/1999/xhtml" class="test">someContent</div>');
+    assert.deepEqual(
+      result,
+      {$document: {
+        childNodes: [
+          ['html', {xmlns: 'http://www.w3.org/1999/xhtml'}, [
+            ['head'],
+            ['body', [
+              expected
+            ]]
+          ]]
+        ]
+      }},
+      'Builds Jamilih array for single element with attribute, ' +
+        'namespace declaration, and text content'
+    );
+  });
   it('attribute node (simulated)', () => {
     const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
 
