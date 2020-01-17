@@ -743,6 +743,7 @@ describe('Jamilih - jml', function () {
     );
   });
   it('Symbol', () => {
+    const publicSym = Symbol.for('publicForSym1');
     const privateSym = Symbol('Test symbol');
     jml('div', [
       ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
@@ -760,7 +761,7 @@ describe('Jamilih - jml', function () {
           jml.sym('#symInput3', privateSym).test('arg3');
 
           // Or add symbol directly:
-          this.previousElementSibling[Symbol.for('publicForSym1')]('arg1');
+          this.previousElementSibling[publicSym]('arg1');
           $('#symInput2')[privateSym]('arg2');
         }
       }}],
@@ -786,6 +787,21 @@ describe('Jamilih - jml', function () {
             'Private-symbol attached object method with `this.elem` and argument'
           );
         }
+      }]}],
+      ['input', {id: 'symInput4', $symbol: ['publicForSym1', {
+        localValue: 5,
+        test (arg1) {
+          xmlTesting.matches(
+            this.localValue,
+            5,
+            'Public-symbol attached object method with `this`'
+          );
+          xmlTesting.matches(
+            this.elem.id + ' ' + arg1,
+            'symInput4 arg4',
+            'Public-symbol attached object method with `this.elem` and argument'
+          );
+        }
       }]}]
     ], body);
 
@@ -800,6 +816,9 @@ describe('Jamilih - jml', function () {
     $('#divSymbolTest').dispatchEvent(new window.Event('click'));
     jml.command('#symInput1', 'publicForSym1', 'arg1');
     jml.command('#symInput3', privateSym, 'test', 'arg3');
+    $('#symInput4')[publicSym].test('arg4');
+    jml.sym('#symInput4', publicSym).test('arg4');
+    jml.command('#symInput4', publicSym, 'test', 'arg4');
   });
   it('Shadow DOM', () => {
     if (!body.attachShadow) {
