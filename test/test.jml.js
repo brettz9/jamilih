@@ -615,6 +615,11 @@ describe('Jamilih - jml', function () {
       );
     }
   });
+  it('throws with `null` at main level except at end', () => {
+    expect(() => {
+      jml('div', null, []);
+    }).to.throw(TypeError, '`null` values not allowed except as final Jamilih argument');
+  });
   it('throws with `undefined` child nodes', () => {
     expect(() => {
       jml('div', [

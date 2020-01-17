@@ -13,15 +13,18 @@
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Ensure `stripWhitespace` on text node returns a text node (that is
   empty)
-- Enhancement: Throw proper `TypeError` on undefined child content; throw
-  also for `null`.
-- Enhancement: Throw if non-function added within `$on` array
-- Enhancement: Throw for all non-object plugins
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes
-- Enhancement: Make DOMException polyfill inherit from Error and include
-  message and `name`
+- Enhancement (Errors):
+  - Throw proper `TypeError` on undefined child content; throw
+    also for `null`.
+  - Throw if non-function added within `$on` array
+  - Throw for all non-object plugins
+  - Show exact type if passing in bad type as Jamilih argument
+  - Throw if passing in `null` in non-final position
+  - Make `DOMException` polyfill inherit from `Error` and include
+    message and `name`
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
 - Testing: Coverage

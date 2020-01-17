@@ -234,13 +234,12 @@ function _isNullish (o) {
 * @private
 * @static
 * @param {string|JamilihAttributes|JamilihArray|Element|DocumentFragment} item
-* @returns {"string"|"null"|"array"|"element"|"fragment"|"object"}
+* @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|"symbol"|"function"|"number"|"boolean"}
 */
 function _getType (item) {
-  if (typeof item === 'string') {
-    return 'string';
-  }
-  if (typeof item === 'object') {
+  const type = typeof item;
+  switch (type) {
+  case 'object':
     if (item === null) {
       return 'null';
     }
@@ -259,9 +258,10 @@ function _getType (item) {
         return 'non-container node';
       }
     }
-    return 'object';
+    // Fallthrough
+  default:
+    return type;
   }
-  return undefined;
 }
 
 /**
@@ -820,7 +820,7 @@ const jml = function jml (...args) {
         // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
       }
-      break;
+      throw new TypeError('`null` values not allowed except as final Jamilih argument');
     case 'string': // Strings normally indicate elements
       switch (arg) {
       case '!':
