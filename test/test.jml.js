@@ -1,7 +1,6 @@
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); remove IE8 processing instruction hack?
-0. Add test cases for properties: innerHTML, selected, checked, value, htmlFor, for
 0. When CDATA XML-check added, add check for CDATA section in XML
 0. Fix bug with IE 10 (but not IE 8) when testing $on events (race condition)
 */
@@ -43,6 +42,74 @@ describe('Jamilih - jml', function () {
       'Single element with two attributes'
     );
   });
+
+  it('DOM attributes', function () {
+    xmlTesting.matchesXMLString(
+      jml('div', {
+        innerHTML: '<span>Test</span>'
+      }),
+      '<div xmlns="http://www.w3.org/1999/xhtml"><span>Test</span></div>'
+    );
+    xmlTesting.matchesXMLString(
+      jml('label', {
+        htmlFor: 'someId'
+      }),
+      '<label xmlns="http://www.w3.org/1999/xhtml" for="someId"></label>'
+    );
+    xmlTesting.matchesXMLString(
+      jml('label', {
+        for: 'someId'
+      }),
+      '<label xmlns="http://www.w3.org/1999/xhtml" for="someId"></label>'
+    );
+    xmlTesting.matchesXMLString(
+      jml('label', {
+        for: null
+      }),
+      '<label xmlns="http://www.w3.org/1999/xhtml"></label>'
+    );
+    let input = jml('input', {
+      checked: true
+    });
+    expect(input.checked).to.be.true;
+    input = jml('input', {
+      readonly: true
+    });
+    expect(input.readOnly).to.be.true;
+    input = jml('input', {
+      readOnly: true
+    });
+    expect(input.readOnly).to.be.true;
+    const option = jml('option', {
+      selected: true
+    });
+    expect(option.selected).to.be.true;
+    const custom = jml('custom', {
+      for: 'blah'
+    });
+    expect(custom.getAttribute('for')).to.equal('blah');
+  });
+
+  it('test nullish properties', function () {
+    let option = jml('option', {
+      title: 'Hello'
+    });
+    expect(option.title).to.equal('Hello');
+
+    option = jml('option');
+    expect(option.title).to.equal('');
+
+    option = jml('option', {title: null});
+    expect(option.title).to.equal('');
+
+    xmlTesting.matchesXMLString(
+      jml('div', {
+        innerHTML: null
+      }),
+      '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
+    );
+  });
+
   it('DOM wrapping', () => {
     const div = jml(
       'div', {style: 'position:absolute !important; left: -1000px;'}, [

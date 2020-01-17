@@ -1280,7 +1280,9 @@ jml.toDOM = function (...args) { // Alias for jml()
  */
 jml.toHTML = function (...args) { // Todo: Replace this with version of jml() that directly builds a string
   const ret = jml(...args);
-  // Todo: deal with serialization of properties like 'selected', 'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*', 'style'! (i.e., need to build a string ourselves)
+  // Todo: deal with serialization of properties like 'selected',
+  //  'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*',
+  //  'style'! (i.e., need to build a string ourselves)
   return ret.outerHTML;
 };
 
