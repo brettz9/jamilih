@@ -469,17 +469,33 @@ describe('Jamilih - jml', function () {
     }
 
     const doc7 = jml({$document: {
-      title: 'My title'
+      body: ['some text']
     }});
     try {
       xmlTesting.matchesXMLString(
         doc7,
         `<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title>My title</title></head><body></body></html>`
+<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>some text</body></html>`
       );
     } catch (err) {
       xmlTesting.matchesXMLString(
         doc7,
+        `<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>some text</body></html>`
+      );
+    }
+
+    const doc8 = jml({$document: {
+      title: 'My title'
+    }});
+    try {
+      xmlTesting.matchesXMLString(
+        doc8,
+        `<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title>My title</title></head><body></body></html>`
+      );
+    } catch (err) {
+      xmlTesting.matchesXMLString(
+        doc8,
         `<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title>My title</title></head><body></body></html>`
       );
     }
