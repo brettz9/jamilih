@@ -449,6 +449,40 @@ describe('Jamilih - jml', function () {
       ]
     }});
     expect(doc5.childNodes.length).to.equal(0);
+
+    const doc6 = jml({$document: {
+      body: [
+        ['p']
+      ]
+    }});
+    try {
+      xmlTesting.matchesXMLString(
+        doc6,
+        `<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><p></p></body></html>`
+      );
+    } catch (err) {
+      xmlTesting.matchesXMLString(
+        doc6,
+        `<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head></head><body><p></p></body></html>`
+      );
+    }
+
+    const doc7 = jml({$document: {
+      title: 'My title'
+    }});
+    try {
+      xmlTesting.matchesXMLString(
+        doc7,
+        `<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title>My title</title></head><body></body></html>`
+      );
+    } catch (err) {
+      xmlTesting.matchesXMLString(
+        doc7,
+        `<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title>My title</title></head><body></body></html>`
+      );
+    }
   });
   it('Event listeners', () => {
     let str;
