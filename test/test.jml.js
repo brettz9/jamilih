@@ -68,6 +68,24 @@ describe('Jamilih - jml', function () {
       }),
       '<label xmlns="http://www.w3.org/1999/xhtml"></label>'
     );
+    xmlTesting.matchesXMLString(
+      jml('div', {
+        className: 'aClass'
+      }),
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="aClass"></div>'
+    );
+    xmlTesting.matchesXMLString(
+      jml('div', {
+        class: 'aClass'
+      }),
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="aClass"></div>'
+    );
+    xmlTesting.matchesXMLString(
+      jml('div', {
+        class: null
+      }),
+      '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
+    );
     let input = jml('input', {
       checked: true
     });
