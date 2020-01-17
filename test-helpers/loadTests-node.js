@@ -6,11 +6,9 @@ global.assert = assert;
 global.expect = expect;
 
 global.window = jml.getWindow();
-global.Event = window.Event;
-global.DOMParser = window.DOMParser;
-global.Node = window.Node;
 global.document = jml.getDocument();
 global.XMLSerializer = jml.getXMLSerializer();
+
 global.jml = jml;
 global.glue = glue;
 global.nbsp = nbsp;

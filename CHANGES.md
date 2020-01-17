@@ -13,6 +13,8 @@
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Throw proper `Error` on undefined child content
 - Fix: Throw for all non-object plugins
+- Enhancement: Check for `DOMParser` on `window` so can get automatically
+  after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes
 - Enhancement: Make DOMException polyfill inherit from Error and include
   message and `name`

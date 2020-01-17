@@ -82,10 +82,10 @@ describe('Jamilih - Other Methods', function () {
     const mapInput = $('#mapTest').firstElementChild;
     mapInput.value = '1001';
     mapInput.dispatchEvent(
-      new Event('input')
+      new window.Event('input')
     );
     const mapDiv = $('#clickArea');
-    mapDiv.dispatchEvent(new Event('click'));
+    mapDiv.dispatchEvent(new window.Event('click'));
   });
 });
 

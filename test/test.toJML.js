@@ -4,7 +4,7 @@ describe('Jamilih - toJML', function () {
       class: 'test',
       xmlns: 'http://www.w3.org/1999/xhtml'
     }, ['someContent']];
-    const html = new DOMParser().parseFromString(
+    const html = new window.DOMParser().parseFromString(
       '<div class="test">someContent</div>', 'text/html'
     );
     this.divDOM = html.documentElement.querySelector('.test');

@@ -912,7 +912,7 @@ const jml = function jml (...args) {
         }
         // try {
         // Also fix DOMParser to work with text/html
-        elem = nodes[nodes.length - 1] = new DOMParser().parseFromString(
+        elem = nodes[nodes.length - 1] = new window.DOMParser().parseFromString(
           new XmlSerializer().serializeToString(elem)
           // Mozilla adds XHTML namespace
             .replace(' xmlns="' + NS_HTML + '"', replacer),
@@ -992,7 +992,7 @@ const jml = function jml (...args) {
 jml.toJML = function (dom, config) {
   config = config || {stringOutput: false};
   if (typeof dom === 'string') {
-    dom = new DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
+    dom = new window.DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
   }
 
   const prohibitHTMLOnly = true;

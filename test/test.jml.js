@@ -368,7 +368,7 @@ describe('Jamilih - jml', function () {
     assert.deepEqual(expected.name, result.name, 'Equal `name`');
     assert.deepEqual(expected.value, result.value, 'Equal `value`');
     assert.deepEqual(expected.namespaceURI, result.namespaceURI, 'Equal `namespaceURI`');
-    // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
+    // assert.strictEqual(result.nodeType, window.Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
   });
   it('attribute node (non-namespaced)', () => {
     const attInfo = ['aaa', 'eeefg'];
@@ -380,7 +380,7 @@ describe('Jamilih - jml', function () {
     assert.deepEqual(expected.value, result.value, 'Equal `value`');
     assert.deepEqual(null, result.prefix, 'Equal `prefix`');
     assert.deepEqual(null, result.namespaceURI, 'Equal `namespaceURI`');
-    // assert.strictEqual(result.nodeType, Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
+    // assert.strictEqual(result.nodeType, window.Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
   });
   it('Comments, processing instructions, entities, character references, CDATA', () => {
     const isIE = window.navigator && window.navigator.appName === 'Microsoft Internet Explorer';
@@ -625,7 +625,7 @@ describe('Jamilih - jml', function () {
     if (input2.fireEvent) {
       input2.fireEvent('onchange');
     } else {
-      const ev = new Event('change');
+      const ev = new window.Event('change');
       input2.dispatchEvent(ev);
     }
     xmlTesting.matches(str, 'worked2', 'Single element with attributes and triggered change listener (alongside click) added to body');
@@ -783,7 +783,7 @@ describe('Jamilih - jml', function () {
 
     $('#symInput3')[privateSym].test('arg3');
     jml.sym('#symInput3', privateSym).test('arg3');
-    $('#divSymbolTest').dispatchEvent(new Event('click'));
+    $('#divSymbolTest').dispatchEvent(new window.Event('click'));
     jml.command('#symInput1', 'publicForSym1', 'arg1');
     jml.command('#symInput3', privateSym, 'test', 'arg3');
   });
