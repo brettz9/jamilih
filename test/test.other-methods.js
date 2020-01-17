@@ -10,17 +10,17 @@ describe('Jamilih - Other Methods', function () {
     const br = document.createElement('br');
     const expected = '["br",{"xmlns":"http://www.w3.org/1999/xhtml"}]';
     const result = jml.toJMLString(br);
-    assert.deepEqual(expected, result, 'Empty element with no attributes');
+    assert.deepEqual(result, expected, 'Empty element with no attributes');
   });
   it('jml.toHTML()', () => {
     const expected = '<br>';
     const result = jml.toHTML('br');
-    assert.deepEqual(expected, result, 'Empty element with no attributes');
+    assert.deepEqual(result, expected, 'Empty element with no attributes');
   });
   it('jml.toXML()', () => {
     const expected = '<br xmlns="http://www.w3.org/1999/xhtml" />';
     const result = jml.toXML('br');
-    assert.deepEqual(expected, result, 'Empty element with no attributes');
+    assert.deepEqual(result, expected, 'Empty element with no attributes');
   });
   it('jml.toDOM()', () => {
     const expected = jml('br');
@@ -30,12 +30,12 @@ describe('Jamilih - Other Methods', function () {
   it('jml.toXMLDOMString()', () => {
     const expected = jml.toXMLDOMString('br');
     const result = jml.toXML('br');
-    assert.deepEqual(expected, result, 'Empty element with no attributes');
+    assert.deepEqual(result, expected, 'Empty element with no attributes');
   });
   it('jml.toDOMString()', () => {
     const expected = jml.toDOMString('br');
     const result = jml.toHTML('br');
-    assert.deepEqual(expected, result, 'Empty element with no attributes');
+    assert.deepEqual(result, expected, 'Empty element with no attributes');
   });
   it('jml.weak()', () => {
     const [myMap, elem] = jml.weak({

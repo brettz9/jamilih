@@ -8,13 +8,20 @@ describe('Jamilih - toJML', function () {
       '<div class="test">someContent</div>', 'text/html'
     );
     this.divDOM = html.documentElement.querySelector('.test');
+
+    this.divJamilihEmpty = ['div', {
+      class: 'test',
+      xmlns: 'http://www.w3.org/1999/xhtml'
+    }];
+    this.divDOMEmpty = this.divDOM.cloneNode(true);
+    this.divDOMEmpty.textContent = '';
   });
   it('element with text content', () => {
     const expected = this.divJamilih;
     const result = jml.toJML(this.divDOM);
     assert.deepEqual(
-      expected,
       result,
+      expected,
       'Builds Jamilih array for single element with attribute, ' +
         'namespace declaration, and text content'
     );
@@ -49,7 +56,7 @@ describe('Jamilih - toJML', function () {
       value: 'http://example.com',
       nodeType: 2
     });
-    assert.deepEqual(expected, result, 'Namespaced attribute node to Jamilih');
+    assert.deepEqual(result, expected, 'Namespaced attribute node to Jamilih');
 
     expected = {$attribute: [
       null, 'href', 'http://example.com'
@@ -61,7 +68,7 @@ describe('Jamilih - toJML', function () {
       value: 'http://example.com',
       nodeType: 2
     });
-    assert.deepEqual(expected, result, 'Non-namespaced attribute node to Jamilih');
+    assert.deepEqual(result, expected, 'Non-namespaced attribute node to Jamilih');
 
     result = jml.toJML({
       namespaceURI: null,
@@ -69,7 +76,7 @@ describe('Jamilih - toJML', function () {
       value: 'http://example.com',
       nodeType: undefined
     });
-    assert.deepEqual(expected, result, 'Non-namespaced attribute node to Jamilih');
+    assert.deepEqual(result, expected, 'Non-namespaced attribute node to Jamilih');
   });
   /*
   // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641
@@ -81,7 +88,7 @@ describe('Jamilih - toJML', function () {
     att.value = xlink.slice(-1);
 
     let result = jml.toJML(att);
-    assert.deepEqual(expected, result, 'Namespaced attribute node to Jamilih');
+    assert.deepEqual(result, expected, 'Namespaced attribute node to Jamilih');
 
     xlink[0] = null;
     expected = {$attribute: xlink};
@@ -90,52 +97,52 @@ describe('Jamilih - toJML', function () {
     att.value = xlink.slice(-1);
 
     result = jml.toJML(att);
-    assert.deepEqual(expected, result, 'Non-namespaced attribute node to Jamilih');
+    assert.deepEqual(result, expected, 'Non-namespaced attribute node to Jamilih');
   });
   */
   it('text node', () => {
     const expected = 'text node content';
 
     const result = jml.toJML(document.createTextNode(expected));
-    assert.deepEqual(expected, result, 'Text node to Jamilih');
+    assert.deepEqual(result, expected, 'Text node to Jamilih');
   });
   it('CDATA section', () => {
     const content = 'CDATA <>&\'" content';
     const expected = ['![', content];
     const xml = document.implementation.createDocument('', 'xml', null);
     const result = jml.toJML(xml.createCDATASection(content));
-    assert.deepEqual(expected, result, 'CDATA to Jamilih');
+    assert.deepEqual(result, expected, 'CDATA to Jamilih');
   });
   it('processing instruction', () => {
     const expected = ['?', 'aTarget', 'a processing instruction'];
 
     const result = jml.toJML(document.createProcessingInstruction('aTarget', 'a processing instruction'));
-    assert.deepEqual(expected, result, 'Processing instruction to Jamilih');
+    assert.deepEqual(result, expected, 'Processing instruction to Jamilih');
   });
   it('comment', () => {
     const expected = ['!', 'a comment'];
 
     const result = jml.toJML(document.createComment('a comment'));
-    assert.deepEqual(expected, result, 'Comment to Jamilih');
+    assert.deepEqual(result, expected, 'Comment to Jamilih');
   });
   it('document', () => {
     const expected = {$document: {childNodes: [{$DOCTYPE: {name: 'html'}}, ['html', {xmlns: 'http://www.w3.org/1999/xhtml'}, [['head', [['title', ['a title']]]], ['body']]]]}};
     const doc = document.implementation.createHTMLDocument('a title');
     const result = jml.toJML(doc);
-    assert.deepEqual(expected, result, 'Document node to Jamilih');
+    assert.deepEqual(result, expected, 'Document node to Jamilih');
   });
   it('document type', () => {
     const expected = {$DOCTYPE: {name: 'a-prefix:a-name', publicId: 'a-pub-id', systemId: 'a-sys-id'}};
 
     const result = jml.toJML(document.implementation.createDocumentType('a-prefix:a-name', 'a-pub-id', 'a-sys-id'));
-    assert.deepEqual(expected, result, 'Document type node to Jamilih');
+    assert.deepEqual(result, expected, 'Document type node to Jamilih');
   });
   it('document fragment', () => {
     const expected = {'#': [this.divJamilih]};
     const frag = document.createDocumentFragment();
     frag.append(this.divDOM.cloneNode(true));
     const result = jml.toJML(frag);
-    assert.deepEqual(expected, result, 'Document fragment node to Jamilih');
+    assert.deepEqual(result, expected, 'Document fragment node to Jamilih');
   });
 
   it('bad types', () => {
@@ -264,5 +271,11 @@ describe('Jamilih - toJML', function () {
     } catch (err) {
       expect(err.name).to.equal('INVALID_STATE_ERR');
     }
+  });
+  it('with config', () => {
+    const result = jml.toJML(this.divDOMEmpty, {
+      stripWhitespace: true
+    });
+    assert.deepEqual(result, this.divJamilihEmpty, 'Whitespace-stripped text node to Jamilih');
   });
 });
