@@ -685,8 +685,7 @@ or some recurring item, without the need for a special `map` or `reduce`.
             children array).
         1. A property beginning with `$` has a special purpose and if it begins with `$_`,
             it is a plugin.
-        1. A property `$document` set to an object with properties `childNodes` and, where present, a
-            child object `xmlDeclaration` with properties `version`, `encoding`, and `standAlone`. In place of `childNodes`, one may
+        1. A property `$document` set to an object with properties `childNodes`. In place of `childNodes`, one may
             instead add to any of the array properties, `head` and `body`. One may also add a string `title` property in which case, a `<head>` will be automatically created, with a `<meta charset="utf-8"/>` element (as expected by HTML5) and a `<title>` element, and any additionally supplied `head` array items appended to that `<head>`. If `head`,
             `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
             `<html>` element with the XHTML namespace. If `head` is supplied, a `<meta charset="utf-8">` will also be added as

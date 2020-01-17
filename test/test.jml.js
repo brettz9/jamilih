@@ -417,6 +417,38 @@ describe('Jamilih - jml', function () {
         `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
       );
     }
+    const doc3 = jml({$document: {
+      childNodes: [
+        ['html', {id: 'myHTML'}]
+      ]
+    }});
+    xmlTesting.matchesXMLString(
+      doc3,
+      `<html xmlns="http://www.w3.org/1999/xhtml" id="myHTML"></html>`
+    );
+    const doc4 = jml({$document: {
+      childNodes: [
+        {$DOCTYPE: {name: 'somethingDifferent'}},
+        ['html', {id: 'myHTML'}]
+      ]
+    }});
+    try {
+      xmlTesting.matchesXMLString(
+        doc4,
+        `<!DOCTYPE somethingDifferent>
+<html xmlns="http://www.w3.org/1999/xhtml" id="myHTML"></html>`
+      );
+    } catch (err) {
+      xmlTesting.matchesXMLString(
+        doc4,
+        `<!DOCTYPE somethingDifferent><html xmlns="http://www.w3.org/1999/xhtml" id="myHTML"></html>`
+      );
+    }
+    const doc5 = jml({$document: {
+      childNodes: [
+      ]
+    }});
+    expect(doc5.childNodes.length).to.equal(0);
   });
   it('Event listeners', () => {
     let str;

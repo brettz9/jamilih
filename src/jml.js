@@ -589,15 +589,15 @@ const jml = function jml (...args) {
         // Todo: Conditionally create XML document
         const node = doc.implementation.createHTMLDocument();
         if (attVal.childNodes) {
-          // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-          attVal.childNodes.forEach(_childrenToJML(node));
           // Remove any extra nodes created by createHTMLDocument().
-          let j = attVal.childNodes.length;
+          const j = attVal.childNodes.length;
           while (node.childNodes[j]) {
             const cn = node.childNodes[j];
             cn.remove();
-            j++;
+            // `j` should stay the same as removing will cause node to be present
           }
+          // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
+          attVal.childNodes.forEach(_childrenToJML(node));
         } else {
           if (attVal.$DOCTYPE) {
             const dt = {$DOCTYPE: attVal.$DOCTYPE};

@@ -7,8 +7,11 @@
 - Breaking update: Remove now removed `entities`, `notations`,
   `internalSubset` properties
 - Breaking update: Remove now removed `xmlDeclaration` handling
-- Fix: Throw proper `Error` on undefined child content
+- Fix: Ensure that extra `childNodes` from the default HTML document are
+  overwritten (and completely overwritten) before attempting to add the
+  user's own `childNodes`.
 - Fix: Allow previously undocumented fragment creation to accept children
+- Fix: Throw proper `Error` on undefined child content
 - Fix: Throw for all non-object plugins
 - Enhancement: Allow wrapping a document and inserting nodes
 - Enhancement: Make DOMException polyfill inherit from Error and include
