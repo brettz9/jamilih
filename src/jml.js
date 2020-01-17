@@ -986,17 +986,20 @@ const jml = function jml (...args) {
 * @param {string|HTMLElement} dom If a string, will parse as document
 * @param {PlainObject} [config] Configuration object
 * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string.
+* @param {boolean} [config.reportInvalidState=true] If true (the default), will report invalid state errors
+* @param {boolean} [config.stripWhitespace=false] Strip whitespace for text nodes
 * @returns {JamilihArray|string} Array containing the elements which represent
 * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
 * version of such an object
 */
-jml.toJML = function (dom, config) {
-  config = config || {stringOutput: false};
+jml.toJML = function (dom, {
+  stringOutput = false,
+  reportInvalidState = true,
+  stripWhitespace = false
+} = {}) {
   if (typeof dom === 'string') {
     dom = new window.DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
   }
-
-  const prohibitHTMLOnly = true;
 
   const ret = [];
   let parent = ret;
@@ -1016,9 +1019,8 @@ jml.toJML = function (dom, config) {
         this.name = name;
       }
     }
-    if (prohibitHTMLOnly) {
+    if (reportInvalidState) {
       // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
-      // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
       const e = new DOMException(msg, 'INVALID_STATE_ERR');
       e.code = 11;
       throw e;
@@ -1163,7 +1165,7 @@ jml.toJML = function (dom, config) {
       set({$attribute: [node.namespaceURI, node.name, node.value]});
       break;
     case 3: // TEXT
-      if (config.stripWhitespace && (/^\s+$/u).test(node.nodeValue)) {
+      if (stripWhitespace && (/^\s+$/u).test(node.nodeValue)) {
         set('');
         return;
       }
@@ -1261,7 +1263,7 @@ jml.toJML = function (dom, config) {
 
   parseDOM(dom, {});
 
-  if (config.stringOutput) {
+  if (stringOutput) {
     return JSON.stringify(ret[0]);
   }
   return ret[0];

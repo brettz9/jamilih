@@ -333,4 +333,18 @@ describe('Jamilih - toJML', function () {
     });
     assert.deepEqual(result, expected, 'Not whitespace-only so unstripped text node to Jamilih');
   });
+
+  it('with config (`reportInvalidState`)', function () {
+    const expected = ['?', 'xml', 'something'];
+    const badProcInst = {
+      target: 'xml',
+      data: 'something',
+      nodeType: 7
+    };
+    let procInst;
+    expect(() => {
+      procInst = jml.toJML(badProcInst, {reportInvalidState: false});
+    }).to.not.throw();
+    expect(procInst).to.deep.equal(expected);
+  });
 });

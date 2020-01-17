@@ -4,6 +4,8 @@
 
 - Breaking change: Drop ordered attribute array (objects can be iterated
     now in order)
+- Breaking change: `toJML` will not get defaults with falsey value besides
+  `undefined`
 - Breaking update: Remove now removed `entities`, `notations`,
   `internalSubset` properties
 - Breaking update: Remove now removed `xmlDeclaration` handling
@@ -17,6 +19,7 @@
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes
+- Enhancement: Add config for `toJML` to `reportInvalidState`
 - Enhancement (Errors):
   - Throw proper `TypeError` on undefined child content; throw
     also for `null`.
