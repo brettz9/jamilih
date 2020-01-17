@@ -11,10 +11,11 @@
   overwritten (and completely overwritten) before attempting to add the
   user's own `childNodes`.
 - Fix: Allow previously undocumented fragment creation to accept children
-- Fix: Throw proper `Error` on undefined child content
-- Fix: Throw for all non-object plugins
 - Fix: Ensure `stripWhitespace` on text node returns a text node (that is
   empty)
+- Enhancement: Throw proper `TypeError` on undefined child content; throw
+  also for `null`.
+- Enhancement: Throw for all non-object plugins
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes

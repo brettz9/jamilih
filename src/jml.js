@@ -950,8 +950,8 @@ const jml = function jml (...args) {
       for (let j = 0; j < cl; j++) { // Go through children array container to handle elements
         const childContent = child[j];
         const childContentType = typeof childContent;
-        if (childContent === undefined) {
-          throw new Error('Parent array:' + JSON.stringify(args) + '; child: ' + child + '; index:' + j);
+        if (_isNullish(childContent)) {
+          throw new TypeError('Bad children (parent array: ' + JSON.stringify(args) + '; child: ' + child + '; index:' + j + ')');
         }
         switch (childContentType) {
         // Todo: determine whether null or function should have special handling or be converted to text

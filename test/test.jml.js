@@ -597,6 +597,20 @@ describe('Jamilih - jml', function () {
       );
     }
   });
+  it('throws with `undefined` child nodes', () => {
+    expect(() => {
+      jml('div', [
+        undefined
+      ]);
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; child: ; index:0)');
+  });
+  it('throws with `null` child nodes', () => {
+    expect(() => {
+      jml('div', [
+        null
+      ]);
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; child: ; index:0)');
+  });
   it('Event listeners', () => {
     let str;
     const input = jml('input', {
