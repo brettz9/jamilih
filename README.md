@@ -1,8 +1,19 @@
 [![Build Status](https://img.shields.io/travis/brettz9/jamilih.svg)](https://travis-ci.org/brettz9/jamilih)
 [![Dependencies](https://img.shields.io/david/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih)
 [![devDependencies](https://img.shields.io/david/dev/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih?type=dev)
-[![npm](http://img.shields.io/npm/v/jamilih.svg)](https://www.npmjs.com/package/jamilih)
+[![npm](https://img.shields.io/npm/v/jamilih.svg)](https://www.npmjs.com/package/jamilih)
 [![License](https://img.shields.io/npm/l/jamilih.svg)](LICENSE-MIT.txt)
+
+[![testing badge](https://raw.githubusercontent.com/brettz9/jamilih/master/badges/tests-badge.svg?sanitize=true)](badges/tests-badge.svg)
+[![coverage badge](https://raw.githubusercontent.com/brettz9/jamilih/master/badges/coverage-badge.svg?sanitize=true)](badges/coverage-badge.svg)
+
+[![Known Vulnerabilities](https://snyk.io/test/github/brettz9/jamilih/badge.svg)](https://snyk.io/test/github/brettz9/jamilih)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/brettz9/jamilih.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/brettz9/jamilih/alerts)
+[![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/brettz9/jamilih.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/brettz9/jamilih/context:javascript)
+
+[![License](https://img.shields.io/npm/l/jamilih.svg)](LICENSE-MIT.txt)
+
+[![issuehunt-to-marktext](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/brettz9/jamilih)
 
 # Jamilih
 
@@ -743,7 +754,7 @@ or some recurring item, without the need for a special `map` or `reduce`.
 
 ## Schema
 
-A tentative [JSON Schema](http://json-schema.org/) is available
+A tentative [JSON Schema](https://json-schema.org/) is available
 [here](jamilih.jsonschema).
 
 ## Design Rationale

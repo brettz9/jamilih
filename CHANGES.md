@@ -29,6 +29,7 @@
   - Throw if passing in `null` in non-final position
   - Make `DOMException` polyfill inherit from `Error` and include
     message and `name`
+- Docs: Add testing and coverage badges
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
 - Testing: Coverage
