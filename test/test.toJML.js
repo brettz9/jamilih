@@ -84,4 +84,56 @@ describe('Jamilih - toJML', function () {
     const result = jml.toJML(frag);
     assert.deepEqual(expected, result, 'Document fragment node to Jamilih');
   });
+
+  it('bad types', () => {
+    expect(() => {
+      jml.toJML({});
+    }).to.throw(TypeError, 'Not an XML type', 'Not a node type');
+    expect(() => {
+      jml.toJML({nodeType: 100});
+    }).to.throw(TypeError, 'Not an XML type', 'Not a valid node type');
+    expect(() => {
+      jml.toJML({nodeType: 6});
+    }).to.throw(TypeError, 'Not an XML type', 'Entities no longer part of DOM');
+    expect(() => {
+      jml.toJML({nodeType: 12});
+    }).to.throw(TypeError, 'Not an XML type', 'Notations no longer part of DOM');
+  });
+
+  it('Bad text node', () => {
+    const badElement = {
+      nodeValue: '\u0000',
+      nodeType: 3
+    };
+    try {
+      jml.toJML(badElement);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+  });
+
+  it('bad document type', () => {
+    let badDoctype = {
+      publicId: '\u0000',
+      nodeType: 10
+    };
+    try {
+      jml.toJML(badDoctype);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+
+    badDoctype = {
+      systemId: `ab'"`,
+      nodeType: 10
+    };
+    try {
+      jml.toJML(badDoctype);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+  });
 });

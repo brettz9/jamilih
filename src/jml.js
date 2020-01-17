@@ -1002,17 +1002,23 @@ jml.toJML = function (dom, config) {
   let parentIdx = 0;
 
   /**
-   *
+   * @param {string} msg
    * @throws {DOMException}
    * @returns {void}
    */
-  function invalidStateError () { // These are probably only necessary if working with text/html
-    // eslint-disable-next-line no-shadow
-    class DOMException {}
+  function invalidStateError (msg) { // These are probably only necessary if working with text/html
+    // eslint-disable-next-line no-shadow, unicorn/custom-error-definition
+    class DOMException extends Error {
+      constructor (message, name) {
+        super(message);
+        // eslint-disable-next-line unicorn/custom-error-definition
+        this.name = name;
+      }
+    }
     if (prohibitHTMLOnly) {
       // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
       // Since we can't instantiate without this (at least in Mozilla), this mimicks at least (good idea?)
-      const e = new DOMException();
+      const e = new DOMException(msg, 'INVALID_STATE_ERR');
       e.code = 11;
       throw e;
     }
@@ -1026,7 +1032,7 @@ jml.toJML = function (dom, config) {
    */
   function addExternalID (obj, node) {
     if (node.systemId.includes('"') && node.systemId.includes("'")) {
-      invalidStateError();
+      invalidStateError('systemId cannot have both single and double quotes.');
     }
     const {publicId, systemId} = node;
     if (systemId) {
@@ -1081,16 +1087,16 @@ jml.toJML = function (dom, config) {
 
     /*
     if ((node.prefix && node.prefix.includes(':')) || (node.localName && node.localName.includes(':'))) {
-      invalidStateError();
+      invalidStateError('Prefix cannot have a colon');
     }
     */
 
     const type = 'nodeType' in node ? node.nodeType : null;
     namespaces = {...namespaces};
 
-    const xmlChars = /([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
+    const xmlChars = /^([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
     if ([2, 3, 4, 7, 8].includes(type) && !xmlChars.test(node.nodeValue)) {
-      invalidStateError();
+      invalidStateError('Node has bad XML character value');
     }
 
     let children, start, tmpParent, tmpParentIdx;
@@ -1110,6 +1116,7 @@ jml.toJML = function (dom, config) {
       parentIdx = tmpParentIdx;
       parentIdx++; // Increment index in parent container of this element
     }
+
     switch (type) {
     case 1: { // ELEMENT
       setTemp();
@@ -1160,7 +1167,7 @@ jml.toJML = function (dom, config) {
       break;
     case 4: // CDATA
       if (node.nodeValue.includes(']]' + '>')) {
-        invalidStateError();
+        invalidStateError('CDATA cannot end with closing ]]>');
       }
       set(['![', node.nodeValue]);
       break;
@@ -1169,23 +1176,23 @@ jml.toJML = function (dom, config) {
       break;
     case 7: // PROCESSING INSTRUCTION
       if ((/^xml$/iu).test(node.target)) {
-        invalidStateError();
+        invalidStateError('Processing instructions cannot be "xml".');
       }
       if (node.target.includes('?>')) {
-        invalidStateError();
+        invalidStateError('Processing instruction targets cannot include ?>');
       }
       if (node.target.includes(':')) {
-        invalidStateError();
+        invalidStateError('The processing instruction target cannot include ":"');
       }
       if (node.data.includes('?>')) {
-        invalidStateError();
+        invalidStateError('Processing instruction data cannot include ?>');
       }
       set(['?', node.target, node.data]); // Todo: Could give option to attempt to convert value back into object if has pseudo-attributes
       break;
     case 8: // COMMENT
       if (node.nodeValue.includes('--') ||
         (node.nodeValue.length && node.nodeValue.lastIndexOf('-') === node.nodeValue.length - 1)) {
-        invalidStateError();
+        invalidStateError('Comments cannot include --');
       }
       set(['!', node.nodeValue]);
       break;
@@ -1204,7 +1211,7 @@ jml.toJML = function (dom, config) {
 
       children = node.childNodes;
       if (!children.length) {
-        invalidStateError();
+        invalidStateError('Documents must have a child node');
       }
       // set({$xmlDocument: []}); // doc.implementation.createDocument // Todo: use this conditionally
 
@@ -1221,7 +1228,7 @@ jml.toJML = function (dom, config) {
       start = {$DOCTYPE: {name: node.name}};
       const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
       if (!pubIdChar.test(node.publicId)) {
-        invalidStateError();
+        invalidStateError('A publicId must have valid characters.');
       }
       addExternalID(start.$DOCTYPE, node);
       // Fit in internal subset along with entities?: probably don't need as these would only differ if from DTD, and we're not rebuilding the DTD

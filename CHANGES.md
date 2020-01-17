@@ -10,6 +10,8 @@
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Throw for all non-object plugins
 - Enhancement: Allow wrapping a document and inserting nodes
+- Enhancement: Make DOMException polyfill inherit from Error and include
+  message and `name`
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
 - Testing: Coverage
