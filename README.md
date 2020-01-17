@@ -283,6 +283,11 @@ will not work properly in the `innerHTML` build (they will use
 const div = jml('div', [
     ['!', 'a comment'],
     ['?', 'customPI', 'a processing instruction'],
+    // Or with an object of "attributes" (like `xml-stylesheet` `href`)
+    ['?', 'customPIB', {
+      att1: 'val 1',
+      att2: 'val 2"'
+    }],
     ['![', '&test <CDATA> content'],
     ['&', 'copy'],
     ['#', '1234'],

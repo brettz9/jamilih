@@ -28,11 +28,11 @@ Other Todos:
 0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
 */
 
-/* istanbul ignore next */
+// istanbul ignore next
 let win = typeof window !== 'undefined' && window;
-/* istanbul ignore next */
+// istanbul ignore next
 let doc = typeof document !== 'undefined' && document;
-/* istanbul ignore next */
+// istanbul ignore next
 let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
 
 // STATIC PROPERTIES
@@ -120,11 +120,11 @@ function _getHTMLNodeName (node) {
 */
 function _applyAnyStylesheet (node) {
   // Only used in IE
-  /* istanbul ignore else */
+  // istanbul ignore else
   if (!doc.createStyleSheet) {
     return;
   }
-  /* istanbul ignore next */
+  // istanbul ignore next
   if (_getHTMLNodeName(node) === 'style') { // IE
     const ss = doc.createStyleSheet(); // Create a stylesheet to actually do something useful
     ss.cssText = node.cssText;
@@ -145,7 +145,7 @@ function _appendNode (parent, child) {
   const childName = _getHTMLNodeName(child);
 
   // IE only
-  /* istanbul ignore if */
+  // istanbul ignore if
   if (doc.createStyleSheet) {
     if (parentName === 'script') {
       parent.text = child.nodeValue;
@@ -163,7 +163,7 @@ function _appendNode (parent, child) {
   try {
     parent.append(child); // IE9 is now ok with this
   } catch (e) {
-    /* istanbul ignore next */
+    // istanbul ignore next
     if (parentName === 'select' && childName === 'option') {
       try { // Since this is now DOM Level 4 standard behavior (and what IE7+ can handle), we try it first
         parent.add(child);
@@ -172,7 +172,7 @@ function _appendNode (parent, child) {
       }
       return;
     }
-    /* istanbul ignore next */
+    // istanbul ignore next
     throw e;
   }
 }
@@ -487,7 +487,7 @@ const jml = function jml (...args) {
           }
         }
         break;
-      } case 'is': { // Not yet supported in browsers
+      } case 'is': { // Currently only in Chrome
         // Handled during element creation
         break;
       } case '$custom': {
@@ -879,15 +879,15 @@ const jml = function jml (...args) {
       default: { // An element
         elStr = arg;
         const atts = args[i + 1];
-        // Todo: Fix this to depend on XML/config, not availability of methods
         if (_getType(atts) === 'object' && atts.is) {
           const {is} = atts;
+          // istanbul ignore else
           if (doc.createElementNS) {
             elem = doc.createElementNS(NS_HTML, elStr, {is});
           } else {
             elem = doc.createElement(elStr, {is});
           }
-        } else if (doc.createElementNS) {
+        } else /* istanbul ignore else */ if (doc.createElementNS) {
           elem = doc.createElementNS(NS_HTML, elStr);
         } else {
           elem = doc.createElement(elStr);
@@ -1415,7 +1415,7 @@ function glue (jmlArray, glu) {
   }, []).slice(0, -1);
 }
 
-/* istanbul ignore next */
+// istanbul ignore next
 let body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 
 const nbsp = '\u00A0'; // Very commonly needed in templates

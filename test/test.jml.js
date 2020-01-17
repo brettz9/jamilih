@@ -291,6 +291,10 @@ describe('Jamilih - jml', function () {
       jml('div', [
         ['!', 'a comment'],
         ['?', 'customPI', 'a processing instruction'],
+        ['?', 'customPIB', {
+          att1: 'val 1',
+          att2: 'val 2"'
+        }],
         ['&', 'copy'],
         ['#', '1234'],
         ['#x', 'ab3'],
@@ -301,6 +305,10 @@ describe('Jamilih - jml', function () {
       // Any way to overcome the IE problem with pseudo-processing instructions?
       (isIE ? '!--' : '') +
       '?customPI a processing instruction?' +
+      (isIE ? '--' : '') +
+      '><' +
+      (isIE ? '!--' : '') +
+      '?customPIB att1="val 1" att2="val 2&quot;"?' +
       (isIE ? '--' : '') +
       '>\u00A9\u04D2\u0AB3&amp;test &lt;CDATA&gt; content</div>',
       'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
