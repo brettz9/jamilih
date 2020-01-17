@@ -1099,7 +1099,7 @@ jml.toJML = function (dom, config) {
       invalidStateError('Node has bad XML character value');
     }
 
-    let children, start, tmpParent, tmpParentIdx;
+    let tmpParent, tmpParentIdx;
 
     /**
      * @returns {void}
@@ -1125,7 +1125,7 @@ jml.toJML = function (dom, config) {
       setChildren(); // Build child array since elements are, except at the top level, encapsulated in arrays
       set(nodeName);
 
-      start = {};
+      const start = {};
       let hasNamespaceDeclaration = false;
 
       if (namespaces[node.prefix || ''] !== node.namespaceURI) {
@@ -1146,10 +1146,10 @@ jml.toJML = function (dom, config) {
         set(start);
       }
 
-      children = node.childNodes;
-      if (children.length) {
+      const {childNodes} = node;
+      if (childNodes.length) {
         setChildren(); // Element children array container
-        [...children].forEach(function (childNode) {
+        [...childNodes].forEach(function (childNode) {
           parseDOM(childNode, namespaces);
         });
       }
@@ -1200,22 +1200,18 @@ jml.toJML = function (dom, config) {
       setTemp();
       const docObj = {$document: {childNodes: []}};
 
-      if (config.xmlDeclaration) {
-        docObj.$document.xmlDeclaration = {version: doc.xmlVersion, encoding: doc.xmlEncoding, standAlone: doc.xmlStandalone};
-      }
-
       set(docObj); // doc.implementation.createHTMLDocument
 
       // Set position to fragment's array children
       setObj('$document', 'childNodes');
 
-      children = node.childNodes;
-      if (!children.length) {
+      const {childNodes} = node;
+      if (!childNodes.length) {
         invalidStateError('Documents must have a child node');
       }
       // set({$xmlDocument: []}); // doc.implementation.createDocument // Todo: use this conditionally
 
-      [...children].forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
+      [...childNodes].forEach(function (childNode) { // Can't just do documentElement as there may be doctype, comments, etc.
         // No need for setChildren, as we have already built the container array
         parseDOM(childNode, namespaces);
       });
@@ -1225,7 +1221,7 @@ jml.toJML = function (dom, config) {
       setTemp();
 
       // Can create directly by doc.implementation.createDocumentType
-      start = {$DOCTYPE: {name: node.name}};
+      const start = {$DOCTYPE: {name: node.name}};
       const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
       if (!pubIdChar.test(node.publicId)) {
         invalidStateError('A publicId must have valid characters.');
@@ -1236,7 +1232,7 @@ jml.toJML = function (dom, config) {
 
       resetTemp();
       break;
-    } case 11: // DOCUMENT FRAGMENT
+    } case 11: { // DOCUMENT FRAGMENT
       setTemp();
 
       set({'#': []});
@@ -1244,15 +1240,15 @@ jml.toJML = function (dom, config) {
       // Set position to fragment's array children
       setObj('#');
 
-      children = node.childNodes;
-      [...children].forEach(function (childNode) {
+      const {childNodes} = node;
+      [...childNodes].forEach(function (childNode) {
         // No need for setChildren, as we have already built the container array
         parseDOM(childNode, namespaces);
       });
 
       resetTemp();
       break;
-    default:
+    } default:
       throw new TypeError('Not an XML type');
     }
   }

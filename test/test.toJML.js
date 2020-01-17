@@ -160,6 +160,19 @@ describe('Jamilih - toJML', function () {
     }
   });
 
+  it('Bad document', () => {
+    const badDoc = {
+      childNodes: [],
+      nodeType: 9
+    };
+    try {
+      jml.toJML(badDoc);
+      assert.ok(false);
+    } catch (err) {
+      expect(err.name).to.equal('INVALID_STATE_ERR');
+    }
+  });
+
   it('Bad processing instructions', () => {
     let badProcInst = {
       target: 'xml',

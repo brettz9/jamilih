@@ -6,6 +6,7 @@
     now in order)
 - Breaking update: Remove now removed `entities`, `notations`,
   `internalSubset` properties
+- Breaking update: Remove now removed `xmlDeclaration` handling
 - Fix: Throw proper `Error` on undefined child content
 - Fix: Allow previously undocumented fragment creation to accept children
 - Fix: Throw for all non-object plugins
