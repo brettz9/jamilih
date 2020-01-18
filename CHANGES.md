@@ -19,6 +19,7 @@
 - Fix: Underdocumented named `$map` had not been working properly
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
+- Enhancement: With `$define` array allow absent 2nd (options) argument
 - Enhancement: Allow wrapping a document and inserting nodes
 - Enhancement: Allow wrapping of customized built-in
 - Enhancement: Add config for `toJML` to `reportInvalidState`

@@ -1271,7 +1271,7 @@ describe('Jamilih - jml', function () {
       //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
       const myButton2 = jml('button', {
         id: 'myButton2',
-        is: 'fancy-button',
+        is: 'fancy-button2',
         $define: {
           test () {
             return this.id;
@@ -1290,7 +1290,7 @@ describe('Jamilih - jml', function () {
             return this.id;
           }
         },
-        is: 'fancy-button'
+        is: 'fancy-button2'
       }, body);
       xmlTesting.matches(
         myButton3.test(),
@@ -1340,6 +1340,47 @@ describe('Jamilih - jml', function () {
         'myButton5'
       );
     }
+  });
+  it('Custom Elements - 3', function () {
+    const myButton6 = jml('x-buttona', {
+      id: 'myButton6',
+      $define: [{
+        test () {
+          return this.id;
+        }
+      }]
+    }, body);
+    xmlTesting.matches(
+      myButton6.test(),
+      'myButton6'
+    );
+
+    const myButton7 = jml('x-buttonb', {
+      id: 'myButton7',
+      $define: [{
+        test () {
+          return this.id;
+        }
+      }]
+    }, body);
+    xmlTesting.matches(
+      myButton7.test(),
+      'myButton7'
+    );
+
+    const myButton8 = jml('button', {
+      id: 'myButton8',
+      is: 'x-button2',
+      $define: [{
+        test () {
+          return this.id;
+        }
+      }, {extends: 'button'}]
+    }, body);
+    xmlTesting.matches(
+      myButton8.test(),
+      'myButton8'
+    );
   });
   it('$custom properties', () => {
     const mySelect = jml('select', {

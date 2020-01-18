@@ -542,10 +542,8 @@ const jml = function jml (...args) {
               //  that may be the only reason to have a string here which
               //  differs from the `localName` anyways
               options = {extends: options};
-            } else if (!{}.hasOwnProperty.call(options, 'extends')) {
+            } else if (options && !{}.hasOwnProperty.call(options, 'extends')) {
               mixin = options;
-            } else {
-              console.log('uncovered3');
             }
             if (typeof cnstrctr === 'object') {
               mixin = cnstrctr;
