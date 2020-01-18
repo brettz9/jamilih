@@ -1,3 +1,4 @@
 module.exports = {
-  exclude: 'test/*/**'
+  exclude: 'test/*/**',
+  reporter: 'mocha-multi-reporters'
 };
