@@ -990,6 +990,46 @@ describe('Jamilih - jml', function () {
           ['p', ['Other content']]
         ], body);
       }, null, 'Adding Shadow DOM (via `content`) does not throw');
+
+      assert.doesNotThrow(function () {
+        jml('section', {
+          id: 'myElem2',
+          $shadow: {
+            open: [
+              ['style', [`
+                :host {color: red;}
+                ::slotted(p) {color: blue;}
+              `]],
+              ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+              ['h2', ['Heading level 2']],
+              ['slot', ['DEFAULT CONTENT HERE']]
+            ]
+          }
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via `open` content) does not throw');
+
+      assert.doesNotThrow(function () {
+        jml('section', {
+          id: 'myElem2',
+          $shadow: {
+            closed: [
+              ['style', [`
+                :host {color: red;}
+                ::slotted(p) {color: blue;}
+              `]],
+              ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+              ['h2', ['Heading level 2']],
+              ['slot', ['DEFAULT CONTENT HERE']]
+            ]
+          }
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via `closed` content) does not throw');
     }
   });
   it('Custom elements', () => {
