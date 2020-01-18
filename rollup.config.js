@@ -73,9 +73,9 @@ export default [{
     })
   ]
 }, {
-  input: 'src/jml-polyglot.js',
+  input: 'src/jml-jsdom.js',
   output: {
-    file: 'dist/jml-polyglot.js',
+    file: 'dist/jml-jsdom.js',
     format: 'cjs',
     name: 'jml',
     exports: 'named'

@@ -38,7 +38,7 @@
     "cover 100%"
   ],
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "main": "dist/jml-polyglot.js",
+  "main": "dist/jml-jsdom.js",
   "browser": "dist/jml.js",
   "module": "dist/jml-es.js",
   "repository": {

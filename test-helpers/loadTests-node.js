@@ -1,6 +1,6 @@
 /* eslint-env node */
 import {assert, expect} from 'chai';
-import {jml, glue, nbsp, $, $$, body} from '../src/jml-polyglot.js';
+import {jml, glue, nbsp, $, $$, body} from '../src/jml-jsdom.js';
 
 global.assert = assert;
 global.expect = expect;

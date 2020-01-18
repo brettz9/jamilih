@@ -9,6 +9,9 @@
 - Breaking update: Remove now removed `entities`, `notations`,
   `internalSubset` properties
 - Breaking update: Remove now removed `xmlDeclaration` handling
+- Breaking change: Switch name of polyglot file to `dist/jml-jsdom.js`
+  (pointed to in `main` so should not be breaking unless hard-coding the
+  path).
 - Fix: Ensure that extra `childNodes` from the default HTML document are
   overwritten (and completely overwritten) before attempting to add the
   user's own `childNodes`.

@@ -836,12 +836,31 @@
               break;
             }
 
+          /* istanbul ignore next */
+
           case '$define':
             {
               var localName = elem.localName.toLowerCase(); // Note: customized built-ins sadly not working yet
 
-              var customizedBuiltIn = !localName.includes('-');
-              var def = customizedBuiltIn ? elem.getAttribute('is') : localName;
+              var customizedBuiltIn = !localName.includes('-'); // We check attribute in case this is a preexisting DOM element
+              // const {is} = atts;
+
+              var is;
+
+              if (customizedBuiltIn) {
+                is = elem.getAttribute('is');
+
+                if (!is) {
+                  if (!{}.hasOwnProperty.call(atts, 'is')) {
+                    throw new TypeError('Expected `is` with `$define` on built-in');
+                  }
+
+                  elem.setAttribute('is', atts.is);
+                  is = atts.is;
+                }
+              }
+
+              var def = customizedBuiltIn ? is : localName;
 
               if (customElements.get(def)) {
                 break;
@@ -880,7 +899,7 @@
                 }(baseClass);
               };
 
-              var cnstrctr, options, prototype;
+              var cnstrctr, options, mixin;
 
               if (Array.isArray(attVal)) {
                 if (attVal.length <= 2) {
@@ -890,22 +909,25 @@
                   options = _attVal[1];
 
                   if (typeof options === 'string') {
+                    // Todo: Allow creating a definition without using it;
+                    //  that may be the only reason to have a string here which
+                    //  differs from the `localName` anyways
                     options = {
                       "extends": options
                     };
-                  } else if (!{}.hasOwnProperty.call(options, 'extends')) {
-                    prototype = options;
+                  } else if (options && !{}.hasOwnProperty.call(options, 'extends')) {
+                    mixin = options;
                   }
 
                   if (_typeof(cnstrctr) === 'object') {
-                    prototype = cnstrctr;
+                    mixin = cnstrctr;
                     cnstrctr = getConstructor();
                   }
                 } else {
                   var _attVal2 = _slicedToArray(attVal, 3);
 
                   cnstrctr = _attVal2[0];
-                  prototype = _attVal2[1];
+                  mixin = _attVal2[1];
                   options = _attVal2[2];
 
                   if (typeof options === 'string') {
@@ -917,7 +939,7 @@
               } else if (typeof attVal === 'function') {
                 cnstrctr = attVal;
               } else {
-                prototype = attVal;
+                mixin = attVal;
                 cnstrctr = getConstructor();
               }
 
@@ -931,11 +953,18 @@
                 };
               }
 
-              if (prototype) {
-                Object.assign(cnstrctr.prototype, prototype);
-              }
+              if (mixin) {
+                Object.entries(mixin).forEach(function (_ref) {
+                  var _ref2 = _slicedToArray(_ref, 2),
+                      methodName = _ref2[0],
+                      method = _ref2[1];
 
-              customElements.define(def, cnstrctr, customizedBuiltIn ? options : undefined);
+                  cnstrctr.prototype[methodName] = method;
+                });
+              } // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
+
+
+              customElements.define(def, cnstrctr, _typeof(options) === 'object' ? options : undefined);
               break;
             }
 
@@ -1553,13 +1582,13 @@
 
 
   jml.toJML = function (dom) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        _ref$stringOutput = _ref.stringOutput,
-        stringOutput = _ref$stringOutput === void 0 ? false : _ref$stringOutput,
-        _ref$reportInvalidSta = _ref.reportInvalidState,
-        reportInvalidState = _ref$reportInvalidSta === void 0 ? true : _ref$reportInvalidSta,
-        _ref$stripWhitespace = _ref.stripWhitespace,
-        stripWhitespace = _ref$stripWhitespace === void 0 ? false : _ref$stripWhitespace;
+    var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref3$stringOutput = _ref3.stringOutput,
+        stringOutput = _ref3$stringOutput === void 0 ? false : _ref3$stringOutput,
+        _ref3$reportInvalidSt = _ref3.reportInvalidState,
+        reportInvalidState = _ref3$reportInvalidSt === void 0 ? true : _ref3$reportInvalidSt,
+        _ref3$stripWhitespace = _ref3.stripWhitespace,
+        stripWhitespace = _ref3$stripWhitespace === void 0 ? false : _ref3$stripWhitespace;
 
     if (typeof dom === 'string') {
       dom = new window.DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element

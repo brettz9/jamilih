@@ -1,3 +1,7 @@
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function (obj) {
@@ -2200,7 +2204,7 @@ jml.setDocument = function (docum) {
   doc = docum;
 
   if (docum && docum.body) {
-    body = docum.body;
+    exports.body = docum.body;
   }
 };
 /**
@@ -2252,9 +2256,28 @@ function glue(jmlArray, glu) {
 } // istanbul ignore next
 
 
-var body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
+exports.body = doc && doc.body; // eslint-disable-line import/no-mutable-exports
 
 var nbsp = "\xA0"; // Very commonly needed in templates
 
-export default jml;
-export { $, $$, body, glue, jml, nbsp };
+/* eslint-env node */
+/* istanbul ignore else */
+
+if (typeof process !== 'undefined') {
+  // import {JSDOM} from 'jsdom';
+  var _require = require('jsdom'),
+      JSDOM = _require.JSDOM; // eslint-disable-line global-require
+
+
+  var win$1 = new JSDOM('').window;
+  jml.setWindow(win$1);
+  jml.setDocument(win$1.document);
+  jml.setXMLSerializer(win$1.XMLSerializer);
+}
+
+exports.$ = $;
+exports.$$ = $$;
+exports.default = jml;
+exports.glue = glue;
+exports.jml = jml;
+exports.nbsp = nbsp;
