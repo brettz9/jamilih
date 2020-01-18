@@ -1433,8 +1433,8 @@ describe('Jamilih - jml', function () {
         'Custom element with invoked constructor with `this`'
       );
       xmlTesting.matches(
-        myButton9.test(),
-        'myButton9'
+        myButton10.test(),
+        'myButton10'
       );
     }
   });
