@@ -508,6 +508,13 @@ version of these methods `jml.Map` and `jml.WeakMap`).
 
 (TODO: Adapt examples from [tests](tests/jml-test.js))
 
+## Commands
+
+Commands are a convenience to invoke a function (optionally with arguments)
+associated with an element via symbol or map.
+
+(TODO: Adapt examples from [tests](tests/jml-test.js))
+
 ## Custom elements
 
 (Note: This is not currently supported in jsdom or

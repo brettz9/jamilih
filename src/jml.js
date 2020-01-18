@@ -1354,23 +1354,52 @@ class JamilihWeakMap extends WeakMap {
 jml.Map = JamilihMap;
 jml.WeakMap = JamilihWeakMap;
 
+/**
+* @typedef {GenericArray} MapAndElementArray
+* @property {JamilihWeakMap|JamilihMap} 0
+* @property {Element} 1
+*/
+
+/**
+ * @param {GenericObject} obj
+ * @param {...JamilihArray} args
+ * @returns {MapAndElementArray}
+ */
 jml.weak = function (obj, ...args) {
   const map = new JamilihWeakMap();
   const elem = jml({$map: [map, obj]}, ...args);
   return [map, elem];
 };
 
+/**
+ * @param {any} obj
+ * @param {...JamilihArray} args
+ * @returns {MapAndElementArray}
+ */
 jml.strong = function (obj, ...args) {
   const map = new JamilihMap();
   const elem = jml({$map: [map, obj]}, ...args);
   return [map, elem];
 };
 
+/**
+ * @param {string|Element} elem If a string, will be interpreted as a selector
+ * @param {symbol|string} sym If a string, will be used with `Symbol.for`
+ * @returns {any} The value associated with the symbol
+ */
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
   elem = typeof elem === 'string' ? $(elem) : elem;
   return elem[typeof sym === 'symbol' ? sym : Symbol.for(sym)];
 };
 
+/**
+ * @param {string|Element} elem If a string, will be interpreted as a selector
+ * @param {symbol|string|Map|WeakMap} symOrMap If a string, will be used with `Symbol.for`
+ * @param {string|any} methodName Can be `any` if the symbol or map directly
+ *   points to a function (it is then used as the first argument).
+ * @param {any[]} args
+ * @returns {any}
+ */
 jml.command = function (elem, symOrMap, methodName, ...args) {
   elem = typeof elem === 'string' ? $(elem) : elem;
   let func;
@@ -1389,25 +1418,47 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
   // return func[methodName].call(elem, ...args);
 };
 
+/**
+ * @param {Window} wind
+ * @returns {void}
+ */
 jml.setWindow = (wind) => {
   win = wind;
 };
+/**
+ * Also updates `body`
+ * @param {Document} docum
+ * @returns {void}
+ */
 jml.setDocument = (docum) => {
   doc = docum;
   if (docum && docum.body) {
     ({body} = docum);
   }
 };
+/**
+ * @param {XMLSerializer} xmls
+ * @returns {void}
+ */
 jml.setXMLSerializer = (xmls) => {
   XmlSerializer = xmls;
 };
 
+/**
+ * @returns {Window}
+ */
 jml.getWindow = () => {
   return win;
 };
+/**
+ * @returns {Document}
+ */
 jml.getDocument = () => {
   return doc;
 };
+/**
+ * @returns {XMLSerializer}
+ */
 jml.getXMLSerializer = () => {
   return XmlSerializer;
 };
