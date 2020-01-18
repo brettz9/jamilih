@@ -1164,10 +1164,9 @@ describe('Jamilih - jml', function () {
         '<button xmlns="http://www.w3.org/1999/xhtml" id="myButton"></button>'
       );
     } catch (err) {
-      // Firefox
       xmlTesting.matchesXMLString(
         myButton,
-        '<button xmlns="http://www.w3.org/1999/xhtml" id="myButton" is="fancy-button"></button>'
+        '<button is="fancy-button" xmlns="http://www.w3.org/1999/xhtml" id="myButton"></button>'
       );
     }
 
@@ -1270,8 +1269,8 @@ describe('Jamilih - jml', function () {
     } else {
       // Todo: If customized built-in elements implemented, ensure testing
       //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
-      /* const myButton2 = */ jml('button', {
-        id: 'myButton',
+      const myButton2 = jml('button', {
+        id: 'myButton2',
         is: 'fancy-button',
         $define: {
           test () {
@@ -1280,9 +1279,34 @@ describe('Jamilih - jml', function () {
         }
       }, body);
       xmlTesting.matches(
-        myButton.test(),
-        'myButton'
+        myButton2.test(),
+        'myButton2'
       );
+
+      const myButton3 = jml('button', {
+        id: 'myButton3',
+        $define: {
+          test () {
+            return this.id;
+          }
+        },
+        is: 'fancy-button'
+      }, body);
+      xmlTesting.matches(
+        myButton3.test(),
+        'myButton3'
+      );
+
+      expect(() => {
+        jml('button', {
+          id: 'myButton3',
+          $define: {
+            test () {
+              return this.id;
+            }
+          }
+        }, body);
+      }).to.throw(TypeError, 'Expected `is` with `$define`');
     }
   });
   it('$custom properties', () => {

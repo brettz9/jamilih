@@ -488,8 +488,7 @@ const jml = function jml (...args) {
         }
         break;
       } case 'is': { // Currently only in Chrome
-        // Handled during element creation, but add for detection
-        elem.setAttribute('is', attVal);
+        // Handled during element creation
         break;
       } case '$custom': {
         Object.assign(elem, attVal);
@@ -501,7 +500,17 @@ const jml = function jml (...args) {
 
         // We check attribute in case this is a preexisting DOM element
         // const {is} = atts;
-        const is = elem.getAttribute('is');
+        let is;
+        if (customizedBuiltIn) {
+          is = elem.getAttribute('is');
+          if (!is) {
+            if (!{}.hasOwnProperty.call(atts, 'is')) {
+              throw new TypeError('Expected `is` with `$define`');
+            }
+            elem.setAttribute('is', atts.is);
+            is = atts.is;
+          }
+        }
 
         const def = customizedBuiltIn ? is : localName;
         if (customElements.get(def)) {
