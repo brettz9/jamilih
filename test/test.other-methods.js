@@ -115,12 +115,12 @@ describe('Jamilih extras', function () {
     div = jml('div', {id: 'extraHolder'}, body);
   });
   it('$', function () {
-    body.append(jml('br'), jml('br'));
+    body.querySelector('#extraHolder').append(jml('br'), jml('br'));
     const br = $('br');
     expect(br.localName).to.equal('br');
   });
   it('$$', function () {
-    body.append(jml('br'), jml('br'));
+    body.querySelector('#extraHolder').append(jml('br'), jml('br'));
     const brs = $$('br');
     expect(brs.length).to.equal(2);
   });
