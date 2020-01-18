@@ -1306,7 +1306,39 @@ describe('Jamilih - jml', function () {
             }
           }
         }, body);
-      }).to.throw(TypeError, 'Expected `is` with `$define`');
+      }).to.throw(TypeError, 'Expected `is` with `$define` on built-in');
+    }
+  });
+  it('Custom elements-2', function () {
+    if (!window.customElements) {
+      xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
+    } else {
+      const myButton4 = jml('x-button', {
+        id: 'myButton4',
+        $define: [{
+          test () {
+            return this.id;
+          }
+        }, window.HTMLButtonElement]
+      }, body);
+      xmlTesting.matches(
+        myButton4.test(),
+        'myButton4'
+      );
+
+      const myButton5 = jml('button', {
+        id: 'myButton5',
+        is: 'x-buttony',
+        $define: [{
+          test () {
+            return this.id;
+          }
+        }, 'button']
+      }, body);
+      xmlTesting.matches(
+        myButton5.test(),
+        'myButton5'
+      );
     }
   });
   it('$custom properties', () => {

@@ -493,7 +493,7 @@ const jml = function jml (...args) {
       } case '$custom': {
         Object.assign(elem, attVal);
         break;
-      } case '$define': {
+      } /* istanbul ignore next */ case '$define': {
         const localName = elem.localName.toLowerCase();
         // Note: customized built-ins sadly not working yet
         const customizedBuiltIn = !localName.includes('-');
@@ -505,10 +505,10 @@ const jml = function jml (...args) {
           is = elem.getAttribute('is');
           if (!is) {
             if (!{}.hasOwnProperty.call(atts, 'is')) {
-              throw new TypeError('Expected `is` with `$define`');
+              throw new TypeError('Expected `is` with `$define` on built-in');
             }
             elem.setAttribute('is', atts.is);
-            is = atts.is;
+            ({is} = atts);
           }
         }
 
@@ -522,6 +522,7 @@ const jml = function jml (...args) {
             : customizedBuiltIn
               ? doc.createElement(localName).constructor
               : HTMLElement;
+
           return cnstrct
             ? class extends baseClass {
               constructor () {
@@ -532,21 +533,27 @@ const jml = function jml (...args) {
             : class extends baseClass {};
         };
 
-        let cnstrctr, options, prototype;
+        let cnstrctr, options, mixin;
         if (Array.isArray(attVal)) {
           if (attVal.length <= 2) {
             [cnstrctr, options] = attVal;
             if (typeof options === 'string') {
+              // Todo: Allow creating a definition without using it;
+              //  that may be the only reason to have a string here which
+              //  differs from the `localName` anyways
               options = {extends: options};
             } else if (!{}.hasOwnProperty.call(options, 'extends')) {
-              prototype = options;
+              mixin = options;
+            } else {
+              console.log('uncovered3');
             }
             if (typeof cnstrctr === 'object') {
-              prototype = cnstrctr;
+              mixin = cnstrctr;
               cnstrctr = getConstructor();
             }
           } else {
-            [cnstrctr, prototype, options] = attVal;
+            console.log('uncovered5');
+            [cnstrctr, mixin, options] = attVal;
             if (typeof options === 'string') {
               options = {extends: options};
             }
@@ -554,7 +561,7 @@ const jml = function jml (...args) {
         } else if (typeof attVal === 'function') {
           cnstrctr = attVal;
         } else {
-          prototype = attVal;
+          mixin = attVal;
           cnstrctr = getConstructor();
         }
         if (!cnstrctr.toString().startsWith('class')) {
@@ -563,10 +570,13 @@ const jml = function jml (...args) {
         if (!options && customizedBuiltIn) {
           options = {extends: localName};
         }
-        if (prototype) {
-          Object.assign(cnstrctr.prototype, prototype);
+        if (mixin) {
+          Object.entries(mixin).forEach(([methodName, method]) => {
+            cnstrctr.prototype[methodName] = method;
+          });
         }
-        customElements.define(def, cnstrctr, customizedBuiltIn ? options : undefined);
+        // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
+        customElements.define(def, cnstrctr, typeof options === 'object' ? options : undefined);
         break;
       } case '$symbol': {
         const [symbol, func] = attVal;
