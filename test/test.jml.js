@@ -974,7 +974,6 @@ describe('Jamilih - jml', function () {
         jml('section', {
           id: 'myElem2',
           $shadow: {
-            // Could also define as `open: []`
             content: [
               ['style', [`
                 :host {color: red;}
@@ -990,6 +989,25 @@ describe('Jamilih - jml', function () {
           ['p', ['Other content']]
         ], body);
       }, null, 'Adding Shadow DOM (via `content`) does not throw');
+
+      assert.doesNotThrow(function () {
+        const content = jml({'#': [
+          ['style', [`
+            :host {color: red;}
+            ::slotted(p) {color: blue;}
+          `]],
+          ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+          ['h2', ['Heading level 2']],
+          ['slot', ['DEFAULT CONTENT HERE']]
+        ]});
+        jml('section', {
+          id: 'myElem2',
+          $shadow: {content}
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via DOM `content`) does not throw');
 
       assert.doesNotThrow(function () {
         jml('section', {
@@ -1030,6 +1048,18 @@ describe('Jamilih - jml', function () {
           ['p', ['Other content']]
         ], body);
       }, null, 'Adding Shadow DOM (via `closed` content) does not throw');
+
+      assert.doesNotThrow(function () {
+        jml('section', {
+          id: 'myElem2',
+          $shadow: {
+            closed: true
+          }
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (with `closed` and no content) does not throw');
     }
   });
   it('Custom elements', () => {
