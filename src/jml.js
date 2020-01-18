@@ -789,11 +789,11 @@ const jml = function jml (...args) {
         dataVal.forEach((dVal) => {
           setMap(opts.$map[dVal]);
         });
+        return;
         // Array of Map and non-map data object
-      } else {
-        map = dataVal[0] || defaultMap[0];
-        obj = dataVal[1] || defaultMap[1];
       }
+      map = dataVal[0] || defaultMap[0];
+      obj = dataVal[1] || defaultMap[1];
       // Map
     } else if ((/^\[object (?:Weak)?Map\]$/u).test([].toString.call(dataVal))) {
       map = dataVal;

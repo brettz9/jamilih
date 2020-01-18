@@ -774,6 +774,71 @@ describe('Jamilih - jml', function () {
       'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map and function'
     );
   });
+  it('Maps (with default named maps)', () => {
+    // Todo: Let `$map` accept an array of map-object arrays (and add tests)
+    // Todo: Add tests for array of map strings
+    const weakMap1 = new WeakMap();
+    const weakMap2 = new jml.WeakMap();
+    const testObj1 = {test: 5};
+    const testObj2 = {test: 7};
+    const testFunc = function (arg1) { return this.id + ' ok ' + arg1; };
+    const el = jml({
+      $map: {
+        root: [weakMap1, testObj1],
+        weakMap1: [weakMap1, testObj1],
+        weakMap2: [weakMap2, testObj2],
+        weakMap1ToFunc: [weakMap1, testFunc]
+      }
+    }, 'div', {id: 'mapAttributeTest'}, [
+      ['input', {id: 'input1', $data: true}, ['Test']],
+      ['input', {id: 'input2', $data: ['weakMap2']}],
+      ['input', {id: 'input3', $data: ['weakMap1']}],
+      ['input', {id: 'input4', $data: testObj2}],
+      ['input', {id: 'input5', $data: [, testObj1]}], // eslint-disable-line no-sparse-arrays
+      ['input', {id: 'input6', $data: ['weakMap1']}],
+      ['input', {id: 'input7', $data: ['weakMap1ToFunc']}]
+    ], body);
+    xmlTesting.matches(
+      weakMap1.get(el),
+      testObj1,
+      'Externally retrieve element with Jamilih-returned element associated with normal WeakMap (alongside a JamilihWeakMap); using default map and object'
+    );
+    xmlTesting.matches(
+      weakMap1.get($('#input1')),
+      testObj1,
+      'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using default map and object'
+    );
+    xmlTesting.matches(
+      weakMap2.get($('#input2')),
+      testObj2,
+      'Externally retrieve element with DOM retrieved element associated with JamilihWeakMap (alongside a normal WeakMap); using array-based map and object'
+    );
+    xmlTesting.matches(
+      weakMap1.get($('#input3')),
+      testObj1,
+      'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using single map defaulting object'
+    );
+    xmlTesting.matches(
+      weakMap1.get($('#input4')),
+      testObj2,
+      'Externally retrieve element with DOM retrieved element associated with JamilihWeakMap (alongside a normal WeakMap); using single object defaulting map'
+    );
+    xmlTesting.matches(
+      weakMap1.get($('#input5')),
+      testObj1,
+      'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map attachment with empty default map and single object'
+    );
+    xmlTesting.matches(
+      weakMap1.get($('#input6')),
+      testObj1,
+      'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using single-item array map (defaulting object)'
+    );
+    xmlTesting.matches(
+      jml.command($('#input7'), weakMap1, 'arg1'),
+      'input7 ok arg1',
+      'Externally retrieve element with DOM retrieved element associated with normal WeakMap (alongside a JamilihWeakMap); using array-based map and function'
+    );
+  });
   it('Symbol', () => {
     const publicSym = Symbol.for('publicForSym1');
     const privateSym = Symbol('Test symbol');

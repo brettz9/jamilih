@@ -16,6 +16,7 @@
 - Fix: Ensure `stripWhitespace` on text node returns a text node (that is
   empty)
 - Fix: Ensure can reset to null namespace for namespaced elements
+- Fix: Underdocumented named `$map` had not been working properly
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes
