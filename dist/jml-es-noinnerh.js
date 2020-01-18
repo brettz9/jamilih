@@ -322,9 +322,7 @@ Other Todos:
 // istanbul ignore next
 var win = typeof window !== 'undefined' && window; // istanbul ignore next
 
-var doc = typeof document !== 'undefined' && document; // istanbul ignore next
-
-var XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer; // STATIC PROPERTIES
+var doc = typeof document !== 'undefined' && document || win && win.document; // STATIC PROPERTIES
 
 var possibleOptions = ['$plugins', // '$mode', // Todo (SVG/XML)
 // 'state', // Used internally
@@ -1459,7 +1457,7 @@ var jml = function jml() {
             // Also fix DOMParser to work with text/html
 
 
-            elem = nodes[nodes.length - 1] = new window.DOMParser().parseFromString(new XmlSerializer().serializeToString(elem) // Mozilla adds XHTML namespace
+            elem = nodes[nodes.length - 1] = new win.DOMParser().parseFromString(new win.XMLSerializer().serializeToString(elem) // Mozilla adds XHTML namespace
             .replace(' xmlns="' + NS_HTML + '"', replacer), 'application/xml').documentElement; // }catch(e) {alert(elem.outerHTML);throw e;}
           }
 
@@ -1574,7 +1572,7 @@ jml.toJML = function (dom) {
       stripWhitespace = _ref3$stripWhitespace === void 0 ? false : _ref3$stripWhitespace;
 
   if (typeof dom === 'string') {
-    dom = new window.DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
+    dom = new win.DOMParser().parseFromString(dom, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
   }
 
   var ret = [];
@@ -1975,7 +1973,7 @@ jml.toDOMString = function () {
 
 jml.toXML = function () {
   var ret = jml.apply(void 0, arguments);
-  return new XmlSerializer().serializeToString(ret);
+  return new XMLSerializer().serializeToString(ret);
 };
 /**
  *
@@ -2170,6 +2168,8 @@ jml.command = function (elem, symOrMap, methodName) {
   return (_func3 = func)[methodName].apply(_func3, [elem].concat(args)); // return func[methodName].call(elem, ...args);
 };
 /**
+ * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
+ * Also updates `body` with `document.body`.
  * @param {Window} wind
  * @returns {void}
  */
@@ -2177,29 +2177,12 @@ jml.command = function (elem, symOrMap, methodName) {
 
 jml.setWindow = function (wind) {
   win = wind;
-};
-/**
- * Also updates `body`
- * @param {Document} docum
- * @returns {void}
- */
+  doc = win.document;
 
-
-jml.setDocument = function (docum) {
-  doc = docum;
-
-  if (docum && docum.body) {
-    body = docum.body;
+  if (doc && doc.body) {
+    var _doc = doc;
+    body = _doc.body;
   }
-};
-/**
- * @param {XMLSerializer} xmls
- * @returns {void}
- */
-
-
-jml.setXMLSerializer = function (xmls) {
-  XmlSerializer = xmls;
 };
 /**
  * @returns {Window}
@@ -2208,22 +2191,6 @@ jml.setXMLSerializer = function (xmls) {
 
 jml.getWindow = function () {
   return win;
-};
-/**
- * @returns {Document}
- */
-
-
-jml.getDocument = function () {
-  return doc;
-};
-/**
- * @returns {XMLSerializer}
- */
-
-
-jml.getXMLSerializer = function () {
-  return XmlSerializer;
 };
 /**
  * Does not run Jamilih so can be further processed.

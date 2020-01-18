@@ -1,5 +1,7 @@
 /* eslint-env node */
-import {jml, $, $$, nbsp, body, glue} from './jml.js';
+import {jml} from './jml.js';
+
+export {jml, $, $$, nbsp, body, glue} from './jml.js';
 
 /* istanbul ignore else */
 if (typeof process !== 'undefined') {
@@ -11,5 +13,4 @@ if (typeof process !== 'undefined') {
   jml.setWindow(win);
 }
 
-export {jml, $, $$, nbsp, body, glue};
 export default jml;

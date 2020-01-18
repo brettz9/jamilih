@@ -1438,7 +1438,8 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
 };
 
 /**
- * Also updates `body`
+ * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
+ * Also updates `body` with `document.body`.
  * @param {Window} wind
  * @returns {void}
  */
