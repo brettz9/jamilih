@@ -9,6 +9,9 @@ global.window = jml.getWindow();
 global.document = jml.getDocument();
 global.XMLSerializer = jml.getXMLSerializer();
 
+window.WeakMap = WeakMap;
+window.Map = Map;
+
 global.jml = jml;
 global.glue = glue;
 global.nbsp = nbsp;

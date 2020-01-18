@@ -1339,11 +1339,11 @@ class JamilihMap extends Map {
 class JamilihWeakMap extends WeakMap {
   get (elem) {
     elem = typeof elem === 'string' ? $(elem) : elem;
-    return super.get(elem);
+    return super.get.call(this, elem);
   }
   set (elem, value) {
     elem = typeof elem === 'string' ? $(elem) : elem;
-    return super.set(elem, value);
+    return super.set.call(this, elem, value);
   }
   invoke (elem, methodName, ...args) {
     elem = typeof elem === 'string' ? $(elem) : elem;

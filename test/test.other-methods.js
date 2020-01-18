@@ -37,55 +37,62 @@ describe('Jamilih - Other Methods', function () {
     const result = jml.toHTML('br');
     assert.deepEqual(result, expected, 'Empty element with no attributes');
   });
-  it('jml.weak()', () => {
-    const [myMap, elem] = jml.weak({
-      localVar: 'localValue',
-      myMethod (el, arg1) {
-        return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input').value;
-      }
-    }, 'div', {id: 'mapTest'}, [
-      ['input', {value: '100', $on: {
-        input () {
-          xmlTesting.matches(
-            myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
-            'internal test localValue 1001',
-            'JamilihWeakMap `invoke` method with arguments and `this`'
-          );
+  ['weak', 'strong'].forEach((mapType) => {
+    it(`jml.${mapType}()`, () => {
+      const [myMap, elem] = jml[mapType]({
+        localVar: 'localValue',
+        myMethod (el, arg1) {
+          return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input').value;
         }
-      }}],
-      ['div', {id: 'clickArea', $data: {
-        localVariable: 8,
-        test (el, arg1) {
-          xmlTesting.matches(
-            arg1 + ' ' + el.id + this.localVariable,
-            'arg1 clickArea8',
-            'Attached JamilihWeakMap $data method invoked by click listener with arguments and `this`'
-          );
-        }
-      }, $on: {
-        click () {
-          myMap.invoke(this, 'test', 'arg1');
-        }
-      }}]
-    ], body);
-    xmlTesting.matches(
-      myMap.invoke(elem, 'myMethod', 'external test'),
-      'external test localValue 100',
-      'Externally invoke JamilihWeakMap `invoke` method with arguments and `this`'
-    );
-    xmlTesting.matches(
-      myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
-      'localValue',
-      'Externally retrieve JamilihWeakMap-associated element by selector'
-    );
+      }, 'div', {id: 'mapTest'}, [
+        ['input', {value: '100', $on: {
+          input () {
+            xmlTesting.matches(
+              myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
+              'internal test localValue 1001',
+              `Jamilih${mapType === 'weak' ? 'Weak' : ''}Map \`invoke\` method with arguments and \`this\``
+            );
+          }
+        }}],
+        ['div', {id: 'clickArea', $data: {
+          localVariable: 8,
+          test (el, arg1) {
+            xmlTesting.matches(
+              arg1 + ' ' + el.id + this.localVariable,
+              'arg1 clickArea8',
+              `Attached Jamilih${mapType === 'weak' ? 'Weak' : ''}Map $data method invoked by click listener with arguments and \`this\``
+            );
+          }
+        }, $on: {
+          click () {
+            myMap.invoke(this, 'test', 'arg1');
+          }
+        }}]
+      ], body);
+      xmlTesting.matches(
+        myMap.invoke(elem, 'myMethod', 'external test'),
+        'external test localValue 100',
+        `Externally invoke Jamilih${mapType === 'weak' ? 'Weak' : ''}Map \`invoke\` method with arguments and \`this\``
+      );
+      xmlTesting.matches(
+        myMap.invoke('#mapTest', 'myMethod', 'external test'),
+        'external test localValue 100',
+        `Externally invoke Jamilih${mapType === 'weak' ? 'Weak' : ''}Map \`invoke\` method with arguments and \`this\``
+      );
+      xmlTesting.matches(
+        myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
+        'localValue',
+        `Externally retrieve Jamilih${mapType === 'weak' ? 'Weak' : ''}Map-associated element by selector`
+      );
 
-    const mapInput = $('#mapTest').firstElementChild;
-    mapInput.value = '1001';
-    mapInput.dispatchEvent(
-      new window.Event('input')
-    );
-    const mapDiv = $('#clickArea');
-    mapDiv.dispatchEvent(new window.Event('click'));
+      const mapInput = $('#mapTest').firstElementChild;
+      mapInput.value = '1001';
+      mapInput.dispatchEvent(
+        new window.Event('input')
+      );
+      const mapDiv = $('#clickArea');
+      mapDiv.dispatchEvent(new window.Event('click'));
+    });
   });
   describe('setDocument', function () {
     afterEach(() => {
