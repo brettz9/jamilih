@@ -1342,45 +1342,49 @@ describe('Jamilih - jml', function () {
     }
   });
   it('Custom Elements - 3', function () {
-    const myButton6 = jml('x-buttona', {
-      id: 'myButton6',
-      $define: [{
-        test () {
-          return this.id;
-        }
-      }]
-    }, body);
-    xmlTesting.matches(
-      myButton6.test(),
-      'myButton6'
-    );
+    if (!window.customElements) {
+      xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
+    } else {
+      const myButton6 = jml('x-buttona', {
+        id: 'myButton6',
+        $define: [{
+          test () {
+            return this.id;
+          }
+        }]
+      }, body);
+      xmlTesting.matches(
+        myButton6.test(),
+        'myButton6'
+      );
 
-    const myButton7 = jml('x-buttonb', {
-      id: 'myButton7',
-      $define: [{
-        test () {
-          return this.id;
-        }
-      }]
-    }, body);
-    xmlTesting.matches(
-      myButton7.test(),
-      'myButton7'
-    );
+      const myButton7 = jml('x-buttonb', {
+        id: 'myButton7',
+        $define: [{
+          test () {
+            return this.id;
+          }
+        }]
+      }, body);
+      xmlTesting.matches(
+        myButton7.test(),
+        'myButton7'
+      );
 
-    const myButton8 = jml('button', {
-      id: 'myButton8',
-      is: 'x-button2',
-      $define: [{
-        test () {
-          return this.id;
-        }
-      }, {extends: 'button'}]
-    }, body);
-    xmlTesting.matches(
-      myButton8.test(),
-      'myButton8'
-    );
+      const myButton8 = jml('button', {
+        id: 'myButton8',
+        is: 'x-button2',
+        $define: [{
+          test () {
+            return this.id;
+          }
+        }, {extends: 'button'}]
+      }, body);
+      xmlTesting.matches(
+        myButton8.test(),
+        'myButton8'
+      );
+    }
   });
   it('$custom properties', () => {
     const mySelect = jml('select', {
