@@ -2,8 +2,8 @@ import * as xmlTesting from './xmlTesting.js';
 
 describe('Jamilih - Other Methods', function () {
   beforeEach(() => {
-    while (body.firstChild) {
-      body.firstChild.remove();
+    if ($('#mapTest')) {
+      $('#mapTest').remove();
     }
   });
   it('jml.toJMLString()', () => {
@@ -107,10 +107,12 @@ describe('Jamilih - Other Methods', function () {
 });
 
 describe('Jamilih extras', function () {
+  let div;
   beforeEach(() => {
-    while (body.firstChild) {
-      body.firstChild.remove();
+    if (div) {
+      div.remove();
     }
+    div = jml('div', {id: 'extraHolder'}, body);
   });
   it('$', function () {
     body.append(jml('br'), jml('br'));

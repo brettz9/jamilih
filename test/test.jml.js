@@ -9,8 +9,8 @@ import * as xmlTesting from './xmlTesting.js';
 
 describe('Jamilih - jml', function () {
   beforeEach(() => {
-    while (body.firstChild) {
-      body.firstChild.remove();
+    if ($('#mapAttributeTest')) {
+      $('#mapAttributeTest').remove();
     }
     let jmlTestContent = $('#jmlTestContent');
     if (!jmlTestContent) {

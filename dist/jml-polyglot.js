@@ -1278,12 +1278,12 @@ var jml = function jml() {
       if (typeof dataVal[0] === 'string') {
         dataVal.forEach(function (dVal) {
           setMap(opts.$map[dVal]);
-        }); // Array of Map and non-map data object
-      } else {
-        map = dataVal[0] || defaultMap[0];
-        obj = dataVal[1] || defaultMap[1];
-      } // Map
+        });
+        return; // Array of Map and non-map data object
+      }
 
+      map = dataVal[0] || defaultMap[0];
+      obj = dataVal[1] || defaultMap[1]; // Map
     } else if (/^\[object (?:Weak)?Map\]$/.test([].toString.call(dataVal))) {
       map = dataVal;
       obj = defaultMap[1]; // Non-map data object
@@ -2059,6 +2059,17 @@ function (_WeakMap) {
 
 jml.Map = JamilihMap;
 jml.WeakMap = JamilihWeakMap;
+/**
+* @typedef {GenericArray} MapAndElementArray
+* @property {JamilihWeakMap|JamilihMap} 0
+* @property {Element} 1
+*/
+
+/**
+ * @param {GenericObject} obj
+ * @param {...JamilihArray} args
+ * @returns {MapAndElementArray}
+ */
 
 jml.weak = function (obj) {
   var map = new JamilihWeakMap();
@@ -2072,6 +2083,12 @@ jml.weak = function (obj) {
   }].concat(args));
   return [map, elem];
 };
+/**
+ * @param {any} obj
+ * @param {...JamilihArray} args
+ * @returns {MapAndElementArray}
+ */
+
 
 jml.strong = function (obj) {
   var map = new JamilihMap();
@@ -2085,11 +2102,26 @@ jml.strong = function (obj) {
   }].concat(args));
   return [map, elem];
 };
+/**
+ * @param {string|Element} elem If a string, will be interpreted as a selector
+ * @param {symbol|string} sym If a string, will be used with `Symbol.for`
+ * @returns {any} The value associated with the symbol
+ */
+
 
 jml.symbol = jml.sym = jml["for"] = function (elem, sym) {
   elem = typeof elem === 'string' ? $(elem) : elem;
   return elem[_typeof(sym) === 'symbol' ? sym : Symbol["for"](sym)];
 };
+/**
+ * @param {string|Element} elem If a string, will be interpreted as a selector
+ * @param {symbol|string|Map|WeakMap} symOrMap If a string, will be used with `Symbol.for`
+ * @param {string|any} methodName Can be `any` if the symbol or map directly
+ *   points to a function (it is then used as the first argument).
+ * @param {any[]} args
+ * @returns {any}
+ */
+
 
 jml.command = function (elem, symOrMap, methodName) {
   var _func3;
@@ -2123,10 +2155,21 @@ jml.command = function (elem, symOrMap, methodName) {
 
   return (_func3 = func)[methodName].apply(_func3, [elem].concat(args)); // return func[methodName].call(elem, ...args);
 };
+/**
+ * @param {Window} wind
+ * @returns {void}
+ */
+
 
 jml.setWindow = function (wind) {
   win = wind;
 };
+/**
+ * Also updates `body`
+ * @param {Document} docum
+ * @returns {void}
+ */
+
 
 jml.setDocument = function (docum) {
   doc = docum;
@@ -2135,18 +2178,35 @@ jml.setDocument = function (docum) {
     exports.body = docum.body;
   }
 };
+/**
+ * @param {XMLSerializer} xmls
+ * @returns {void}
+ */
+
 
 jml.setXMLSerializer = function (xmls) {
   XmlSerializer = xmls;
 };
+/**
+ * @returns {Window}
+ */
+
 
 jml.getWindow = function () {
   return win;
 };
+/**
+ * @returns {Document}
+ */
+
 
 jml.getDocument = function () {
   return doc;
 };
+/**
+ * @returns {XMLSerializer}
+ */
+
 
 jml.getXMLSerializer = function () {
   return XmlSerializer;
