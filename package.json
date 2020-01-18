@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.47.0",
+  "version": "0.48.0",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -109,6 +109,6 @@
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "10.1.0",
     "rollup-plugin-re": "^1.0.7",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.5"
   }
 }

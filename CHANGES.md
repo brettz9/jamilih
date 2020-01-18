@@ -1,20 +1,20 @@
 # CHANGES for jamilih
 
-## ?
+## 0.48.0
 
-- Breaking change: Drop ordered attribute array (objects can be iterated
-    now in order)
-- Breaking change: `toJML` will not get defaults with falsey value besides
-  `undefined`
-- Breaking update: Remove now removed `entities`, `notations`,
-  `internalSubset` properties
-- Breaking update: Remove now removed `xmlDeclaration` handling
-- Breaking change: Switch name of polyglot file to `dist/jml-jsdom.js`
-  (pointed to in `main` so should not be breaking unless hard-coding the
-  path).
 - Breaking change: Remove `setXMLSerializer`/`getXMLSerializer` and
   `setDocument`/`getDocument` and check on `window` (set by `setWindow`)
   instead (this will now also set `body`).
+- Breaking change: Switch name of polyglot file to `dist/jml-jsdom.js`
+  (pointed to in `main` so should not be breaking unless hard-coding the
+  path).
+- Breaking change: Drop ordered attribute array (object properties can
+    be iterated now in order)
+- Breaking update: Remove now removed `entities`, `notations`,
+  `internalSubset` properties
+- Breaking update: Remove now removed `xmlDeclaration` handling
+- Breaking change: `toJML` will not get defaults with falsey value besides
+  `undefined`
 - Fix: Ensure that extra `childNodes` from the default HTML document are
   overwritten (and completely overwritten) before attempting to add the
   user's own `childNodes`.
@@ -23,18 +23,18 @@
   empty)
 - Fix: Ensure can reset to null namespace for namespaced elements
 - Fix: Underdocumented named `$map` had not been working properly
+- Enhancement: Add config for `toJML` to `reportInvalidState`
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
-- Enhancement: With `$define` array allow absent 2nd (options) argument
 - Enhancement: Allow wrapping a document and inserting nodes
-- Enhancement: Allow wrapping of customized built-in
-- Enhancement: Add config for `toJML` to `reportInvalidState`
+- Enhancement: Allow wrapping of customized built-in elements
+- Enhancement: With `$define` array allow absent 2nd (options) argument
 - Enhancement (Errors):
   - Throw proper `TypeError` on undefined child content; throw
     also for `null`.
   - Throw if non-function added within `$on` array
-  - Throw for all non-object plugins
-  - Show exact type if passing in bad type as Jamilih argument
+  - Throw for all non-objects given as plugins
+  - Report exact type if passing in bad type as Jamilih argument
   - Throw if passing in `null` in non-final position
   - Make `DOMException` polyfill inherit from `Error` and include
     message and `name`
