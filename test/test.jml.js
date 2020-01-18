@@ -883,6 +883,95 @@ describe('Jamilih - jml', function () {
 
       assert.doesNotThrow(function () {
         jml('section', {
+          id: 'myElem',
+          $shadow: {
+            open: true, // Default (can also use `closed`)
+            template: [
+              ['style', [`
+                :host {color: red;}
+                ::slotted(p) {color: blue;}
+              `]],
+              ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+              ['h2', ['Heading level 2']],
+              ['slot', ['DEFAULT CONTENT HERE']]
+            ]
+          }
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via `open`/no-attribute `template`) does not throw');
+
+      assert.doesNotThrow(function () {
+        const template = jml('template', [
+          ['style', [`
+            :host {color: red;}
+            ::slotted(p) {color: blue;}
+          `]],
+          ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+          ['h2', ['Heading level 2']],
+          ['slot', ['DEFAULT CONTENT HERE']]
+        ]);
+        jml('section', {
+          id: 'myElem',
+          $shadow: {
+            open: true, // Default (can also use `closed`)
+            template
+          }
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via `open`/DOM `template`) does not throw');
+
+      assert.doesNotThrow(function () {
+        jml('section', {
+          id: 'myElem',
+          $shadow: {
+            open: true, // Default (can also use `closed`)
+            template: 'myTemplate'
+          }
+        }, [
+          ['template', {id: 'myTemplate'}, [
+            ['style', [`
+              :host {color: red;}
+              ::slotted(p) {color: blue;}
+            `]],
+            ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+            ['h2', ['Heading level 2']],
+            ['slot', ['DEFAULT CONTENT HERE']]
+          ]],
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via `open`/string `template`) does not throw');
+
+      assert.doesNotThrow(function () {
+        jml('section', {
+          id: 'myElem',
+          $shadow: {
+            closed: true,
+            template: [
+              {id: 'myTemplate'},
+              [
+                ['style', [`
+                  :host {color: red;}
+                  ::slotted(p) {color: blue;}
+                `]],
+                ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+                ['h2', ['Heading level 2']],
+                ['slot', ['DEFAULT CONTENT HERE']]
+              ]
+            ]
+          }
+        }, [
+          ['h1', {slot: 'h'}, ['Heading level 1']],
+          ['p', ['Other content']]
+        ], body);
+      }, null, 'Adding Shadow DOM (via `closed`/`template`) does not throw');
+
+      assert.doesNotThrow(function () {
+        jml('section', {
           id: 'myElem2',
           $shadow: {
             // Could also define as `open: []`
