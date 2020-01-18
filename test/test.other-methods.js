@@ -87,6 +87,16 @@ describe('Jamilih - Other Methods', function () {
     const mapDiv = $('#clickArea');
     mapDiv.dispatchEvent(new window.Event('click'));
   });
+  describe('setDocument', function () {
+    afterEach(() => {
+      jml.setDocument(document);
+    });
+    it('setDocument', function () {
+      expect(() => {
+        jml.setDocument();
+      }).to.not.throw();
+    });
+  });
 });
 
 describe('Jamilih extras', function () {
