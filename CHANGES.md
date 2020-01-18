@@ -37,7 +37,7 @@
 - Docs: Add jsdoc blocks on methods where missing
 - Linting (ESLint): As per latest ash-nazg
 - Travis: Adding builds 10, 12
-- Testing: Coverage
+- Testing: Coverage 100%
 - Testing: Use builtin `body`, `$`, `$$`, `nbsp`
 - npm: Update `package-lock.json`
 - npm: Switch from deprecated `rollup-plugin-json` to replacement

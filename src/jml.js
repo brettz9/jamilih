@@ -550,13 +550,9 @@ const jml = function jml (...args) {
               cnstrctr = getConstructor();
             }
           } else {
-            console.log('uncovered5');
             [cnstrctr, mixin, options] = attVal;
             if (typeof options === 'string') {
-              console.log('uncovered6');
               options = {extends: options};
-            } else {
-              console.log('uncovered7');
             }
           }
         } else if (typeof attVal === 'function') {

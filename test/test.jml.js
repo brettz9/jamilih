@@ -1384,6 +1384,58 @@ describe('Jamilih - jml', function () {
         myButton8.test(),
         'myButton8'
       );
+
+      let constructorSetVar6;
+      const myButton9 = jml('button', {
+        id: 'myButton9',
+        is: 'x-button3',
+        $define: [
+          function () {
+            constructorSetVar6 = this.id;
+          },
+          {
+            test () {
+              return this.id;
+            }
+          },
+          {extends: 'button'}
+        ]
+      }, body);
+      xmlTesting.matches(
+        constructorSetVar6,
+        'myButton9',
+        'Custom element with invoked constructor with `this`'
+      );
+      xmlTesting.matches(
+        myButton9.test(),
+        'myButton9'
+      );
+
+      let constructorSetVar7;
+      const myButton10 = jml('button', {
+        id: 'myButton10',
+        is: 'x-button4',
+        $define: [
+          function () {
+            constructorSetVar7 = this.id;
+          },
+          {
+            test () {
+              return this.id;
+            }
+          },
+          'button'
+        ]
+      }, body);
+      xmlTesting.matches(
+        constructorSetVar7,
+        'myButton10',
+        'Custom element with invoked constructor with `this`'
+      );
+      xmlTesting.matches(
+        myButton9.test(),
+        'myButton9'
+      );
     }
   });
   it('$custom properties', () => {
