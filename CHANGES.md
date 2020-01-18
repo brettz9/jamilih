@@ -34,6 +34,8 @@
 - Travis: Adding builds 10, 12
 - Testing: Coverage
 - Testing: Use builtin `body`, `$`, `$$`, `nbsp`
+- npm: Update `package-lock.json`
+- npm: Switch from deprecated `rollup-plugin-json` to replacement
 - npm: Update devDeps, peerDep
 
 ## 0.47.0
