@@ -66,6 +66,14 @@ The following functions are available:
 - `jml.toDOM()` - An alias for `jml()`.
 - `jml.toDOMString()` - An alias for `jml.toHTML()` (for parity with `toJMLString`).
 - `jml.toXMLDOMString()` - An alias for `jml.toXML()` (for parity with `toJMLString`).
+- `jml.command` - Invoke commands on element-attached symbol or Map function or methods
+- `jml.sym` - Alias for `jml.symbol`
+- `jml.for` - Alias for `jml.symbol`
+- `jml.symbol` - Utility for getting a symbol attached to an element.
+- `jml.setWindow`, `jml.setDocument`, `jml.setXMLSerializer` - Setters of the `window`,
+  `document`, and `XMLSerializer` object used internally. Set automatically for
+  browser or Node.
+- `jml.getWindow`, `jml.getDocument`, `jml.getXMLSerializer` - Getters for the setters.
 - `jml.weak(obj, ...args)` - Returns a two-item array with the first item as a new `jml.WeakMap` object
     on which an association is made between `obj` and a Jamilih element created out of passing
     `args` to `jml()` and the second item is the new Jamilih elemnet
