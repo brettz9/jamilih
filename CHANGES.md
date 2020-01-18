@@ -20,6 +20,7 @@
 - Enhancement: Check for `DOMParser` on `window` so can get automatically
   after setting `window`
 - Enhancement: Allow wrapping a document and inserting nodes
+- Enhancement: Allow wrapping of customized built-in
 - Enhancement: Add config for `toJML` to `reportInvalidState`
 - Enhancement (Errors):
   - Throw proper `TypeError` on undefined child content; throw

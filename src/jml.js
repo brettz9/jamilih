@@ -488,7 +488,8 @@ const jml = function jml (...args) {
         }
         break;
       } case 'is': { // Currently only in Chrome
-        // Handled during element creation
+        // Handled during element creation, but add for detection
+        elem.setAttribute('is', attVal);
         break;
       } case '$custom': {
         Object.assign(elem, attVal);
@@ -498,7 +499,11 @@ const jml = function jml (...args) {
         // Note: customized built-ins sadly not working yet
         const customizedBuiltIn = !localName.includes('-');
 
-        const def = customizedBuiltIn ? elem.getAttribute('is') : localName;
+        // We check attribute in case this is a preexisting DOM element
+        // const {is} = atts;
+        const is = elem.getAttribute('is');
+
+        const def = customizedBuiltIn ? is : localName;
         if (customElements.get(def)) {
           break;
         }

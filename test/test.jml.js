@@ -1153,21 +1153,21 @@ describe('Jamilih - jml', function () {
     }
   });
   it('Custom elements', () => {
-    const mySelect = jml('select', {
-      id: 'mySelect',
-      is: 'button'
+    const myButton = jml('button', {
+      id: 'myButton',
+      is: 'fancy-button'
     }, body);
     try {
       // Node
       xmlTesting.matchesXMLString(
-        mySelect,
-        '<select xmlns="http://www.w3.org/1999/xhtml" id="mySelect"></select>'
+        myButton,
+        '<button xmlns="http://www.w3.org/1999/xhtml" id="myButton"></button>'
       );
     } catch (err) {
       // Firefox
       xmlTesting.matchesXMLString(
-        mySelect,
-        '<select is="button" xmlns="http://www.w3.org/1999/xhtml" id="mySelect"></select>'
+        myButton,
+        '<button xmlns="http://www.w3.org/1999/xhtml" id="myButton" is="fancy-button"></button>'
       );
     }
 
@@ -1265,22 +1265,25 @@ describe('Jamilih - jml', function () {
       myel5.test2('arg1');
     }
 
-    /*
-    // If customized built-in elements implemented, ensure testing `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
-    const mySelect = jml('select', {
-      id: 'mySelect',
-      is: 'my-select',
-      $define: {
-        test () {
-          return this.id;
+    if (!window.customElements) {
+      xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
+    } else {
+      // Todo: If customized built-in elements implemented, ensure testing
+      //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
+      /* const myButton2 = */ jml('button', {
+        id: 'myButton',
+        is: 'fancy-button',
+        $define: {
+          test () {
+            return this.id;
+          }
         }
-      }
-    }, body);
-    xmlTesting.matches(
-      mySelect.test(),
-      'mySelect'
-    );
-    */
+      }, body);
+      xmlTesting.matches(
+        myButton.test(),
+        'myButton'
+      );
+    }
   });
   it('$custom properties', () => {
     const mySelect = jml('select', {
