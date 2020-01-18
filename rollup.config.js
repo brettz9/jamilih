@@ -97,4 +97,17 @@ export default [{
     }),
     commonjs()
   ]
+}, {
+  input: 'src/jml-dominum.js',
+  output: {
+    file: 'dist/jml-dominum.js',
+    format: 'cjs',
+    name: 'jml',
+    exports: 'named'
+  },
+  plugins: [
+    babel(),
+    resolve(),
+    commonjs()
+  ]
 }];

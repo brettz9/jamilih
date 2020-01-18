@@ -2,6 +2,9 @@
 
 ## 0.49.0
 
+- Enhancement: Offer new lighter-weight dominum alternative to jsdom
+  usage (Integration not tested and incomplete (e.g., for querying the
+  DOM), but may be sufficient for server-side creation.)
 - Enhancement: Allow non-array Jamilih (e.g., object-based fragments) in
   `$document` head and body
 - Enhancement: Expose state to plugins, adding new states
