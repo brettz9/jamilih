@@ -25,7 +25,8 @@
   "nyc": {
     "exclude": [
       "test",
-      "test-helpers"
+      "test-helpers",
+      ".mocharc.js"
     ],
     "reporter": [
       "text",
