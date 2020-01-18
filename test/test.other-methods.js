@@ -94,7 +94,7 @@ describe('Jamilih - Other Methods', function () {
       mapDiv.dispatchEvent(new window.Event('click'));
     });
   });
-  describe('setWindow', function () {
+  describe.skip('setWindow', function () {
     afterEach(() => {
       jml.setWindow(window);
     });

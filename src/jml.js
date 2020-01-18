@@ -1512,6 +1512,10 @@ jml.setWindow = (wind) => {
   doc = win.document;
   if (doc && doc.body) {
     ({body} = doc);
+  } else if (doc.documentElement && doc.documentElement.childNodes) {
+    body = [...doc.documentElement.childNodes].find((node) => {
+      return node.nodeType === 1 && node.localName === 'body';
+    });
   }
 };
 
