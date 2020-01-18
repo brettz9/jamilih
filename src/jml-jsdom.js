@@ -9,8 +9,6 @@ if (typeof process !== 'undefined') {
   const win = new JSDOM('').window;
 
   jml.setWindow(win);
-  jml.setDocument(win.document);
-  jml.setXMLSerializer(win.XMLSerializer);
 }
 
 export {jml, $, $$, nbsp, body, glue};

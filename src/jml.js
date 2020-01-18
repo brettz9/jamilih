@@ -31,9 +31,7 @@ Other Todos:
 // istanbul ignore next
 let win = typeof window !== 'undefined' && window;
 // istanbul ignore next
-let doc = typeof document !== 'undefined' && document;
-// istanbul ignore next
-let XmlSerializer = typeof XMLSerializer !== 'undefined' && XMLSerializer;
+let doc = (typeof document !== 'undefined' && document) || (win && win.document);
 
 // STATIC PROPERTIES
 
@@ -935,7 +933,7 @@ const jml = function jml (...args) {
         // try {
         // Also fix DOMParser to work with text/html
         elem = nodes[nodes.length - 1] = new win.DOMParser().parseFromString(
-          new XmlSerializer().serializeToString(elem)
+          new win.XMLSerializer().serializeToString(elem)
           // Mozilla adds XHTML namespace
             .replace(' xmlns="' + NS_HTML + '"', replacer),
           'application/xml'
@@ -1331,7 +1329,7 @@ jml.toDOMString = function (...args) { // Alias for jml.toHTML for parity with j
  */
 jml.toXML = function (...args) {
   const ret = jml(...args);
-  return new XmlSerializer().serializeToString(ret);
+  return new XMLSerializer().serializeToString(ret);
 };
 
 /**
@@ -1440,29 +1438,16 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
 };
 
 /**
+ * Also updates `body`
  * @param {Window} wind
  * @returns {void}
  */
 jml.setWindow = (wind) => {
   win = wind;
-};
-/**
- * Also updates `body`
- * @param {Document} docum
- * @returns {void}
- */
-jml.setDocument = (docum) => {
-  doc = docum;
-  if (docum && docum.body) {
-    ({body} = docum);
+  doc = win.document;
+  if (doc && doc.body) {
+    ({body} = doc);
   }
-};
-/**
- * @param {XMLSerializer} xmls
- * @returns {void}
- */
-jml.setXMLSerializer = (xmls) => {
-  XmlSerializer = xmls;
 };
 
 /**
@@ -1470,18 +1455,6 @@ jml.setXMLSerializer = (xmls) => {
  */
 jml.getWindow = () => {
   return win;
-};
-/**
- * @returns {Document}
- */
-jml.getDocument = () => {
-  return doc;
-};
-/**
- * @returns {XMLSerializer}
- */
-jml.getXMLSerializer = () => {
-  return XmlSerializer;
 };
 
 /**

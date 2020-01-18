@@ -70,10 +70,10 @@ The following functions are available:
 - `jml.sym` - Alias for `jml.symbol`
 - `jml.for` - Alias for `jml.symbol`
 - `jml.symbol` - Utility for getting a symbol attached to an element.
-- `jml.setWindow`, `jml.setDocument`, `jml.setXMLSerializer` - Setters of the `window`,
-  `document`, and `XMLSerializer` object used internally. Set automatically for
+- `jml.setWindow` - Setter of the `window` object. Used internally and requires
+  `DOMParser`, `XMLSerializer`, and `document` objects. Set automatically for
   browser or Node.
-- `jml.getWindow`, `jml.getDocument`, `jml.getXMLSerializer` - Getters for the setters.
+- `jml.getWindow` - Getter for the setter.
 - `jml.weak(obj, ...args)` - Returns a two-item array with the first item as a new `jml.WeakMap` object
     on which an association is made between `obj` and a Jamilih element created out of passing
     `args` to `jml()` and the second item is the new Jamilih elemnet

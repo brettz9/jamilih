@@ -94,13 +94,13 @@ describe('Jamilih - Other Methods', function () {
       mapDiv.dispatchEvent(new window.Event('click'));
     });
   });
-  describe('setDocument', function () {
+  describe('setWindow', function () {
     afterEach(() => {
-      jml.setDocument(document);
+      jml.setWindow(window);
     });
-    it('setDocument', function () {
+    it('setWindow', function () {
       expect(() => {
-        jml.setDocument();
+        jml.setWindow({});
       }).to.not.throw();
     });
   });

@@ -12,6 +12,9 @@
 - Breaking change: Switch name of polyglot file to `dist/jml-jsdom.js`
   (pointed to in `main` so should not be breaking unless hard-coding the
   path).
+- Breaking change: Remove `setXMLSerializer`/`getXMLSerializer` and
+  `setDocument`/`getDocument` and check on `window` (set by `setWindow`)
+  instead (this will now also set `body`).
 - Fix: Ensure that extra `childNodes` from the default HTML document are
   overwritten (and completely overwritten) before attempting to add the
   user's own `childNodes`.

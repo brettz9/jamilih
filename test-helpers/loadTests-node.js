@@ -6,8 +6,8 @@ global.assert = assert;
 global.expect = expect;
 
 global.window = jml.getWindow();
-global.document = jml.getDocument();
-global.XMLSerializer = jml.getXMLSerializer();
+global.document = window.document;
+global.XMLSerializer = window.XMLSerializer;
 
 window.WeakMap = WeakMap;
 window.Map = Map;
