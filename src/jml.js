@@ -328,7 +328,7 @@ function _childrenToJML (node) {
   return function (childNodeJML, i) {
     const cn = node.childNodes[i];
     const j = Array.isArray(childNodeJML) ? jml(...childNodeJML) : jml(childNodeJML);
-    cn.parentNode.replaceChild(j, cn);
+    cn.replaceWith(j);
   };
 }
 

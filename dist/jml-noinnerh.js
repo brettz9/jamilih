@@ -636,7 +636,7 @@
     return function (childNodeJML, i) {
       var cn = node.childNodes[i];
       var j = Array.isArray(childNodeJML) ? jml.apply(void 0, _toConsumableArray(childNodeJML)) : jml(childNodeJML);
-      cn.parentNode.replaceChild(j, cn);
+      cn.replaceWith(j);
     };
   }
   /**
