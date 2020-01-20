@@ -1329,7 +1329,7 @@ jml.toDOMString = function (...args) { // Alias for jml.toHTML for parity with j
  */
 jml.toXML = function (...args) {
   const ret = jml(...args);
-  return new XMLSerializer().serializeToString(ret);
+  return new win.XMLSerializer().serializeToString(ret);
 };
 
 /**

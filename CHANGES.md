@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.48.1
+
+- Fix: Ensure all instances of `XMLSerializer` are on internal "window".
+
 ## 0.48.0
 
 - Breaking change: Remove `setXMLSerializer`/`getXMLSerializer` and

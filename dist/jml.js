@@ -1990,7 +1990,7 @@
 
   jml.toXML = function () {
     var ret = jml.apply(void 0, arguments);
-    return new XMLSerializer().serializeToString(ret);
+    return new win.XMLSerializer().serializeToString(ret);
   };
   /**
    *
