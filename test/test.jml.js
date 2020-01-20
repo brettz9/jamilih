@@ -614,6 +614,33 @@ describe('Jamilih - jml', function () {
         `<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><title>My title</title></head><body></body></html>`
       );
     }
+
+    const doc9 = jml({$document: {
+      $DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'},
+      head: [
+        {'#': [
+          ['meta', {name: 'webappfind'}]
+        ]}
+      ],
+      body: [
+        {'#': [
+          ['p']
+        ]}
+      ]
+    }});
+    try {
+      xmlTesting.matchesXMLString(
+        doc9,
+        `<!DOCTYPE NETSCAPE-Bookmark-file-1>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
+      );
+    } catch (err) {
+      // Node's implementation omits the line break
+      xmlTesting.matchesXMLString(
+        doc9,
+        `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
+      );
+    }
   });
   it('throws with `null` at main level except at end', () => {
     expect(() => {

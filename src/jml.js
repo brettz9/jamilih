@@ -346,7 +346,11 @@ function _childrenToJML (node) {
 */
 function _appendJML (node) {
   return function (childJML) {
-    node.append(jml(...childJML));
+    if (Array.isArray(childJML)) {
+      node.append(jml(...childJML));
+    } else {
+      node.append(jml(childJML));
+    }
   };
 }
 
@@ -366,8 +370,10 @@ function _appendJMLOrText (node) {
   return function (childJML) {
     if (typeof childJML === 'string') {
       node.append(childJML);
-    } else {
+    } else if (Array.isArray(childJML)) {
       node.append(jml(...childJML));
+    } else {
+      node.append(jml(childJML));
     }
   };
 }

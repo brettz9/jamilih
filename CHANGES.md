@@ -1,5 +1,11 @@
 # CHANGES for jamilih
 
+## ?
+
+- Enhancement: Allow non-array Jamilih (e.g., object-based fragments) in
+  `$document` head and body
+- Refactoring: Prefer `replaceWith` to `replaceChild`
+
 ## 0.48.1
 
 - Fix: Ensure all instances of `XMLSerializer` are on internal "window".
