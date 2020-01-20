@@ -2479,7 +2479,7 @@ function _childrenToJML(node) {
   return function (childNodeJML, i) {
     var cn = node.childNodes[i];
     var j = Array.isArray(childNodeJML) ? jml.apply(void 0, _toConsumableArray(childNodeJML)) : jml(childNodeJML);
-    cn.parentNode.replaceChild(j, cn);
+    cn.replaceWith(j);
   };
 }
 /**
@@ -2498,7 +2498,11 @@ function _childrenToJML(node) {
 
 function _appendJML(node) {
   return function (childJML) {
-    node.append(jml.apply(void 0, _toConsumableArray(childJML)));
+    if (Array.isArray(childJML)) {
+      node.append(jml.apply(void 0, _toConsumableArray(childJML)));
+    } else {
+      node.append(jml(childJML));
+    }
   };
 }
 /**
@@ -2519,8 +2523,10 @@ function _appendJMLOrText(node) {
   return function (childJML) {
     if (typeof childJML === 'string') {
       node.append(childJML);
-    } else {
+    } else if (Array.isArray(childJML)) {
       node.append(jml.apply(void 0, _toConsumableArray(childJML)));
+    } else {
+      node.append(jml(childJML));
     }
   };
 }
@@ -3833,7 +3839,7 @@ jml.toDOMString = function () {
 
 jml.toXML = function () {
   var ret = jml.apply(void 0, arguments);
-  return new XMLSerializer().serializeToString(ret);
+  return new win.XMLSerializer().serializeToString(ret);
 };
 /**
  *
@@ -4125,7 +4131,29 @@ if (typeof process !== 'undefined') {
 
 exports.$ = $;
 exports.$$ = $$;
+exports.Attr = Attr;
+exports.CDATASection = CDATASection;
+exports.CharacterData = CharacterData;
+exports.ChildNode = ChildNode;
+exports.Comment = Comment;
+exports.DOMException = DOMException;
+exports.Document = Document;
+exports.DocumentFragment = DocumentFragment;
+exports.DocumentType = DocumentType;
+exports.Element = Element;
+exports.HTMLDocument = HTMLDocument;
+exports.HTMLElement = HTMLElement$1;
+exports.NamedNodeMap = NamedNodeMap;
+exports.Node = Node;
+exports.NodeList = NodeList;
+exports.ParentNode = ParentNode;
+exports.ProcessingInstruction = ProcessingInstruction;
+exports.Text = Text;
+exports.XMLDocument = XMLDocument;
+exports.createHTMLDocument = createHTMLDocument;
 exports.default = jml;
 exports.glue = glue;
 exports.jml = jml;
 exports.nbsp = nbsp;
+exports.setNamedNodeMapWritingPermission = setWritingPermission;
+exports.setNodeListWritingPermission = setWritingPermission;

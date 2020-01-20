@@ -10,6 +10,19 @@ import {jml} from './jml.js';
 //   error throwing function below so consuemrs can get message
 export {$, $$, jml, nbsp, body, glue} from './jml.js';
 
+// Expose dominum classes for overriding/use
+export {
+  createHTMLDocument,
+  Document, HTMLDocument,
+  DOMException,
+  NodeList, setNodeListWritingPermission,
+  NamedNodeMap, setNamedNodeMapWritingPermission,
+  Element, HTMLElement, Attr, Node, DocumentFragment,
+  ProcessingInstruction, CharacterData, Comment, Text,
+  CDATASection, DocumentType, XMLDocument,
+  ParentNode, ChildNode
+} from 'dominum';
+
 /* istanbul ignore else */
 if (typeof process !== 'undefined') {
   const doc = createHTMLDocument();
