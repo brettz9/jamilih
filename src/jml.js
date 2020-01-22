@@ -777,9 +777,9 @@ const jml = function jml (...args) {
   if (_getType(args[0]) === 'object' &&
     Object.keys(args[0]).some((key) => possibleOptions.includes(key))) {
     opts = args[0];
-    if (opts.state !== 'child') {
+    if (opts.state === undefined) {
       isRoot = true;
-      opts.state = 'child';
+      opts.state = 'root';
     }
     if (opts.$map && !opts.$map.root && opts.$map.root !== false) {
       opts.$map = {root: opts.$map};
