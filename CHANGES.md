@@ -4,6 +4,7 @@
 
 - Enhancement: Allow non-array Jamilih (e.g., object-based fragments) in
   `$document` head and body
+- Optimization: Avoid checking for child name unless needed
 - Refactoring: Prefer `replaceWith` to `replaceChild`
 
 ## 0.48.1

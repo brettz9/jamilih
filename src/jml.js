@@ -140,7 +140,6 @@ function _applyAnyStylesheet (node) {
  */
 function _appendNode (parent, child) {
   const parentName = _getHTMLNodeName(parent);
-  const childName = _getHTMLNodeName(child);
 
   // IE only
   // istanbul ignore if
@@ -161,6 +160,8 @@ function _appendNode (parent, child) {
   try {
     parent.append(child); // IE9 is now ok with this
   } catch (e) {
+    // istanbul ignore next
+    const childName = _getHTMLNodeName(child);
     // istanbul ignore next
     if (parentName === 'select' && childName === 'option') {
       try { // Since this is now DOM Level 4 standard behavior (and what IE7+ can handle), we try it first
