@@ -38,7 +38,7 @@ let doc = (typeof document !== 'undefined' && document) || (win && win.document)
 const possibleOptions = [
   '$plugins',
   // '$mode', // Todo (SVG/XML)
-  // 'state', // Used internally
+  // '$state', // Used internally
   '$map' // Add any other options here
 ];
 
@@ -294,19 +294,6 @@ function _replaceDefiner (xmlnsObj) {
 }
 
 /**
- *
- * @param {JamilihArray} args
- * @returns {Element}
- */
-function _optsOrUndefinedJML (...args) {
-  return jml(...(
-    args[0] === undefined
-      ? args.slice(1)
-      : args
-  ));
-}
-
-/**
 * @typedef {JamilihAttributes} AttributeArray
 * @property {string} 0 The key
 * @property {string} 1 The value
@@ -417,10 +404,48 @@ function _DOMfromJMLOrString (childNodeJML) {
 */
 
 /**
+* @typedef {PlainObject} JamilihOptions
+* @property {"root"|"attributeValue"|"fragment"|"children"|"fragmentChildren"} $state
+*/
+
+/**
+ * @param {Element} elem
+ * @param {string} att
+ * @param {string} attVal
+ * @param {JamilihOptions} opts
+ * @returns {void}
+ */
+function checkPluginValue (elem, att, attVal, opts) {
+  opts.$state = 'attributeValue';
+  if (attVal && typeof attVal === 'object') {
+    const matchingPlugin = getMatchingPlugin(opts, Object.keys(attVal)[0]);
+    if (matchingPlugin) {
+      return matchingPlugin.set({
+        opts,
+        element: elem,
+        attribute: {name: att, value: attVal}
+      });
+    }
+  }
+  return attVal;
+}
+
+/**
+ * @param {JamilihOptions} opts
+ * @param {string} item
+ * @returns {JamilihPlugin}
+ */
+function getMatchingPlugin (opts, item) {
+  return opts.$plugins && opts.$plugins.find((p) => {
+    return p.name === item;
+  });
+}
+
+/**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
- * @param {JamilihArray} args
+ * @param {...JamilihArray} args
  * @returns {JamilihReturn} The newly created (and possibly already appended)
  *   element or array of elements
  */
@@ -434,12 +459,15 @@ const jml = function jml (...args) {
   function _checkAtts (atts) {
     for (let [att, attVal] of Object.entries(atts)) {
       att = att in ATTR_MAP ? ATTR_MAP[att] : att;
+
       if (NULLABLES.includes(att)) {
+        attVal = checkPluginValue(elem, att, attVal, opts);
         if (!_isNullish(attVal)) {
           elem[att] = attVal;
         }
         continue;
       } else if (ATTR_DOM.includes(att)) {
+        attVal = checkPluginValue(elem, att, attVal, opts);
         elem[att] = attVal;
         continue;
       }
@@ -457,7 +485,8 @@ const jml = function jml (...args) {
           break;
       */
       case '#': { // Document fragment
-        nodes[nodes.length] = _optsOrUndefinedJML(opts, attVal);
+        opts.$state = 'fragmentChilden';
+        nodes[nodes.length] = jml(opts, attVal);
         break;
       } case '$shadow': {
         const {open, closed} = attVal;
@@ -492,6 +521,9 @@ const jml = function jml (...args) {
           }
         }
         break;
+      } case '$state': {
+        // Handled internally
+        break;
       } case 'is': { // Currently only in Chrome
         // Handled during element creation
         break;
@@ -512,6 +544,7 @@ const jml = function jml (...args) {
             if (!{}.hasOwnProperty.call(atts, 'is')) {
               throw new TypeError('Expected `is` with `$define` on built-in');
             }
+            atts.is = checkPluginValue(elem, 'is', atts.is, opts);
             elem.setAttribute('is', atts.is);
             ({is} = atts);
           }
@@ -670,6 +703,7 @@ const jml = function jml (...args) {
         }
         break;
       } case 'className': case 'class':
+        attVal = checkPluginValue(elem, att, attVal, opts);
         if (!_isNullish(attVal)) {
           elem.className = attVal;
         }
@@ -711,11 +745,13 @@ const jml = function jml (...args) {
         // #endif
       case 'htmlFor': case 'for':
         if (elStr === 'label') {
+          attVal = checkPluginValue(elem, att, attVal, opts);
           if (!_isNullish(attVal)) {
             elem.htmlFor = attVal;
           }
           break;
         }
+        attVal = checkPluginValue(elem, att, attVal, opts);
         elem.setAttribute(att, attVal);
         break;
       case 'xmlns':
@@ -723,11 +759,13 @@ const jml = function jml (...args) {
         break;
       default: {
         if (att.startsWith('on')) {
+          attVal = checkPluginValue(elem, att, attVal, opts);
           elem[att] = attVal;
           // _addEvent(elem, att.slice(2), attVal, false); // This worked, but perhaps the user wishes only one event
           break;
         }
         if (att === 'style') {
+          attVal = checkPluginValue(elem, att, attVal, opts);
           if (_isNullish(attVal)) {
             break;
           }
@@ -745,6 +783,7 @@ const jml = function jml (...args) {
             }
             break;
           }
+
           // setAttribute unfortunately erases any existing styles
           elem.setAttribute(att, attVal);
           /*
@@ -757,13 +796,16 @@ const jml = function jml (...args) {
           */
           break;
         }
-        const matchingPlugin = opts && opts.$plugins && opts.$plugins.find((p) => {
-          return p.name === att;
-        });
+        const matchingPlugin = getMatchingPlugin(opts, att);
         if (matchingPlugin) {
-          matchingPlugin.set({element: elem, attribute: {name: att, value: attVal}});
+          matchingPlugin.set({
+            opts,
+            element: elem,
+            attribute: {name: att, value: attVal}
+          });
           break;
         }
+        attVal = checkPluginValue(elem, att, attVal, opts);
         elem.setAttribute(att, attVal);
         break;
       }
@@ -775,11 +817,12 @@ const jml = function jml (...args) {
   let opts;
   let isRoot = false;
   if (_getType(args[0]) === 'object' &&
-    Object.keys(args[0]).some((key) => possibleOptions.includes(key))) {
+    Object.keys(args[0]).some((key) => possibleOptions.includes(key))
+  ) {
     opts = args[0];
-    if (opts.state === undefined) {
+    if (opts.$state === undefined) {
       isRoot = true;
-      opts.state = 'root';
+      opts.$state = 'root';
     }
     if (opts.$map && !opts.$map.root && opts.$map.root !== false) {
       opts.$map = {root: opts.$map};
@@ -801,9 +844,13 @@ const jml = function jml (...args) {
       });
     }
     args = args.slice(1);
+  } else {
+    opts = {
+      $state: undefined
+    };
   }
   const argc = args.length;
-  const defaultMap = opts && opts.$map && opts.$map.root;
+  const defaultMap = opts.$map && opts.$map.root;
   const setMap = (dataVal) => {
     let map, obj;
     // Boolean indicating use of default map and object
@@ -902,6 +949,8 @@ const jml = function jml (...args) {
         break;
       case '':
         nodes[nodes.length] = elem = doc.createDocumentFragment();
+        // Todo: Report to plugins
+        opts.$state = 'fragment';
         break;
       default: { // An element
         elStr = arg;
@@ -919,6 +968,8 @@ const jml = function jml (...args) {
         } else {
           elem = doc.createElement(elStr);
         }
+        // Todo: Report to plugins
+        opts.$state = 'element';
         nodes[nodes.length] = elem; // Add to parent
         break;
       }
@@ -926,7 +977,6 @@ const jml = function jml (...args) {
       break;
     case 'object': { // Non-DOM-element objects indicate attribute-value pairs
       const atts = arg;
-
       if (atts.xmlns !== undefined) { // We handle this here, as otherwise may lose events, etc.
         // As namespace of element already set as XHTML, we need to change the namespace
         // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
@@ -945,6 +995,8 @@ const jml = function jml (...args) {
             .replace(' xmlns="' + NS_HTML + '"', replacer),
           'application/xml'
         ).documentElement;
+        // Todo: Report to plugins
+        opts.$state = 'element';
         // }catch(e) {alert(elem.outerHTML);throw e;}
       }
       _checkAtts(atts);
@@ -959,6 +1011,8 @@ const jml = function jml (...args) {
       */
       if (i === 0) { // Allow wrapping of element, fragment, or document
         elem = arg;
+        // Todo: Report to plugins
+        opts.$state = 'element';
       }
       if (i === argc - 1 || (i === argc - 2 && args[i + 1] === null)) { // parent
         const elsl = nodes.length;
@@ -987,11 +1041,14 @@ const jml = function jml (...args) {
           break;
         default:
           if (Array.isArray(childContent)) { // Arrays representing child elements
-            _appendNode(elem, _optsOrUndefinedJML(opts, ...childContent));
+            opts.$state = 'children';
+            _appendNode(elem, jml(opts, ...childContent));
           } else if (childContent['#']) { // Fragment
-            _appendNode(elem, _optsOrUndefinedJML(opts, childContent['#']));
+            opts.$state = 'fragmentChildren';
+            _appendNode(elem, jml(opts, childContent['#']));
           } else { // Single DOM element children
-            _appendNode(elem, childContent);
+            const newChildContent = checkPluginValue(elem, null, childContent, opts);
+            _appendNode(elem, newChildContent);
           }
           break;
         }
@@ -1001,7 +1058,7 @@ const jml = function jml (...args) {
     }
   }
   const ret = nodes[0] || elem;
-  if (opts && isRoot && opts.$map && opts.$map.root) {
+  if (isRoot && opts.$map && opts.$map.root) {
     setMap(true);
   }
   return ret;
@@ -1300,7 +1357,7 @@ jml.toJMLString = function (dom, config) {
 
 /**
  *
- * @param {JamilihArray} args
+ * @param {...JamilihArray} args
  * @returns {JamilihReturn}
  */
 jml.toDOM = function (...args) { // Alias for jml()
@@ -1309,7 +1366,7 @@ jml.toDOM = function (...args) { // Alias for jml()
 
 /**
  *
- * @param {JamilihArray} args
+ * @param {...JamilihArray} args
  * @returns {string}
  */
 jml.toHTML = function (...args) { // Todo: Replace this with version of jml() that directly builds a string
@@ -1322,7 +1379,7 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
 
 /**
  *
- * @param {JamilihArray} args
+ * @param {...JamilihArray} args
  * @returns {string}
  */
 jml.toDOMString = function (...args) { // Alias for jml.toHTML for parity with jml.toJMLString
@@ -1331,7 +1388,7 @@ jml.toDOMString = function (...args) { // Alias for jml.toHTML for parity with j
 
 /**
  *
- * @param {JamilihArray} args
+ * @param {...JamilihArray} args
  * @returns {string}
  */
 jml.toXML = function (...args) {
@@ -1341,7 +1398,7 @@ jml.toXML = function (...args) {
 
 /**
  *
- * @param {JamilihArray} args
+ * @param {...JamilihArray} args
  * @returns {string}
  */
 jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with jml.toJMLString

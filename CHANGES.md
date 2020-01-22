@@ -1,11 +1,14 @@
 # CHANGES for jamilih
 
-## ?
+## 0.49.0
 
 - Enhancement: Allow non-array Jamilih (e.g., object-based fragments) in
   `$document` head and body
+- Enhancement: Expose state to plugins, adding new states
+- Enhancement: Add interpolator plugin
 - Optimization: Avoid checking for child name unless needed
 - Refactoring: Prefer `replaceWith` to `replaceChild`
+- npm: Update devDeps; use stable mocha-badge-generator
 
 ## 0.48.1
 

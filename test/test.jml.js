@@ -7,6 +7,8 @@ Todos:
 
 import * as xmlTesting from './xmlTesting.js';
 
+import getInterpolator from '../plugins/getInterpolator.js';
+
 describe('Jamilih - jml', function () {
   beforeEach(() => {
     if ($('#mapAttributeTest')) {
@@ -1563,5 +1565,23 @@ describe('Jamilih - jml', function () {
         }
       }]}, 'div');
     }).to.throw(Error, null, 'Should throw with bad `name` on plugin');
+  });
+  it('getInterpolator plugin', () => {
+    const {args, plugin, dynamic} = getInterpolator();
+    const j = jml.bind(null, {$plugins: [plugin]});
+    const div = j('div', {
+      id: 'myId',
+      class: dynamic('fff')
+    }, [
+      ['span', ['abc']],
+      dynamic('ggg')
+    ]);
+
+    expect(args).to.deep.equal(['fff', 'ggg']);
+
+    const ser = new XMLSerializer().serializeToString(div);
+    expect(ser).to.match(
+      /<div xmlns="http:\/\/www.w3.org\/1999\/xhtml" id="myId" class="([a-f\d-]+)"><span>abc<\/span>\1<\/div>/u
+    );
   });
 });

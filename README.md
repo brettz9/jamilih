@@ -643,6 +643,10 @@ j('div', {id: 'myDiv', $_myplugin: {
 }}, body);
 ```
 
+In addition to `element` and `attribute`, `opts` is available,
+including its `state` property (set to `root`, `element`,
+`fragment`, `children`, or `fragmentChildren`).
+
 For a list of plugins, see [docs/PLUGINS.md](./docs/PLUGINS.md).
 
 ## Utilities
