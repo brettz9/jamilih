@@ -164,7 +164,7 @@ Simple element with just child elements...
 
 ```js
 const div = jml('div', [
-    ['p', ['no attributes on the div']]
+  ['p', ['no attributes on the div']]
 ]);
 ```
 
@@ -172,8 +172,8 @@ Simple element with attributes and child elements...
 
 ```js
 const div = jml('div', {class: 'myClass'}, [
-    ['p', ['Some inner text']],
-    ['p', ['another child paragraph']]
+  ['p', ['Some inner text']],
+  ['p', ['another child paragraph']]
 ]);
 ```
 
@@ -181,9 +181,9 @@ Simple element with attributes, child elements, and text nodes...
 
 ```js
 const div = jml('div', {class: 'myClass'}, [
-    'text1',
-    ['p', ['Some inner text']],
-    'text3'
+  'text1',
+  ['p', ['Some inner text']],
+  'text3'
 ]);
 ```
 
@@ -198,15 +198,15 @@ DOM element (API unstable)...
 
 ```js
 const firstTr = jml(
-    'tr', [
-        ['td', ['row 1 cell 1']],
-        ['td', ['row 1 cell 2']]
-    ],
-    'tr', {className: 'anotherRowSibling'}, [
-        ['td', ['row 2 cell 1']],
-        ['td', ['row 2 cell 2']]
-    ],
-    table
+  'tr', [
+    ['td', ['row 1 cell 1']],
+    ['td', ['row 1 cell 2']]
+  ],
+  'tr', {className: 'anotherRowSibling'}, [
+    ['td', ['row 2 cell 1']],
+    ['td', ['row 2 cell 2']]
+  ],
+  table
 );
 ```
 
@@ -214,15 +214,15 @@ Returning element siblings as an array (API unstable)...
 
 ```js
 const trsFragment = jml(
-    'tr', [
-        ['td', ['row 1 cell 1']],
-        ['td', ['row 1 cell 2']]
-    ],
-    'tr', {className: 'anotherRowSibling'}, [
-        ['td', ['row 2 cell 1']],
-        ['td', ['row 2 cell 2']]
-    ],
-    null
+  'tr', [
+    ['td', ['row 1 cell 1']],
+    ['td', ['row 1 cell 2']]
+  ],
+  'tr', {className: 'anotherRowSibling'}, [
+    ['td', ['row 2 cell 1']],
+    ['td', ['row 2 cell 2']]
+  ],
+  null
 );
 ```
 
@@ -230,12 +230,12 @@ Inclusion of regular DOM elements...
 
 ```js
 const div = jml(
-    'div', [
-        $('#DOMChildrenMustBeInArray')[0]
-    ],
-    $('#anotherElementToAddToParent')[0],
-    $('#yetAnotherSiblingToAddToParent')[0],
-    parent
+  'div', [
+    $('#DOMChildrenMustBeInArray')[0]
+  ],
+  $('#anotherElementToAddToParent')[0],
+  $('#yetAnotherSiblingToAddToParent')[0],
+  parent
 );
 ```
 
@@ -243,9 +243,9 @@ Document fragments addable anywhere within child elements...
 
 ```js
 jml('div', [
-    'text0',
-    {'#': ['text1', ['span', ['inner text']], 'text2']},
-    'text3'
+  'text0',
+  {'#': ['text1', ['span', ['inner text']], 'text2']},
+  'text3'
 ]);
 ```
 
@@ -253,11 +253,11 @@ You can also use the JsonML style for fragments:
 
 ```js
 jml('div', [
-    'text0',
-    ['', [
-      'text1', ['span', ['inner text']], 'text2'
-    ]],
-    'text3'
+  'text0',
+  ['', [
+    'text1', ['span', ['inner text']], 'text2'
+  ]],
+  'text3'
 ]);
 ```
 
@@ -265,27 +265,27 @@ Event attachment...
 
 ```js
 const input = jml('input', {
-    // Contains events to be added via addEventListener or
-    //   attachEvent where available
-    $on: {
-        click: [function () {
-            alert('worked1');
-        }, true] // Capturing
-    }
+  // Contains events to be added via addEventListener or
+  //   attachEvent where available
+  $on: {
+    click: [function () {
+      alert('worked1');
+    }, true] // Capturing
+  }
 });
 ```
 
 ```js
 const input2 = jml('input', {
-    style: 'position:absolute; left: -1000px;',
-    $on: {
-        click () {
-            alert('worked2');
-        },
-        focus: [function () {
-            alert('worked3');
-        }, true]
-    }
+  style: 'position:absolute; left: -1000px;',
+  $on: {
+    click () {
+      alert('worked2');
+    },
+    focus: [function () {
+      alert('worked3');
+    }, true]
+  }
 }, body);
 ```
 
@@ -300,17 +300,17 @@ will not work properly in the `innerHTML` build (they will use
 
 ```js
 const div = jml('div', [
-    ['!', 'a comment'],
-    ['?', 'customPI', 'a processing instruction'],
-    // Or with an object of "attributes" (like `xml-stylesheet` `href`)
-    ['?', 'customPIB', {
-      att1: 'val 1',
-      att2: 'val 2"'
-    }],
-    ['![', '&test <CDATA> content'],
-    ['&', 'copy'],
-    ['#', '1234'],
-    ['#x', 'ab3']
+  ['!', 'a comment'],
+  ['?', 'customPI', 'a processing instruction'],
+  // Or with an object of "attributes" (like `xml-stylesheet` `href`)
+  ['?', 'customPIB', {
+    att1: 'val 1',
+    att2: 'val 2"'
+  }],
+  ['![', '&test <CDATA> content'],
+  ['&', 'copy'],
+  ['#', '1234'],
+  ['#x', 'ab3']
 ]);
 ```
 
@@ -343,44 +343,44 @@ Its allowable properties include:
 
 ```js
 jml('div', {
-    id: 'myElem',
-    $shadow: {
-        open: true, // Default (can also use `closed`)
-        template: [
-            {id: 'myTemplate'},
-            [
-                ['style', [`
-                    :host {color: red;}
-                    ::slotted(p) {color: blue;}
-                `]],
-                ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
-                ['h2', ['Heading level 2']],
-                ['slot', ['DEFAULT CONTENT HERE']]
-            ]
-        ]
-    }
+  id: 'myElem',
+  $shadow: {
+    open: true, // Default (can also use `closed`)
+    template: [
+      {id: 'myTemplate'},
+      [
+        ['style', [`
+            :host {color: red;}
+            ::slotted(p) {color: blue;}
+        `]],
+        ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+        ['h2', ['Heading level 2']],
+        ['slot', ['DEFAULT CONTENT HERE']]
+      ]
+    ]
+  }
 }, [
-    ['h1', {slot: 'h'}, ['Heading level 1']],
-    ['p', ['Other content']]
+  ['h1', {slot: 'h'}, ['Heading level 1']],
+  ['p', ['Other content']]
 ], body);
 
 jml('div', {
-    id: 'myElem',
-    $shadow: {
-        // Could also define as `open: []`
-        content: [
-            ['style', [`
-                :host {color: red;}
-                ::slotted(p) {color: blue;}
-            `]],
-            ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
-            ['h2', ['Heading level 2']],
-            ['slot', ['DEFAULT CONTENT HERE']]
-        ]
-    }
+  id: 'myElem',
+  $shadow: {
+    // Could also define as `open: []`
+    content: [
+      ['style', [`
+          :host {color: red;}
+          ::slotted(p) {color: blue;}
+      `]],
+      ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
+      ['h2', ['Heading level 2']],
+      ['slot', ['DEFAULT CONTENT HERE']]
+    ]
+  }
 }, [
-    ['h1', {slot: 'h'}, ['Heading level 1']],
-    ['p', ['Other content']]
+  ['h1', {slot: 'h'}, ['Heading level 1']],
+  ['p', ['Other content']]
 ], body);
 ```
 
@@ -398,12 +398,12 @@ reference, consider using a symbol with `$custom`.
 
 ```js
 jml('input', {
-    id: 'symInput1',
-    $symbol: ['publicForSym1', function (arg1) {
-        console.log(
-            (this.id + ' ' + arg1) === 'symInput1 arg1'
-        );
-    }]
+  id: 'symInput1',
+  $symbol: ['publicForSym1', function (arg1) {
+    console.log(
+      (this.id + ' ' + arg1) === 'symInput1 arg1'
+    );
+  }]
 }, body);
 
 // Then elsewhere get and use the symbol function for the DOM object
@@ -421,13 +421,13 @@ an object instead of a function:
 ```js
 const privateSym = Symbol('a private symbol');
 jml('input', {id: 'symInput3', $symbol: [privateSym, {
-    localValue: 5,
-    test (arg1) {
-        console.log(this.localValue === 5);
-        console.log(
-            (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
-        );
-    }
+  localValue: 5,
+  test (arg1) {
+    console.log(this.localValue === 5);
+    console.log(
+      (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
+    );
+  }
 }]}, body);
 
 // Obtaining the element with symbol or using the utility:
@@ -442,30 +442,30 @@ together) and without the overhead of defining a custom element.
 
 ```js
 jml('div', [
-    ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
-        console.log(
-            (this.id + ' ' + arg1) === 'symInput1 arg1'
-        );
-    }]}],
-    ['div', {id: 'divSymbolTest', $on: {
-        click () {
-            // Can supply element or selector
-            jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
-            jml.sym('#symInput3', privateSym).test('arg3');
+  ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
+    console.log(
+      (this.id + ' ' + arg1) === 'symInput1 arg1'
+    );
+  }]}],
+  ['div', {id: 'divSymbolTest', $on: {
+    click () {
+      // Can supply element or selector
+      jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
+      jml.sym('#symInput3', privateSym).test('arg3');
 
-            // Or use symbols directly:
-            this.previousElementSibling[Symbol.for('publicForSym1')]('arg1');
-        }
-    }}],
-    ['input', {id: 'symInput3', $symbol: [privateSym, {
-        localValue: 5,
-        test (arg1) {
-            console.log(this.localValue === 5);
-            console.log(
-                (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
-            );
-        }
-    }]}]
+      // Or use symbols directly:
+      this.previousElementSibling[Symbol.for('publicForSym1')]('arg1');
+    }
+  }}],
+  ['input', {id: 'symInput3', $symbol: [privateSym, {
+    localValue: 5,
+    test (arg1) {
+      console.log(this.localValue === 5);
+      console.log(
+        (this.elem.id + ' ' + arg1) === 'symInput3 arg3'
+      );
+    }
+  }]}]
 ], body);
 ```
 
@@ -482,15 +482,15 @@ properties (like methods) will be added to each instance of the element rather t
 
 ```js
 const mySelect = jml('select', {
-    id: 'mySelect',
-    $custom: {
-        test () {
-            return this.id;
-        },
-        test2 () {
-            return this.test();
-        }
+  id: 'mySelect',
+  $custom: {
+    test () {
+      return this.id;
+    },
+    test2 () {
+      return this.test();
     }
+  }
 }, body);
 console.log(mySelect.test() === 'mySelect');
 console.log(mySelect.test2() === 'mySelect');
@@ -542,12 +542,12 @@ an empty `HTMLElement`-extending constructor):
 
 ```js
 const myEl = jml('my-el', {
-    id: 'myEl',
-    $define: {
-        test () {
-            return this.id;
-        }
+  id: 'myEl',
+  $define: {
+    test () {
+      return this.id;
     }
+  }
 }, body);
 console.log(myEl.test() === 'myEl');
 ```
@@ -559,10 +559,10 @@ constructor (it will be executed after a call to the dynamically-created class'
 ```js
 let constructorSetVar2;
 jml('my-el2', {
-    id: 'myEl2',
-    $define () {
-        constructorSetVar2 = this.id;
-    }
+  id: 'myEl2',
+  $define () {
+    constructorSetVar2 = this.id;
+  }
 }, body);
 console.log(constructorSetVar2 === 'myEl2');
 ```
@@ -574,13 +574,13 @@ It may be an inline class expression or a reference to a class declaration.
 ```js
 let constructorSetVar3;
 jml('my-el3', {
-    id: 'myEl3',
-    $define: class extends HTMLElement {
-        constructor () {
-            super();
-            constructorSetVar3 = this.id;
-        }
+  id: 'myEl3',
+  $define: class extends HTMLElement {
+    constructor () {
+      super();
+      constructorSetVar3 = this.id;
     }
+  }
 }, body);
 console.log(constructorSetVar3 === 'myEl3');
 ```
@@ -590,17 +590,17 @@ You may supply a two-element array with the function (or class) and prototype me
 ```js
 let constructorSetVar4;
 const myel4 = jml('my-el4', {
-    id: 'myEl4',
-    $define: [function () {
-        constructorSetVar4 = this.id;
-    }, {
-        test () {
-            console.log(this.id === 'myEl4');
-        },
-        test2 () {
-            this.test();
-        }
-    }]
+  id: 'myEl4',
+  $define: [function () {
+    constructorSetVar4 = this.id;
+  }, {
+    test () {
+      console.log(this.id === 'myEl4');
+    },
+    test2 () {
+      this.test();
+    }
+  }]
 }, body);
 console.log(constructorSetVar4 === 'myEl4');
 myel4.test();
@@ -617,20 +617,20 @@ you prefer.
 
 ```js
 const options = {$plugins: [
-    {
-        name: '$_myplugin',
-        set ({element, attribute: {name, value}}) {
-            // Add code here to modify the element
-            element.setAttribute(name, value + 'Changed');
-            if (value.blueAndRed) {
-                element.style.color = 'blue';
-                element.style.backgroundColor = 'red';
-            }
-        }
+  {
+    name: '$_myplugin',
+    set ({element, attribute: {name, value}}) {
+      // Add code here to modify the element
+      element.setAttribute(name, value + 'Changed');
+      if (value.blueAndRed) {
+        element.style.color = 'blue';
+        element.style.backgroundColor = 'red';
+      }
     }
+  }
 ]};
 jml(options, 'div', {id: 'myDiv', $_myplugin: {
-    blueAndRed: true
+  blueAndRed: true
 }}, body);
 
 // If reusing, you may wish to bind the options
@@ -639,7 +639,7 @@ const j = jml.bind(null, options);
 // Then you can reuse without needing to resupply the
 //    options (including its plugins)
 j('div', {id: 'myDiv', $_myplugin: {
-    blueAndRed: true
+  blueAndRed: true
 }}, body);
 ```
 

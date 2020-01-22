@@ -64,9 +64,7 @@ module.exports = {
         "import/no-commonjs": "off",
         "node/no-missing-import": "off",
         "no-multi-spaces": "off",
-        "no-alert": "off",
-        // Disable until may fix https://github.com/gajus/eslint-plugin-jsdoc/issues/211
-        "indent": "off"
+        "no-alert": "off"
       }
     },
     {
