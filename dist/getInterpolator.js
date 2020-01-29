@@ -64,6 +64,7 @@
     var uuid = generateUUID();
     return {
       args: args,
+      uuid: uuid,
       dynamic: function dynamic(val) {
         return _defineProperty({}, name, val);
       },

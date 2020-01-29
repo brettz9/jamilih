@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.49.2
+
+- Fix: For `getInterpolator` plugin, export `uuid`
+
 ## 0.49.1
 
 - Fix: Add UMD `dist` for new plugin

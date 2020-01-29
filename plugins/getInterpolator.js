@@ -43,6 +43,7 @@ function getInterpolator () {
   const uuid = generateUUID();
   return {
     args,
+    uuid,
     dynamic (val) {
       return {
         [name]: val
