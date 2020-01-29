@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.49.0",
+  "version": "0.49.1",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -8,6 +8,7 @@
   },
   "contributors": [],
   "scripts": {
+    "prepublishOnly": "npm run rollup",
     "eslint": "eslint --ext=js,md,html .",
     "rollup": "rollup -c",
     "browser-test": "npm run rollup && open-cli http://localhost:8091/test/ && npm run start",

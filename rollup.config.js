@@ -64,7 +64,6 @@ export default [{
   output: {
     file: 'dist/jml-es.js',
     format: 'es',
-    name: 'jml',
     exports: 'named'
   },
   plugins: [
@@ -77,7 +76,6 @@ export default [{
   output: {
     file: 'dist/jml-jsdom.js',
     format: 'cjs',
-    name: 'jml',
     exports: 'named'
   },
   external: [
@@ -96,5 +94,18 @@ export default [{
       preferBuiltins: true
     }),
     commonjs()
+  ]
+}, {
+  input: 'plugins/getInterpolator.js',
+  output: {
+    file: 'dist/getInterpolator.js',
+    format: 'umd',
+    name: 'Interpolator',
+    exports: 'named'
+  },
+  plugins: [
+    babel({
+      exclude: 'node_modules/**'
+    })
   ]
 }];

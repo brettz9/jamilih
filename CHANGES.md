@@ -1,5 +1,10 @@
 # CHANGES for jamilih
 
+## 0.49.1
+
+- Fix: Add UMD `dist` for new plugin
+- Build: Update `dist` files
+
 ## 0.49.0
 
 - Enhancement: Allow non-array Jamilih (e.g., object-based fragments) in
