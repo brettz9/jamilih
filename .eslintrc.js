@@ -33,7 +33,8 @@ module.exports = {
     {
       files: ['test/test.*.js'],
       rules: {
-          'import/unambiguous': 'off'
+          'import/unambiguous': 'off',
+          'jsdoc/require-jsdoc': 'off'
       },
       extends: [
         'plugin:chai-friendly/recommended',
@@ -64,7 +65,8 @@ module.exports = {
         "import/no-commonjs": "off",
         "node/no-missing-import": "off",
         "no-multi-spaces": "off",
-        "no-alert": "off"
+        "no-alert": "off",
+        "jsdoc/require-jsdoc": "off"
       }
     },
     {

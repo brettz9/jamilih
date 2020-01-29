@@ -561,8 +561,14 @@ const jml = function jml (...args) {
               ? doc.createElement(localName).constructor
               : HTMLElement;
 
+          /**
+           * Class wrapping base class.
+           */
           return cnstrct
             ? class extends baseClass {
+              /**
+               * Calls user constructor.
+               */
               constructor () {
                 super();
                 cnstrct.call(this);
@@ -1094,8 +1100,16 @@ jml.toJML = function (dom, {
    * @returns {void}
    */
   function invalidStateError (msg) { // These are probably only necessary if working with text/html
-    // eslint-disable-next-line no-shadow, unicorn/custom-error-definition
+    /* eslint-disable no-shadow, unicorn/custom-error-definition */
+    /**
+     * Polyfill for `DOMException`.
+     */
     class DOMException extends Error {
+      /* eslint-enable no-shadow, unicorn/custom-error-definition */
+      /**
+       * @param {string} message
+       * @param {string} name
+       */
       constructor (message, name) {
         super(message);
         // eslint-disable-next-line unicorn/custom-error-definition
@@ -1405,29 +1419,66 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
   return jml.toXML(...args);
 };
 
+/**
+ * Element-aware wrapper for `Map`.
+ */
 class JamilihMap extends Map {
+  /**
+   * @param {string|Element} elem
+   * @returns {any}
+   */
   get (elem) {
     elem = typeof elem === 'string' ? $(elem) : elem;
     return super.get.call(this, elem);
   }
+  /**
+   * @param {string|Element} elem
+   * @param {any} value
+   * @returns {any}
+   */
   set (elem, value) {
     elem = typeof elem === 'string' ? $(elem) : elem;
     return super.set.call(this, elem, value);
   }
+  /**
+   * @param {string|Element} elem
+   * @param {string} methodName
+   * @param {...any} args
+   * @returns {any}
+   */
   invoke (elem, methodName, ...args) {
     elem = typeof elem === 'string' ? $(elem) : elem;
     return this.get(elem)[methodName](elem, ...args);
   }
 }
+
+/**
+ * Element-aware wrapper for `WeakMap`.
+ */
 class JamilihWeakMap extends WeakMap {
+  /**
+   * @param {string|Element} elem
+   * @returns {any}
+   */
   get (elem) {
     elem = typeof elem === 'string' ? $(elem) : elem;
     return super.get.call(this, elem);
   }
+  /**
+   * @param {string|Element} elem
+   * @param {any} value
+   * @returns {any}
+   */
   set (elem, value) {
     elem = typeof elem === 'string' ? $(elem) : elem;
     return super.set.call(this, elem, value);
   }
+  /**
+   * @param {string|Element} elem
+   * @param {string} methodName
+   * @param {...any} args
+   * @returns {any}
+   */
   invoke (elem, methodName, ...args) {
     elem = typeof elem === 'string' ? $(elem) : elem;
     return this.get(elem)[methodName](elem, ...args);
