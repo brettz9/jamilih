@@ -91,6 +91,7 @@ const ATTR_DOM = BOOL_ATTS.concat([
 //   to avoid setting through nullish value
 const NULLABLES = [
   'dir', // HTMLElement
+  'integrity', // script, link
   'lang', // HTMLElement
   'max',
   'min',

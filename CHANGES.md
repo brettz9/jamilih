@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.50.0
+
+- Enhancement: Add `integrity` as nullable property
+
 ## 0.49.2
 
 - Fix: For `getInterpolator` plugin, export `uuid`
