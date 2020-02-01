@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## ?
+
+- npm: Update devDeps
+
 ## 0.50.0
 
 - Enhancement: Add `integrity` as nullable property
