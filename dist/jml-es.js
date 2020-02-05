@@ -353,7 +353,7 @@ var ATTR_DOM = BOOL_ATTS.concat(['accessKey', // HTMLElement
 'value', 'willvalidate']); // Todo: Add more to this as useful for templating
 //   to avoid setting through nullish value
 
-var NULLABLES = ['dir', // HTMLElement
+var NULLABLES = ['autocomplete', 'dir', // HTMLElement
 'integrity', // script, link
 'lang', // HTMLElement
 'max', 'min', 'title' // HTMLElement

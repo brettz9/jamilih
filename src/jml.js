@@ -90,6 +90,7 @@ const ATTR_DOM = BOOL_ATTS.concat([
 // Todo: Add more to this as useful for templating
 //   to avoid setting through nullish value
 const NULLABLES = [
+  'autocomplete',
   'dir', // HTMLElement
   'integrity', // script, link
   'lang', // HTMLElement

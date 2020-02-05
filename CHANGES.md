@@ -1,7 +1,8 @@
 # CHANGES for jamilih
 
-## ?
+## 0.51.0
 
+- Enhancement: Add `autocomplete` as nullable property
 - npm: Update devDeps
 
 ## 0.50.0
