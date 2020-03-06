@@ -1232,7 +1232,7 @@ describe('Jamilih - jml', function () {
       let constructorSetVar3;
       jml('my-el3', {
         id: 'myEl3',
-        $define: class extends HTMLElement {
+        $define: class extends window.HTMLElement {
           constructor () {
             super();
             constructorSetVar3 = this.id;
@@ -1270,7 +1270,7 @@ describe('Jamilih - jml', function () {
       let constructorSetVar5;
       const myel5 = jml('my-el5', {
         id: 'myEl5',
-        $define: [class extends HTMLElement {
+        $define: [class extends window.HTMLElement {
           constructor () {
             super();
             constructorSetVar5 = this.id;

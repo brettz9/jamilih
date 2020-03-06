@@ -11,7 +11,10 @@
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/brettz9/jamilih.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/brettz9/jamilih/alerts)
 [![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/brettz9/jamilih.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/brettz9/jamilih/context:javascript)
 
-[![License](https://img.shields.io/npm/l/jamilih.svg)](LICENSE-MIT.txt)
+[![Licenses badge](https://raw.githubusercontent.com/brettz9/jamilih/master/badges/licenses-badge.svg?sanitize=true)](badges/licenses-badge.svg)
+
+(see also [licenses for dev. deps.](https://raw.githubusercontent.com/brettz9/jamilih/master/badges/licenses-badge-dev.svg?sanitize=true))
+<!-- [![License](https://img.shields.io/npm/l/jamilih.svg)](LICENSE-MIT.txt) -->
 
 [![issuehunt-to-marktext](https://issuehunt.io/static/embed/issuehunt-button-v1.svg)](https://issuehunt.io/r/brettz9/jamilih)
 
@@ -842,6 +845,8 @@ in templates, and to my personal sensibilities, more clear in goal #8
 ### Medium priority to-dos
 
 1. See "todo"'s within code.
+1. SSR: Add mode to avoid need for `defaultChecked`,
+    `defaultSelected`, `defaultValue`
 1. Timing of appending
     1. Add element before processing properties? Try to append children to their
         parent immediately (before attribute/property processing code is run) so

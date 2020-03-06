@@ -96,6 +96,8 @@ const NULLABLES = [
   'lang', // HTMLElement
   'max',
   'min',
+  'minlength',
+  'maxlength',
   'title' // HTMLElement
 ];
 
@@ -553,7 +555,7 @@ const jml = function jml (...args) {
         }
 
         const def = customizedBuiltIn ? is : localName;
-        if (customElements.get(def)) {
+        if (window.customElements.get(def)) {
           break;
         }
         const getConstructor = (cnstrct) => {
@@ -561,7 +563,7 @@ const jml = function jml (...args) {
             ? doc.createElement(options.extends).constructor
             : customizedBuiltIn
               ? doc.createElement(localName).constructor
-              : HTMLElement;
+              : window.HTMLElement;
 
           /**
            * Class wrapping base class.
@@ -619,7 +621,7 @@ const jml = function jml (...args) {
           });
         }
         // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
-        customElements.define(def, cnstrctr, typeof options === 'object' ? options : undefined);
+        window.customElements.define(def, cnstrctr, typeof options === 'object' ? options : undefined);
         break;
       } case '$symbol': {
         const [symbol, func] = attVal;

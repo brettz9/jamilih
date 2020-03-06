@@ -1,5 +1,13 @@
 # CHANGES for jamilih
 
+## 0.52.0
+
+- Breaking change: Require Node 10 (dev. env. relies upon)
+- Enhancement: Add `minlength` and `maxlength` as nullables
+- Build: Update build files
+- Docs: Add license badges for devs/devDeps
+- npm: Update devDeps
+
 ## 0.51.0
 
 - Enhancement: Add `autocomplete` as nullable property
