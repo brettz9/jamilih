@@ -2,7 +2,6 @@
 [![Dependencies](https://img.shields.io/david/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih)
 [![devDependencies](https://img.shields.io/david/dev/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih?type=dev)
 [![npm](https://img.shields.io/npm/v/jamilih.svg)](https://www.npmjs.com/package/jamilih)
-[![License](https://img.shields.io/npm/l/jamilih.svg)](LICENSE-MIT.txt)
 
 [![testing badge](https://raw.githubusercontent.com/brettz9/jamilih/master/badges/tests-badge.svg?sanitize=true)](badges/tests-badge.svg)
 [![coverage badge](https://raw.githubusercontent.com/brettz9/jamilih/master/badges/coverage-badge.svg?sanitize=true)](badges/coverage-badge.svg)
