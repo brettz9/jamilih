@@ -1,5 +1,11 @@
 # CHANGES for jamilih
 
+## ?
+
+- Docs: Update coverage badge per latest coveradge
+- Docs: Remove redundant license badge
+- npm: Update devDeps
+
 ## 0.52.0
 
 - Breaking change: Require Node 10 (dev. env. relies upon)
