@@ -101,7 +101,7 @@
     "esm": "^3.2.25",
     "jsdoc": "^3.6.3",
     "jsdom": "16.2.1",
-    "license-badger": "^0.12.5",
+    "license-badger": "^0.12.6",
     "mocha": "^7.1.1",
     "mocha-badge-generator": "^0.5.2",
     "mocha-multi-reporters": "git+https://github.com/brettz9/mocha-multi-reporters.git#missing-reporter",
