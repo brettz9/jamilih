@@ -1,7 +1,8 @@
 # CHANGES for jamilih
 
-## ?
+## 0.52.1
 
+- Fix: `minlength` and `maxlength` needed case-changing
 - Docs: Update coverage badge per latest coveradge
 - Docs: Remove redundant license badge
 - npm: Update devDeps

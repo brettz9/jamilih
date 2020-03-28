@@ -46,6 +46,8 @@ const NS_HTML = 'http://www.w3.org/1999/xhtml',
   hyphenForCamelCase = /-([a-z])/gu;
 
 const ATTR_MAP = {
+  maxlength: 'maxLength',
+  minlength: 'maxLength',
   readonly: 'readOnly'
 };
 
@@ -96,8 +98,8 @@ const NULLABLES = [
   'lang', // HTMLElement
   'max',
   'min',
-  'minlength',
-  'maxlength',
+  'minLength',
+  'maxLength',
   'title' // HTMLElement
 ];
 

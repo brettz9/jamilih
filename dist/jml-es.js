@@ -360,6 +360,8 @@ var possibleOptions = ['$plugins', // '$mode', // Todo (SVG/XML)
 var NS_HTML = 'http://www.w3.org/1999/xhtml',
     hyphenForCamelCase = /\x2D([a-z])/g;
 var ATTR_MAP = {
+  maxlength: 'maxLength',
+  minlength: 'maxLength',
   readonly: 'readOnly'
 }; // We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
 // We don't set attribute esp. for boolean atts as we want to allow setting of `undefined`
@@ -383,7 +385,7 @@ var ATTR_DOM = BOOL_ATTS.concat(['accessKey', // HTMLElement
 var NULLABLES = ['autocomplete', 'dir', // HTMLElement
 'integrity', // script, link
 'lang', // HTMLElement
-'max', 'min', 'minlength', 'maxlength', 'title' // HTMLElement
+'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
 ];
 
 var $ = function $(sel) {
