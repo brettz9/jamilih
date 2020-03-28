@@ -47,7 +47,7 @@ const NS_HTML = 'http://www.w3.org/1999/xhtml',
 
 const ATTR_MAP = {
   maxlength: 'maxLength',
-  minlength: 'maxLength',
+  minlength: 'minLength',
   readonly: 'readOnly'
 };
 

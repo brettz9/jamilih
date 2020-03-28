@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.52.2
+
+- Fix: Wrong mapping for `minlength`
+
 ## 0.52.1
 
 - Fix: `minlength` and `maxlength` needed case-changing

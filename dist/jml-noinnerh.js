@@ -367,7 +367,7 @@
       hyphenForCamelCase = /\x2D([a-z])/g;
   var ATTR_MAP = {
     maxlength: 'maxLength',
-    minlength: 'maxLength',
+    minlength: 'minLength',
     readonly: 'readOnly'
   }; // We define separately from ATTR_DOM for clarity (and parity with JsonML) but no current need
   // We don't set attribute esp. for boolean atts as we want to allow setting of `undefined`
