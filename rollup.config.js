@@ -1,4 +1,4 @@
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -39,6 +39,7 @@ function noInnerHTML (format) {
         ]
       }),
       babel({
+        babelHelpers: 'bundled',
         exclude: 'node_modules/**'
       })
     ]
@@ -56,6 +57,7 @@ export default [{
   },
   plugins: [
     babel({
+      babelHelpers: 'bundled',
       exclude: 'node_modules/**'
     })
   ]
@@ -68,6 +70,7 @@ export default [{
   },
   plugins: [
     babel({
+      babelHelpers: 'bundled',
       exclude: 'node_modules/**'
     })
   ]
@@ -87,6 +90,7 @@ export default [{
   ],
   plugins: [
     babel({
+      babelHelpers: 'bundled',
       exclude: 'node_modules/**'
     }),
     json(),
@@ -105,6 +109,7 @@ export default [{
   },
   plugins: [
     babel({
+      babelHelpers: 'bundled',
       exclude: 'node_modules/**'
     })
   ]

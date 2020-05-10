@@ -1,5 +1,13 @@
 # CHANGES for jamilih
 
+## ?
+
+- Docs: Update badges per latest
+- Linting: Check hidden files; update per latest ash-nazg
+- npm: Switch from deprecated `rollup-plugin-babel` to
+    `rollup/plugin-babel`; use `babelHelpers` explicitly
+- npm: Update devDeps and peerDep
+
 ## 0.52.2
 
 - Fix: Wrong mapping for `minlength`

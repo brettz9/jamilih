@@ -6,7 +6,8 @@ export {jml, $, $$, nbsp, body, glue} from './jml.js';
 /* istanbul ignore else */
 if (typeof process !== 'undefined') {
   // import {JSDOM} from 'jsdom';
-  const {JSDOM} = require('jsdom'); // eslint-disable-line global-require
+  // eslint-disable-next-line node/global-require, node/no-unpublished-require
+  const {JSDOM} = require('jsdom');
 
   const win = new JSDOM('').window;
 
