@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.53.1
+
+- Fix: Resume allowing no-op for `$on`
+
 ## 0.53.0
 
 - Build: Change to Node 10 targets

@@ -710,7 +710,11 @@ describe('Jamilih - jml', function () {
   });
   it('style attribute object', () => {
     xmlTesting.matchesXMLString(
-      jml('div', {style: {float: 'left', 'border-color': 'red'}}, ['test']),
+      jml('div', {
+        // Squeeze in an `$on` here too for `$on` no-op coverage
+        $on: null,
+        style: {float: 'left', 'border-color': 'red'}
+      }, ['test']),
       '<div xmlns="http://www.w3.org/1999/xhtml" style="float: left; border-color: red;">test</div>',
       'Single element with style object and text child'
     );
