@@ -207,7 +207,7 @@ function _createSafeReference (type, prefix, arg) {
   // For security reasons related to innerHTML, we ensure this string only
   //  contains potential entity characters
   if (!arg.match(/^\w+$/u)) {
-    throw new TypeError('Bad ' + type);
+    throw new TypeError(`Bad ${type} reference; with prefix "${prefix}" and arg "${arg}"`);
   }
   const elContainer = doc.createElement('div');
   // Todo: No workaround for XML?
@@ -548,7 +548,11 @@ const jml = function jml (...args) {
           is = elem.getAttribute('is');
           if (!is) {
             if (!{}.hasOwnProperty.call(atts, 'is')) {
-              throw new TypeError('Expected `is` with `$define` on built-in');
+              throw new TypeError(
+                `Expected \`is\` with \`$define\` on built-in; args: ${
+                  JSON.stringify(args)
+                }`
+              );
             }
             atts.is = checkPluginValue(elem, 'is', atts.is, opts);
             elem.setAttribute('is', atts.is);
@@ -709,7 +713,7 @@ const jml = function jml (...args) {
             val = [val, false];
           }
           if (typeof val[0] !== 'function') {
-            throw new TypeError('Expect a function for `$on`');
+            throw new TypeError(`Expect a function for \`$on\`; args: ${JSON.stringify(args)}`);
           }
           _addEvent(elem, p2, val[0], val[1]); // element, event name, handler, capturing
         }
@@ -841,17 +845,17 @@ const jml = function jml (...args) {
     }
     if ('$plugins' in opts) {
       if (!Array.isArray(opts.$plugins)) {
-        throw new TypeError('$plugins must be an array');
+        throw new TypeError(`\`$plugins\` must be an array; args: ${JSON.stringify(args)}`);
       }
       opts.$plugins.forEach((pluginObj) => {
         if (!pluginObj || typeof pluginObj !== 'object') {
-          throw new TypeError('Plugin must be an object');
+          throw new TypeError(`Plugin must be an object; args: ${JSON.stringify(args)}`);
         }
         if (!pluginObj.name || !pluginObj.name.startsWith('$_')) {
-          throw new TypeError('Plugin object name must be present and begin with `$_`');
+          throw new TypeError(`Plugin object name must be present and begin with \`$_\`; args: ${JSON.stringify(args)}`);
         }
         if (typeof pluginObj.set !== 'function') {
-          throw new TypeError('Plugin object must have a `set` method');
+          throw new TypeError(`Plugin object must have a \`set\` method; args: ${JSON.stringify(args)}`);
         }
       });
     }
@@ -895,7 +899,7 @@ const jml = function jml (...args) {
     const type = _getType(arg);
     switch (type) {
     default:
-      throw new TypeError('Unexpected type: ' + type);
+      throw new TypeError(`Unexpected type: ${type}; arg: ${arg}; index ${i} on args: ${JSON.stringify(args)}`);
     case 'null': // null always indicates a place-holder (only needed for last argument if want array returned)
       if (i === argc - 1) {
         _applyAnyStylesheet(nodes[0]); // We have to execute any stylesheets even if not appending or otherwise IE will never apply them
@@ -905,7 +909,7 @@ const jml = function jml (...args) {
         // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
       }
-      throw new TypeError('`null` values not allowed except as final Jamilih argument');
+      throw new TypeError(`\`null\` values not allowed except as final Jamilih argument; index ${i} on args: ${JSON.stringify(args)}`);
     case 'string': // Strings normally indicate elements
       switch (arg) {
       case '!':
@@ -1044,7 +1048,9 @@ const jml = function jml (...args) {
         const childContent = child[j];
         const childContentType = typeof childContent;
         if (_isNullish(childContent)) {
-          throw new TypeError('Bad children (parent array: ' + JSON.stringify(args) + '; child: ' + child + '; index:' + j + ')');
+          throw new TypeError(
+            `Bad children (parent array: ${JSON.stringify(args)}; index ${j} of child: ${JSON.stringify(child)})`
+          );
         }
         switch (childContentType) {
         // Todo: determine whether null or function should have special handling or be converted to text

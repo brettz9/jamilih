@@ -4,21 +4,6 @@
   (global = global || self, factory(global.Interpolator = {}));
 }(this, (function (exports) { 'use strict';
 
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
   /* globals performance */
   // The `performance` global is optional
 
@@ -33,22 +18,22 @@
     //  Adapted from original: public domain/MIT: http://stackoverflow.com/a/8809472/271577
 
     /* istanbul ignore next */
-    var d = new Date().getTime() + ( // use high-precision timer if available
+    let d = new Date().getTime() + ( // use high-precision timer if available
 
     /* eslint-disable compat/compat */
     typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now()
     /* eslint-enable compat/compat */
     : 0);
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/gu, function (c) {
       /* eslint-disable no-bitwise */
-      var r = (d + Math.random() * 16) % 16 | 0;
+      const r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
       return (c === 'x' ? r : r & 0x3 | 0x8).toString(16);
       /* eslint-enable no-bitwise */
     });
   }
 
-  var name = '$_interpolator';
+  const name = '$_interpolator';
   /**
   * @typedef {JamilihPlugin} JamilihPluginWithArgs
   * @property {any[]} args
@@ -60,21 +45,28 @@
    */
 
   function getInterpolator() {
-    var args = [];
-    var uuid = generateUUID();
+    const args = [];
+    const uuid = generateUUID();
     return {
-      args: args,
-      uuid: uuid,
-      dynamic: function dynamic(val) {
-        return _defineProperty({}, name, val);
-      },
-      plugin: {
-        name: name,
-        set: function set(_ref2) {
-          var element = _ref2.element,
-              value = _ref2.attribute.value,
-              opts = _ref2.opts;
+      args,
+      uuid,
 
+      dynamic(val) {
+        return {
+          [name]: val
+        };
+      },
+
+      plugin: {
+        name,
+
+        set({
+          element,
+          attribute: {
+            value
+          },
+          opts
+        }) {
           // Todo: Add unique ID on which to later split
           // Todo: Support in element name or fragment position
           //  (with ability to convert whole set of arguments?); and
@@ -96,9 +88,10 @@
             /* istanbul ignore next */
 
             default:
-              throw new Error("Interpolator plugin not expected in ".concat(opts.$state, " position"));
+              throw new Error(`Interpolator plugin not expected in ${opts.$state} position`);
           }
         }
+
       }
     };
   }

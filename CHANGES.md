@@ -1,7 +1,10 @@
 # CHANGES for jamilih
 
-## ?
+## 0.53.0
 
+- Build: Change to Node 10 targets
+- Build: Switch to babelrc with "json" extension
+- Enhancement: More details in error messages
 - Docs: Update badges per latest
 - Linting: Check hidden files; update per latest ash-nazg
 - npm: Switch from deprecated `rollup-plugin-babel` to

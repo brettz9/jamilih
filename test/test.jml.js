@@ -471,7 +471,7 @@ describe('Jamilih - jml', function () {
       jml('div', [
         ['&', 'ab cd']
       ]);
-    }).to.throw(TypeError, 'Bad entity');
+    }).to.throw(TypeError, /Bad entity reference/u);
   });
   it('recovers with malformed processing instruction', function () {
     const div = jml('div', [
@@ -654,14 +654,14 @@ describe('Jamilih - jml', function () {
       jml('div', [
         undefined
       ]);
-    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; child: ; index:0)');
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; index 0 of child: [null])');
   });
   it('throws with `null` child nodes', () => {
     expect(() => {
       jml('div', [
         null
       ]);
-    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; child: ; index:0)');
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; index 0 of child: [null])');
   });
   it('Event listeners', () => {
     let str;
