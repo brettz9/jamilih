@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.53.2
+
+- Fix: Missed adding updated build files
+
 ## 0.53.1
 
 - Fix: Resume allowing no-op for `$on`

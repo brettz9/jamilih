@@ -804,7 +804,8 @@
           case '$on':
             {
               // Events
-              for (let [p2, val] of Object.entries(attVal)) {
+              // Allow for no-op by defaulting to `{}`
+              for (let [p2, val] of Object.entries(attVal || {})) {
                 if (typeof val === 'function') {
                   val = [val, false];
                 }
