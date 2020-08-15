@@ -1,5 +1,15 @@
 # CHANGES for jamilih
 
+## ?
+
+- Build: Update per latest devDeps.
+- Linting: As per latest ash-nazg
+- npm: Switch from deprecated `rollup-plugin-commonjs` to
+    `@rollup/plugin-commonjs`
+- npm: Remove `remark-lint`
+- npm: Add separate `nyc` testing script
+- npm: Update devDeps. and package-lock
+
 ## 0.53.2
 
 - Fix: Missed adding updated build files

@@ -35,7 +35,8 @@ module.exports = {
       files: ['test/test.*.js'],
       rules: {
         'import/unambiguous': 'off',
-        'jsdoc/require-jsdoc': 'off'
+        'jsdoc/require-jsdoc': 'off',
+        'compat/compat': 'off'
       },
       extends: [
         'plugin:chai-friendly/recommended',
@@ -98,6 +99,7 @@ module.exports = {
     // Todo: Reenable
     'max-len': 0,
     'no-loop-func': 0,
-    'prefer-named-capture-group': 0
+    'prefer-named-capture-group': 0,
+    'eslint-comments/require-description': 0
   }
 };

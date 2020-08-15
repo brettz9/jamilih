@@ -114,6 +114,7 @@ function _applyAnyStylesheet(node) {
  * @static
  * @param {Element} parent The parent to which to append the element
  * @param {Node} child The element or other node to append to the parent
+ * @throws {Error} Rethrow if problem with `append` and unhandled
  * @returns {void}
  */
 
@@ -184,6 +185,7 @@ function _addEvent(el, type, handler, capturing) {
 * @param {'entity'|'decimal'|'hexadecimal'} type Type of reference
 * @param {string} prefix Text to prefix immediately after the "&"
 * @param {string} arg The body of the reference
+* @throws {TypeError}
 * @returns {Text} The text node of the resolved reference
 */
 
@@ -474,6 +476,7 @@ const jml = function jml(...args) {
   /**
    *
    * @param {Object<{string: string}>} atts
+   * @throws {TypeError}
    * @returns {void}
    */
 
@@ -750,8 +753,7 @@ const jml = function jml(...args) {
               while (node.childNodes[j]) {
                 const cn = node.childNodes[j];
                 cn.remove(); // `j` should stay the same as removing will cause node to be present
-              } // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
-
+              }
 
               attVal.childNodes.forEach(_childrenToJML(node));
             } else {
@@ -777,13 +779,11 @@ const jml = function jml(...args) {
                 }
 
                 if (attVal.head) {
-                  // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
                   attVal.head.forEach(_appendJML(head));
                 }
               }
 
               if (attVal.body) {
-                // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
                 attVal.body.forEach(_appendJMLOrText(body));
               }
             }
@@ -1042,9 +1042,6 @@ const jml = function jml(...args) {
     const type = _getType(arg);
 
     switch (type) {
-      default:
-        throw new TypeError(`Unexpected type: ${type}; arg: ${arg}; index ${i} on args: ${JSON.stringify(args)}`);
-
       case 'null':
         // null always indicates a place-holder (only needed for last argument if want array returned)
         if (i === argc - 1) {
@@ -1278,6 +1275,9 @@ const jml = function jml(...args) {
 
           break;
         }
+
+      default:
+        throw new TypeError(`Unexpected type: ${type}; arg: ${arg}; index ${i} on args: ${JSON.stringify(args)}`);
     }
   }
 
@@ -1296,6 +1296,7 @@ const jml = function jml(...args) {
 * @param {boolean} [config.stringOutput=false] Whether to output the Jamilih object as a string.
 * @param {boolean} [config.reportInvalidState=true] If true (the default), will report invalid state errors
 * @param {boolean} [config.stripWhitespace=false] Strip whitespace for text nodes
+* @throws {TypeError}
 * @returns {JamilihArray|string} Array containing the elements which represent
 * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
 * version of such an object
@@ -1417,6 +1418,7 @@ jml.toJML = function (dom, {
    *
    * @param {Node} node
    * @param {object<{string: string}>} namespaces
+   * @throws {TypeError}
    * @returns {void}
    */
 

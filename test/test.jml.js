@@ -392,7 +392,6 @@ describe('Jamilih - jml', function () {
   });
   it('attribute node (non-namespaced)', () => {
     const attInfo = ['aaa', 'eeefg'];
-    // eslint-disable-next-line compat/compat
     const expected = document.createAttribute('aaa');
     expected.value = 'eeefg';
     const result = jml({$attribute: attInfo});
