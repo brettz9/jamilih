@@ -8,6 +8,7 @@
     `@rollup/plugin-commonjs`
 - npm: Remove `remark-lint`
 - npm: Add separate `nyc` testing script
+- npm: Switch to stable `mocha-multi-reporters`
 - npm: Update devDeps. and package-lock
 
 ## 0.53.2
