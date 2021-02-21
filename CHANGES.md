@@ -15,7 +15,8 @@
 - npm: Add separate `nyc` testing script
 - npm: Switch to stable `mocha-multi-reporters`
 - npm: Switch to server without reported vulnerabilities
-- npm: Update devDeps. and package-lock
+- npm: Switch to pnpm
+- npm: Update devDeps.
 
 ## 0.53.2
 
