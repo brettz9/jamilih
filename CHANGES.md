@@ -1,6 +1,11 @@
 # CHANGES for jamilih
 
-## ?
+## 0.54.0
+
+**User-facing:**
+- npm: Remove `core-js-bundle` from `peerDependencies`
+
+**Dev-facing:**
 
 - Build: Update per latest devDeps.
 - Linting: As per latest ash-nazg
@@ -9,6 +14,7 @@
 - npm: Remove `remark-lint`
 - npm: Add separate `nyc` testing script
 - npm: Switch to stable `mocha-multi-reporters`
+- npm: Switch to server without reported vulnerabilities
 - npm: Update devDeps. and package-lock
 
 ## 0.53.2

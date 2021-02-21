@@ -1,6 +1,6 @@
 'use strict';
 module.exports = {
-  extends: 'ash-nazg/sauron-node',
+  extends: 'ash-nazg/sauron-node-overrides',
   parserOptions: {
     sourceType: 'module'
   },
@@ -55,7 +55,7 @@ module.exports = {
       }
     },
     {
-      files: ['*.md'],
+      files: ['*.md/*.js'],
       rules: {
         'eol-last': 'off',
         'no-console': 'off',

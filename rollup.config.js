@@ -46,7 +46,6 @@ function noInnerHTML (format) {
   };
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
 export default [{
   input: 'src/jml.js',
   output: {

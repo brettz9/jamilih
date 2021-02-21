@@ -208,7 +208,7 @@ function _addEvent (el, type, handler, capturing) {
 function _createSafeReference (type, prefix, arg) {
   // For security reasons related to innerHTML, we ensure this string only
   //  contains potential entity characters
-  if (!arg.match(/^\w+$/u)) {
+  if (!(/^\w+$/u).test(arg)) {
     throw new TypeError(`Bad ${type} reference; with prefix "${prefix}" and arg "${arg}"`);
   }
   const elContainer = doc.createElement('div');
@@ -505,11 +505,9 @@ const jml = function jml (...args) {
         });
         if (template) {
           if (Array.isArray(template)) {
-            if (_getType(template[0]) === 'object') { // Has attributes
-              template = jml('template', ...template, doc.body);
-            } else { // Array is for the children
-              template = jml('template', template, doc.body);
-            }
+            template = _getType(template[0]) === 'object'
+              ? jml('template', ...template, doc.body)
+              : jml('template', template, doc.body);
           } else if (typeof template === 'string') {
             template = $(template);
           }
@@ -732,11 +730,9 @@ const jml = function jml (...args) {
           const pastInitialProp = startProp !== '';
           Object.keys(atVal).forEach((key) => {
             const value = atVal[key];
-            if (pastInitialProp) {
-              prop = startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase);
-            } else {
-              prop = startProp + key.replace(hyphenForCamelCase, _upperCase);
-            }
+            prop = pastInitialProp
+              ? startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase)
+              : startProp + key.replace(hyphenForCamelCase, _upperCase);
             if (value === null || typeof value !== 'object') {
               if (!_isNullish(value)) {
                 elem.dataset[prop] = value;
@@ -905,7 +901,7 @@ const jml = function jml (...args) {
         // Todo: Fix to allow application of stylesheets of style tags within fragments?
         return nodes.length <= 1
           ? nodes[0]
-        // eslint-disable-next-line unicorn/no-fn-reference-in-iterator
+          // eslint-disable-next-line unicorn/no-array-callback-reference
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
       }
       throw new TypeError(`\`null\` values not allowed except as final Jamilih argument; index ${i} on args: ${JSON.stringify(args)}`);
@@ -972,12 +968,10 @@ const jml = function jml (...args) {
         const atts = args[i + 1];
         if (_getType(atts) === 'object' && atts.is) {
           const {is} = atts;
-          // istanbul ignore else
-          if (doc.createElementNS) {
-            elem = doc.createElementNS(NS_HTML, elStr, {is});
-          } else {
-            elem = doc.createElement(elStr, {is});
-          }
+          // istanbul ignore next
+          elem = doc.createElementNS
+            ? doc.createElementNS(NS_HTML, elStr, {is})
+            : doc.createElement(elStr, {is});
         } else /* istanbul ignore else */ if (doc.createElementNS) {
           elem = doc.createElementNS(NS_HTML, elStr);
         } else {
@@ -996,12 +990,9 @@ const jml = function jml (...args) {
         // As namespace of element already set as XHTML, we need to change the namespace
         // elem.setAttribute('xmlns', atts.xmlns); // Doesn't work
         // Can't set namespaceURI dynamically, renameNode() is not supported, and setAttribute() doesn't work to change the namespace, so we resort to this hack
-        let replacer;
-        if (typeof atts.xmlns === 'object') {
-          replacer = _replaceDefiner(atts.xmlns);
-        } else {
-          replacer = ' xmlns="' + atts.xmlns + '"';
-        }
+        const replacer = typeof atts.xmlns === 'object'
+          ? _replaceDefiner(atts.xmlns)
+          : ' xmlns="' + atts.xmlns + '"';
         // try {
         // Also fix DOMParser to work with text/html
         elem = nodes[nodes.length - 1] = new win.DOMParser().parseFromString(
