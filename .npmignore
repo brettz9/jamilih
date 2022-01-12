@@ -6,4 +6,5 @@ docs
 !LICENSE-MIT.txt
 !jamilih.jsonschema
 coverage
+compressed-source
 .nyc_output
