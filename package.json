@@ -8,7 +8,7 @@
   },
   "contributors": [],
   "scripts": {
-    "amo": "echo \"Bundling for AMO\" && tar -czf compressed-source/source.zip src plugins .babelrc.json package.json README.md rollup.config.js",
+    "amo": "echo \"Bundling for AMO\" && tar -czf compressed-source/source.tar.gz src plugins .babelrc.json package.json README.md rollup.config.js",
     "prepublishOnly": "npm run rollup",
     "license-badge": "license-badger --corrections --uncategorizedLicenseTemplate \"\\${license} (\\${name} (\\${version}))\" --filteredTypes=nonempty --textTemplate \"License types\n(project, deps, and bundled devDeps)\" --packageJson --production badges/licenses-badge.svg",
     "license-badge-dev": "license-badger --corrections --filteredTypes=nonempty --textTemplate \"License types\n(all devDeps)\" --allDevelopment badges/licenses-badge-dev.svg",
