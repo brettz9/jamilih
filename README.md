@@ -873,3 +873,17 @@ in templates, and to my personal sensibilities, more clear in goal #8
     1. Specify types of allowable properties on attributes object in JSON Schema.
     1. Allow for fragments and other out-of-place objects
     1. Get working with JSONEditor
+
+## For developers
+
+To build the source code, you may use the latest version of npm (7) and the
+minimum version of Node in the `engines` field of `package.json`. No special
+operating system should be required.
+
+1. Run `npm install` to ensure devDependencies are installed
+1. Run `npm run rollup`
+1. See the results in the `dist` folder
+
+Note to browser add-on reviewers, the `dist/jml-es-noinnerh.js` file is the
+one copied into the add-on (it strips out `innerHTML` capabilities for
+security reasons and for simplification of the review process).
