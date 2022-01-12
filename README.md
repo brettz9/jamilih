@@ -880,8 +880,10 @@ To build the source code, you may use the latest version of npm (7) and the
 minimum version of Node in the `engines` field of `package.json`. No special
 operating system should be required.
 
-1. Run `npm install` to ensure devDependencies are installed
-1. Run `npm run rollup`
+1. Run `npm i -g pnpm` to install `pnpm` (saves a lot of hard drive
+    space compared to npm!)
+1. Run `pnpm install` to ensure devDependencies are installed
+1. Run `pnpm rollup`
 1. See the results in the `dist` folder
 
 Note to browser add-on reviewers, the `dist/jml-es-noinnerh.js` file is the
