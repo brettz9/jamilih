@@ -877,15 +877,17 @@ in templates, and to my personal sensibilities, more clear in goal #8
 ## For developers
 
 To build the source code, you may use the latest version of npm (7) and the
-minimum version of Node in the `engines` field of `package.json`. No special
-operating system should be required.
+minimum version of Node in the `engines` field of `package.json`. Presently
+requires a *Nix type of OS to build.
 
 1. Run `npm i -g pnpm` to install `pnpm` (saves a lot of hard drive
     space compared to npm!)
+1. Ensure there is a `dist` folder (if not, add one)
 1. Run `pnpm install` to ensure devDependencies are installed
 1. Run `pnpm rollup`
 1. See the results in the `dist` folder
 
 Note to browser add-on reviewers, the `dist/jml-es-noinnerh.js` file is the
 one copied into the add-on (it strips out `innerHTML` capabilities for
-security reasons and for simplification of the review process).
+security reasons and for simplification of the review process). The only
+actual source file used in that file should be `src/jml.js`.
