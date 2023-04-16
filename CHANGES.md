@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.55.2
+
+- fix: expose `src/jml-jsdom.js` export
+
 ## 0.55.1
 
 - fix: expose `jml-jsdom.js` export
