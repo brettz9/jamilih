@@ -1,8 +1,9 @@
 'use strict';
+
 module.exports = {
   extends: 'ash-nazg/sauron-node-overrides',
   parserOptions: {
-    sourceType: 'module'
+    ecmaVersion: 2022
   },
   settings: {
     polyfills: [
@@ -11,6 +12,7 @@ module.exports = {
       'console',
       'document.body',
       'document.createComment',
+      'document.createDocumentFragment',
       'document.querySelector',
       'document.querySelectorAll',
       'document.xmlEncoding',
@@ -65,7 +67,7 @@ module.exports = {
         'import/unambiguous': 'off',
         'import/no-unresolved': 'off',
         'import/no-commonjs': 'off',
-        'node/no-missing-import': 'off',
+        'n/no-missing-import': 'off',
         'no-multi-spaces': 'off',
         'no-alert': 'off',
         'jsdoc/require-jsdoc': 'off'

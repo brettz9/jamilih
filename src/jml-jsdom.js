@@ -1,13 +1,15 @@
 /* eslint-env node */
+
+// eslint-disable-next-line n/no-unpublished-import
+import jsdom from 'jsdom';
+
 import {jml} from './jml.js';
 
 export {jml, $, $$, nbsp, body, glue} from './jml.js';
 
 /* istanbul ignore else */
 if (typeof process !== 'undefined') {
-  // import {JSDOM} from 'jsdom';
-  // eslint-disable-next-line node/global-require, node/no-unpublished-require
-  const {JSDOM} = require('jsdom');
+  const {JSDOM} = jsdom;
 
   const win = new JSDOM('').window;
 

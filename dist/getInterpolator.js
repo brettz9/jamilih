@@ -2,9 +2,10 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Interpolator = {}));
-}(this, (function (exports) { 'use strict';
+})(this, (function (exports) { 'use strict';
 
   /* globals performance */
+
   // The `performance` global is optional
 
   /**
@@ -16,14 +17,12 @@
    */
   function generateUUID() {
     //  Adapted from original: public domain/MIT: http://stackoverflow.com/a/8809472/271577
-
     /* istanbul ignore next */
-    let d = Date.now() + ( // use high-precision timer if available
-
+    let d = Date.now() + (
+    // use high-precision timer if available
     /* eslint-disable compat/compat */
     typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now()
-    /* eslint-enable compat/compat */
-    : 0);
+    /* eslint-enable compat/compat */ : 0);
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/gu, function (c) {
       /* eslint-disable no-bitwise */
       const r = Math.trunc((d + Math.random() * 16) % 16);
@@ -34,32 +33,28 @@
   }
 
   const name = '$_interpolator';
+
   /**
   * @typedef {JamilihPlugin} JamilihPluginWithArgs
   * @property {any[]} args
   */
-
   /**
    * Use with `String.raw(elementsAsString.split(uniqueID), ...args)`.
    * @returns {JamilihPlugin}
    */
-
   function getInterpolator() {
     const args = [];
     const uuid = generateUUID();
     return {
       args,
       uuid,
-
       dynamic(val) {
         return {
           [name]: val
         };
       },
-
       plugin: {
         name,
-
         set({
           element,
           attribute: {
@@ -75,7 +70,6 @@
             case 'attributeValue':
               args.push(value[this.name]);
               return uuid;
-
             /*
             case 'children': case 'fragmentChildren':
               args.push(value[this.name]);
@@ -84,14 +78,11 @@
             case 'element':
             case 'fragment':
             */
-
             /* istanbul ignore next */
-
             default:
               throw new Error(`Interpolator plugin not expected in ${opts.$state} position`);
           }
         }
-
       }
     };
   }
@@ -100,4 +91,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

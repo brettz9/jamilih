@@ -66,7 +66,8 @@ const BOOL_ATTS = [
 ];
 
 // From JsonML
-const ATTR_DOM = BOOL_ATTS.concat([
+const ATTR_DOM = [
+  ...BOOL_ATTS,
   'accessKey', // HTMLElement
   'async',
   'autocapitalize', // HTMLElement
@@ -88,7 +89,7 @@ const ATTR_DOM = BOOL_ATTS.concat([
   'translate', // HTMLElement
   'value',
   'willvalidate'
-]);
+];
 // Todo: Add more to this as useful for templating
 //   to avoid setting through nullish value
 const NULLABLES = [
@@ -229,7 +230,7 @@ function _upperCase (n0, n1) {
 
 // Todo: Make as public utility
 /**
- * @param {any} o
+ * @param {ArbitraryValue} o
  * @returns {boolean}
  */
 function _isNullish (o) {
@@ -684,6 +685,7 @@ const jml = function jml (...args) {
           const body = html.childNodes[1];
           if (attVal.title || attVal.head) {
             const meta = doc.createElement('meta');
+            // eslint-disable-next-line unicorn/text-encoding-identifier-case -- HTML
             meta.setAttribute('charset', 'utf-8');
             head.append(meta);
             if (attVal.title) {
@@ -1149,8 +1151,12 @@ jml.toJML = function (dom, {
   }
 
   /**
+   * @typedef {any} ArbitraryValue
+   */
+
+  /**
    *
-   * @param {any} val
+   * @param {ArbitraryValue} val
    * @returns {void}
    */
   function set (val) {
@@ -1184,7 +1190,7 @@ jml.toJML = function (dom, {
   /**
    *
    * @param {Node} node
-   * @param {object<{string: string}>} namespaces
+   * @param {Object<{string: string}>} namespaces
    * @throws {TypeError}
    * @returns {void}
    */
@@ -1431,7 +1437,7 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
 class JamilihMap extends Map {
   /**
    * @param {string|Element} elem
-   * @returns {any}
+   * @returns {ArbitraryValue}
    */
   get (elem) {
     elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1439,8 +1445,8 @@ class JamilihMap extends Map {
   }
   /**
    * @param {string|Element} elem
-   * @param {any} value
-   * @returns {any}
+   * @param {ArbitraryValue} value
+   * @returns {ArbitraryValue}
    */
   set (elem, value) {
     elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1449,8 +1455,8 @@ class JamilihMap extends Map {
   /**
    * @param {string|Element} elem
    * @param {string} methodName
-   * @param {...any} args
-   * @returns {any}
+   * @param {...ArbitraryValue} args
+   * @returns {ArbitraryValue}
    */
   invoke (elem, methodName, ...args) {
     elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1464,7 +1470,7 @@ class JamilihMap extends Map {
 class JamilihWeakMap extends WeakMap {
   /**
    * @param {string|Element} elem
-   * @returns {any}
+   * @returns {ArbitraryValue}
    */
   get (elem) {
     elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1472,8 +1478,8 @@ class JamilihWeakMap extends WeakMap {
   }
   /**
    * @param {string|Element} elem
-   * @param {any} value
-   * @returns {any}
+   * @param {ArbitraryValue} value
+   * @returns {ArbitraryValue}
    */
   set (elem, value) {
     elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1482,8 +1488,8 @@ class JamilihWeakMap extends WeakMap {
   /**
    * @param {string|Element} elem
    * @param {string} methodName
-   * @param {...any} args
-   * @returns {any}
+   * @param {...ArbitraryValue} args
+   * @returns {ArbitraryValue}
    */
   invoke (elem, methodName, ...args) {
     elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1512,7 +1518,7 @@ jml.weak = function (obj, ...args) {
 };
 
 /**
- * @param {any} obj
+ * @param {ArbitraryValue} obj
  * @param {...JamilihArray} args
  * @returns {MapAndElementArray}
  */
@@ -1525,7 +1531,7 @@ jml.strong = function (obj, ...args) {
 /**
  * @param {string|Element} elem If a string, will be interpreted as a selector
  * @param {symbol|string} sym If a string, will be used with `Symbol.for`
- * @returns {any} The value associated with the symbol
+ * @returns {ArbitraryValue} The value associated with the symbol
  */
 jml.symbol = jml.sym = jml.for = function (elem, sym) {
   elem = typeof elem === 'string' ? $(elem) : elem;
@@ -1537,8 +1543,8 @@ jml.symbol = jml.sym = jml.for = function (elem, sym) {
  * @param {symbol|string|Map|WeakMap} symOrMap If a string, will be used with `Symbol.for`
  * @param {string|any} methodName Can be `any` if the symbol or map directly
  *   points to a function (it is then used as the first argument).
- * @param {any[]} args
- * @returns {any}
+ * @param {ArbitraryValue[]} args
+ * @returns {ArbitraryValue}
  */
 jml.command = function (elem, symOrMap, methodName, ...args) {
   elem = typeof elem === 'string' ? $(elem) : elem;

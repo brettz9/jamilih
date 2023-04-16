@@ -1,5 +1,18 @@
 # CHANGES for jamilih
 
+## 0.55.0
+
+**User-facing:**
+
+- feat: switch to native ESM
+
+**Dev-facing:**
+
+- chore: update devDeps.
+- chore: fix AMO bundle extension
+- docs: update license dev. badge
+- docs: dev instructions
+
 ## 0.54.0
 
 **User-facing:**

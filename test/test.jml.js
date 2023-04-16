@@ -484,6 +484,7 @@ describe('Jamilih - jml', function () {
         {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
         ['html', [
           ['head', [
+            // eslint-disable-next-line unicorn/text-encoding-identifier-case -- HTML
             ['meta', {charset: 'utf-8'}]
           ]],
           ['body']

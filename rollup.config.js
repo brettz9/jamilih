@@ -1,5 +1,5 @@
-import babel from '@rollup/plugin-babel';
-import resolve from '@rollup/plugin-node-resolve';
+import {babel} from '@rollup/plugin-babel';
+import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
@@ -93,7 +93,7 @@ export default [{
       exclude: 'node_modules/**'
     }),
     json(),
-    resolve({
+    nodeResolve({
       preferBuiltins: true
     }),
     commonjs()
