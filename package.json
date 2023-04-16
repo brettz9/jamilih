@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.55.0",
+  "version": "0.55.1",
   "type": "module",
   "author": {
     "name": "Brett Zamir",
@@ -53,6 +53,7 @@
       "import": "./dist/jml-es.js",
       "require": "./dist/jml-jsdom.js"
     },
+    "./dist/jml-jsdom.js": "./dist/jml-jsdom.js",
     "./dist/jml-es-nooinnerh.js": "./dist/jml-es-noinnerh.js",
     "./dist/jml-nooinnerh.js": "./dist/jml-noinnerh.js",
     "./dist/jml-polyglot.js": "./dist/jml-polyglot.js",

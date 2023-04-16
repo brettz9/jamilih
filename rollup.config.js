@@ -85,7 +85,7 @@ export default [{
     'path', 'fs', 'vm', 'net', 'url', 'punycode', 'util', 'crypto',
     'buffer', 'http', 'https', 'stream', 'zlib', 'dgram', 'dns',
     'querystring', 'assert', 'string_decoder', 'tls', 'events',
-    'child_process', 'os'
+    'child_process', 'os', 'canvas'
   ],
   plugins: [
     babel({
