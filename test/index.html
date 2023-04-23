@@ -12,8 +12,23 @@
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/chai/chai.js"></script>
-    <script type="module" src="../test-helpers/loadTests.js"></script>
 
+    <!--
+      Can't remap a relative file apparently as below, so what to do?
+    -->
+    <script type="importmap">
+      {
+        "imports": {
+          "mocha": "./mochaESMLoader.js",
+          "chai": "./chaiESMLoader.js",
+          "./test-helpers/loadTests.js": "./loadTests-browser.js"
+        }
+      }
+    </script>
+    <script type="module">
+      /* globals mocha */
+      mocha.setup('bdd');
+    </script>
     <!-- Tests -->
     <script type="module">
     import './test.glue.js';

@@ -1,15 +1,11 @@
-/* globals mocha, chai */
-import {jml, glue, nbsp, $, $$, body} from '../src/jml.js';
+/* eslint-env node */
 
-mocha.setup('bdd');
-mocha.globals(['jml', 'glue', 'nbsp']);
+import {jml, $, $$, nbsp, body, glue} from '../src/jml-jsdom.js';
 
-window.jml = jml;
-window.glue = glue;
-window.nbsp = nbsp;
-window.$ = $;
-window.$$ = $$;
-window.body = body;
+const win = /** @type {unknown} */ jml.getWindow();
 
-window.assert = chai.assert;
-window.expect = chai.expect;
+globalThis.window = /** @type {Window & typeof globalThis} */ (win);
+globalThis.document = window.document;
+globalThis.XMLSerializer = window.XMLSerializer;
+
+export {jml, $, $$, nbsp, body, glue};

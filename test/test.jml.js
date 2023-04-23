@@ -5,15 +5,29 @@ Todos:
 0. Fix bug with IE 10 (but not IE 8) when testing $on events (race condition)
 */
 
+// eslint-disable-next-line no-shadow -- Necessary
+import {it, describe, beforeEach} from 'mocha';
+
+// eslint-disable-next-line no-shadow -- Necessary
+import {expect, assert} from 'chai';
+
+import {$, jml, body} from '../test-helpers/loadTests.js';
+
 import * as xmlTesting from './xmlTesting.js';
 
 import getInterpolator from '../plugins/getInterpolator.js';
 
+/**
+ * @typedef {any} BadArgument
+ */
+
 describe('Jamilih - jml', function () {
   beforeEach(() => {
-    if ($('#mapAttributeTest')) {
-      $('#mapAttributeTest').remove();
+    if (!body) {
+      throw new Error('Needs a body');
     }
+    $('#mapAttributeTest')?.remove();
+
     let jmlTestContent = $('#jmlTestContent');
     if (!jmlTestContent) {
       jmlTestContent = document.createElement('div');
@@ -88,50 +102,50 @@ describe('Jamilih - jml', function () {
       }),
       '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
     );
-    let input = jml('input', {
+    let input = /** @type {HTMLInputElement} */ (jml('input', {
       checked: true
-    });
+    }));
     expect(input.checked).to.be.true;
-    input = jml('input', {
+    input = /** @type {HTMLInputElement} */ (jml('input', {
       readonly: true
-    });
+    }));
     expect(input.readOnly).to.be.true;
-    input = jml('input', {
+    input = /** @type {HTMLInputElement} */ (jml('input', {
       readOnly: true
-    });
+    }));
     expect(input.readOnly).to.be.true;
-    const option = jml('option', {
+    const option = /** @type {HTMLOptionElement} */ (jml('option', {
       selected: true
-    });
+    }));
     expect(option.selected).to.be.true;
-    const custom = jml('custom', {
+    const custom = /** @type {HTMLElement} */ (jml('custom', {
       for: 'blah'
-    });
+    }));
     expect(custom.getAttribute('for')).to.equal('blah');
   });
 
   it('DOM properties', function () {
-    const a = jml('a', {
+    const a = /** @type {HTMLAnchorElement} */ (jml('a', {
       onclick () {
         // eslint-disable-next-line no-alert
         alert('boo!');
       }
     }, [
       'Test'
-    ]);
+    ]));
     expect(a.onclick).to.be.a('function');
   });
 
   it('test nullish properties', function () {
-    let option = jml('option', {
+    let option = /** @type {HTMLOptionElement} */ (jml('option', {
       title: 'Hello'
-    });
+    }));
     expect(option.title).to.equal('Hello');
 
-    option = jml('option');
+    option = /** @type {HTMLOptionElement} */ (jml('option'));
     expect(option.title).to.equal('');
 
-    option = jml('option', {title: null});
+    option = /** @type {HTMLOptionElement} */ (jml('option', {title: null}));
     expect(option.title).to.equal('');
 
     xmlTesting.matchesXMLString(
@@ -141,29 +155,33 @@ describe('Jamilih - jml', function () {
       '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
     );
 
-    let div = jml('div', {style: 'abc'});
+    let div = /** @type {HTMLDivElement} */ (jml('div', {style: 'abc'}));
     expect(div.getAttribute('style')).to.equal('abc');
-    div = jml('div');
+    div = /** @type {HTMLDivElement} */ (jml('div'));
     expect(div.getAttribute('style')).to.equal(null);
-    div = jml('div', {style: undefined});
+    div = /** @type {HTMLDivElement} */ (
+      jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({
+        style: undefined
+      }))
+    );
     expect(div.getAttribute('style')).to.equal(null);
 
-    div = jml('div');
+    div = /** @type {HTMLDivElement} */ (jml('div'));
     expect(div.style.color).to.equal('');
-    div = jml('div', {style: {
+    div = /** @type {HTMLDivElement} */ (jml('div', {style: {
       color: 'red'
-    }});
+    }}));
     expect(div.style.color).to.equal('red');
-    div = jml('div', {style: {
+    div = /** @type {HTMLDivElement} */ (jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({style: {
       color: null
-    }});
+    }})));
     expect(div.style.color).to.equal('');
   });
 
   it('DOM wrapping', () => {
     const div = jml(
       'div', {style: 'position:absolute !important; left: -1000px;'}, [
-        $('#DOMChildrenMustBeInArray')
+        /** @type {Element} */ ($('#DOMChildrenMustBeInArray'))
       ],
       $('#anotherElementToAddToParent'),
       $('#yetAnotherSiblingToAddToParent'),
@@ -216,7 +234,9 @@ describe('Jamilih - jml', function () {
       '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass">text1<p>Some inner text</p>text3</div>',
       'Single element with attribute containing two next node children separated by an element child'
     );
-    const table = jml('table', {style: 'position:absolute; left: -1000px;'}, body);
+    const table = /** @type {HTMLTableElement} */ (
+      jml('table', {style: 'position:absolute; left: -1000px;'}, body)
+    );
     /* const firstTr = */
     jml(
       'tr', [
@@ -241,16 +261,18 @@ describe('Jamilih - jml', function () {
   });
   it('Namespace declarations', () => {
     xmlTesting.matches(
-      jml('abc', {xmlns: 'def'}).namespaceURI,
+      /** @type {HTMLElement} */ (jml('abc', {xmlns: 'def'})).namespaceURI,
       'def',
       'Single unknown element with non-HTML default namespace declaration'
     );
 
     xmlTesting.matchesXMLString(
       jml('abc', {
-        z: 3, xmlns: {
+        z: 3,
+        xmlns: {
           prefix3: 'zzz', prefix1: 'def', prefix2: 'ghi'
-        }, b: 7, a: 6
+        },
+        b: 7, a: 6
       }),
       '<abc xmlns="http://www.w3.org/1999/xhtml" xmlns:prefix3="zzz" xmlns:prefix1="def" xmlns:prefix2="ghi" z="3" b="7" a="6"></abc>',
       'Single element with attributes and prefixed (non-HTML) namespace declarations'
@@ -263,7 +285,9 @@ describe('Jamilih - jml', function () {
     );
 
     xmlTesting.matches(
-      jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}}).namespaceURI,
+      /** @type {HTMLElement} */ (
+        jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}})
+      ).namespaceURI,
       'newdefault',
       'Single element with non-HTML default namespace declaration and prefixed declarations (confirming namespaceURI)'
     );
@@ -381,20 +405,28 @@ describe('Jamilih - jml', function () {
     assert.deepEqual(expected.nodeValue, result.nodeValue, 'Equal `nodeValue`');
   });
   it('attribute node (namespaced)', () => {
+    /**
+     * @type {[string, string, string]}
+     */
     const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
-    const expected = document.createAttributeNS(...xlink.slice(0, -1));
+    const expected = document.createAttributeNS(
+      'http://www.w3.org/1999/xlink', 'href'
+    );
     expected.value = xlink[2];
-    const result = jml({$attribute: xlink});
+    const result = /** @type {Attr} */ (jml({$attribute: xlink}));
     assert.deepEqual(expected.name, result.name, 'Equal `name`');
     assert.deepEqual(expected.value, result.value, 'Equal `value`');
     assert.deepEqual(expected.namespaceURI, result.namespaceURI, 'Equal `namespaceURI`');
     // assert.strictEqual(result.nodeType, window.Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
   });
   it('attribute node (non-namespaced)', () => {
+    /**
+     * @type {[string, string]}
+     */
     const attInfo = ['aaa', 'eeefg'];
     const expected = document.createAttribute('aaa');
     expected.value = 'eeefg';
-    const result = jml({$attribute: attInfo});
+    const result = /** @type {Attr} */ (jml({$attribute: attInfo}));
     assert.deepEqual(expected.name, result.name, 'Equal `name`');
     assert.deepEqual(expected.value, result.value, 'Equal `value`');
     assert.deepEqual(null, result.prefix, 'Equal `prefix`');
@@ -456,13 +488,15 @@ describe('Jamilih - jml', function () {
     const wrappedDoc = jml(document, [
       ['!', 'a comment']
     ]);
-    const comment = wrappedDoc.childNodes[wrappedDoc.childNodes.length - 1];
+    const comment = /** @type {Comment} */ (
+      wrappedDoc.childNodes[wrappedDoc.childNodes.length - 1]
+    );
     expect(comment.data).to.equal('a comment');
     expect(comment.nodeType).to.equal(8);
   });
   it('throws when trying to add non-container Node at top level', function () {
     expect(() => {
-      jml(document.createComment('abc'));
+      jml(/** @type {BadArgument} */ (document.createComment('abc')));
     }).to.throw(TypeError, 'Unexpected type: non-container node');
   });
   it('throws with malformed entity reference', function () {
@@ -476,62 +510,81 @@ describe('Jamilih - jml', function () {
     const div = jml('div', [
       ['?', 'ab><?', '?<>']
     ]);
-    expect(div.childNodes[0].data).to.equal('?ab><? ?<>?');
+    expect(/** @type {Comment} */ (div.childNodes[0]).data).to.equal('?ab><? ?<>?');
+  });
+
+  it('Bad document content', function () {
+    expect(() => {
+      /** @type {Document} */ (jml({$document: /** @type {BadArgument} */ (null)}));
+    }).to.throw('Bad attribute value');
+  });
+
+  it('Bad doctype head content', function () {
+    expect(() => {
+      /** @type {Document} */ (jml({$document: {
+        head: [
+          'hello'
+        ]
+      }}));
+    }).to.throw('Unexpected text string/number in the head');
   });
   it('Document and doctype', () => {
-    const doc = jml({$document: {
+    const doc = /** @type {Document} */ (jml({$document: {
       childNodes: [
         {$DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'}},
         ['html', [
           ['head', [
+            document.createElement('link'),
             // eslint-disable-next-line unicorn/text-encoding-identifier-case -- HTML
             ['meta', {charset: 'utf-8'}]
           ]],
           ['body']
         ]]
       ]
-    }});
+    }}));
     xmlTesting.matchesXMLString(
       doc.documentElement,
-      '<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>'
+      '<html xmlns="http://www.w3.org/1999/xhtml"><head><link /><meta charset="utf-8" /></head><body></body></html>'
     );
     xmlTesting.matches(
-      doc.firstChild.name,
+      doc.doctype?.name,
       'NETSCAPE-Bookmark-file-1'
     );
     try {
       xmlTesting.matchesXMLString(
         doc,
         `<!DOCTYPE NETSCAPE-Bookmark-file-1>
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
+<html xmlns="http://www.w3.org/1999/xhtml"><head><link /><meta charset="utf-8" /></head><body></body></html>`
       );
     } catch (err) {
       // Node's implementation omits the line break
       xmlTesting.matchesXMLString(
         doc,
-        `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /></head><body></body></html>`
+        `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><link /><meta charset="utf-8" /></head><body></body></html>`
       );
     }
     const doc2 = jml({$document: {
       $DOCTYPE: {name: 'NETSCAPE-Bookmark-file-1'},
       head: [
+        document.createElement('link'),
         ['meta', {name: 'webappfind'}]
       ],
       body: [
-        ['p']
+        ['p'],
+        document.createElement('br')
       ]
     }});
     try {
       xmlTesting.matchesXMLString(
         doc2,
         `<!DOCTYPE NETSCAPE-Bookmark-file-1>
-<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><link /><meta name="webappfind" /></head><body><p></p><br /></body></html>`
       );
     } catch (err) {
       // Node's implementation omits the line break
       xmlTesting.matchesXMLString(
         doc2,
-        `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><meta name="webappfind" /></head><body><p></p></body></html>`
+        `<!DOCTYPE NETSCAPE-Bookmark-file-1><html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8" /><link /><meta name="webappfind" /></head><body><p></p><br /></body></html>`
       );
     }
     const doc3 = jml({$document: {
@@ -652,31 +705,40 @@ describe('Jamilih - jml', function () {
   it('throws with `undefined` child nodes', () => {
     expect(() => {
       jml('div', [
-        undefined
+        /** @type {BadArgument} */ (undefined)
       ]);
     }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; index 0 of child: [null])');
   });
   it('throws with `null` child nodes', () => {
     expect(() => {
       jml('div', [
-        null
+        /** @type {BadArgument} */ (null)
       ]);
     }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; index 0 of child: [null])');
   });
+
+  it('throws with other non-object child nodes', () => {
+    expect(() => {
+      jml('div', [
+        /** @type {BadArgument} */ (Symbol('1234567890'))
+      ]);
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; index 0 of child: [null])');
+  });
+
   it('Event listeners', () => {
     let str;
-    const input = jml('input', {
+    const input = /** @type {HTMLInputElement} */ (jml('input', {
       type: 'button',
       style: 'position:absolute; left: -1000px;',
       $on: {click: [function () {
         str = 'worked1';
       }, true]}
-    }, body);
+    }, body));
     input.click(); // IE won't activate unless the above element is appended to the DOM
 
     xmlTesting.matches(str, 'worked1', 'Single empty element with attributes and triggered click listener added to body');
 
-    const input2 = jml('input', {
+    const input2 = /** @type {HTMLInputElement} */ (jml('input', {
       style: 'position:absolute; left: -1000px;',
       $on: {
         click () {
@@ -686,14 +748,11 @@ describe('Jamilih - jml', function () {
           str = 'worked2';
         }, true]
       }
-    }, body); // For focus (or select) event to work, we need to append to the document
+    }, body)); // For focus (or select) event to work, we need to append to the document
 
-    if (input2.fireEvent) {
-      input2.fireEvent('onchange');
-    } else {
-      const ev = new window.Event('change');
-      input2.dispatchEvent(ev);
-    }
+    const ev = new window.Event('change');
+    input2.dispatchEvent(ev);
+
     xmlTesting.matches(str, 'worked2', 'Single element with attributes and triggered change listener (alongside click) added to body');
 
     input2.click();
@@ -702,9 +761,9 @@ describe('Jamilih - jml', function () {
     expect(() => {
       jml('input', {
         style: 'position:absolute; left: -1000px;',
-        $on: [{
+        $on: /** @type {BadArgument} */ ([{
           click () { /* */ }
-        }]
+        }])
       }, body);
     }).to.throw(TypeError, 'Expect a function for `$on`');
   });
@@ -726,10 +785,10 @@ describe('Jamilih - jml', function () {
       'Single element using dataset with two properties'
     );
     xmlTesting.matchesXMLString(
-      jml('div', {dataset: {
+      jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({dataset: {
         'aCamel-case': {result: 'hello', result2: 'helloTwo'},
         anotherResult: 'world', aNullishToIgnore: null, aNum: 8
-      }}),
+      }})),
       '<div xmlns="http://www.w3.org/1999/xhtml" data-a-camel-case-result="hello" ' +
       'data-a-camel-case-result2="helloTwo" data-another-result="world" data-a-num="8"></div>',
       'Single element with mixed and nested CamelCase dataset objects'
@@ -749,15 +808,50 @@ describe('Jamilih - jml', function () {
       'Single script element with attribute and text content (check console for "hello!")'
     );
   });
-  ['Map', 'WeakMap'].forEach((mapType) => {
+  it('bad `jml.command`', function () {
+    expect(() => {
+      jml.command('non-existing', new Map(), 'method1');
+    }).to.throw('No element found');
+  });
+  it('`jml.command` with no value in map', function () {
+    expect(() => {
+      jml.command(document.createElement('div'), new Map(), 'method1');
+    }).to.throw('No map found');
+  });
+  it('Bad WeakMap arguments', function () {
+    const map1 = new jml.WeakMap();
+    expect(() => {
+      map1.get(/** @type {BadArgument} */ (null));
+    }).to.throw("Can't find the element");
+
+    expect(() => {
+      map1.set(/** @type {BadArgument} */ ('bad-element'), 100);
+    }).to.throw("Can't find the element");
+
+    expect(() => {
+      map1.invoke(/** @type {BadArgument} */ (null), 'method1');
+    }).to.throw("Can't find the element");
+  });
+  ['Map', 'WeakMap'].forEach((mpType) => {
+    const mapType = /** @type {"Map"|"WeakMap"} */ (mpType);
+
     it('Maps (' + mapType + ')', () => {
       // Todo: Let `$map` accept an array of map-object arrays (and add tests)
       // Todo: Add tests for array of map strings
+      // @ts-expect-error Our signature usage should be compatible
       const map1 = new window[mapType]();
       const map2 = new jml[mapType](); // jml.WeakMap, jml.Map
       const testObj1 = {test: 5};
       const testObj2 = {test: 7};
-      const testFunc = function (arg1) { return this.id + ' ok ' + arg1; };
+
+      /**
+       * @param {string} arg1
+       * @this {Element}
+       * @returns {string}
+       */
+      const testFunc = function (arg1) {
+        return this.id + ' ok ' + arg1;
+      };
       const el = jml({$map: [map1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
         ['input', {id: 'input1', $data: true}, ['Test']],
         ['input', {id: 'input2', $data: [map2, testObj2]}],
@@ -778,7 +872,7 @@ describe('Jamilih - jml', function () {
         `Externally retrieve element with DOM retrieved element associated with normal ${mapType} (alongside a Jamilih${mapType}); using default map and object`
       );
       xmlTesting.matches(
-        map2.get($('#input2')),
+        map2.get(/** @type {HTMLInputElement} */ ($('#input2'))),
         testObj2,
         `Externally retrieve element with DOM retrieved element associated with Jamilih${mapType} (alongside a normal ${mapType}); using array-based map and object`
       );
@@ -815,16 +909,29 @@ describe('Jamilih - jml', function () {
       () => {
         // Todo: Let `$map` accept an array of map-object arrays (and add tests)
         // Todo: Add tests for array of map strings
+
+        // @ts-expect-error Signature should be ok
         const map1 = new window[mapType]();
         const map2 = new jml[mapType]();
         const testObj1 = {test: 5};
         const testObj2 = {test: 7};
         const testObj3 = {
           name: 'test object 3',
+          /**
+           * @param {Element} elem
+           * @param {string} arg1
+           * @returns {string}
+           */
           aMethod (elem, arg1) {
             return this.name + ' ' + elem.id + ' got ' + arg1;
           }
         };
+
+        /**
+         * @param {string} arg1
+         * @this {Element}
+         * @returns {string}
+         */
         const testFunc = function (arg1) { return this.id + ' ok ' + arg1; };
         const el = jml({
           $map: {
@@ -839,11 +946,14 @@ describe('Jamilih - jml', function () {
           ['input', {id: 'input2', $data: ['map2']}],
           ['input', {id: 'input3', $data: ['map1']}],
           ['input', {id: 'input4', $data: testObj2}],
-          ['input', {id: 'input5', $data: [, testObj1]}], // eslint-disable-line no-sparse-arrays
+          ['input', /** @type {import('../src/jml.js').JamilihAttributes} */ ({
+            id: 'input5', $data: [, testObj1] // eslint-disable-line no-sparse-arrays
+          })],
           ['input', {id: 'input6', $data: ['map1']}],
           ['input', {id: 'input7', $data: ['map1ToFunc']}],
           ['input', {id: 'input8', $data: ['map1ToTestObj3']}]
         ], body);
+
         xmlTesting.matches(
           map1.get(el),
           testObj1,
@@ -855,7 +965,7 @@ describe('Jamilih - jml', function () {
           `Externally retrieve element with DOM retrieved element associated with normal ${mapType} (alongside a Jamilih${mapType}); using default map and object`
         );
         xmlTesting.matches(
-          map2.get($('#input2')),
+          map2.get(/** @type {HTMLInputElement} */ ($('#input2'))),
           testObj2,
           `Externally retrieve element with DOM retrieved element associated with Jamilih${mapType} (alongside a normal ${mapType}); using single-item string array-based map and object`
         );
@@ -864,6 +974,7 @@ describe('Jamilih - jml', function () {
           testObj1,
           `Externally retrieve element with DOM retrieved element associated with normal ${mapType} (alongside a Jamilih${mapType}); using single-item string array defaulting object`
         );
+
         xmlTesting.matches(
           map1.get($('#input4')),
           testObj2,
@@ -890,9 +1001,13 @@ describe('Jamilih - jml', function () {
           `Externally invoke on method with DOM retrieved element associated with normal ${mapType} (alongside a Jamilih${mapType}); using string array-based map and function`
         );
 
-        expect(map2.get('#input2')).to.equal(testObj2);
-        map2.set('#input2', 'newVal');
-        expect(map2.get('#input2')).to.equal('newVal');
+        /**
+         * @typedef {any} MapSelector
+         */
+
+        expect(map2.get(/** @type {MapSelector} */ ('#input2'))).to.equal(testObj2);
+        map2.set(/** @type {MapSelector} */ ('#input2'), 'newVal');
+        expect(map2.get(/** @type {MapSelector} */ ('#input2'))).to.equal('newVal');
       }
     );
   });
@@ -900,77 +1015,131 @@ describe('Jamilih - jml', function () {
   it('Symbol', () => {
     const publicSym = Symbol.for('publicForSym1');
     const privateSym = Symbol('Test symbol');
-    jml('div', [
-      ['input', {id: 'symInput1', $symbol: ['publicForSym1', function (arg1) {
-        xmlTesting.matches(
-          this.id + ' ' + arg1,
-          'symInput1 arg1',
-          'Public symbol-attached function with `this` and argument'
-        );
-      }]}],
-      ['div', {id: 'divSymbolTest', $on: {
+
+    const symInput1 = /** @type {HTMLInputElement} */ (jml('input', {
+      id: 'symInput1',
+      $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+        'publicForSym1',
+        function (arg1) {
+          xmlTesting.matches(
+            this.id + ' ' + arg1,
+            'symInput1 arg1',
+            'Public symbol-attached function with `this` and argument'
+          );
+        }
+      ])
+    }));
+
+    const divSymbolTest = /** @type {HTMLInputElement} */ (jml('div', {
+      id: 'divSymbolTest',
+      $on: {
         click () {
           // Can supply element or selector to `jml.sym` utility
-          jml.sym(this.previousElementSibling, 'publicForSym1')('arg1');
-          jml.sym($('#symInput2'), privateSym)('arg2');
+          jml.sym(/** @type {HTMLInputElement} */ (this.previousElementSibling), 'publicForSym1')('arg1');
+          jml.sym(/** @type {HTMLInputElement} */ ($('#symInput2')), privateSym)('arg2');
           jml.sym('#symInput3', privateSym).test('arg3');
 
           // Or add symbol directly:
+          // @ts-expect-error Should be useable
           this.previousElementSibling[publicSym]('arg1');
+          // @ts-expect-error Should be useable
           $('#symInput2')[privateSym]('arg2');
         }
-      }}],
-      ['input', {id: 'symInput2', $symbol: [privateSym, (arg1) => {
-        // No `this` available as using arrow function, but would give element
-        xmlTesting.matches(
-          arg1,
-          'arg2',
-          'Private symbol-attached arrow function with argument'
-        );
-      }]}],
-      ['input', {id: 'symInput3', $symbol: [privateSym, {
-        localValue: 5,
-        test (arg1) {
-          xmlTesting.matches(
-            this.localValue,
-            5,
-            'Private-symbol attached object method with `this`'
-          );
-          xmlTesting.matches(
-            this.elem.id + ' ' + arg1,
-            'symInput3 arg3',
-            'Private-symbol attached object method with `this.elem` and argument'
-          );
-        }
-      }]}],
-      ['input', {id: 'symInput4', $symbol: ['publicForSym1', {
-        localValue: 5,
-        test (arg1) {
-          xmlTesting.matches(
-            this.localValue,
-            5,
-            'Public-symbol attached object method with `this`'
-          );
-          xmlTesting.matches(
-            this.elem.id + ' ' + arg1,
-            'symInput4 arg4',
-            'Public-symbol attached object method with `this.elem` and argument'
-          );
-        }
-      }]}]
+      }
+    }));
+
+    jml('div', [
+      symInput1,
+      divSymbolTest,
+      ['input', {
+        id: 'symInput2',
+        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+          privateSym,
+          (arg1) => {
+            // No `this` available as using arrow function, but would give element
+            xmlTesting.matches(
+              arg1,
+              'arg2',
+              'Private symbol-attached arrow function with argument'
+            );
+          }
+        ])
+      }],
+      ['input', {
+        id: 'symInput3',
+        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+          privateSym,
+          /**
+           * @type {import('../src/jml.js').SymbolObject}
+           */
+          ({
+            localValue: 5,
+            /**
+             * @param {string} arg1
+             * @returns {void}
+             */
+            test (arg1) {
+              xmlTesting.matches(
+                this.localValue,
+                5,
+                'Private-symbol attached object method with `this`'
+              );
+              xmlTesting.matches(
+                this.elem?.id + ' ' + arg1,
+                'symInput3 arg3',
+                'Private-symbol attached object method with `this.elem` and argument'
+              );
+            }
+          })
+        ])
+      }],
+      ['input', {
+        id: 'symInput4',
+        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+          'publicForSym1',
+          /**
+           * @type {import('../src/jml.js').SymbolObject}
+           */
+          ({
+            localValue: 5,
+            /**
+             * @param {string} arg1
+             * @returns {void}
+             */
+            test (arg1) {
+              xmlTesting.matches(
+                this.localValue,
+                5,
+                'Public-symbol attached object method with `this`'
+              );
+              xmlTesting.matches(
+                this.elem?.id + ' ' + arg1,
+                'symInput4 arg4',
+                'Public-symbol attached object method with `this.elem` and argument'
+              );
+            }
+          })
+        ])
+      }]
     ], body);
 
+    // @ts-expect-error Symbol should be ok
     $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
-    jml.sym($('#symInput1'), 'publicForSym1')('arg1');
+    jml.sym(/** @type {Element} */ ($('#symInput1')), 'publicForSym1')('arg1');
     jml.sym('#symInput1', 'publicForSym1')('arg1');
 
+    // @ts-expect-error Symbol should be ok
     $('#symInput2')[privateSym]('arg2');
 
+    // @ts-expect-error Symbol should be ok
     $('#symInput3')[privateSym].test('arg3');
     jml.sym('#symInput3', privateSym).test('arg3');
-    $('#divSymbolTest').dispatchEvent(new window.Event('click'));
+    /** @type {Element} */ ($('#divSymbolTest')).dispatchEvent(
+      new window.Event('click')
+    );
     jml.command('#symInput1', 'publicForSym1', 'arg1');
     jml.command('#symInput3', privateSym, 'test', 'arg3');
+    // @ts-expect-error Symbol should be ok
     $('#symInput4')[publicSym].test('arg4');
     jml.sym('#symInput4', publicSym).test('arg4');
     jml.command('#symInput4', publicSym, 'test', 'arg4');
@@ -1026,7 +1195,7 @@ describe('Jamilih - jml', function () {
       }, null, 'Adding Shadow DOM (via `open`/no-attribute `template`) does not throw');
 
       assert.doesNotThrow(function () {
-        const template = jml('template', [
+        const template = /** @type {HTMLTemplateElement} */ (jml('template', [
           ['style', [`
             :host {color: red;}
             ::slotted(p) {color: blue;}
@@ -1034,7 +1203,7 @@ describe('Jamilih - jml', function () {
           ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
           ['h2', ['Heading level 2']],
           ['slot', ['DEFAULT CONTENT HERE']]
-        ]);
+        ]));
         jml('section', {
           id: 'myElem',
           $shadow: {
@@ -1114,7 +1283,7 @@ describe('Jamilih - jml', function () {
       }, null, 'Adding Shadow DOM (via `content`) does not throw');
 
       assert.doesNotThrow(function () {
-        const content = jml({'#': [
+        const content = /** @type {DocumentFragment} */ (jml({'#': [
           ['style', [`
             :host {color: red;}
             ::slotted(p) {color: blue;}
@@ -1122,7 +1291,7 @@ describe('Jamilih - jml', function () {
           ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
           ['h2', ['Heading level 2']],
           ['slot', ['DEFAULT CONTENT HERE']]
-        ]});
+        ]}));
         jml('section', {
           id: 'myElem2',
           $shadow: {content}
@@ -1203,17 +1372,28 @@ describe('Jamilih - jml', function () {
       );
     }
 
-    if (!window.customElements) {
-      xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
-    } else {
-      const myEl = jml('my-el', {
-        id: 'myEl',
+    expect(() => {
+      const frag = document.createDocumentFragment();
+      jml(frag, {
         $define: {
           test () {
             return this.id;
           }
         }
       }, body);
+    }).to.throw('Element expected for `$define`');
+
+    if (!window.customElements) {
+      xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
+    } else {
+      const myEl = /** @type {Element & {test: () => string}} */ (jml('my-el', {
+        id: 'myEl',
+        $define: {
+          test () {
+            return this.id;
+          }
+        }
+      }, body));
       xmlTesting.matches(
         myEl.test(),
         'myEl',
@@ -1234,9 +1414,12 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar3;
+      const win = /** @type {unknown} */ (window);
       jml('my-el3', {
         id: 'myEl3',
-        $define: class extends window.HTMLElement {
+        $define: class extends /** @type {import('jsdom').DOMWindow} */ (
+          win
+        ).HTMLElement {
           constructor () {
             super();
             constructorSetVar3 = this.id;
@@ -1250,19 +1433,19 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar4;
-      const myel4 = jml('my-el4', {
+      const myel4 = /** @type {Element & {test: (arg1: string) => void, test2: (arg1: string) => void}} */ (jml('my-el4', {
         id: 'myEl4',
-        $define: [function () {
+        $define: /** @type {[import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin]} */ ([function () {
           constructorSetVar4 = this.id;
         }, {
           test (arg1) {
             xmlTesting.matches(this.id + arg1, 'myEl4arg1', 'Custom element with array of constructor and object method invoked with `this` and argument');
           },
           test2 (arg1) {
-            this.test(arg1);
+            /** @type {{test: (arg1: string) => void}} */ (this).test(arg1);
           }
-        }]
-      }, body);
+        }])
+      }, body));
       xmlTesting.matches(
         constructorSetVar4,
         'myEl4',
@@ -1272,9 +1455,11 @@ describe('Jamilih - jml', function () {
       myel4.test2('arg1');
 
       let constructorSetVar5;
-      const myel5 = jml('my-el5', {
+      const myel5 = /** @type {HTMLElement & {test: (arg1: string) => void, test2: (arg1: string) => void}} */ (jml('my-el5', {
         id: 'myEl5',
-        $define: [class extends window.HTMLElement {
+        $define: [class extends /** @type {import('jsdom').DOMWindow} */ (
+          win
+        ).HTMLElement {
           constructor () {
             super();
             constructorSetVar5 = this.id;
@@ -1283,11 +1468,16 @@ describe('Jamilih - jml', function () {
           test (arg1) {
             xmlTesting.matches(this.id + arg1, 'myEl5arg1', 'Custom element with array of class-based constructor and object method invoked with `this` and argument');
           },
+          /**
+           * @param {string} arg1
+           * @returns {void}
+           */
           test2 (arg1) {
+            // @ts-expect-error How to fix?
             this.test(arg1);
           }
         }]
-      }, body);
+      }, body));
       xmlTesting.matches(
         constructorSetVar5,
         'myEl5',
@@ -1302,7 +1492,7 @@ describe('Jamilih - jml', function () {
     } else {
       // Todo: If customized built-in elements implemented, ensure testing
       //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
-      const myButton2 = jml('button', {
+      const myButton2 = /** @type {Element & {test: () => string}} */ (jml('button', {
         id: 'myButton2',
         is: 'fancy-button2',
         $define: {
@@ -1310,13 +1500,13 @@ describe('Jamilih - jml', function () {
             return this.id;
           }
         }
-      }, body);
+      }, body));
       xmlTesting.matches(
         myButton2.test(),
         'myButton2'
       );
 
-      const myButton3 = jml('button', {
+      const myButton3 = /** @type {Element & {test: () => string}} */ (jml('button', {
         id: 'myButton3',
         $define: {
           test () {
@@ -1324,7 +1514,7 @@ describe('Jamilih - jml', function () {
           }
         },
         is: 'fancy-button2'
-      }, body);
+      }, body));
       xmlTesting.matches(
         myButton3.test(),
         'myButton3'
@@ -1346,28 +1536,28 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myButton4 = jml('x-button', {
+      const myButton4 = /** @type {Element & {test: () => string}} */ (jml('x-button', {
         id: 'myButton4',
-        $define: [{
+        $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
           test () {
             return this.id;
           }
-        }, window.HTMLButtonElement]
-      }, body);
+        }, window.HTMLButtonElement])
+      }, body));
       xmlTesting.matches(
         myButton4.test(),
         'myButton4'
       );
 
-      const myButton5 = jml('button', {
+      const myButton5 = /** @type {Element & {test: () => string}} */ (jml('button', {
         id: 'myButton5',
         is: 'x-buttony',
-        $define: [{
+        $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
           test () {
             return this.id;
           }
-        }, 'button']
-      }, body);
+        }, 'button'])
+      }, body));
       xmlTesting.matches(
         myButton5.test(),
         'myButton5'
@@ -1378,33 +1568,33 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myButton6 = jml('x-buttona', {
+      const myButton6 = /** @type {Element & {test: () => string}} */ (jml('x-buttona', {
         id: 'myButton6',
         $define: [{
           test () {
             return this.id;
           }
         }]
-      }, body);
+      }, body));
       xmlTesting.matches(
         myButton6.test(),
         'myButton6'
       );
 
-      const myButton7 = jml('x-buttonb', {
+      const myButton7 = /** @type {Element & {test: () => string}} */ (jml('x-buttonb', {
         id: 'myButton7',
         $define: [{
           test () {
             return this.id;
           }
         }]
-      }, body);
+      }, body));
       xmlTesting.matches(
         myButton7.test(),
         'myButton7'
       );
 
-      const myButton8 = jml('button', {
+      const myButton8 = /** @type {Element & {test: () => string}} */ (jml('button', {
         id: 'myButton8',
         is: 'x-button2',
         $define: [{
@@ -1412,17 +1602,17 @@ describe('Jamilih - jml', function () {
             return this.id;
           }
         }, {extends: 'button'}]
-      }, body);
+      }, body));
       xmlTesting.matches(
         myButton8.test(),
         'myButton8'
       );
 
       let constructorSetVar6;
-      const myButton9 = jml('button', {
+      const myButton9 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
         id: 'myButton9',
         is: 'x-button3',
-        $define: [
+        $define: /** @type {[import('../src/jml.js').DefineConstructor|import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin?, import('../src/jml.js').DefineOptions?]} */ ([
           function () {
             constructorSetVar6 = this.id;
           },
@@ -1432,8 +1622,8 @@ describe('Jamilih - jml', function () {
             }
           },
           {extends: 'button'}
-        ]
-      }, body);
+        ])
+      }, body));
       xmlTesting.matches(
         constructorSetVar6,
         'myButton9',
@@ -1445,10 +1635,10 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar7;
-      const myButton10 = jml('button', {
+      const myButton10 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
         id: 'myButton10',
         is: 'x-button4',
-        $define: [
+        $define: /** @type {[import('../src/jml.js').DefineConstructor|import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin?, import('../src/jml.js').DefineOptions?]} */ ([
           function () {
             constructorSetVar7 = this.id;
           },
@@ -1458,8 +1648,8 @@ describe('Jamilih - jml', function () {
             }
           },
           'button'
-        ]
-      }, body);
+        ])
+      }, body));
       xmlTesting.matches(
         constructorSetVar7,
         'myButton10',
@@ -1472,20 +1662,32 @@ describe('Jamilih - jml', function () {
     }
   });
   it('$custom properties', () => {
-    const mySelect = jml('select', {
+    const mySelect = /** @type {HTMLSelectElement & {test: (arg1: string) => string, test2: (arg1: string) => string}} */ (jml('select', {
       id: 'mySelect',
       $custom: {
+        /**
+         * @param {string} arg1
+         * @returns {string}
+         */
         [Symbol.for('testCustom')] (arg1) {
           return this.test(arg1);
         },
+        /**
+         * @param {string} arg1
+         * @returns {string}
+         */
         test (arg1) {
           return this.id + arg1;
         },
+        /**
+         * @param {string} arg1
+         * @returns {string}
+         */
         test2 (arg1) {
           return this.test(arg1);
         }
       }
-    }, body);
+    }, body));
 
     xmlTesting.matches(
       mySelect.test('Arg1'),
@@ -1498,29 +1700,43 @@ describe('Jamilih - jml', function () {
       'Invoke `$custom`-attached object with regular method with argument and `this` (calling another regular object method)'
     );
     xmlTesting.matches(
+      // @ts-expect-error Should be ok
       mySelect[Symbol.for('testCustom')]('Arg1'),
       'mySelectArg1',
       'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
     );
   });
   it('$plugins', () => {
+    /**
+     * @type {import('../src/jml.js').JamilihOptions}
+     */
     const options = {$plugins: [
       {
         name: '$_myplugin',
-        set ({element, attribute: {name, value}}) {
+        set ({element, attribute: {
+          name,
+          value
+        }}) {
+          const val = /**
+          * @type {import('../src/jml.js').JamilihAttValue & {blueAndRed: boolean}}
+          */ (value);
           // console.log('vvv', value, '::', element, '::', name);
           // Add code here to modify the element
           // element.setAttribute(name, value);
-          if (value.blueAndRed) {
-            element.style.color = 'blue';
-            element.style.backgroundColor = 'red';
+          if (val?.blueAndRed) {
+            /** @type {HTMLElement} */ (element).style.color = 'blue';
+            /** @type {HTMLElement} */ (element).style.backgroundColor = 'red';
           }
+
+          return '';
         }
       }
     ]};
-    const div = jml(options, 'div', {id: 'myDiv', $_myplugin: {
-      blueAndRed: true
-    }}, document.body);
+    const div = /** @type {HTMLDivElement} */ (
+      jml(options, 'div', {id: 'myDiv', $_myplugin: {
+        blueAndRed: true
+      }}, document.body)
+    );
     xmlTesting.matches(
       div.style.color,
       'blue',
@@ -1542,36 +1758,42 @@ describe('Jamilih - jml', function () {
       'Should allow other non-plugin attributes'
     );
     expect(() => {
-      jml({$plugins: {}}, 'div');
-    }).to.throw(Error, null, 'should throw with non-array plugins');
+      jml(/** @type {BadArgument} */ ({$plugins: {}}), 'div');
+    }).to.throw(Error, undefined, 'should throw with non-array plugins');
     expect(() => {
       jml({$plugins: [
-        null
+        /** @type {BadArgument} */ (null)
       ]}, 'div');
-    }).to.throw(Error, null, 'should throw with non-object plugin');
+    }).to.throw(Error, undefined, 'should throw with non-object plugin');
     expect(() => {
-      jml({$plugins: [{
-        set () {
-          /* */
-        }
-      }]}, 'div');
-    }).to.throw(Error, null, 'Should throw when no `name` on plugin');
+      jml({$plugins: [
+        /** @type {BadArgument} */ ({
+          set () {
+            /* */
+          }
+        })
+      ]}, 'div');
+    }).to.throw(Error, undefined, 'Should throw when no `name` on plugin');
     expect(() => {
-      jml({$plugins: [{
-        name: '$_myplugin'
-      }]}, 'div');
-    }).to.throw(Error, null, 'Should throw when no `set` method on plugin');
+      jml({$plugins: [
+        /** @type {BadArgument} */ ({
+          name: '$_myplugin'
+        })
+      ]}, 'div');
+    }).to.throw(Error, undefined, 'Should throw when no `set` method on plugin');
     expect(() => {
-      jml({$plugins: [{
-        name: 'myplugin',
-        set () {
-          /* */
-        }
-      }]}, 'div');
-    }).to.throw(Error, null, 'Should throw with bad `name` on plugin');
+      jml({$plugins: [
+        /** @type {BadArgument} */ ({
+          name: 'myplugin',
+          set () {
+            /* */
+          }
+        })
+      ]}, 'div');
+    }).to.throw(Error, undefined, 'Should throw with bad `name` on plugin');
   });
   it('getInterpolator plugin', () => {
-    const {args, plugin, dynamic} = getInterpolator();
+    const {args, uuid, plugin, dynamic} = getInterpolator();
     const j = jml.bind(null, {$plugins: [plugin]});
     const div = j('div', {
       id: 'myId',
@@ -1584,8 +1806,15 @@ describe('Jamilih - jml', function () {
     expect(args).to.deep.equal(['fff', 'ggg']);
 
     const ser = new XMLSerializer().serializeToString(div);
+
     expect(ser).to.match(
       /<div xmlns="http:\/\/www.w3.org\/1999\/xhtml" id="myId" class="([a-f\d-]+)"><span>abc<\/span>\1<\/div>/u
+    );
+
+    expect(
+      String.raw({raw: ser.split(uuid)}, ...args)
+    ).to.equal(
+      '<div xmlns="http://www.w3.org/1999/xhtml" id="myId" class="fff"><span>abc</span>ggg</div>'
     );
   });
 });

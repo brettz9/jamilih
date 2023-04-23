@@ -7,7 +7,8 @@ import {jml} from './jml.js';
 
 export {jml, $, $$, nbsp, body, glue} from './jml.js';
 
-/* istanbul ignore else */
+// Ignore else
+/* c8 ignore next */
 if (typeof process !== 'undefined') {
   const {JSDOM} = jsdom;
 
