@@ -1,10 +1,13 @@
+// eslint-disable-next-line no-shadow -- Necessary
+import {assert, expect} from 'chai';
+
 import * as xmlTesting from './xmlTesting.js';
+
+import {jml, $, body, $$, nbsp} from '../test-helpers/loadTests-node.js';
 
 describe('Jamilih - Other Methods', function () {
   beforeEach(() => {
-    if ($('#mapTest')) {
-      $('#mapTest').remove();
-    }
+    $('#mapTest')?.remove();
   });
   it('jml.toJMLString()', () => {
     const br = document.createElement('br');
@@ -39,16 +42,26 @@ describe('Jamilih - Other Methods', function () {
   });
   ['weak', 'strong'].forEach((mapType) => {
     it(`jml.${mapType}()`, () => {
-      const [myMap, elem] = jml[mapType]({
+      const [myMap, elem] = jml[/** @type {"weak"|"strong"} */ (mapType)]({
         localVar: 'localValue',
+        /**
+         * @param {Element} el
+         * @param {string} arg1
+         * @returns {string}
+         */
         myMethod (el, arg1) {
-          return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input').value;
+          return arg1 + ' ' + this.localVar + ' ' + el.querySelector('input')?.value;
         }
       }, 'div', {id: 'mapTest'}, [
         ['input', {value: '100', $on: {
+          /**
+           * @this {HTMLInputElement}
+           */
           input () {
             xmlTesting.matches(
-              myMap.invoke(this.parentNode, 'myMethod', 'internal test'),
+              myMap.invoke(/** @type {HTMLDivElement} */ (
+                this.parentNode
+              ), 'myMethod', 'internal test'),
               'internal test localValue 1001',
               `Jamilih${mapType === 'weak' ? 'Weak' : ''}Map \`invoke\` method with arguments and \`this\``
             );
@@ -56,6 +69,12 @@ describe('Jamilih - Other Methods', function () {
         }}],
         ['div', {id: 'clickArea', $data: {
           localVariable: 8,
+          /**
+           * @param {Element} el
+           * @param {string} arg1
+           * @this {{[key: string]: any}}
+           * @returns {void}
+           */
           test (el, arg1) {
             xmlTesting.matches(
               arg1 + ' ' + el.id + this.localVariable,
@@ -68,7 +87,7 @@ describe('Jamilih - Other Methods', function () {
             myMap.invoke(this, 'test', 'arg1');
           }
         }}]
-      ], body);
+      ], /** @type {HTMLBodyElement} */ (body));
       xmlTesting.matches(
         myMap.invoke(elem, 'myMethod', 'external test'),
         'external test localValue 100',
@@ -79,48 +98,53 @@ describe('Jamilih - Other Methods', function () {
         'external test localValue 100',
         `Externally invoke Jamilih${mapType === 'weak' ? 'Weak' : ''}Map \`invoke\` method with arguments and \`this\``
       );
+      /**
+       * @typedef {any} MapSelector
+       */
       xmlTesting.matches(
-        myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
+        myMap.get(/** @type {MapSelector} */ ('#mapTest')).localVar, // Test overridden `get` accepting selectors also
         'localValue',
         `Externally retrieve Jamilih${mapType === 'weak' ? 'Weak' : ''}Map-associated element by selector`
       );
 
-      const mapInput = $('#mapTest').firstElementChild;
+      const mapInput = /** @type {HTMLInputElement} */ ($('#mapTest')?.firstElementChild);
       mapInput.value = '1001';
       mapInput.dispatchEvent(
         new window.Event('input')
       );
       const mapDiv = $('#clickArea');
-      mapDiv.dispatchEvent(new window.Event('click'));
+      mapDiv?.dispatchEvent(new window.Event('click'));
     });
   });
   describe('setWindow', function () {
-    afterEach(() => {
-      jml.setWindow(window);
-    });
     it('setWindow', function () {
       expect(() => {
-        jml.setWindow({});
+        jml.setWindow(window);
       }).to.not.throw();
     });
   });
 });
 
 describe('Jamilih extras', function () {
+  /**
+   * @type {HTMLDivElement}
+   */
   let div;
   beforeEach(() => {
     if (div) {
       div.remove();
     }
-    div = jml('div', {id: 'extraHolder'}, body);
+    div = /** @type {HTMLDivElement} */ (
+      jml('div', {id: 'extraHolder'}, /** @type {HTMLBodyElement} */ (body))
+    );
   });
   it('$', function () {
-    body.querySelector('#extraHolder').append(jml('br'), jml('br'));
+    /** @type {HTMLBodyElement} */ (body).querySelector('#extraHolder')?.append(jml('br'), jml('br'));
     const br = $('br');
-    expect(br.localName).to.equal('br');
+    expect(br?.localName).to.equal('br');
   });
   it('$$', function () {
-    body.querySelector('#extraHolder').append(jml('br'), jml('br'));
+    /** @type {HTMLBodyElement} */ (body).querySelector('#extraHolder')?.append(jml('br'), jml('br'));
     const brs = $$('br');
     expect(brs.length).to.equal(2);
   });

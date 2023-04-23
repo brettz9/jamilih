@@ -12,7 +12,7 @@ import replace from 'rollup-plugin-re';
 
 /**
  * @param {"es"|"umd"} format Rollup format
- * @returns {external:RollupConfig}
+ * @returns {RollupConfig}
  */
 function noInnerHTML (format) {
   return {

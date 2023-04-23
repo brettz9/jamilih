@@ -6,6 +6,9 @@ module.exports = {
     ecmaVersion: 2022
   },
   settings: {
+    jsdoc: {
+      mode: 'typescript'
+    },
     polyfills: [
       'Array.from',
       'Array.isArray',
@@ -43,18 +46,7 @@ module.exports = {
       extends: [
         'plugin:chai-friendly/recommended',
         'plugin:chai-expect/recommended'
-      ],
-      env: {mocha: true},
-      globals: {
-        assert: 'readonly',
-        expect: 'readonly',
-        jml: 'readonly',
-        glue: 'readonly',
-        nbsp: 'readonly',
-        $: 'readonly',
-        $$: 'readonly',
-        body: 'readonly'
-      }
+      ]
     },
     {
       files: ['*.md/*.js'],

@@ -1,24 +1,45 @@
 /* eslint-disable no-console */
-/* globals assert */
+
+// eslint-disable-next-line no-shadow -- Necessary
+import {assert} from 'chai';
 
 const nbsp = '\u00A0';
-const write = (...msgs) => {
+
+/**
+ * @param {ArbitraryValue} val
+ * @param {string[]} msgs
+ * @returns {void}
+ */
+const write = (val, ...msgs) => {
   if (assert) {
-    assert(...msgs);
+    assert(val, ...msgs);
     return;
   }
   if (typeof module === 'undefined') {
     document.body.append(
+      val,
       ...msgs,
       ...Array.from({length: 2}, () => document.createElement('br'))
     );
   } else {
-    console.log(...msgs);
+    console.log(val, ...msgs);
   }
 };
-const skip = (...msgs) => { // Todo: Could track and report on test count
-  return write(...msgs);
+
+/**
+ * @param {ArbitraryValue} val
+ * @param {string[]} msgs
+ * @returns {void}
+ */
+const skip = (val, ...msgs) => { // Todo: Could track and report on test count
+  return write(val, ...msgs);
 };
+
+/**
+ * @param {ArbitraryValue} ok
+ * @param {string} msg
+ * @returns {void}
+ */
 const xmlAssert = (ok, msg) => {
   if (!ok) {
     const err = new Error('Stack');
@@ -26,6 +47,17 @@ const xmlAssert = (ok, msg) => {
   }
   write(Boolean(ok), ` ${nbsp + msg}`);
 };
+
+/**
+ * @typedef {any} ArbitraryValue
+ */
+
+/**
+ * @param {ArbitraryValue} item1
+ * @param {ArbitraryValue} item2
+ * @param {string} [msg]
+ * @returns {void}
+ */
 const matches = (item1, item2, msg) => {
   if (!item2) { // For convenience in debugging
     console.log('Missing item2\n', item1);
@@ -37,6 +69,13 @@ const matches = (item1, item2, msg) => {
   }
   write(item1 === item2, ` ${nbsp}` + msg);
 };
+
+/**
+ * @param {Element|DocumentFragment} element
+ * @param {string} item2
+ * @param {string} msg
+ * @returns {void}
+ */
 const matchesXMLStringWithinElement = (element, item2, msg) => {
   const docFrag = document.createDocumentFragment();
   for (let i = 0; i < element.childNodes.length; i++) {
@@ -44,14 +83,28 @@ const matchesXMLStringWithinElement = (element, item2, msg) => {
   }
   matchesXMLString(docFrag, item2, msg);
 };
+
+/**
+ * @param {Element} element
+ * @param {string} item2
+ * @param {string} msg
+ * @returns {void}
+ */
 const matchesXMLStringOnElement = (element, item2, msg) => {
   const lastInsert = element.childNodes[element.childNodes.length - 1];
   matchesXMLString(lastInsert, item2, msg);
 };
+
+/**
+ * @param {Node} item1
+ * @param {string} item2
+ * @param {string} [msg]
+ * @returns {void}
+ */
 const matchesXMLString = (item1, item2, msg) => {
   const ser = new XMLSerializer();
-  item1 = ser.serializeToString(item1);
-  matches(item1, item2, msg);
+  const str = ser.serializeToString(item1);
+  matches(str, item2, msg);
 };
 
 export {write, skip, xmlAssert, matches, matchesXMLStringWithinElement,

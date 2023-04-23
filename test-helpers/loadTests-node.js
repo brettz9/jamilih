@@ -1,20 +1,11 @@
 /* eslint-env node */
-import {assert, expect} from 'chai';
-import {jml, glue, nbsp, $, $$, body} from '../src/jml-jsdom.js';
 
-global.assert = assert;
-global.expect = expect;
+import {jml, $, $$, nbsp, body, glue} from '../src/jml-jsdom.js';
 
-global.window = jml.getWindow();
-global.document = window.document;
-global.XMLSerializer = window.XMLSerializer;
+const win = /** @type {unknown} */ jml.getWindow();
 
-window.WeakMap = WeakMap;
-window.Map = Map;
+globalThis.window = /** @type {Window & typeof globalThis} */ (win);
+globalThis.document = window.document;
+globalThis.XMLSerializer = window.XMLSerializer;
 
-global.jml = jml;
-global.glue = glue;
-global.nbsp = nbsp;
-global.$ = $;
-global.$$ = $$;
-global.body = body;
+export {jml, $, $$, nbsp, body, glue};
