@@ -1,5 +1,11 @@
 # CHANGES for jamilih
 
+## 0.56.0
+
+- feat: more `toHTML` support
+- feat: TypeScript typings
+- fix: Better error checking/reporting
+
 ## 0.55.2
 
 - fix: expose `src/jml-jsdom.js` export
