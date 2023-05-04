@@ -85,7 +85,7 @@
     "node": ">=16.9.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.5",
+    "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
     "@brettz9/eslint-plugin": "^1.0.4",
     "@rollup/plugin-babel": "^6.0.3",
@@ -122,14 +122,14 @@
     "eslint-plugin-unicorn": "^46.0.0",
     "http-server": "^14.1.1",
     "jsdoc": "^4.0.2",
-    "jsdom": "21.1.2",
+    "jsdom": "22.0.0",
     "license-badger": "^0.21.1",
     "mocha": "^10.2.0",
     "mocha-badge-generator": "^0.10.6",
     "mocha-multi-reporters": "^1.5.1",
     "open-cli": "^7.2.0",
     "request": "^2.88.2",
-    "rollup": "3.21.2",
+    "rollup": "3.21.4",
     "rollup-plugin-re": "^1.0.7",
     "typescript": "^5.0.4"
   }
