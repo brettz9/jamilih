@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["es2022", "DOM"],
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "module": "esnext",
     "allowJs": true,
     "checkJs": true,

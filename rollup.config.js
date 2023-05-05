@@ -76,7 +76,7 @@ export default [{
 }, {
   input: 'src/jml-jsdom.js',
   output: {
-    file: 'dist/jml-jsdom.js',
+    file: 'dist/jml-jsdom.cjs',
     format: 'cjs',
     exports: 'named'
   },

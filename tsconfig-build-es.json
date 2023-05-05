@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "lib": ["es2022", "DOM"],
+    "moduleResolution": "nodenext",
+    "module": "esnext",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": false,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "target": "es6",
+    "outDir": "dist"
+  },
+  "include": ["dist/jml-es.js"],
+  "exclude": ["node_modules"]
+}

@@ -1,5 +1,5 @@
 /// <reference types="jsdom" />
-/// <reference types="jsdom" />
+/// <reference types="jsdom" resolution-mode="require"/>
 /**
  * Configuration object.
  * @typedef {object} ToJmlConfig

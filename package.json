@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "type": "module",
   "types": "./dist/jml.d.ts",
   "author": {
@@ -19,7 +19,7 @@
     "lint": "npm run eslint",
     "eslint": "eslint --ext=js,md,html .",
     "rollup": "rollup -c",
-    "build": "npm run rollup && tsc -p tsconfig-build.json",
+    "build": "npm run rollup && tsc -p tsconfig-build.json && tsc -p tsconfig-build-es.json",
     "browser-test": "npm run build && open-cli http://localhost:8091/test/ && npm run start",
     "mocha": "mocha --require test-helpers/loadTests.js test/test.*.js --reporter-options configFile=mocha-multi-reporters.json",
     "c8": "rm -Rf .nyc_output && rm -Rf coverage && rm -Rf node_modules/.cache && c8 npm run mocha && npm run coverage-badge",
@@ -49,18 +49,26 @@
     "cover 100%"
   ],
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "main": "dist/jml-jsdom.js",
+  "main": "dist/jml-jsdom.cjs",
   "browser": "dist/jml.js",
   "exports": {
     ".": {
-      "browser": "./dist/jml.js",
-      "import": "./dist/jml-es.js",
-      "require": "./dist/jml-jsdom.js"
+      "browser": {
+        "types": "./dist/jml.d.ts",
+        "default": "./dist/jml.js"
+      },
+      "import": {
+        "types": "./dist/jml-es.d.ts",
+        "default": "./dist/jml-es.js"
+      },
+      "require": {
+        "types": "./dist/jml-jsdom.d.cts",
+        "default": "./dist/jml-jsdom.cjs"
+      }
     },
-    "./dist/jml-jsdom.js": "./dist/jml-jsdom.js",
+    "./dist/jml-jsdom.cjs": "./dist/jml-jsdom.cjs",
     "./dist/jml-es-nooinnerh.js": "./dist/jml-es-noinnerh.js",
     "./dist/jml-nooinnerh.js": "./dist/jml-noinnerh.js",
-    "./dist/jml-polyglot.js": "./dist/jml-polyglot.js",
     "./dist/getInterpolator.js": "./dist/getInterpolator.js",
     "./dist/jml.js": "./dist/jml.js",
     "./src/jml-jsdom.js": "./src/jml-jsdom.js"

@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.57.0
+
+- fix: switch to `nodenext` `moduleResolution`
+
 ## 0.56.0
 
 - feat: more `toHTML` support
