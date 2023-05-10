@@ -1,5 +1,10 @@
 # CHANGES for jamilih
 
+## 0.57.1
+
+- fix: Plugin types (add `PluginValue` and allow
+   `Promise<void>` for plugins)
+
 ## 0.57.0
 
 - fix: switch to `nodenext` `moduleResolution`

@@ -71,7 +71,10 @@ export type SymbolObject = {
 };
 export type SymbolArray = [string | symbol, SymbolObject | ((this: Element, ...args: any[]) => any)];
 export type NullableAttributeValue = null | undefined;
-export type JamilihAttValue = (string | NullableAttributeValue | BooleanAttribute | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihShadowRootObject | StringifiableNumber | JamilihDocumentType | JamilihDocument | XmlnsAttributeValue | OnAttributeObject | HandlerAttributeValue | DefineObject | [string | symbol, SymbolObject | ((this: Element, ...args: any[]) => any)] | PluginReference);
+export type PluginValue = string | [string, object] | {
+    [key: string]: any;
+};
+export type JamilihAttValue = (string | NullableAttributeValue | BooleanAttribute | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihShadowRootObject | StringifiableNumber | JamilihDocumentType | JamilihDocument | XmlnsAttributeValue | OnAttributeObject | HandlerAttributeValue | DefineObject | [string | symbol, SymbolObject | ((this: Element, ...args: any[]) => any)] | PluginReference | PluginValue);
 export type DataAttributeObject = {
     [key: string]: string | number | ((this: Element, ...args: any[]) => any);
 };
@@ -193,7 +196,7 @@ export type PluginSettings = {
 };
 export type JamilihPlugin = {
     name: string;
-    set: (opts: PluginSettings) => string;
+    set: (opts: PluginSettings) => string | Promise<void>;
 };
 /**
  * Configuration object.

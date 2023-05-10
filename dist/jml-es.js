@@ -52,7 +52,7 @@ Other Todos:
 /**
  * @typedef {object} JamilihPlugin
  * @property {string} name
- * @property {(opts: PluginSettings) => string} set
+ * @property {(opts: PluginSettings) => string|Promise<void>} set
  */
 
 /**
@@ -527,11 +527,16 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
+ * @typedef {[string, object]|string|{[key: string]: any}} PluginValue
+ */
+
+/**
  * @typedef {(string|NullableAttributeValue|BooleanAttribute|
  *   JamilihArray|JamilihShadowRootObject|StringifiableNumber|
  *   JamilihDocumentType|JamilihDocument|XmlnsAttributeValue|
  *   OnAttributeObject|
- *   HandlerAttributeValue|DefineObject|SymbolArray|PluginReference
+ *   HandlerAttributeValue|DefineObject|SymbolArray|PluginReference|
+ *   PluginValue
  * )} JamilihAttValue
  */
 
@@ -724,7 +729,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @param {JamilihAttValue} attVal
  * @param {JamilihOptions} opts
  * @param {TraversalState} [state]
- * @returns {string|null}
+ * @returns {Promise<void>|string|null}
  */
 function checkPluginValue(elem, att, attVal, opts, state) {
   opts.$state = state !== null && state !== void 0 ? state : 'attributeValue';
@@ -907,7 +912,7 @@ const jml = function jml(...args) {
                 if (!Object.hasOwn(atts, 'is')) {
                   throw new TypeError(`Expected \`is\` with \`$define\` on built-in; args: ${JSON.stringify(args)}`);
                 }
-                atts.is = checkPluginValue(elem, 'is', atts.is, opts);
+                atts.is = /** @type {string} */checkPluginValue(elem, 'is', atts.is, opts);
                 elem.setAttribute('is', atts.is);
                 ({
                   is
@@ -1527,7 +1532,6 @@ const jml = function jml(...args) {
                 if (Array.isArray(childContent)) {
                   // Arrays representing child elements
                   opts.$state = 'children';
-                  // @ts-expect-error Should be ok
                   _appendNode(elem, jml(opts, ...childContent));
                 } else if ('#' in childContent) {
                   // Fragment
