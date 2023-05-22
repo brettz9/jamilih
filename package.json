@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.57.1",
+  "version": "0.57.2",
   "type": "module",
   "types": "./dist/jml.d.ts",
   "author": {
@@ -71,7 +71,10 @@
     "./dist/jml-nooinnerh.js": "./dist/jml-noinnerh.js",
     "./dist/getInterpolator.js": "./dist/getInterpolator.js",
     "./dist/jml.js": "./dist/jml.js",
-    "./src/jml-jsdom.js": "./src/jml-jsdom.js"
+    "./src/jml-jsdom.js": {
+      "types": "./dist/jml-jsdom.d.ts",
+      "import": "./src/jml-jsdom.js"
+    }
   },
   "repository": {
     "type": "git",
