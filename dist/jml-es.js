@@ -631,7 +631,11 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {{'#': (JamilihArray|TextNodeString|Element)[]}} JamilihDocumentFragment
+ * @typedef {JamilihArray|TextNodeString|Element} JamilihDocumentFragmentContent
+ */
+
+/**
+ * @typedef {{'#': JamilihDocumentFragmentContent[]}} JamilihDocumentFragment
  */
 
 /**

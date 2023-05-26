@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.58.0
+
+- feat: Add type for `JamilihDocumentFragmentContent`
+
 ## 0.57.2
 
 - fix: types for `jamilih/src/jml-jsdom.js`

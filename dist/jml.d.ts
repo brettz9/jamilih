@@ -180,8 +180,9 @@ export type JamilihDoc = {
 export type JamilihDoctype = {
     $DOCTYPE: JamilihDocumentType;
 };
+export type JamilihDocumentFragmentContent = [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | TextNodeString | Element;
 export type JamilihDocumentFragment = {
-    '#': ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | TextNodeString | Element)[];
+    '#': JamilihDocumentFragmentContent[];
 };
 export type ElementName = string;
 export type TextNodeString = string | number;
