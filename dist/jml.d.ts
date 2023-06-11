@@ -54,23 +54,23 @@ export type ChildrenToJMLCallback = (childNodeJML: JamilihArray | JamilihChildTy
 /**
  * Keep this in sync with `JamilihArray`'s first argument (minus `Document`).
  */
-export type JamilihFirstArg = JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode | JamilihOptions | ElementName | Element | JamilihDocumentFragment;
+export type JamilihFirstArg = JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode | JamilihOptions | ElementName | HTMLElement | JamilihDocumentFragment;
 export type JamilihAppender = (childJML: JamilihArray | JamilihFirstArg | Node | TextNodeString) => void;
 export type appender = (childJML: JamilihArray | JamilihFirstArg | Node | TextNodeString) => void;
-export type JamilihReturn = Element | DocumentFragment | Comment | Attr | Text | Document | DocumentType | ProcessingInstruction | CDATASection;
+export type JamilihReturn = HTMLElement | DocumentFragment | Comment | Attr | Text | Document | DocumentType | ProcessingInstruction | CDATASection;
 /**
  * Can either be an array of:
  * 1. JamilihAttributes followed by an array of JamilihArrays or Elements.
  *     (Cannot be multiple single JamilihArrays despite TS type).
  * 2. Any number of JamilihArrays.
  */
-export type TemplateJamilihArray = [(JamilihAttributes | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | Element), ...([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | Element)[]];
-export type ShadowRootJamilihArrayContainer = ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | Element)[];
+export type TemplateJamilihArray = [(JamilihAttributes | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | HTMLElement), ...([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | HTMLElement)[]];
+export type ShadowRootJamilihArrayContainer = ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | HTMLElement)[];
 export type JamilihShadowRootObject = {
-    open?: boolean | (Element | JamilihArray)[];
-    closed?: boolean | (Element | JamilihArray)[];
-    template?: string | HTMLTemplateElement | [Element | JamilihArray | JamilihAttributes | JamilihArray[], ...(Element | JamilihArray | JamilihArray[])[]];
-    content?: (Element | JamilihArray)[] | DocumentFragment;
+    open?: boolean | (HTMLElement | JamilihArray)[];
+    closed?: boolean | (HTMLElement | JamilihArray)[];
+    template?: string | HTMLTemplateElement | [HTMLElement | JamilihArray | JamilihAttributes | JamilihArray[], ...(HTMLElement | JamilihArray | JamilihArray[])[]];
+    content?: (HTMLElement | JamilihArray)[] | DocumentFragment;
 };
 export type XmlnsAttributeObject = {
     [key: string]: string;
@@ -82,7 +82,9 @@ export type DatasetAttributeObject = {
 export type StyleAttributeValue = string | {
     [key: string]: string | null;
 } | undefined;
-export type EventHandler = (this: Element, event?: Event) => void;
+export type EventHandler = (this: HTMLElement, event: Event & {
+    target: HTMLElement;
+}) => void;
 export type OnAttributeObject = {
     [key: string]: EventHandler | [EventHandler, boolean];
 };
@@ -90,7 +92,7 @@ export type OnAttribute = {
     $on?: OnAttributeObject | null;
 };
 export type BooleanAttribute = boolean;
-export type HandlerAttributeValue = (this: Element, event?: Event) => void;
+export type HandlerAttributeValue = (this: HTMLElement, event?: Event) => void;
 export type OnHandlerObject = {
     [key: string]: HandlerAttributeValue;
 };
@@ -117,16 +119,16 @@ export type DefineObjectArray = [DefineConstructor | DefineUserConstructor | Def
 export type DefineObject = DefineObjectArray | DefineConstructor | DefineMixin | DefineUserConstructor;
 export type SymbolObject = {
     [key: string]: any;
-    elem?: Element | undefined;
+    elem?: HTMLElement | undefined;
 };
-export type SymbolArray = [string | symbol, SymbolObject | ((this: Element, ...args: any[]) => any)];
+export type SymbolArray = [string | symbol, SymbolObject | ((this: HTMLElement, ...args: any[]) => any)];
 export type NullableAttributeValue = null | undefined;
 export type PluginValue = string | [string, object] | {
     [key: string]: any;
 };
-export type JamilihAttValue = (string | NullableAttributeValue | BooleanAttribute | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihShadowRootObject | StringifiableNumber | JamilihDocumentType | JamilihDocument | XmlnsAttributeValue | OnAttributeObject | HandlerAttributeValue | DefineObject | [string | symbol, SymbolObject | ((this: Element, ...args: any[]) => any)] | PluginReference | PluginValue);
+export type JamilihAttValue = (string | NullableAttributeValue | BooleanAttribute | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihShadowRootObject | StringifiableNumber | JamilihDocumentType | JamilihDocument | XmlnsAttributeValue | OnAttributeObject | HandlerAttributeValue | DefineObject | [string | symbol, SymbolObject | ((this: HTMLElement, ...args: any[]) => any)] | PluginReference | PluginValue);
 export type DataAttributeObject = {
-    [key: string]: string | number | ((this: Element, ...args: any[]) => any);
+    [key: string]: string | number | ((this: HTMLElement, ...args: any[]) => any);
 };
 export type DataAttribute = {
     $data?: true | string[] | Map<any, any> | WeakMap<any, any> | DataAttributeObject | [
@@ -156,7 +158,7 @@ export type CustomAttribute = {
     } | undefined;
 };
 export type SymbolAttribute = {
-    $symbol?: [string | symbol, SymbolObject | ((this: Element, ...args: any[]) => any)];
+    $symbol?: [string | symbol, SymbolObject | ((this: HTMLElement, ...args: any[]) => any)];
 };
 export type XmlnsAttribute = {
     xmlns?: string | null | XmlnsAttributeObject;
@@ -171,8 +173,8 @@ export type JamilihDocument = {
     title?: string;
     childNodes?: JamilihChildType[];
     $DOCTYPE?: JamilihDocumentType;
-    head?: (Element | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[];
-    body?: (Element | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[];
+    head?: (HTMLElement | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[];
+    body?: (HTMLElement | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[];
 };
 export type JamilihDoc = {
     $document: JamilihDocument;
@@ -180,7 +182,7 @@ export type JamilihDoc = {
 export type JamilihDoctype = {
     $DOCTYPE: JamilihDocumentType;
 };
-export type JamilihDocumentFragmentContent = [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | TextNodeString | Element;
+export type JamilihDocumentFragmentContent = [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | TextNodeString | HTMLElement;
 export type JamilihDocumentFragment = {
     '#': JamilihDocumentFragmentContent[];
 };
@@ -189,8 +191,8 @@ export type TextNodeString = string | number;
 export type PluginReference = {
     [key: string]: string;
 };
-export type JamilihChildren = ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | TextNodeString | Element | Comment | ProcessingInstruction | Text | DocumentFragment | [code: "?", target: string, value: string] | JamilihDocumentFragment | PluginReference)[];
-export type JamilihFirstArgument = Document | ElementName | Element | DocumentFragment | JamilihDocumentFragment | JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode;
+export type JamilihChildren = ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | TextNodeString | HTMLElement | Comment | ProcessingInstruction | Text | DocumentFragment | [code: "?", target: string, value: string] | JamilihDocumentFragment | PluginReference)[];
+export type JamilihFirstArgument = Document | ElementName | HTMLElement | DocumentFragment | JamilihDocumentFragment | JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode;
 /**
  * This would be clearer with overrides, but using as typedef.
  *
@@ -213,24 +215,24 @@ export type JamilihFirstArgument = Document | ElementName | Element | DocumentFr
  */
 export type JamilihArray = [
     JamilihOptions | JamilihFirstArgument,
-    (JamilihFirstArgument | JamilihAttributes | (Element | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[] | Element | ShadowRoot | null)?,
-    (JamilihAttributes | (Element | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[] | Element | ShadowRoot | ElementName | null)?,
-    ...(JamilihAttributes | (Element | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[] | Element | ShadowRoot | ElementName | null)[]
+    (JamilihFirstArgument | JamilihAttributes | (HTMLElement | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[] | HTMLElement | ShadowRoot | null)?,
+    (JamilihAttributes | (HTMLElement | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[] | HTMLElement | ShadowRoot | ElementName | null)?,
+    ...(JamilihAttributes | (HTMLElement | Text | Comment | DocumentFragment | ProcessingInstruction | JamilihArray | PluginReference | JamilihDocumentFragment | TextNodeString | JamilihProcessingInstruction)[] | HTMLElement | ShadowRoot | ElementName | null)[]
 ];
 export type JamilihArrayPostOptions = [
-    (string | Element | ShadowRoot),
-    ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | JamilihAttributes | Element | ShadowRoot | null)?,
-    ...([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | Element | JamilihAttributes | ShadowRoot | null)[]
+    (string | HTMLElement | ShadowRoot),
+    ([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | JamilihAttributes | HTMLElement | ShadowRoot | null)?,
+    ...([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | HTMLElement | JamilihAttributes | ShadowRoot | null)[]
 ];
 export type MapWithRoot = {
-    [key: string]: [Map<Element, any> | WeakMap<Element, any>, any];
-    root: [Map<Element, any> | WeakMap<Element, any>, any];
+    [key: string]: [Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any];
+    root: [Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any];
 };
 export type TraversalState = "root" | "attributeValue" | "element" | "fragment" | "children" | "fragmentChildren";
 export type JamilihOptions = {
     $state?: TraversalState | undefined;
     $plugins?: JamilihPlugin[] | undefined;
-    $map?: [Map<Element, any> | WeakMap<Element, any>, any] | MapWithRoot | undefined;
+    $map?: [Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any] | MapWithRoot | undefined;
 };
 export type HTMLWindow = Window & {
     DocumentFragment: any;
@@ -238,7 +240,7 @@ export type HTMLWindow = Window & {
 export type ArbitraryValue = any;
 export type Integer = number;
 export type PluginSettings = {
-    element: Document | Element | DocumentFragment;
+    element: Document | HTMLElement | DocumentFragment;
     attribute: {
         name: string | null;
         value: JamilihAttValue;
@@ -281,12 +283,12 @@ export type Entity = {
     nodeType: number;
     nodeName: string;
 };
-export type JamilihChildType = [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihDoctype | ["![", string] | ["&", string] | [code: "?", target: string, value: string] | [code: "!", value: string] | JamilihDocumentFragment;
+export type JamilihChildType = [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihDoctype | ["![", string] | ["&", string] | [code: "?", target: string, value: string] | [code: "!", value: string] | JamilihDocumentFragment;
 export type JamilihType = JamilihDoc | JamilihAttributeNode | JamilihChildType;
-export type MapAndElementArray = [JamilihWeakMap | JamilihMap, Element];
+export type MapAndElementArray = [JamilihWeakMap | JamilihMap, HTMLElement];
 export type MapCommand = {
-    [key: string]: (elem: Element, ...args: any[]) => void;
-} | ((elem: Element, ...args: any[]) => void);
+    [key: string]: (elem: HTMLElement, ...args: any[]) => void;
+} | ((elem: HTMLElement, ...args: any[]) => void);
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
@@ -295,7 +297,7 @@ export type MapCommand = {
  * @returns {JamilihReturn} The newly created (and possibly already appended)
  *   element or array of elements
  */
-export function jml(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): JamilihReturn;
+export function jml(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): JamilihReturn;
 export namespace jml {
     /**
      * @typedef {JamilihArray|JamilihDoctype|
@@ -326,35 +328,35 @@ export namespace jml {
      * @param {JamilihArray} args
      * @returns {JamilihReturn}
      */
-    export function toDOM(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): JamilihReturn;
+    export function toDOM(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): JamilihReturn;
     /**
      *
      * @param {JamilihArray} args
      * @returns {string}
      */
-    export function toHTML(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
+    export function toHTML(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
     /**
      *
      * @param {JamilihArray} args
      * @returns {string}
      */
-    export function toDOMString(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
+    export function toDOMString(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
     /**
      *
      * @param {JamilihArray} args
      * @returns {string}
      */
-    export function toXML(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
+    export function toXML(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
     /**
      *
      * @param {JamilihArray} args
      * @returns {string}
      */
-    export function toXMLDOMString(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | Element | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
+    export function toXMLDOMString(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): string;
     export { JamilihMap as Map };
     export { JamilihWeakMap as WeakMap };
     /**
-     * @typedef {[JamilihWeakMap|JamilihMap, Element]} MapAndElementArray
+     * @typedef {[JamilihWeakMap|JamilihMap, HTMLElement]} MapAndElementArray
      */
     /**
      * @param {{[key: string]: any}} obj
@@ -363,29 +365,29 @@ export namespace jml {
      */
     export function weak(obj: {
         [key: string]: any;
-    }, args_0: string | Element | ShadowRoot, args_1?: Element | ShadowRoot | JamilihAttributes | JamilihArray[] | null | undefined, ...args_2: (Element | ShadowRoot | JamilihAttributes | JamilihArray[] | null)[]): MapAndElementArray;
+    }, args_0: string | HTMLElement | ShadowRoot, args_1?: HTMLElement | ShadowRoot | JamilihAttributes | JamilihArray[] | null | undefined, ...args_2: (HTMLElement | ShadowRoot | JamilihAttributes | JamilihArray[] | null)[]): MapAndElementArray;
     /**
      * @param {ArbitraryValue} obj
      * @param {JamilihArrayPostOptions} args
      * @returns {MapAndElementArray}
      */
-    export function strong(obj: any, args_0: string | Element | ShadowRoot, args_1?: Element | ShadowRoot | JamilihAttributes | JamilihArray[] | null | undefined, ...args_2: (Element | ShadowRoot | JamilihAttributes | JamilihArray[] | null)[]): MapAndElementArray;
-    export function symbol(element: string | Element, sym: string | symbol): any;
-    export function sym(element: string | Element, sym: string | symbol): any;
-    function _for(element: string | Element, sym: string | symbol): any;
+    export function strong(obj: any, args_0: string | HTMLElement | ShadowRoot, args_1?: HTMLElement | ShadowRoot | JamilihAttributes | JamilihArray[] | null | undefined, ...args_2: (HTMLElement | ShadowRoot | JamilihAttributes | JamilihArray[] | null)[]): MapAndElementArray;
+    export function symbol(element: string | HTMLElement, sym: string | symbol): any;
+    export function sym(element: string | HTMLElement, sym: string | symbol): any;
+    function _for(element: string | HTMLElement, sym: string | symbol): any;
     export { _for as for };
     /**
-     * @typedef {((elem: Element, ...args: any[]) => void)|{[key: string]: (elem: Element, ...args: any[]) => void}} MapCommand
+     * @typedef {((elem: HTMLElement, ...args: any[]) => void)|{[key: string]: (elem: HTMLElement, ...args: any[]) => void}} MapCommand
      */
     /**
-     * @param {?(string|Element)} elem If a string, will be interpreted as a selector
-     * @param {symbol|string|Map<Element, MapCommand>|WeakMap<Element, MapCommand>} symOrMap If a string, will be used with `Symbol.for`
+     * @param {?(string|HTMLElement)} elem If a string, will be interpreted as a selector
+     * @param {symbol|string|Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} symOrMap If a string, will be used with `Symbol.for`
      * @param {string|any} methodName Can be `any` if the symbol or map directly
      *   points to a function (it is then used as the first argument).
      * @param {ArbitraryValue[]} args
      * @returns {ArbitraryValue}
      */
-    export function command(elem: string | Element | null, symOrMap: string | symbol | Map<Element, MapCommand> | WeakMap<Element, MapCommand>, methodName: any, ...args: any[]): any;
+    export function command(elem: string | HTMLElement | null, symOrMap: string | symbol | Map<HTMLElement, MapCommand> | WeakMap<HTMLElement, MapCommand>, methodName: any, ...args: any[]): any;
     /**
      * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
      * Also updates `body` with `document.body`.
@@ -400,14 +402,14 @@ export namespace jml {
 }
 /**
  * @param {string} sel
- * @returns {Element|null}
+ * @returns {HTMLElement|null}
  */
-export function $(sel: string): Element | null;
+export function $(sel: string): HTMLElement | null;
 /**
  * @param {string} sel
- * @returns {Element[]}
+ * @returns {HTMLElement[]}
  */
-export function $$(sel: string): Element[];
+export function $$(sel: string): HTMLElement[];
 export const nbsp: " ";
 /**
  * @type {HTMLBodyElement}
@@ -428,23 +430,23 @@ declare class JamilihWeakMap extends WeakMap<any, any> {
     constructor(entries?: readonly [any, any][] | null | undefined);
     constructor(iterable: Iterable<readonly [any, any]>);
     /**
-     * @param {Element} element
+     * @param {HTMLElement} element
      * @returns {ArbitraryValue}
      */
-    get(element: Element): ArbitraryValue;
+    get(element: HTMLElement): ArbitraryValue;
     /**
-     * @param {Element} element
+     * @param {HTMLElement} element
      * @param {ArbitraryValue} value
      * @returns {ArbitraryValue}
      */
-    set(element: Element, value: ArbitraryValue): ArbitraryValue;
+    set(element: HTMLElement, value: ArbitraryValue): ArbitraryValue;
     /**
-     * @param {string|Element} element
+     * @param {string|HTMLElement} element
      * @param {string} methodName
      * @param {...ArbitraryValue} args
      * @returns {ArbitraryValue}
      */
-    invoke(element: string | Element, methodName: string, ...args: ArbitraryValue[]): ArbitraryValue;
+    invoke(element: string | HTMLElement, methodName: string, ...args: ArbitraryValue[]): ArbitraryValue;
 }
 /**
  * Element-aware wrapper for `Map`.
@@ -455,22 +457,22 @@ declare class JamilihMap extends Map<any, any> {
     constructor();
     constructor(iterable?: Iterable<readonly [any, any]> | null | undefined);
     /**
-     * @param {?(string|Element)} element
+     * @param {?(string|HTMLElement)} element
      * @returns {ArbitraryValue}
      */
-    get(element: (string | Element) | null): ArbitraryValue;
+    get(element: (string | HTMLElement) | null): ArbitraryValue;
     /**
-     * @param {string|Element} element
+     * @param {string|HTMLElement} element
      * @param {ArbitraryValue} value
      * @returns {ArbitraryValue}
      */
-    set(element: string | Element, value: ArbitraryValue): ArbitraryValue;
+    set(element: string | HTMLElement, value: ArbitraryValue): ArbitraryValue;
     /**
-     * @param {string|Element} element
+     * @param {string|HTMLElement} element
      * @param {string} methodName
      * @param {...ArbitraryValue} args
      * @returns {ArbitraryValue}
      */
-    invoke(element: string | Element, methodName: string, ...args: ArbitraryValue[]): ArbitraryValue;
+    invoke(element: string | HTMLElement, methodName: string, ...args: ArbitraryValue[]): ArbitraryValue;
 }
 //# sourceMappingURL=jml.d.ts.map

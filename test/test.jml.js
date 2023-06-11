@@ -181,7 +181,7 @@ describe('Jamilih - jml', function () {
   it('DOM wrapping', () => {
     const div = jml(
       'div', {style: 'position:absolute !important; left: -1000px;'}, [
-        /** @type {Element} */ ($('#DOMChildrenMustBeInArray'))
+        /** @type {HTMLElement} */ ($('#DOMChildrenMustBeInArray'))
       ],
       $('#anotherElementToAddToParent'),
       $('#yetAnotherSiblingToAddToParent'),
@@ -1125,7 +1125,7 @@ describe('Jamilih - jml', function () {
 
     // @ts-expect-error Symbol should be ok
     $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
-    jml.sym(/** @type {Element} */ ($('#symInput1')), 'publicForSym1')('arg1');
+    jml.sym(/** @type {HTMLElement} */ ($('#symInput1')), 'publicForSym1')('arg1');
     jml.sym('#symInput1', 'publicForSym1')('arg1');
 
     // @ts-expect-error Symbol should be ok
@@ -1134,7 +1134,7 @@ describe('Jamilih - jml', function () {
     // @ts-expect-error Symbol should be ok
     $('#symInput3')[privateSym].test('arg3');
     jml.sym('#symInput3', privateSym).test('arg3');
-    /** @type {Element} */ ($('#divSymbolTest')).dispatchEvent(
+    /** @type {HTMLElement} */ ($('#divSymbolTest')).dispatchEvent(
       new window.Event('click')
     );
     jml.command('#symInput1', 'publicForSym1', 'arg1');
@@ -1386,7 +1386,7 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myEl = /** @type {Element & {test: () => string}} */ (jml('my-el', {
+      const myEl = /** @type {HTMLElement & {test: () => string}} */ (jml('my-el', {
         id: 'myEl',
         $define: {
           test () {
@@ -1433,7 +1433,7 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar4;
-      const myel4 = /** @type {Element & {test: (arg1: string) => void, test2: (arg1: string) => void}} */ (jml('my-el4', {
+      const myel4 = /** @type {HTMLElement & {test: (arg1: string) => void, test2: (arg1: string) => void}} */ (jml('my-el4', {
         id: 'myEl4',
         $define: /** @type {[import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin]} */ ([function () {
           constructorSetVar4 = this.id;
@@ -1492,7 +1492,7 @@ describe('Jamilih - jml', function () {
     } else {
       // Todo: If customized built-in elements implemented, ensure testing
       //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
-      const myButton2 = /** @type {Element & {test: () => string}} */ (jml('button', {
+      const myButton2 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
         id: 'myButton2',
         is: 'fancy-button2',
         $define: {
@@ -1506,7 +1506,7 @@ describe('Jamilih - jml', function () {
         'myButton2'
       );
 
-      const myButton3 = /** @type {Element & {test: () => string}} */ (jml('button', {
+      const myButton3 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
         id: 'myButton3',
         $define: {
           test () {
@@ -1536,7 +1536,7 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myButton4 = /** @type {Element & {test: () => string}} */ (jml('x-button', {
+      const myButton4 = /** @type {HTMLElement & {test: () => string}} */ (jml('x-button', {
         id: 'myButton4',
         $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
           test () {
@@ -1549,7 +1549,7 @@ describe('Jamilih - jml', function () {
         'myButton4'
       );
 
-      const myButton5 = /** @type {Element & {test: () => string}} */ (jml('button', {
+      const myButton5 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
         id: 'myButton5',
         is: 'x-buttony',
         $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
@@ -1568,7 +1568,7 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myButton6 = /** @type {Element & {test: () => string}} */ (jml('x-buttona', {
+      const myButton6 = /** @type {HTMLElement & {test: () => string}} */ (jml('x-buttona', {
         id: 'myButton6',
         $define: [{
           test () {
@@ -1581,7 +1581,7 @@ describe('Jamilih - jml', function () {
         'myButton6'
       );
 
-      const myButton7 = /** @type {Element & {test: () => string}} */ (jml('x-buttonb', {
+      const myButton7 = /** @type {HTMLElement & {test: () => string}} */ (jml('x-buttonb', {
         id: 'myButton7',
         $define: [{
           test () {
@@ -1594,7 +1594,7 @@ describe('Jamilih - jml', function () {
         'myButton7'
       );
 
-      const myButton8 = /** @type {Element & {test: () => string}} */ (jml('button', {
+      const myButton8 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
         id: 'myButton8',
         is: 'x-button2',
         $define: [{

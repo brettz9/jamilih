@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.58.1
+
+- fix(types): `Element` -> `HTMLElement`
+
 ## 0.58.0
 
 - feat: Add type for `JamilihDocumentFragmentContent`
