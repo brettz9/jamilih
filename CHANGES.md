@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.58.2
+
+- fix(plugins): ensure passing root element
+
 ## 0.58.1
 
 - fix(types): `Element` -> `HTMLElement`

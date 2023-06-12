@@ -1239,7 +1239,7 @@ const jml = function jml(...args) {
             if (matchingPlugin) {
               matchingPlugin.set({
                 opts,
-                element: elem,
+                element: /** @type {HTMLElement} */nodes[0],
                 attribute: {
                   name: pluginName,
                   value: /** @type {PluginReference} */attVal
@@ -1430,7 +1430,8 @@ const jml = function jml(...args) {
                 // Should create separate file for this
                 /* eslint-disable object-shorthand -- Casting */ ? /** @type {HTMLElement} */doc.createElementNS(NS_HTML, elStr, {
                   is: /** @type {string} */is
-                }) : doc.createElement(elStr, {
+                })
+                /* c8 ignore next 1 */ : doc.createElement(elStr, {
                   is: /** @type {string} */is
                 });
                 /* eslint-enable object-shorthand -- Casting */
