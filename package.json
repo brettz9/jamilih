@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.58.2",
+  "version": "0.59.0",
   "type": "module",
   "types": "./dist/jml.d.ts",
   "author": {
@@ -142,6 +142,6 @@
     "request": "^2.88.2",
     "rollup": "3.21.4",
     "rollup-plugin-re": "^1.0.7",
-    "typescript": "^5.0.4"
+    "typescript": "^5.4.5"
   }
 }

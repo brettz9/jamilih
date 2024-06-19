@@ -766,15 +766,27 @@ function getMatchingPlugin(opts, pluginName) {
   });
 }
 
+/* eslint-disable jsdoc/valid-types -- pratt parser bug  */
+/**
+ * @template T
+ * @typedef {T[keyof T]} ValueOf
+ */
+/* eslint-enable jsdoc/valid-types -- pratt parser bug  */
+
+/* eslint-disable jsdoc/valid-types -- pratt parser bug  */
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
- * @param {JamilihArray} args
- * @returns {JamilihReturn} The newly created (and possibly already appended)
+ * @template {JamilihArray} T
+ * @param {T} args
+ * @returns {T extends [keyof HTMLElementTagNameMap, any?, any?, any?]
+ *   ? HTMLElementTagNameMap[T[0]] : JamilihReturn}
+ * The newly created (and possibly already appended)
  *   element or array of elements
  */
 const jml = function jml(...args) {
+  /* eslint-enable jsdoc/valid-types -- pratt parser bug  */
   if (!win) {
     throw new Error('No window object');
   }
@@ -1353,9 +1365,11 @@ const jml = function jml(...args) {
       case 'null':
         // null always indicates a place-holder (only needed for last argument if want array returned)
         if (i === argc - 1) {
-          return nodes.length <= 1 ? nodes[0]
-          // eslint-disable-next-line unicorn/no-array-callback-reference
-          : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
+          // Casting needing unless changing `jml()` signature with overloads
+          return (/** @type {ArbitraryValue} */nodes.length <= 1 ? nodes[0]
+            // eslint-disable-next-line unicorn/no-array-callback-reference
+            : nodes.reduce(_fragReducer, doc.createDocumentFragment())
+          ); // nodes;
         }
 
         throw new TypeError(`\`null\` values not allowed except as final Jamilih argument; index ${i} on args: ${JSON.stringify(args)}`);
@@ -1567,7 +1581,10 @@ const jml = function jml(...args) {
   if (isRoot && opts.$map && /** @type {MapWithRoot} */opts.$map.root) {
     setMap(true);
   }
-  return ret;
+
+  // Casting needing unless changing `jml()` signature with overloads
+  return (/** @type {ArbitraryValue} */ret
+  );
 };
 
 /**

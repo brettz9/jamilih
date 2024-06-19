@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.59.0
+
+- fix: for common uses, return more accurate type for `jml()`
+
 ## 0.58.2
 
 - fix(plugins): ensure passing root element

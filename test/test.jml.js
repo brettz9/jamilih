@@ -1492,7 +1492,7 @@ describe('Jamilih - jml', function () {
     } else {
       // Todo: If customized built-in elements implemented, ensure testing
       //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
-      const myButton2 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
+      const myButton2 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
         id: 'myButton2',
         is: 'fancy-button2',
         $define: {
@@ -1506,7 +1506,7 @@ describe('Jamilih - jml', function () {
         'myButton2'
       );
 
-      const myButton3 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
+      const myButton3 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
         id: 'myButton3',
         $define: {
           test () {
@@ -1549,7 +1549,7 @@ describe('Jamilih - jml', function () {
         'myButton4'
       );
 
-      const myButton5 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
+      const myButton5 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
         id: 'myButton5',
         is: 'x-buttony',
         $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
@@ -1594,7 +1594,7 @@ describe('Jamilih - jml', function () {
         'myButton7'
       );
 
-      const myButton8 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
+      const myButton8 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
         id: 'myButton8',
         is: 'x-button2',
         $define: [{
@@ -1609,7 +1609,7 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar6;
-      const myButton9 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
+      const myButton9 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
         id: 'myButton9',
         is: 'x-button3',
         $define: /** @type {[import('../src/jml.js').DefineConstructor|import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin?, import('../src/jml.js').DefineOptions?]} */ ([
@@ -1635,7 +1635,7 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar7;
-      const myButton10 = /** @type {HTMLElement & {test: () => string}} */ (jml('button', {
+      const myButton10 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
         id: 'myButton10',
         is: 'x-button4',
         $define: /** @type {[import('../src/jml.js').DefineConstructor|import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin?, import('../src/jml.js').DefineOptions?]} */ ([
@@ -1677,7 +1677,10 @@ describe('Jamilih - jml', function () {
          * @returns {string}
          */
         test (arg1) {
-          return this.id + arg1;
+          /**
+           * @typedef {any} CurrentThis
+           */
+          return /** @type {CurrentThis} */ (this).id + arg1;
         },
         /**
          * @param {string} arg1

@@ -27,11 +27,11 @@ export type XmlnsAttributeObject = {
 };
 export type XmlnsAttributeValue = null | XmlnsAttributeObject;
 export type DatasetAttributeObject = {
-    [key: string]: string | number | DatasetAttributeObject | null | undefined;
+    [key: string]: string | number | null | undefined | DatasetAttributeObject;
 };
-export type StyleAttributeValue = string | {
+export type StyleAttributeValue = string | undefined | {
     [key: string]: string | null;
-} | undefined;
+};
 export type EventHandler = (this: HTMLElement, event: Event & {
     target: HTMLElement;
 }) => void;
@@ -42,7 +42,7 @@ export type OnAttribute = {
     $on?: OnAttributeObject | null;
 };
 export type BooleanAttribute = boolean;
-export type HandlerAttributeValue = (this: HTMLElement, event?: Event) => void;
+export type HandlerAttributeValue = ((this: HTMLElement, event?: Event) => void);
 export type OnHandlerObject = {
     [key: string]: HandlerAttributeValue;
 };
@@ -68,12 +68,12 @@ export type DefineUserConstructor = (this: HTMLElement) => void;
 export type DefineObjectArray = [DefineConstructor | DefineUserConstructor | DefineMixin, DefineOptions?] | [DefineConstructor | DefineUserConstructor, DefineMixin?, DefineOptions?];
 export type DefineObject = DefineObjectArray | DefineConstructor | DefineMixin | DefineUserConstructor;
 export type SymbolObject = {
+    elem?: HTMLElement;
     [key: string]: any;
-    elem?: HTMLElement | undefined;
 };
-export type SymbolArray = [string | symbol, SymbolObject | ((this: HTMLElement, ...args: any[]) => any)];
+export type SymbolArray = [symbol | string, ((this: HTMLElement, ...args: any[]) => any) | SymbolObject];
 export type NullableAttributeValue = null | undefined;
-export type PluginValue = string | [string, object] | {
+export type PluginValue = [string, object] | string | {
     [key: string]: any;
 };
 export type JamilihAttValue = (string | NullableAttributeValue | BooleanAttribute | [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihShadowRootObject | StringifiableNumber | JamilihDocumentType | JamilihDocument | XmlnsAttributeValue | OnAttributeObject | HandlerAttributeValue | DefineObject | [string | symbol, SymbolObject | ((this: HTMLElement, ...args: any[]) => any)] | PluginReference | PluginValue);
@@ -105,7 +105,7 @@ export type DefineAttribute = {
 export type CustomAttribute = {
     $custom?: {
         [key: string]: any;
-    } | undefined;
+    };
 };
 export type SymbolAttribute = {
     $symbol?: [string | symbol, SymbolObject | ((this: HTMLElement, ...args: any[]) => any)];
@@ -117,7 +117,7 @@ export type XmlnsAttribute = {
  * `OnHandlerObject &` wasn't working, so added `HandlerAttributeValue`.
  */
 export type JamilihAttributes = DataAttribute & StyleAttribute & JamilihShadowRootAttribute & DefineAttribute & DatasetAttribute & CustomAttribute & SymbolAttribute & OnAttribute & XmlnsAttribute & Partial<JamilihAttributeNode> & Partial<JamilihTextNode> & Partial<JamilihDoc> & Partial<JamilihDoctype> & {
-    [key: string]: JamilihAttValue;
+    [key: string]: JamilihAttValue | HandlerAttributeValue;
 };
 export type JamilihDocument = {
     title?: string;
@@ -175,8 +175,8 @@ export type JamilihArrayPostOptions = [
     ...([JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]][] | HTMLElement | JamilihAttributes | ShadowRoot | null)[]
 ];
 export type MapWithRoot = {
-    [key: string]: [Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any];
     root: [Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any];
+    [key: string]: [Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any];
 };
 export type TraversalState = "root" | "attributeValue" | "element" | "fragment" | "children" | "fragmentChildren";
 export type JamilihOptions = {
@@ -201,6 +201,7 @@ export type JamilihPlugin = {
     name: string;
     set: (opts: PluginSettings) => string | Promise<void>;
 };
+export type ValueOf<T> = T[keyof T];
 /**
  * Configuration object.
  */
@@ -236,9 +237,9 @@ export type Entity = {
 export type JamilihChildType = [JamilihOptions | JamilihFirstArgument, (ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined)?, (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined)?, ...(string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]] | JamilihDoctype | ["![", string] | ["&", string] | [code: "?", target: string, value: string] | [code: "!", value: string] | JamilihDocumentFragment;
 export type JamilihType = JamilihDoc | JamilihAttributeNode | JamilihChildType;
 export type MapAndElementArray = [JamilihWeakMap | JamilihMap, HTMLElement];
-export type MapCommand = {
+export type MapCommand = ((elem: HTMLElement, ...args: any[]) => void) | {
     [key: string]: (elem: HTMLElement, ...args: any[]) => void;
-} | ((elem: HTMLElement, ...args: any[]) => void);
+};
 /**
  * @param {string} sel
  * @returns {HTMLElement|null}
@@ -303,14 +304,21 @@ export class DOMException extends Error {
  */
 export let body: HTMLBodyElement;
 /**
+ * @template T
+ * @typedef {T[keyof T]} ValueOf
+ */
+/**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
- * @param {JamilihArray} args
- * @returns {JamilihReturn} The newly created (and possibly already appended)
+ * @template {JamilihArray} T
+ * @param {T} args
+ * @returns {T extends [keyof HTMLElementTagNameMap, any?, any?, any?]
+ *   ? HTMLElementTagNameMap[T[0]] : JamilihReturn}
+ * The newly created (and possibly already appended)
  *   element or array of elements
  */
-export function jml(args_0: JamilihOptions | JamilihFirstArgument, args_1?: ShadowRoot | JamilihAttributes | JamilihChildren | JamilihFirstArgument | null | undefined, args_2?: string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null | undefined, ...args_3: (string | HTMLElement | ShadowRoot | JamilihAttributes | JamilihChildren | null)[]): JamilihReturn;
+export function jml<T extends JamilihArray>(...args: T): T extends [keyof HTMLElementTagNameMap, any?, any?, any?] ? HTMLElementTagNameMap[T[0]] : JamilihReturn;
 export namespace jml {
     /**
      * @typedef {JamilihArray|JamilihDoctype|
@@ -426,7 +434,7 @@ export const nbsp: " ";
  * @extends {WeakMap<any>}
  */
 declare class JamilihWeakMap extends WeakMap<any, any> {
-    constructor(entries?: readonly [any, any][] | null | undefined);
+    constructor(entries?: readonly (readonly [any, any])[] | null | undefined);
     constructor(iterable: Iterable<readonly [any, any]>);
     /**
      * @param {HTMLElement} element
