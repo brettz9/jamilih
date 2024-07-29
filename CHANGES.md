@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.59.1
+
+- fix: make `list` attribute nullable
+
 ## 0.59.0
 
 - fix: for common uses, return more accurate type for `jml()`

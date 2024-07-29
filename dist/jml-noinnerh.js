@@ -121,7 +121,7 @@
   // script, link
   'lang',
   // HTMLElement
-  'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
+  'list', 'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
   ];
 
   /**
