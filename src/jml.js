@@ -131,7 +131,6 @@ const NULLABLES = [
   'dir', // HTMLElement
   'integrity', // script, link
   'lang', // HTMLElement
-  'list',
   'max',
   'min',
   'minLength',

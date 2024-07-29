@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.59.2
+
+- fix: revert making `list` attribute nullable (needs `setAttribute`)
+
 ## 0.59.1
 
 - fix: make `list` attribute nullable
