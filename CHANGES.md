@@ -1,5 +1,10 @@
 # CHANGES for jamilih
 
+## 0.60.0
+
+- BREAKING: Require Node 18
+- perf(build): target Node 18
+
 ## 0.59.2
 
 - fix: revert making `list` attribute nullable (needs `setAttribute`)

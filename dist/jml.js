@@ -4,7 +4,6 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.jml = {}));
 })(this, (function (exports) { 'use strict';
 
-  var _win;
   /*
   Possible todos:
   0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -72,7 +71,7 @@
   }
 
   /* c8 ignore next */
-  let doc = typeof document !== 'undefined' && document || ((_win = win) === null || _win === void 0 ? void 0 : _win.document);
+  let doc = typeof document !== 'undefined' && document || win?.document;
 
   // STATIC PROPERTIES
 
@@ -743,7 +742,7 @@
    * @returns {Promise<void>|string|null}
    */
   function checkPluginValue(elem, att, attVal, opts, state) {
-    opts.$state = state !== null && state !== void 0 ? state : 'attributeValue';
+    opts.$state = state ?? 'attributeValue';
     if (attVal && typeof attVal === 'object') {
       const matchingPlugin = getMatchingPlugin(opts, Object.keys(attVal)[0]);
       if (matchingPlugin) {
@@ -814,8 +813,7 @@
         throw new Error('No document object');
       }
       for (let [att, attVal] of Object.entries(atts)) {
-        var _ATTR_MAP$get;
-        att = (_ATTR_MAP$get = ATTR_MAP.get(att)) !== null && _ATTR_MAP$get !== void 0 ? _ATTR_MAP$get : att;
+        att = ATTR_MAP.get(att) ?? att;
 
         /**
          * @typedef {any} ElementExpando
@@ -1097,21 +1095,20 @@
                 jamlihDoc.childNodes.forEach(_childrenToJML(docNode));
               } else {
                 if (jamlihDoc.$DOCTYPE) {
-                  var _docNode$firstChild;
                   const dt = {
                     $DOCTYPE: jamlihDoc.$DOCTYPE
                   };
                   const doctype = jml(dt);
-                  (_docNode$firstChild = docNode.firstChild) === null || _docNode$firstChild === void 0 ? void 0 : _docNode$firstChild.replaceWith(doctype);
+                  docNode.firstChild?.replaceWith(doctype);
                 }
                 const html = docNode.querySelector('html');
-                const head = html === null || html === void 0 ? void 0 : html.querySelector('head');
-                const body = html === null || html === void 0 ? void 0 : html.querySelector('body');
+                const head = html?.querySelector('head');
+                const body = html?.querySelector('body');
                 if (jamlihDoc.title || jamlihDoc.head) {
                   const meta = doc.createElement('meta');
                   // eslint-disable-next-line unicorn/text-encoding-identifier-case -- HTML
                   meta.setAttribute('charset', 'utf-8');
-                  head === null || head === void 0 ? void 0 : head.append(meta);
+                  head?.append(meta);
                   if (jamlihDoc.title) {
                     docNode.title = jamlihDoc.title; // Appends after meta
                   }
@@ -1903,10 +1900,9 @@
           }
         case 4:
           {
-            var _node$nodeValue;
             // CDATA
             const node = /** @type {CDATASection} */nodeOrEntity;
-            if ((_node$nodeValue = node.nodeValue) !== null && _node$nodeValue !== void 0 && _node$nodeValue.includes(']]' + '>')) {
+            if (node.nodeValue?.includes(']]' + '>')) {
               invalidStateError('CDATA cannot end with closing ]]>');
             }
             set(['![', node.nodeValue]);
@@ -2318,9 +2314,8 @@
    * @returns {void}
    */
   jml.setWindow = wind => {
-    var _win2;
     win = wind;
-    doc = (_win2 = win) === null || _win2 === void 0 ? void 0 : _win2.document;
+    doc = win?.document;
     if (doc && doc.body) {
       // eslint-disable-next-line prefer-destructuring -- Needed for typing
       exports.body = /** @type {HTMLBodyElement} */doc.body;

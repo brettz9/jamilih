@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.59.2",
+  "version": "0.60.0",
   "type": "module",
   "types": "./dist/jml.d.ts",
   "author": {
@@ -93,7 +93,7 @@
     "url": "https://github.com/brettz9/jamilih/issues"
   },
   "engines": {
-    "node": ">=16.9.0"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",
