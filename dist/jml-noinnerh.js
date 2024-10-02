@@ -4,6 +4,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.jml = {}));
 })(this, (function (exports) { 'use strict';
 
+  /* eslint-disable sonarjs/updated-loop-counter -- Ok */
   /*
   Possible todos:
   0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -80,7 +81,6 @@
   // '$state', // Used internally
   '$map' // Add any other options here
   ];
-
   const NS_HTML = 'http://www.w3.org/1999/xhtml',
     hyphenForCamelCase = /-([a-z])/gu;
   const ATTR_MAP = new Map([['maxlength', 'maxLength'], ['minlength', 'minLength'], ['readonly', 'readOnly']]);
@@ -142,7 +142,7 @@
     if (!doc) {
       throw new Error('No document object');
     }
-    return [... /** @type {NodeListOf<HTMLElement>} */doc.querySelectorAll(sel)];
+    return [...(/** @type {NodeListOf<HTMLElement>} */doc.querySelectorAll(sel))];
   };
 
   /**
@@ -207,7 +207,7 @@
     }
     const elContainer = doc.createElement('div');
     // Todo: No workaround for XML?
-    // eslint-disable-next-line no-unsanitized/property
+    // // eslint-disable-next-line no-unsanitized/property
     elContainer.textContent = '&' + prefix + arg + ';';
     return doc.createTextNode(elContainer.textContent);
   }
@@ -325,7 +325,7 @@
   function _childrenToJML(node) {
     return function (childNodeJML, i) {
       const cn = node.childNodes[i];
-      const j = Array.isArray(childNodeJML) ? jml(... /** @type {JamilihArray} */childNodeJML) : jml(childNodeJML);
+      const j = Array.isArray(childNodeJML) ? jml(...(/** @type {JamilihArray} */childNodeJML)) : jml(childNodeJML);
       cn.replaceWith(j);
     };
   }
@@ -756,8 +756,7 @@
         });
       }
     }
-    return (/** @type {string} */attVal
-    );
+    return /** @type {string} */attVal;
   }
 
   /**
@@ -865,13 +864,13 @@
               if (template) {
                 if (Array.isArray(template)) {
                   template = /** @type {HTMLTemplateElement} */
-                  _getType(template[0]) === 'object' ? jml('template', ...
+                  _getType(template[0]) === 'object' ? jml('template', ...(
                   /**
                    * @type {[
                    *   JamilihAttributes, ...(JamilihArray[]|HTMLElement)[]
                    * ]}
                    */
-                  template, doc.body) : jml('template',
+                  template), doc.body) : jml('template',
                   /**
                    * @type {JamilihArray[]|HTMLElement}
                    */
@@ -879,7 +878,7 @@
                 } else if (typeof template === 'string') {
                   template = /** @type {HTMLTemplateElement} */$(template);
                 }
-                jml( /** @type {HTMLTemplateElement} */
+                jml(/** @type {HTMLTemplateElement} */
                 /** @type {HTMLTemplateElement} */template.content.cloneNode(true), shadowRoot);
               } else {
                 if (!content) {
@@ -940,7 +939,7 @@
                   } = atts);
                 }
               }
-              const def = customizedBuiltIn ? /** @type {string} */is : localName;
+              const def = customizedBuiltIn ? (/** @type {string} */is) : localName;
               if (window.customElements.get(def)) {
                 break;
               }
@@ -954,7 +953,7 @@
                 if (!doc) {
                   throw new Error('No document object');
                 }
-                const baseClass = typeof options === 'object' && typeof options.extends === 'string' ? /** @type {typeof HTMLElement} */doc.createElement(options.extends).constructor : customizedBuiltIn ? /** @type {typeof HTMLElement} */doc.createElement(localName).constructor : window.HTMLElement;
+                const baseClass = typeof options === 'object' && typeof options.extends === 'string' ? (/** @type {typeof HTMLElement} */doc.createElement(options.extends).constructor) : customizedBuiltIn ? (/** @type {typeof HTMLElement} */doc.createElement(localName).constructor) : window.HTMLElement;
 
                 /**
                  * Class wrapping base class.
@@ -1012,7 +1011,7 @@
                 cnstrctr = getConstructor();
               }
               if (!cnstrctr.toString().startsWith('class')) {
-                cnstrctr = getConstructor( /** @type {DefineUserConstructor} */cnstrctr);
+                cnstrctr = getConstructor(/** @type {DefineUserConstructor} */cnstrctr);
               }
               if (!options && customizedBuiltIn) {
                 options = {
@@ -1032,7 +1031,7 @@
             {
               const [symbol, func] = /** @type {SymbolArray} */attVal;
               if (typeof func === 'function') {
-                const funcBound = func.bind( /** @type {HTMLElement} */elem);
+                const funcBound = func.bind(/** @type {HTMLElement} */elem);
                 if (typeof symbol === 'string') {
                   // @ts-expect-error
                   elem[Symbol.for(symbol)] = funcBound;
@@ -1055,7 +1054,7 @@
             }
           case '$data':
             {
-              setMap( /** @type {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} */
+              setMap(/** @type {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} */
               attVal);
               break;
             }
@@ -1063,15 +1062,15 @@
             {
               // Attribute node
               const attr = /** @type {JamilihAttributeNodeValue} */attVal;
-              const node = attr.length === 3 ? doc.createAttributeNS(attr[0], attr[1]) : doc.createAttribute( /** @type {string} */attr[0]);
-              node.value = /** @type {string} */attr[attr.length - 1];
+              const node = attr.length === 3 ? doc.createAttributeNS(attr[0], attr[1]) : doc.createAttribute(/** @type {string} */attr[0]);
+              node.value = /** @type {string} */attr.at(-1);
               nodes[nodes.length] = node;
               break;
             }
           case '$text':
             {
               // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
-              const node = doc.createTextNode( /** @type {string} */attVal);
+              const node = doc.createTextNode(/** @type {string} */attVal);
               nodes[nodes.length] = node;
               break;
             }
@@ -1091,7 +1090,6 @@
                   cn.remove();
                   // `j` should stay the same as removing will cause node to be present
                 }
-
                 jamlihDoc.childNodes.forEach(_childrenToJML(docNode));
               } else {
                 if (jamlihDoc.$DOCTYPE) {
@@ -1112,7 +1110,6 @@
                   if (jamlihDoc.title) {
                     docNode.title = jamlihDoc.title; // Appends after meta
                   }
-
                   if (jamlihDoc.head && head) {
                     // each child of `head` is:
                     //  (JamilihArray|TextNodeString|HTMLElement|Comment|ProcessingInstruction|
@@ -1145,16 +1142,16 @@
             {
               // Events
               // Allow for no-op by defaulting to `{}`
-              for (let [p2, val] of Object.entries( /** @type {OnAttributeObject} */attVal || {})) {
+              // eslint-disable-next-line prefer-const -- Ok as mixed
+              for (let [p2, val] of Object.entries(/** @type {OnAttributeObject} */attVal || {})) {
                 if (typeof val === 'function') {
                   val = [val, false];
                 }
                 if (typeof val[0] !== 'function') {
                   throw new TypeError(`Expect a function for \`$on\`; args: ${JSON.stringify(args)}`);
                 }
-                _addEvent( /** @type {HTMLElement} */elem, p2, val[0], val[1]); // element, event name, handler, capturing
+                _addEvent(/** @type {HTMLElement} */elem, p2, val[0], val[1]); // element, event name, handler, capturing
               }
-
               break;
             }
           case 'className':
@@ -1177,7 +1174,7 @@
                 const pastInitialProp = startProp !== '';
                 Object.keys(atVal).forEach(key => {
                   const value = atVal[key];
-                  prop = pastInitialProp ? startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase) : startProp + key.replace(hyphenForCamelCase, _upperCase);
+                  prop = pastInitialProp ? startProp + key.replaceAll(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase) : startProp + key.replaceAll(hyphenForCamelCase, _upperCase);
                   if (value === null || typeof value !== 'object') {
                     if (!_isNullish(value)) {
                       elem.dataset[prop] = value;
@@ -1188,11 +1185,10 @@
                   recurse(value, prop);
                 });
               };
-              recurse( /** @type {DatasetAttributeObject} */attVal, '');
+              recurse(/** @type {DatasetAttributeObject} */attVal, '');
               break;
               // Todo: Disable this by default unless configuration explicitly allows (for security)
             }
-
           case 'htmlFor':
           case 'for':
             if (elStr === 'label') {
@@ -1230,7 +1226,7 @@
                         elem.style.cssFloat = styleVal;
                         elem.style.styleFloat = styleVal; // Harmless though we could make conditional on older IE instead
                       } else {
-                        elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = styleVal;
+                        elem.style[p2.replaceAll(hyphenForCamelCase, _upperCase)] = styleVal;
                       }
                     }
                   }
@@ -1254,10 +1250,10 @@
               if (matchingPlugin) {
                 matchingPlugin.set({
                   opts,
-                  element: /** @type {HTMLElement} */nodes[0],
+                  element: (/** @type {HTMLElement} */nodes[0]),
                   attribute: {
                     name: pluginName,
-                    value: /** @type {PluginReference} */attVal
+                    value: (/** @type {PluginReference} */attVal)
                   }
                 });
                 break;
@@ -1332,12 +1328,11 @@
         // Array of strings mapping to default
         if (typeof dataVal[0] === 'string') {
           dataVal.forEach(dVal => {
-            setMap( /** @type {MapWithRoot} */opts.$map[dVal]);
+            setMap(/** @type {MapWithRoot} */opts.$map[dVal]);
           });
           return;
           // Array of Map and non-map data object
         }
-
         map = dataVal[0] || defMap[0];
         obj = dataVal[1] || defMap[1];
         // Map
@@ -1350,7 +1345,7 @@
         obj = dataVal;
       }
       /** @type {Map<HTMLElement, any> | WeakMap<HTMLElement, any>} */
-      map.set( /** @type {HTMLElement} */
+      map.set(/** @type {HTMLElement} */
       elem, obj);
     };
     for (let i = argStart; i < argc; i++) {
@@ -1361,18 +1356,16 @@
           // null always indicates a place-holder (only needed for last argument if want array returned)
           if (i === argc - 1) {
             // Casting needing unless changing `jml()` signature with overloads
-            return (/** @type {ArbitraryValue} */nodes.length <= 1 ? nodes[0]
-              // eslint-disable-next-line unicorn/no-array-callback-reference
-              : nodes.reduce(_fragReducer, doc.createDocumentFragment())
-            ); // nodes;
+            return /** @type {ArbitraryValue} */nodes.length <= 1 ? nodes[0]
+            // eslint-disable-next-line unicorn/no-array-callback-reference
+            : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
           }
-
           throw new TypeError(`\`null\` values not allowed except as final Jamilih argument; index ${i} on args: ${JSON.stringify(args)}`);
         case 'string':
           // Strings normally indicate elements
           switch (arg) {
             case '!':
-              nodes[nodes.length] = doc.createComment( /** @type {string} */args[++i]);
+              nodes[nodes.length] = doc.createComment(/** @type {string} */args[++i]);
               break;
             case '?':
               {
@@ -1384,7 +1377,7 @@
                   for (const [p, procInstVal] of Object.entries(val)) {
                     procValues.push(p + '=' + '"' +
                     // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
-                    procInstVal.replace(/"/gu, '&quot;') + '"');
+                    procInstVal.replaceAll('"', '&quot;') + '"');
                   }
                   procValue = procValues.join(' ');
                 }
@@ -1421,12 +1414,11 @@
               // CDATA valid in XML only, so we'll just treat as text for mutual compatibility
               // Todo: config (or detection via some kind of doc.documentType property?) of whether in XML
               try {
-                nodes[nodes.length] = doc.createCDATASection( /** @type {string} */args[++i]);
+                nodes[nodes.length] = doc.createCDATASection(/** @type {string} */args[++i]);
               } catch (e2) {
-                nodes[nodes.length] = doc.createTextNode( /** @type {string} */
+                nodes[nodes.length] = doc.createTextNode(/** @type {string} */
                 args[i]); // i already incremented
               }
-
               break;
             case '':
               nodes[nodes.length] = elem = doc.createDocumentFragment();
@@ -1445,11 +1437,11 @@
                   /* c8 ignore next 4 */
                   elem = doc.createElementNS
                   // Should create separate file for this
-                  /* eslint-disable object-shorthand -- Casting */ ? /** @type {HTMLElement} */doc.createElementNS(NS_HTML, elStr, {
-                    is: /** @type {string} */is
+                  /* eslint-disable object-shorthand -- Casting */ ? (/** @type {HTMLElement} */doc.createElementNS(NS_HTML, elStr, {
+                    is: (/** @type {string} */is)
                   })
-                  /* c8 ignore next 1 */ : doc.createElement(elStr, {
-                    is: /** @type {string} */is
+                  /* c8 ignore next 1 */) : doc.createElement(elStr, {
+                    is: (/** @type {string} */is)
                   });
                   /* eslint-enable object-shorthand -- Casting */
                 } else /* c8 ignore next */if (doc.createElementNS) {
@@ -1484,9 +1476,9 @@
               // Also fix DOMParser to work with text/html
               elem = nodes[nodes.length - 1] =
               // Why doesn't `HTMLWindow` have `DOMParser`?
-              new /** @type {import('jsdom').DOMWindow} */win.DOMParser().parseFromString(new /** @type {import('jsdom').DOMWindow} */win.XMLSerializer().serializeToString(elem)
+              new /** @type {import('jsdom').DOMWindow} */win.DOMParser().parseFromString(new /** @type {import('jsdom').DOMWindow} */win.XMLSerializer().serializeToString(elem).
               // Mozilla adds XHTML namespace
-              .replace(' xmlns="' + NS_HTML + '"',
+              replace(' xmlns="' + NS_HTML + '"',
               // Needed to cast here, despite either overload working
               /** @type {string} */
               replacer), 'application/xml').documentElement;
@@ -1494,8 +1486,7 @@
               opts.$state = 'element';
               // }catch(e) {alert(elem.outerHTML);throw e;}
             }
-
-            _checkAtts( /** @type {JamilihAttributes} */atts);
+            _checkAtts(/** @type {JamilihAttributes} */atts);
             break;
           }
         case 'document':
@@ -1515,7 +1506,7 @@
             // parent
             const elsl = nodes.length;
             for (let k = 0; k < elsl; k++) {
-              _appendNode( /** @type {Document|DocumentFragment|HTMLElement} */arg, nodes[k]);
+              _appendNode(/** @type {Document|DocumentFragment|HTMLElement} */arg, nodes[k]);
             }
           } else {
             nodes[nodes.length] = /** @type {Document|DocumentFragment|HTMLElement} */arg;
@@ -1578,8 +1569,7 @@
     }
 
     // Casting needing unless changing `jml()` signature with overloads
-    return (/** @type {ArbitraryValue} */ret
-    );
+    return /** @type {ArbitraryValue} */ret;
   };
 
   /**
@@ -1677,7 +1667,6 @@
     if (typeof nde === 'string') {
       nde = new /** @type {import('jsdom').DOMWindow} */win.DOMParser().parseFromString(nde, 'text/html'); // todo: Give option for XML once implemented and change JSDoc to allow for Element
     }
-
     const dom = /** @type {HTMLElement|Node|Entity} */nde;
 
     /**
@@ -1789,7 +1778,7 @@
         ...namespaces
       };
       const xmlChars = /^([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
-      if ([2, 3, 4, 7, 8].includes(type) && /** @type {Node} */nodeOrEntity.nodeValue && !xmlChars.test( /** @type {Node} */nodeOrEntity.nodeValue)) {
+      if ([2, 3, 4, 7, 8].includes(type) && /** @type {Node} */nodeOrEntity.nodeValue && !xmlChars.test(/** @type {Node} */nodeOrEntity.nodeValue)) {
         invalidStateError('Node has bad XML character value');
       }
 
@@ -1818,7 +1807,6 @@
         parentIdx = tmpParentIdx;
         parentIdx++; // Increment index in parent container of this element
       }
-
       switch (type) {
         case 1:
           {
@@ -1978,7 +1966,7 @@
               }
             };
             const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
-            if (!pubIdChar.test( /** @type {DocumentType} */node.publicId)) {
+            if (!pubIdChar.test(/** @type {DocumentType} */node.publicId)) {
               invalidStateError('A publicId must have valid characters.');
             }
             addExternalID(start.$DOCTYPE, node);
@@ -2026,7 +2014,7 @@
    * @returns {string}
    */
   jml.toJMLString = function (dom, config) {
-    return (/** @type {string} */
+    return /** @type {string} */(
       jml.toJML(dom, Object.assign(config || {}, {
         stringOutput: true
       }))
@@ -2058,15 +2046,12 @@
           // Todo: deal with serialization of properties like 'selected',
           //  'checked', 'value', 'defaultValue', 'for', 'dataset', 'on*',
           //  'style'! (i.e., need to build a string ourselves)
-          return (/** @type {HTMLElement} */ret.outerHTML
-          );
+          return /** @type {HTMLElement} */ret.outerHTML;
         }
       case 2:
         {
           // ATTR
-          return `${
-        /** @type {Attr} */ret.name}="${
-        /** @type {Attr} */ret.value.replace(/"/gu, '&quot;')}"`;
+          return `${/** @type {Attr} */ret.name}="${/** @type {Attr} */ret.value.replaceAll('"', '&quot;')}"`;
         }
       case 3:
         {
@@ -2077,8 +2062,7 @@
           if (!ret.nodeValue) {
             throw new TypeError('Unexpected null Text node');
           }
-          return (/** @type {Text|CDATASection} */ret.nodeValue
-          );
+          return /** @type {Text|CDATASection} */ret.nodeValue;
           // case 5: // Entity Reference Node
           //  No 6: Entity Node
           //  No 12: Notation Node
@@ -2094,7 +2078,7 @@
           // DOCUMENT FRAGMENT
           const node = /** @type {DocumentFragment} */ret;
           return [...node.childNodes].map(childNode => {
-            return jml.toHTML( /** @type {JamilihFirstArgument} */childNode);
+            return jml.toHTML(/** @type {JamilihFirstArgument} */childNode);
           }).join('');
         }
       case 10:
@@ -2234,7 +2218,7 @@
     const elem = jml({
       $map: [map, obj]
     }, ...args);
-    return [map, /** @type {HTMLElement} */elem];
+    return [map, (/** @type {HTMLElement} */elem)];
   };
 
   /**
@@ -2247,7 +2231,7 @@
     const elem = jml({
       $map: [map, obj]
     }, ...args);
-    return [map, /** @type {HTMLElement} */elem];
+    return [map, (/** @type {HTMLElement} */elem)];
   };
 
   /**
@@ -2285,7 +2269,6 @@
       if (typeof func === 'function') {
         return func(methodName, ...args); // Already has `this` bound to `elem`
       }
-
       return func[methodName](...args);
     }
     func = /** @type {Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} */symOrMap.get(elem);
@@ -2340,7 +2323,7 @@
   /**
    * @type {HTMLBodyElement}
    */
-  exports.body = void 0; // eslint-disable-line import/no-mutable-exports
+  exports.body = void 0; // // eslint-disable-line import/no-mutable-exports
 
   /* c8 ignore next 4 */
   if (doc && doc.body) {

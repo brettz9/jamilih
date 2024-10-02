@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/assertions-in-tests -- Ok here */
 /*
 Todos:
 0. Confirm working cross-browser (all browsers); remove IE8 processing instruction hack?
@@ -8,7 +9,6 @@ Todos:
 // eslint-disable-next-line no-shadow -- Necessary
 import {it, describe, beforeEach} from 'mocha';
 
-// eslint-disable-next-line no-shadow -- Necessary
 import {expect, assert} from 'chai';
 
 import {$, jml, body} from '../test-helpers/loadTests.js';
@@ -427,10 +427,10 @@ describe('Jamilih - jml', function () {
     const expected = document.createAttribute('aaa');
     expected.value = 'eeefg';
     const result = /** @type {Attr} */ (jml({$attribute: attInfo}));
-    assert.deepEqual(expected.name, result.name, 'Equal `name`');
-    assert.deepEqual(expected.value, result.value, 'Equal `value`');
-    assert.deepEqual(null, result.prefix, 'Equal `prefix`');
-    assert.deepEqual(null, result.namespaceURI, 'Equal `namespaceURI`');
+    assert.deepEqual(result.name, expected.name, 'Equal `name`');
+    assert.deepEqual(result.value, expected.value, 'Equal `value`');
+    assert.deepEqual(result.prefix, null, 'Equal `prefix`');
+    assert.deepEqual(result.namespaceURI, null, 'Equal `namespaceURI`');
     // assert.strictEqual(result.nodeType, window.Node.ATTRIBUTE_NODE); // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641 / https://github.com/jsdom/jsdom/pull/1822
   });
   it('Comments, processing instructions, entities, character references, CDATA', () => {
@@ -489,6 +489,7 @@ describe('Jamilih - jml', function () {
       ['!', 'a comment']
     ]);
     const comment = /** @type {Comment} */ (
+      // eslint-disable-next-line unicorn/prefer-at -- No `at`
       wrappedDoc.childNodes[wrappedDoc.childNodes.length - 1]
     );
     expect(comment.data).to.equal('a comment');
@@ -932,7 +933,9 @@ describe('Jamilih - jml', function () {
          * @this {Element}
          * @returns {string}
          */
-        const testFunc = function (arg1) { return this.id + ' ok ' + arg1; };
+        const testFunc = function (arg1) {
+          return this.id + ' ok ' + arg1;
+        };
         const el = jml({
           $map: {
             root: [map1, testObj1],
@@ -1717,7 +1720,7 @@ describe('Jamilih - jml', function () {
       {
         name: '$_myplugin',
         set ({element, attribute: {
-          name,
+          // name,
           value
         }}) {
           const val = /**
@@ -1736,6 +1739,7 @@ describe('Jamilih - jml', function () {
       }
     ]};
     const div = /** @type {HTMLDivElement} */ (
+      // eslint-disable-next-line camelcase -- Ok
       jml(options, 'div', {id: 'myDiv', $_myplugin: {
         blueAndRed: true
       }}, document.body)

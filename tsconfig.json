@@ -12,7 +12,8 @@
     "declarationMap": true,
     "strict": true,
     "target": "es6",
-    "outDir": "dist"
+    "outDir": "dist",
+    "skipLibCheck": true
   },
   "include": ["src/**/*.js", "test/**/*.js"],
   "exclude": ["node_modules"]

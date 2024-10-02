@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 
-// eslint-disable-next-line no-shadow -- Necessary
 import {assert} from 'chai';
 
 const nbsp = '\u00A0';
@@ -78,6 +77,7 @@ const matches = (item1, item2, msg) => {
  */
 const matchesXMLStringWithinElement = (element, item2, msg) => {
   const docFrag = document.createDocumentFragment();
+  // eslint-disable-next-line sonarjs/prefer-for-of -- Not an array
   for (let i = 0; i < element.childNodes.length; i++) {
     docFrag.append(element.childNodes[i].cloneNode(true));
   }
@@ -91,6 +91,7 @@ const matchesXMLStringWithinElement = (element, item2, msg) => {
  * @returns {void}
  */
 const matchesXMLStringOnElement = (element, item2, msg) => {
+  // eslint-disable-next-line unicorn/prefer-at -- No `at` method
   const lastInsert = element.childNodes[element.childNodes.length - 1];
   matchesXMLString(lastInsert, item2, msg);
 };

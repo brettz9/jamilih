@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-shadow -- Necessary
 import {describe, it} from 'mocha';
 
-// eslint-disable-next-line no-shadow -- Necessary
 import {assert} from 'chai';
 
 import {glue, nbsp} from '../test-helpers/loadTests.js';

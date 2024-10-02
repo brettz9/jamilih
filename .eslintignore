@@ -1,6 +1,0 @@
-dist
-docs/jsdoc
-coverage
-ignore
-compressed-source
-!.*.js

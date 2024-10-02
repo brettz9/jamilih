@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/updated-loop-counter -- Ok */
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -224,7 +225,7 @@ function _createSafeReference (type, prefix, arg) {
   }
   const elContainer = doc.createElement('div');
   // Todo: No workaround for XML?
-  // eslint-disable-next-line no-unsanitized/property
+  // // eslint-disable-next-line no-unsanitized/property
   elContainer.innerHTML = '&' + prefix + arg + ';';
   return doc.createTextNode(elContainer.innerHTML);
 }
@@ -1083,7 +1084,7 @@ const jml = function jml (...args) {
         const node = attr.length === 3
           ? doc.createAttributeNS(attr[0], attr[1])
           : doc.createAttribute(/** @type {string} */ (attr[0]));
-        node.value = /** @type {string} */ (attr[attr.length - 1]);
+        node.value = /** @type {string} */ (attr.at(-1));
         nodes[nodes.length] = node;
         break;
       } case '$text': { // Todo: Also allow as jml(['a text node']) (or should that become a fragment)?
@@ -1154,6 +1155,7 @@ const jml = function jml (...args) {
         break;
       } case '$on': { // Events
         // Allow for no-op by defaulting to `{}`
+        // eslint-disable-next-line prefer-const -- Ok as mixed
         for (let [p2, val] of Object.entries(/** @type {OnAttributeObject} */ (attVal) || {})) {
           if (typeof val === 'function') {
             val = [val, false];
@@ -1183,8 +1185,8 @@ const jml = function jml (...args) {
           Object.keys(atVal).forEach((key) => {
             const value = atVal[key];
             prop = pastInitialProp
-              ? startProp + key.replace(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase)
-              : startProp + key.replace(hyphenForCamelCase, _upperCase);
+              ? startProp + key.replaceAll(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase)
+              : startProp + key.replaceAll(hyphenForCamelCase, _upperCase);
             if (value === null || typeof value !== 'object') {
               if (!_isNullish(value)) {
                 elem.dataset[prop] = value;
@@ -1203,7 +1205,7 @@ const jml = function jml (...args) {
       // Don't remove this `if` block (for sake of no-innerHTML build)
       case 'innerHTML':
         if (!_isNullish(attVal)) {
-          // eslint-disable-next-line no-unsanitized/property
+          // // eslint-disable-next-line no-unsanitized/property
           elem.innerHTML = attVal;
         }
         break;
@@ -1246,7 +1248,7 @@ const jml = function jml (...args) {
                   elem.style.cssFloat = styleVal;
                   elem.style.styleFloat = styleVal; // Harmless though we could make conditional on older IE instead
                 } else {
-                  elem.style[p2.replace(hyphenForCamelCase, _upperCase)] = styleVal;
+                  elem.style[p2.replaceAll(hyphenForCamelCase, _upperCase)] = styleVal;
                 }
               }
             }
@@ -1398,7 +1400,7 @@ const jml = function jml (...args) {
             procValues.push(
               p + '=' + '"' +
               // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
-              procInstVal.replace(/"/gu, '&quot;') +
+              procInstVal.replaceAll('"', '&quot;') +
               '"'
             );
           }
@@ -1496,9 +1498,9 @@ const jml = function jml (...args) {
           ).DOMParser().parseFromString(
             new /** @type {import('jsdom').DOMWindow} */ (
               win
-            ).XMLSerializer().serializeToString(elem)
+            ).XMLSerializer().serializeToString(elem).
             // Mozilla adds XHTML namespace
-              .replace(
+              replace(
                 ' xmlns="' + NS_HTML + '"',
                 // Needed to cast here, despite either overload working
                 /** @type {string} */ (replacer)
@@ -2040,7 +2042,7 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
     return `${
       /** @type {Attr} */ (ret).name
     }="${
-      /** @type {Attr} */ (ret).value.replace(/"/gu, '&quot;')
+      /** @type {Attr} */ (ret).value.replaceAll('"', '&quot;')
     }"`;
   } case 3: { // TEXT
     // Fallthrough
@@ -2311,7 +2313,7 @@ function glue (array, glu) {
 /**
  * @type {HTMLBodyElement}
  */
-let body; // eslint-disable-line import/no-mutable-exports
+let body; // // eslint-disable-line import/no-mutable-exports
 
 /* c8 ignore next 4 */
 if (doc && doc.body) {

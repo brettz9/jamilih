@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-shadow -- Needed
 import {expect} from 'chai';
 import {jml, $, $$} from '../src/jml.js';
 
@@ -63,7 +62,7 @@ describe('Window/Document getters/setters', function () {
   });
 });
 
-describe('Window/Document getters/setters', function () {
+describe('Window/Document getters/setters (no document))', function () {
   /**
    * @type {import('jsdom').DOMWindow|import('../src/jml.js').HTMLWindow|undefined}
    */

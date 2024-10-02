@@ -1,4 +1,4 @@
-// eslint-disable-next-line no-shadow -- Necessary
+/* eslint-disable sonarjs/assertions-in-tests -- Ok here */
 import {assert, expect} from 'chai';
 
 import * as xmlTesting from './xmlTesting.js';

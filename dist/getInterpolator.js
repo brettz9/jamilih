@@ -4,8 +4,6 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Interpolator = {}));
 })(this, (function (exports) { 'use strict';
 
-  /* globals performance */
-
   // The `performance` global is optional
 
   /**
@@ -27,19 +25,17 @@
     //  Adapted from original: public domain/MIT: http://stackoverflow.com/a/8809472/271577
     let d = Date.now() + (
     // use high-precision timer if available
-    /* eslint-disable compat/compat */
     /* c8 ignore next 4 */
-    typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now()
-    /* eslint-enable compat/compat */ : 0);
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/gu, function (c) {
+    typeof performance !== 'undefined' && typeof performance.now === 'function' ? performance.now() : 0);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replaceAll(/[xy]/gu, function (c) {
       /* eslint-disable no-bitwise */
+      // eslint-disable-next-line sonarjs/pseudo-random -- Ok
       const r = Math.trunc((d + Math.random() * 16) % 16);
       d = Math.floor(d / 16);
       return (c === 'x' ? r : r & 0x3 | 0x8).toString(16);
       /* eslint-enable no-bitwise */
     });
   }
-
   const name = '$_interpolator';
 
   /**
@@ -68,7 +64,7 @@
       plugin: {
         name,
         set({
-          element,
+          // element,
           attribute: {
             value
           },
@@ -81,7 +77,7 @@
           switch (opts.$state) {
             case 'children':
             case 'attributeValue':
-              args.push( /** @type {{[key: string]: string}} */value[this.name]);
+              args.push(/** @type {{[key: string]: string}} */value[this.name]);
               return uuid;
             /*
             case 'fragmentChildren':

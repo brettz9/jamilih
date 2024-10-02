@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-shadow -- Necessary
 import {describe, beforeEach, it} from 'mocha';
 
-// eslint-disable-next-line no-shadow -- Necessary
 import {assert, expect} from 'chai';
 
 import {jml} from '../test-helpers/loadTests.js';
@@ -104,6 +103,7 @@ describe(
 
       expect(() => {
         jml.toJML(/** @type {Attr} */ (mockExampleAttributeNodeNoNodeType));
+      // eslint-disable-next-line sonarjs/test-check-exception -- Ok for now
       }).to.throw();
     });
     /*

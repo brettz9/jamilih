@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## ?
+
+- chore: update devDeps. and lint; change browser targets
+
 ## 0.60.0
 
 - BREAKING: Require Node 18
