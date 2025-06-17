@@ -6,16 +6,7 @@ Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
 
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
-
 0. expand ATTR_MAP
-0. equivalent of markup, to allow strings to be embedded within an object
-   (e.g., {$value: '<div>id</div>'}); advantage over innerHTML in that it
-   wouldn't need to work as the entire contents (nor destroy any existing
-   content or handlers)
-0. Whitespace trimming?
-
-JsonML element-specific:
-0. table appending
 
 Other Todos:
 0. Note to self: Integrate research from other jml notes
