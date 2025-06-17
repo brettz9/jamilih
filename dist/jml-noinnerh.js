@@ -86,7 +86,7 @@
   'readOnly', 'selected'];
 
   // From JsonML
-  const ATTR_DOM = [...BOOL_ATTS, 'accessKey',
+  const ATTR_DOM = new Set([...BOOL_ATTS, 'accessKey',
   // HTMLElement
   'async', 'autocapitalize',
   // HTMLElement
@@ -104,17 +104,17 @@
   // HTMLElement
   'translate',
   // HTMLElement
-  'value', 'willvalidate'];
+  'value', 'willvalidate']);
   // Todo: Add more to this as useful for templating
   //   to avoid setting through nullish value
-  const NULLABLES = ['autocomplete', 'dir',
+  const NULLABLES = new Set(['autocomplete', 'dir',
   // HTMLElement
   'integrity',
   // script, link
   'lang',
   // HTMLElement
   'max', 'min', 'minLength', 'maxLength', 'title' // HTMLElement
-  ];
+  ]);
 
   /**
    * @param {string} sel
@@ -139,16 +139,6 @@
   };
 
   /**
-  * Retrieve the (lower-cased) HTML name of a node.
-  * @static
-  * @param {Node} node The HTML node
-  * @returns {string} The lower-cased node name
-  */
-  function _getHTMLNodeName(node) {
-    return node.nodeName && node.nodeName.toLowerCase();
-  }
-
-  /**
    * @private
    * @static
    * @param {Document|DocumentFragment|HTMLElement} parent The parent to which to append the element
@@ -157,7 +147,7 @@
    * @returns {void}
    */
   function _appendNode(parent, child) {
-    const parentName = _getHTMLNodeName(parent);
+    const parentName = parent.nodeName?.toLowerCase();
     if (parentName === 'template') {
       /** @type {HTMLTemplateElement} */parent.content.append(child);
       return;
@@ -811,13 +801,13 @@
          * @typedef {any} ElementExpando
          */
 
-        if (NULLABLES.includes(att)) {
+        if (NULLABLES.has(att)) {
           attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */attVal, opts);
           if (!_isNullish(attVal)) {
             /** @type {ElementExpando} */elem[att] = attVal;
           }
           continue;
-        } else if (ATTR_DOM.includes(att)) {
+        } else if (ATTR_DOM.has(att)) {
           attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */attVal, opts);
           /** @type {ElementExpando} */
           elem[att] = attVal;

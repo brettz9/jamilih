@@ -156,16 +156,6 @@ const $$ = (sel) => {
 };
 
 /**
-* Retrieve the (lower-cased) HTML name of a node.
-* @static
-* @param {Node} node The HTML node
-* @returns {string} The lower-cased node name
-*/
-function _getHTMLNodeName (node) {
-  return node.nodeName && node.nodeName.toLowerCase();
-}
-
-/**
  * @private
  * @static
  * @param {Document|DocumentFragment|HTMLElement} parent The parent to which to append the element
@@ -174,7 +164,7 @@ function _getHTMLNodeName (node) {
  * @returns {void}
  */
 function _appendNode (parent, child) {
-  const parentName = _getHTMLNodeName(parent);
+  const parentName = parent.nodeName?.toLowerCase();
 
   if (parentName === 'template') {
     /** @type {HTMLTemplateElement} */ (parent).content.append(child);
