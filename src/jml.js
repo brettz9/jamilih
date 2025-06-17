@@ -94,7 +94,7 @@ const BOOL_ATTS = [
 ];
 
 // From JsonML
-const ATTR_DOM = [
+const ATTR_DOM = new Set([
   ...BOOL_ATTS,
   'accessKey', // HTMLElement
   'async',
@@ -117,10 +117,10 @@ const ATTR_DOM = [
   'translate', // HTMLElement
   'value',
   'willvalidate'
-];
+]);
 // Todo: Add more to this as useful for templating
 //   to avoid setting through nullish value
-const NULLABLES = [
+const NULLABLES = new Set([
   'autocomplete',
   'dir', // HTMLElement
   'integrity', // script, link
@@ -130,7 +130,7 @@ const NULLABLES = [
   'minLength',
   'maxLength',
   'title' // HTMLElement
-];
+]);
 
 /**
  * @param {string} sel
@@ -829,13 +829,13 @@ const jml = function jml (...args) {
        * @typedef {any} ElementExpando
        */
 
-      if (NULLABLES.includes(att)) {
+      if (NULLABLES.has(att)) {
         attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */ (attVal), opts);
         if (!_isNullish(attVal)) {
           /** @type {ElementExpando} */ (elem)[att] = attVal;
         }
         continue;
-      } else if (ATTR_DOM.includes(att)) {
+      } else if (ATTR_DOM.has(att)) {
         attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */ (attVal), opts);
         /** @type {ElementExpando} */ (elem)[att] = attVal;
         continue;
