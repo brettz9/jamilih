@@ -823,7 +823,7 @@ const jml = function jml (...args) {
       throw new Error('No document object');
     }
     for (let [att, attVal] of Object.entries(atts)) {
-      att = ATTR_MAP.get(att) ?? att;
+      att = ATTR_MAP.has(att) ? String(ATTR_MAP.get(att)) : att;
 
       /**
        * @typedef {any} ElementExpando

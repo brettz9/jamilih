@@ -10,31 +10,22 @@
   /*
   Possible todos:
   0. Add XSLT to JML-string stylesheet (or even vice versa)
-  0. IE problem: Add JsonML code to handle name attribute (during element creation)
-  0. Element-specific: IE object-param handling
 
   Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
-
-  0. duplicate attributes?
   0. expand ATTR_MAP
-  0. equivalent of markup, to allow strings to be embedded within an object (e.g., {$value: '<div>id</div>'}); advantage over innerHTML in that it wouldn't need to work as the entire contents (nor destroy any existing content or handlers)
-  0. More validation?
-  0. JsonML DOM Level 0 listener
-  0. Whitespace trimming?
-
-  JsonML element-specific:
-  0. table appending
-  0. canHaveChildren necessary? (attempts to append to script and img)
 
   Other Todos:
   0. Note to self: Integrate research from other jml notes
-  0. Allow Jamilih to be seeded with an existing element, so as to be able to add/modify attributes and children
+  0. Allow Jamilih to be seeded with an existing element, so as to be able to
+      add/modify attributes and children
   0. Allow array as single first argument
-  0. Settle on whether need to use null as last argument to return array (or fragment) or other way to allow appending? Options object at end instead to indicate whether returning array, fragment, first element, etc.?
+  0. Settle on whether need to use null as last argument to return array (or
+      fragment) or other way to allow appending? Options object at end instead
+      to indicate whether returning array, fragment, first element, etc.?
   0. Allow building of generic XML (pass configuration object)
   0. Allow building content internally as a string (though allowing DOM methods, etc.?)
   0. Support JsonML empty string element name to represent fragments?
-  0. Redo browser testing of jml (including ensuring IE7 can work even if test framework can't work)
+  0. Redo browser testing of jml
   */
 
   /**
@@ -814,7 +805,7 @@
         throw new Error('No document object');
       }
       for (let [att, attVal] of Object.entries(atts)) {
-        att = ATTR_MAP.get(att) ?? att;
+        att = ATTR_MAP.has(att) ? String(ATTR_MAP.get(att)) : att;
 
         /**
          * @typedef {any} ElementExpando
