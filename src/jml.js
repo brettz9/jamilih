@@ -7,7 +7,6 @@ Possible todos:
 
 Todos inspired by JsonML: https://github.com/mckamey/jsonml/blob/master/jsonml-html.js
 
-0. duplicate attributes?
 0. expand ATTR_MAP
 0. equivalent of markup, to allow strings to be embedded within an object
    (e.g., {$value: '<div>id</div>'}); advantage over innerHTML in that it
