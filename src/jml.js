@@ -1,4 +1,6 @@
 /* eslint-disable sonarjs/updated-loop-counter -- Ok */
+/* eslint-disable unicorn/prefer-global-this -- Easier */
+/* eslint-disable sonarjs/no-control-regex -- Intentional */
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -2060,6 +2062,7 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
   //   return `<?${node.target} ${node.data}?>`;
   // } case 8: { // Comment
   //   return `<!--${ret.nodeValue}-->`;
+  // eslint-disable-next-line sonarjs/no-fallthrough
   } case 9: { // Document
     // Fallthrough
   } case 11: { // DOCUMENT FRAGMENT

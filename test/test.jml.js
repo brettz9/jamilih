@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-global-this -- Easier */
 /* eslint-disable sonarjs/assertions-in-tests -- Ok here */
 /*
 Todos:

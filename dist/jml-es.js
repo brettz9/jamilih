@@ -1,4 +1,6 @@
 /* eslint-disable sonarjs/updated-loop-counter -- Ok */
+/* eslint-disable unicorn/prefer-global-this -- Easier */
+/* eslint-disable sonarjs/no-control-regex -- Intentional */
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -2017,11 +2019,9 @@ jml.toJML = function (nde, {
  * @returns {string}
  */
 jml.toJMLString = function (dom, config) {
-  return /** @type {string} */(
-    jml.toJML(dom, Object.assign(config || {}, {
-      stringOutput: true
-    }))
-  );
+  return /** @type {string} */jml.toJML(dom, Object.assign(config || {}, {
+    stringOutput: true
+  }));
 };
 
 /**
@@ -2074,6 +2074,7 @@ jml.toHTML = function (...args) {
         //   return `<?${node.target} ${node.data}?>`;
         // } case 8: { // Comment
         //   return `<!--${ret.nodeValue}-->`;
+        // eslint-disable-next-line sonarjs/no-fallthrough
       }
     case 9:
     case 11:

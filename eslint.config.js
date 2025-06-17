@@ -24,6 +24,11 @@ export default [
       globals: {
         module: 'readonly'
       }
+    },
+    rules: {
+      'import/unambiguous': 'off',
+      // Not sure why not being disabled in ash-nazg
+      'import/no-commonjs': 'off'
     }
   },
   {

@@ -307,13 +307,13 @@ export namespace jml {
     * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
     * version of such an object
     */
-    export function toJML(nde: string | HTMLElement | Node | Entity, { stringOutput, reportInvalidState, stripWhitespace }?: ToJmlConfig | undefined): JamilihType | string;
+    export function toJML(nde: string | HTMLElement | Node | Entity, { stringOutput, reportInvalidState, stripWhitespace }?: ToJmlConfig): JamilihType | string;
     /**
      * @param {string|HTMLElement} dom
      * @param {ToJmlConfig} [config]
      * @returns {string}
      */
-    export function toJMLString(dom: string | HTMLElement, config?: ToJmlConfig | undefined): string;
+    export function toJMLString(dom: string | HTMLElement, config?: ToJmlConfig): string;
     /**
      *
      * @param {JamilihArray} args
@@ -401,7 +401,7 @@ export function $(sel: string): HTMLElement | null;
  * @returns {HTMLElement[]}
  */
 export function $$(sel: string): HTMLElement[];
-export const nbsp: " ";
+export const nbsp: "\u00A0";
 /**
  * @type {HTMLBodyElement}
  */

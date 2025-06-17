@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* eslint-disable unicorn/prefer-global-this -- Easier */
 
 import {jml, $, $$, nbsp, body, glue} from '../src/jml-jsdom.js';
 

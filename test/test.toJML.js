@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-global-this -- Easier */
 // eslint-disable-next-line no-shadow -- Necessary
 import {describe, beforeEach, it} from 'mocha';
 

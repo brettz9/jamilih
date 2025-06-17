@@ -77,7 +77,6 @@ const matches = (item1, item2, msg) => {
  */
 const matchesXMLStringWithinElement = (element, item2, msg) => {
   const docFrag = document.createDocumentFragment();
-  // eslint-disable-next-line sonarjs/prefer-for-of -- Not an array
   for (let i = 0; i < element.childNodes.length; i++) {
     docFrag.append(element.childNodes[i].cloneNode(true));
   }

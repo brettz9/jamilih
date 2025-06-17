@@ -1,4 +1,6 @@
-// eslint-disable-next-line no-shadow -- Needed
+/* eslint-disable unicorn/prefer-global-this -- Easier */
+/* eslint-disable no-shadow -- Ok */
+
 const {describe, it} = window;
 
 export {
