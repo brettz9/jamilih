@@ -93,7 +93,6 @@ The following functions are available:
 ## Browser setup (Global)
 
 ```html
-<script src="node_modules/core-js-bundle/minified.js"></script>
 <script src="node_modules/jamilih/dist/jml.js"></script>
 ```
 
@@ -106,40 +105,36 @@ jml(...args);
 If compiling, select from any or all of `jml`, `$`, `$$`, `nbsp`, and `body`:
 
 ```js
-import 'core-js-bundle';
 import {jml, $, $$, nbsp, body} from 'jamilih';
 ```
 
 If not compiling:
 
 ```js
-import './node_modules/core-js-bundle/minified.js';
 import {jml, $, $$, nbsp, body} from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 For backward compatibility, a default export is provided, but this is now deprecated:
 
 ```js
-import './node_modules/core-js-bundle/minified.js';
 import jml from './node_modules/jamilih/dist/jml-es.js';
 ```
 
 ## Node installation and usage
 
-If for browser only (the `core-js-bundle` is for any polyfilling needed):
+If for browser only:
 
 ```
-npm install jamilih core-js-bundle
+npm install jamilih
 ```
 
 If for Node use:
 
 ```
-npm install jamilih core-js-bundle jsdom request
+npm install jamilih jsdom request
 ```
 
 ```js
-require('core-js-bundle');
 const jml = require('jamilih');
 ```
 
