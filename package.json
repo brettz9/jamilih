@@ -120,7 +120,6 @@
     "mocha-badge-generator": "^0.11.0",
     "mocha-multi-reporters": "^1.5.1",
     "open-cli": "^8.0.0",
-    "request": "^2.88.2",
     "rollup": "4.49.0",
     "rollup-plugin-re": "^1.0.7",
     "typescript": "^5.9.2"
