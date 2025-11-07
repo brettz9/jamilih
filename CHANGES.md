@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.61.4
+
+- chore: jsdom export issue
+
 ## 0.61.3
 
 - chore: change `exports` targets
