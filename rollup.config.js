@@ -5,20 +5,14 @@ import json from '@rollup/plugin-json';
 import replace from 'rollup-plugin-re';
 
 /**
- * @external RollupConfig
- * @type {PlainObject}
- * @see {@link https://rollupjs.org/guide/en#big-list-of-options}
- */
-
-/**
  * @param {"es"|"umd"} format Rollup format
- * @returns {RollupConfig}
+ * @returns {import('rollup').RollupOptions}
  */
 function noInnerHTML (format) {
   return {
     input: 'src/jml.js',
     output: {
-      file: `dist/jml${format === 'es' ? '-es' : ''}-noinnerh.js`,
+      file: `dist/jml-noinnerh.${format === 'es' ? 'm' : ''}js`,
       format,
       name: 'jml',
       exports: 'named'
@@ -63,7 +57,7 @@ export default [{
 }, noInnerHTML('umd'), noInnerHTML('es'), {
   input: 'src/jml.js',
   output: {
-    file: 'dist/jml-es.js',
+    file: 'dist/jml.mjs',
     format: 'es',
     exports: 'named'
   },
@@ -76,8 +70,33 @@ export default [{
 }, {
   input: 'src/jml-jsdom.js',
   output: {
-    file: 'dist/jml-jsdom.cjs',
+    file: 'dist/jml-jsdom.js',
     format: 'cjs',
+    exports: 'named'
+  },
+  external: [
+    // jsdom
+    'path', 'fs', 'vm', 'net', 'url', 'punycode', 'util', 'crypto',
+    'buffer', 'http', 'https', 'stream', 'zlib', 'dgram', 'dns',
+    'querystring', 'assert', 'string_decoder', 'tls', 'events',
+    'child_process', 'os', 'canvas'
+  ],
+  plugins: [
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**'
+    }),
+    json(),
+    nodeResolve({
+      preferBuiltins: true
+    }),
+    commonjs()
+  ]
+}, {
+  input: 'src/jml-jsdom.js',
+  output: {
+    file: 'dist/jml-jsdom.mjs',
+    format: 'esm',
     exports: 'named'
   },
   external: [
@@ -103,6 +122,20 @@ export default [{
   output: {
     file: 'dist/getInterpolator.js',
     format: 'umd',
+    name: 'Interpolator',
+    exports: 'named'
+  },
+  plugins: [
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**'
+    })
+  ]
+}, {
+  input: 'plugins/getInterpolator.js',
+  output: {
+    file: 'dist/getInterpolator.mjs',
+    format: 'esm',
     name: 'Interpolator',
     exports: 'named'
   },

@@ -1,8 +1,8 @@
 # CHANGES for jamilih
 
-## ?
+## 0.61.0
 
-- chore: update devDeps. and lint; change browser targets
+- chore: update devDeps. and lint; change `exports` targets
 
 ## 0.60.0
 

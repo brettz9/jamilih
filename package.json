@@ -1,8 +1,7 @@
 {
   "name": "jamilih",
-  "version": "0.60.0",
+  "version": "0.61.0",
   "type": "module",
-  "types": "./dist/jml.d.ts",
   "author": {
     "name": "Brett Zamir",
     "email": "brettz9@yahoo.com",
@@ -11,6 +10,7 @@
   "contributors": [],
   "scripts": {
     "tsc": "tsc",
+    "attw": "attw --pack",
     "amo": "echo \"Bundling for AMO\" && tar -czf compressed-source/source.tar.gz src plugins .babelrc.json package.json README.md rollup.config.js",
     "prepublishOnly": "npm run build",
     "license-badge": "license-badger --corrections --uncategorizedLicenseTemplate \"\\${license} (\\${name} (\\${version}))\" --filteredTypes=nonempty --textTemplate \"License types\n(project, deps, and bundled devDeps)\" --packageJson --production badges/licenses-badge.svg",
@@ -19,7 +19,7 @@
     "lint": "npm run eslint",
     "eslint": "eslint .",
     "rollup": "rollup -c",
-    "build": "npm run rollup && tsc -p tsconfig-build.json && tsc -p tsconfig-build-es.json",
+    "build": "rm -Rf dist && mkdir dist && echo '{\"type\": \"commonjs\"}' > dist/package.json && npm run rollup && tsc -p tsconfig-build.json",
     "browser-test": "npm run build && open-cli http://localhost:8091/test/ && npm run start",
     "mocha": "mocha --require test-helpers/loadTests.js test/test.*.js --reporter-options configFile=mocha-multi-reporters.json",
     "c8": "rm -Rf .nyc_output && rm -Rf coverage && rm -Rf node_modules/.cache && c8 npm run mocha && npm run coverage-badge",
@@ -49,31 +49,44 @@
     "defaults, not op_mini all"
   ],
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "main": "dist/jml-jsdom.cjs",
-  "browser": "dist/jml.js",
+  "types": "./dist/src/jml.d.ts",
+  "main": "dist/jml-jsdom.js",
   "exports": {
     ".": {
       "browser": {
-        "types": "./dist/jml.d.ts",
+        "types": "./dist/src/jml.d.ts",
         "default": "./dist/jml.js"
       },
       "import": {
-        "types": "./dist/jml-es.d.ts",
-        "default": "./dist/jml-es.js"
+        "types": "./dist/src/jml-jsdom.d.mts",
+        "default": "./dist/jml-jsdom.mjs"
       },
       "require": {
-        "types": "./dist/jml-jsdom.d.cts",
-        "default": "./dist/jml-jsdom.cjs"
+        "types": "./dist/src/jml-jsdom.d.ts",
+        "default": "./dist/jml-jsdom.js"
       }
     },
-    "./dist/jml-jsdom.cjs": "./dist/jml-jsdom.cjs",
-    "./dist/jml-es-nooinnerh.js": "./dist/jml-es-noinnerh.js",
-    "./dist/jml-nooinnerh.js": "./dist/jml-noinnerh.js",
-    "./dist/getInterpolator.js": "./dist/getInterpolator.js",
-    "./dist/jml.js": "./dist/jml.js",
-    "./src/jml-jsdom.js": {
-      "types": "./dist/jml-jsdom.d.ts",
-      "import": "./src/jml-jsdom.js"
+    "./dist/jml.js": {
+      "import": {
+        "types": "./dist/src/jml.d.mts",
+        "default": "./dist/jml.mjs"
+      },
+      "require": {
+        "types": "./dist/src/jml.d.ts",
+        "default": "./dist/jml.js"
+      }
+    },
+    "./dist/jml-nooinnerh.js": "./dist/jml-es-noinnerh.js",
+    "./dist/jml-nooinnerh.mjs": "./dist/jml-noinnerh.mjs",
+    "./dist/getInterpolator.js": {
+      "import": {
+        "types": "./dist/plugins/getInterpolator.d.mts",
+        "import": "./dist/getInterpolator.mjs"
+      },
+      "require": {
+        "types": "./dist/plugins/getInterpolator.d.ts",
+        "require": "./dist/getInterpolator.js"
+      }
     }
   },
   "repository": {
@@ -96,6 +109,7 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
     "@rollup/plugin-babel": "^6.0.4",

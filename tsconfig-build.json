@@ -16,6 +16,6 @@
     "outDir": "dist",
     "skipLibCheck": true
   },
-  "include": ["src/**/*.js"],
+  "include": ["src/**/*.js", "src/**/*.mts", "plugins/*.js", "plugins/*.mjs"],
   "exclude": ["node_modules"]
 }
