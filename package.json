@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.61.1",
+  "version": "0.61.2",
   "type": "module",
   "author": {
     "name": "Brett Zamir",
@@ -58,7 +58,7 @@
         "default": "./dist/jml.js"
       },
       "import": {
-        "types": "./dist/jml-jsdom.d.mts",
+        "types": "./dist/jml-jsdom.d.ts",
         "default": "./dist/jml-jsdom.mjs"
       },
       "require": {
@@ -68,7 +68,7 @@
     },
     "./dist/jml.js": {
       "import": {
-        "types": "./dist/jml.d.mts",
+        "types": "./dist/jml.d.ts",
         "default": "./dist/jml.mjs"
       },
       "require": {
