@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.61.1
+
+- chore: change `exports` targets
+
 ## 0.61.0
 
 - chore: update devDeps. and lint; change `exports` targets

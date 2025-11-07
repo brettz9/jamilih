@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.61.0",
+  "version": "0.61.1",
   "type": "module",
   "author": {
     "name": "Brett Zamir",
@@ -49,30 +49,30 @@
     "defaults, not op_mini all"
   ],
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "types": "./dist/src/jml.d.ts",
+  "types": "./dist/jml.d.ts",
   "main": "dist/jml-jsdom.js",
   "exports": {
     ".": {
       "browser": {
-        "types": "./dist/src/jml.d.ts",
+        "types": "./dist/jml.d.ts",
         "default": "./dist/jml.js"
       },
       "import": {
-        "types": "./dist/src/jml-jsdom.d.mts",
+        "types": "./dist/jml-jsdom.d.mts",
         "default": "./dist/jml-jsdom.mjs"
       },
       "require": {
-        "types": "./dist/src/jml-jsdom.d.ts",
+        "types": "./dist/jml-jsdom.d.ts",
         "default": "./dist/jml-jsdom.js"
       }
     },
     "./dist/jml.js": {
       "import": {
-        "types": "./dist/src/jml.d.mts",
+        "types": "./dist/jml.d.mts",
         "default": "./dist/jml.mjs"
       },
       "require": {
-        "types": "./dist/src/jml.d.ts",
+        "types": "./dist/jml.d.ts",
         "default": "./dist/jml.js"
       }
     },
