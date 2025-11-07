@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.61.2",
+  "version": "0.61.3",
   "type": "module",
   "author": {
     "name": "Brett Zamir",
@@ -19,7 +19,8 @@
     "lint": "npm run eslint",
     "eslint": "eslint .",
     "rollup": "rollup -c",
-    "build": "rm -Rf dist && mkdir dist && echo '{\"type\": \"commonjs\"}' > dist/package.json && npm run rollup && tsc -p tsconfig-build.json",
+    "build": "rm -Rf dist && mkdir dist && echo '{\"type\": \"commonjs\"}' > dist/package.json && npm run rollup && tsc -p tsconfig-build.json && npm run copy-dts",
+    "copy-dts": "cp dist/src/jml.d.ts dist/src/jml.d.mts && cp dist/src/jml-jsdom.d.ts dist/src/jml-jsdom.d.mts && cp dist/plugins/getInterpolator.d.ts dist/plugins/getInterpolator.d.mts",
     "browser-test": "npm run build && open-cli http://localhost:8091/test/ && npm run start",
     "mocha": "mocha --require test-helpers/loadTests.js test/test.*.js --reporter-options configFile=mocha-multi-reporters.json",
     "c8": "rm -Rf .nyc_output && rm -Rf coverage && rm -Rf node_modules/.cache && c8 npm run mocha && npm run coverage-badge",
@@ -49,43 +50,43 @@
     "defaults, not op_mini all"
   ],
   "description": "Provide round-trippable JSON/JavaScript serialization",
-  "types": "./dist/jml.d.ts",
+  "types": "./dist/src/jml.d.ts",
   "main": "dist/jml-jsdom.js",
   "exports": {
     ".": {
       "browser": {
-        "types": "./dist/jml.d.ts",
+        "types": "./dist/src/jml.d.ts",
         "default": "./dist/jml.js"
       },
       "import": {
-        "types": "./dist/jml-jsdom.d.ts",
+        "types": "./dist/src/jml-jsdom.d.mts",
         "default": "./dist/jml-jsdom.mjs"
       },
       "require": {
-        "types": "./dist/jml-jsdom.d.ts",
+        "types": "./dist/src/jml-jsdom.d.ts",
         "default": "./dist/jml-jsdom.js"
       }
     },
     "./dist/jml.js": {
       "import": {
-        "types": "./dist/jml.d.ts",
+        "types": "./dist/src/jml.d.mts",
         "default": "./dist/jml.mjs"
       },
       "require": {
-        "types": "./dist/jml.d.ts",
+        "types": "./dist/src/jml.d.ts",
         "default": "./dist/jml.js"
       }
     },
-    "./dist/jml-nooinnerh.js": "./dist/jml-es-noinnerh.js",
-    "./dist/jml-nooinnerh.mjs": "./dist/jml-noinnerh.mjs",
+    "./dist/jml-noinnerh.js": "./dist/jml-noinnerh.js",
+    "./dist/jml-noinnerh.mjs": "./dist/jml-noinnerh.mjs",
     "./dist/getInterpolator.js": {
       "import": {
         "types": "./dist/plugins/getInterpolator.d.mts",
-        "import": "./dist/getInterpolator.mjs"
+        "default": "./dist/getInterpolator.mjs"
       },
       "require": {
         "types": "./dist/plugins/getInterpolator.d.ts",
-        "require": "./dist/getInterpolator.js"
+        "default": "./dist/getInterpolator.js"
       }
     }
   },

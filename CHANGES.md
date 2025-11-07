@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.61.3
+
+- chore: change `exports` targets
+
 ## 0.61.2
 
 - chore: change `exports` targets
