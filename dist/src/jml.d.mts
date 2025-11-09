@@ -163,6 +163,11 @@ export type JamilihAttributes = DataAttribute & StyleAttribute & JamilihShadowRo
 };
 export type JamilihDocument = {
     title?: string;
+    xmlDeclaration?: {
+        version: string;
+        encoding: string;
+        standalone: boolean;
+    };
     childNodes?: JamilihChildType[];
     $DOCTYPE?: JamilihDocumentType;
     head?: JamilihChildren;

@@ -216,7 +216,7 @@ function _isNullish(o) {
 *   JamilihOptions|HTMLElement|Document|DocumentFragment|null|undefined} item
 * @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|
 *   "symbol"|"bigint"|"function"|"number"|"boolean"|"undefined"|
-*   "document"|"non-container node"}
+*   "document"|"processing-instruction"|"non-container node"}
 */
 function _getType(item) {
   const type = typeof item;
@@ -237,6 +237,8 @@ function _getType(item) {
         switch (item.nodeType) {
           case 1:
             return 'element';
+          case 7:
+            return 'processing-instruction';
           case 9:
             return 'document';
           case 11:
@@ -596,6 +598,11 @@ function _DOMfromJMLOrString (childNodeJML) {
 /**
  * @typedef {{
  *   title?: string,
+ *   xmlDeclaration?: {
+ *     version: string,
+ *     encoding: string,
+ *     standalone: boolean
+ *   },
  *   childNodes?: JamilihChildType[],
  *   $DOCTYPE?: JamilihDocumentType,
  *   head?: JamilihChildren
@@ -1105,6 +1112,16 @@ const jml = function jml(...args) {
                 jamlihDoc.body.forEach(_appendJMLOrText(body));
               }
             }
+            if (jamlihDoc.xmlDeclaration) {
+              const {
+                version,
+                encoding,
+                standalone
+              } = jamlihDoc.xmlDeclaration;
+              const xmlDeclarationData = `${version ? ` version="${version}"` : ''}${encoding ? ` encoding="${encoding}"` : ''}${standalone ? ` standalone="yes"` : ''}`.slice(1);
+              const xmlDeclaration = doc.createProcessingInstruction('xml', xmlDeclarationData);
+              docNode.insertBefore(xmlDeclaration, docNode.firstChild);
+            }
             nodes[nodes.length] = docNode;
             break;
           }
@@ -1475,6 +1492,7 @@ const jml = function jml(...args) {
           _checkAtts(/** @type {JamilihAttributes} */atts);
           break;
         }
+      case 'processing-instruction':
       case 'document':
       case 'fragment':
       case 'element':
@@ -2050,9 +2068,12 @@ jml.toHTML = function (...args) {
         // case 5: // Entity Reference Node
         //  No 6: Entity Node
         //  No 12: Notation Node
-        // } case 7: { // PROCESSING INSTRUCTION
-        //   const node = /** @type {ProcessingInstruction} */ (ret);
-        //   return `<?${node.target} ${node.data}?>`;
+      }
+    case 7:
+      {
+        // PROCESSING INSTRUCTION
+        const node = /** @type {ProcessingInstruction} */ret;
+        return `<?${node.target} ${node.data}?>`;
         // } case 8: { // Comment
         //   return `<!--${ret.nodeValue}-->`;
         // eslint-disable-next-line sonarjs/no-fallthrough

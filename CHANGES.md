@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.62.0
+
+- feat: restore processing instruction / XML declaration support
+
 ## 0.61.4
 
 - chore: jsdom export issue

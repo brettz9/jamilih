@@ -50,6 +50,51 @@ describe('Jamilih - Other Methods', function () {
       assert.deepEqual(result, expected, 'Document fragment');
     });
 
+    it('creates a document (with xml declaration)', () => {
+      const expected = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<html><head></head><body></body></html>';
+      const result = jml.toHTML({$document: {
+        xmlDeclaration: {
+          version: '1.0',
+          // eslint-disable-next-line unicorn/text-encoding-identifier-case -- XML
+          encoding: 'UTF-8',
+          standalone: true
+        },
+        childNodes: [
+          // {$DOCTYPE: {name: 'html'}},
+          // Todo: Support doctype and comments (needed in main position)
+          // ['!', 'comment']
+          ['html', [
+            ['head'],
+            ['body']
+          ]]
+        ]
+      }});
+      assert.deepEqual(result, expected, 'Document fragment');
+    });
+
+    it('creates a document (with empty xml declaration)', () => {
+      const expected = '<?xml ?>' +
+        '<html><head></head><body></body></html>';
+      const result = jml.toHTML({$document: {
+        xmlDeclaration: {
+          version: '',
+          encoding: '',
+          standalone: false
+        },
+        childNodes: [
+          // {$DOCTYPE: {name: 'html'}},
+          // Todo: Support doctype and comments (needed in main position)
+          // ['!', 'comment']
+          ['html', [
+            ['head'],
+            ['body']
+          ]]
+        ]
+      }});
+      assert.deepEqual(result, expected, 'Document fragment');
+    });
+
     it('serializes an empty document fragment', () => {
       const expected = '';
       const result = jml.toHTML({'#': []});

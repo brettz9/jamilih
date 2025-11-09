@@ -222,7 +222,7 @@
   *   JamilihOptions|HTMLElement|Document|DocumentFragment|null|undefined} item
   * @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|
   *   "symbol"|"bigint"|"function"|"number"|"boolean"|"undefined"|
-  *   "document"|"non-container node"}
+  *   "document"|"processing-instruction"|"non-container node"}
   */
   function _getType(item) {
     const type = typeof item;
@@ -243,6 +243,8 @@
           switch (item.nodeType) {
             case 1:
               return 'element';
+            case 7:
+              return 'processing-instruction';
             case 9:
               return 'document';
             case 11:
@@ -602,6 +604,11 @@
   /**
    * @typedef {{
    *   title?: string,
+   *   xmlDeclaration?: {
+   *     version: string,
+   *     encoding: string,
+   *     standalone: boolean
+   *   },
    *   childNodes?: JamilihChildType[],
    *   $DOCTYPE?: JamilihDocumentType,
    *   head?: JamilihChildren
@@ -1111,6 +1118,16 @@
                   jamlihDoc.body.forEach(_appendJMLOrText(body));
                 }
               }
+              if (jamlihDoc.xmlDeclaration) {
+                const {
+                  version,
+                  encoding,
+                  standalone
+                } = jamlihDoc.xmlDeclaration;
+                const xmlDeclarationData = `${version ? ` version="${version}"` : ''}${encoding ? ` encoding="${encoding}"` : ''}${standalone ? ` standalone="yes"` : ''}`.slice(1);
+                const xmlDeclaration = doc.createProcessingInstruction('xml', xmlDeclarationData);
+                docNode.insertBefore(xmlDeclaration, docNode.firstChild);
+              }
               nodes[nodes.length] = docNode;
               break;
             }
@@ -1472,6 +1489,7 @@
             _checkAtts(/** @type {JamilihAttributes} */atts);
             break;
           }
+        case 'processing-instruction':
         case 'document':
         case 'fragment':
         case 'element':
@@ -2047,9 +2065,12 @@
           // case 5: // Entity Reference Node
           //  No 6: Entity Node
           //  No 12: Notation Node
-          // } case 7: { // PROCESSING INSTRUCTION
-          //   const node = /** @type {ProcessingInstruction} */ (ret);
-          //   return `<?${node.target} ${node.data}?>`;
+        }
+      case 7:
+        {
+          // PROCESSING INSTRUCTION
+          const node = /** @type {ProcessingInstruction} */ret;
+          return `<?${node.target} ${node.data}?>`;
           // } case 8: { // Comment
           //   return `<!--${ret.nodeValue}-->`;
           // eslint-disable-next-line sonarjs/no-fallthrough
