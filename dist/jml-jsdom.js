@@ -219108,6 +219108,7 @@ if (typeof process !== 'undefined') {
 
 exports.$ = $;
 exports.$$ = $$;
+exports.DOMException = DOMException;
 exports.default = jml;
 exports.glue = glue;
 exports.jml = jml;

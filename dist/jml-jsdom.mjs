@@ -2353,4 +2353,4 @@ if (typeof process !== 'undefined') {
   jml.setWindow(win);
 }
 
-export { $, $$, body, jml as default, glue, jml, nbsp };
+export { $, $$, DOMException, body, jml as default, glue, jml, nbsp };

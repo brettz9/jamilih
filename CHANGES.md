@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.62.1
+
+- fix(types): re-export types
+
 ## 0.62.0
 
 - feat: restore processing instruction / XML declaration support

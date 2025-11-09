@@ -4,7 +4,7 @@ import jsdom from 'jsdom';
 
 import {jml} from './jml.js';
 
-export {jml, $, $$, nbsp, body, glue} from './jml.js';
+export * from './jml.js';
 
 // Ignore else
 /* c8 ignore next */
