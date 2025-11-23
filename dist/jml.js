@@ -55,7 +55,7 @@
    */
 
   /**
-   * @type {import('jsdom').DOMWindow|HTMLWindow|undefined}
+   * @type {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis|undefined}
    */
   let win;
 
@@ -2297,7 +2297,7 @@
   /**
    * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
    * Also updates `body` with `document.body`.
-   * @param {import('jsdom').DOMWindow|HTMLWindow|undefined} wind
+   * @param {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis|undefined} wind
    * @returns {void}
    */
   jml.setWindow = wind => {
@@ -2310,7 +2310,7 @@
   };
 
   /**
-   * @returns {import('jsdom').DOMWindow|HTMLWindow}
+   * @returns {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis}
    */
   jml.getWindow = () => {
     if (!win) {

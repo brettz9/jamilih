@@ -387,14 +387,14 @@ export namespace jml {
     /**
      * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
      * Also updates `body` with `document.body`.
-     * @param {import('jsdom').DOMWindow|HTMLWindow|undefined} wind
+     * @param {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis|undefined} wind
      * @returns {void}
      */
-    export function setWindow(wind: import("jsdom").DOMWindow | HTMLWindow | undefined): void;
+    export function setWindow(wind: import("jsdom").DOMWindow | HTMLWindow | typeof globalThis | undefined): void;
     /**
-     * @returns {import('jsdom').DOMWindow|HTMLWindow}
+     * @returns {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis}
      */
-    export function getWindow(): import("jsdom").DOMWindow | HTMLWindow;
+    export function getWindow(): import("jsdom").DOMWindow | HTMLWindow | typeof globalThis;
 }
 /**
  * @param {string} sel

@@ -3,7 +3,7 @@ import {jml, $, $$} from '../src/jml.js';
 
 describe('Window/Document getters/setters', function () {
   /**
-   * @type {import('jsdom').DOMWindow|import('../src/jml.js').HTMLWindow|undefined}
+   * @type {import('jsdom').DOMWindow|import('../src/jml.js').HTMLWindow|typeof globalThis|undefined}
    */
   let _win;
   beforeEach(() => {
@@ -64,7 +64,7 @@ describe('Window/Document getters/setters', function () {
 
 describe('Window/Document getters/setters (no document))', function () {
   /**
-   * @type {import('jsdom').DOMWindow|import('../src/jml.js').HTMLWindow|undefined}
+   * @type {import('jsdom').DOMWindow|import('../src/jml.js').HTMLWindow|typeof globalThis|undefined}
    */
   let _win;
   beforeEach(() => {

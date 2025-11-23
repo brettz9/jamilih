@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.63.1
+
+- fix(types): allow `typeof globalThis` for `setWindow`
+
 ## 0.63.0
 
 - chore: make jsdom external
