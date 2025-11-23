@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.63.0
+
+- chore: make jsdom external
+
 ## 0.62.1
 
 - fix(types): re-export types

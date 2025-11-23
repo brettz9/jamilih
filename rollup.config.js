@@ -75,7 +75,7 @@ export default [{
     exports: 'named'
   },
   external: [
-    // jsdom
+    'jsdom',
     'path', 'fs', 'vm', 'net', 'url', 'punycode', 'util', 'crypto',
     'buffer', 'http', 'https', 'stream', 'zlib', 'dgram', 'dns',
     'querystring', 'assert', 'string_decoder', 'tls', 'events',
@@ -100,7 +100,7 @@ export default [{
     exports: 'named'
   },
   external: [
-    // jsdom
+    'jsdom',
     'path', 'fs', 'vm', 'net', 'url', 'punycode', 'util', 'crypto',
     'buffer', 'http', 'https', 'stream', 'zlib', 'dgram', 'dns',
     'querystring', 'assert', 'string_decoder', 'tls', 'events',
