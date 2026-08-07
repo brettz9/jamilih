@@ -830,6 +830,7 @@ in templates, and to my personal sensibilities, more clear in goal #8
 
 ### High priority to-dos
 
+1. Export typed `$i` for `<input>`, etc. and imports which assume the element exists
 1. Namespaced elements and attributes and XML options (esp. SVG), using an
     options mode
 1. Implement a method building JML by string rather than DOM but create
@@ -839,6 +840,7 @@ in templates, and to my personal sensibilities, more clear in goal #8
 ### Medium priority to-dos
 
 1. See "todo"'s within code.
+1. Take inspiration from <https://www.npmjs.com/package/hyperscript-helpers> to allow `jml('div#myId')`
 1. SSR: Add mode to avoid need for `defaultChecked`,
     `defaultSelected`, `defaultValue`
 1. Timing of appending
