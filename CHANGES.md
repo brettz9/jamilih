@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.64.2
+
+- fix(types): type fixes
+
 ## 0.64.1
 
 - fix(types): type fixes
