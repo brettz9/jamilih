@@ -2199,29 +2199,27 @@ class JamilihMap extends Map {
  */
 class JamilihWeakMap extends WeakMap {
   /**
-   * @param {?(string|HTMLElement)} element
+   * @param {?(string|object|symbol)} element
    * @returns {V}
    */
-  // @ts-expect-error -- string selector extension violates WeakMap<object> key type
   get(element) {
     const elem = typeof element === 'string' ? $(element) : element;
     if (!elem) {
       throw new Error("Can't find the element");
     }
-    return super.get.call(this, elem);
+    return super.get.call(this, /** @type {object} */elem);
   }
   /**
-   * @param {?(string|HTMLElement)} element
+   * @param {?(string|object|symbol)} element
    * @param {V} value
    * @returns {UserArg}
    */
-  // @ts-expect-error -- string selector extension violates WeakMap<object> key type
   set(element, value) {
     const elem = typeof element === 'string' ? $(element) : element;
     if (!elem) {
       throw new Error("Can't find the element");
     }
-    return super.set.call(this, elem, value);
+    return super.set.call(this, /** @type {object} */elem, value);
   }
   /**
    * @param {string|HTMLElement} element

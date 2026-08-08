@@ -70,7 +70,7 @@ describe('Window/Document getters/setters (no document))', function () {
   beforeEach(() => {
     _win = jml.getWindow();
     jml.setWindow({
-      // @ts-ignore
+      // @ts-expect-error
       document: null
     });
   });

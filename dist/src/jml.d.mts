@@ -307,16 +307,16 @@ declare class JamilihMap<V> extends Map {
  */
 declare class JamilihWeakMap<V> extends WeakMap {
     /**
-     * @param {?(string|HTMLElement)} element
+     * @param {?(string|object|symbol)} element
      * @returns {V}
      */
-    get(element: (string | HTMLElement) | null): V;
+    get(element: (string | object | symbol) | null): V;
     /**
-     * @param {?(string|HTMLElement)} element
+     * @param {?(string|object|symbol)} element
      * @param {V} value
      * @returns {UserArg}
      */
-    set(element: (string | HTMLElement) | null, value: V): UserArg;
+    set(element: (string | object | symbol) | null, value: V): UserArg;
     /**
      * @param {string|HTMLElement} element
      * @param {string} methodName
