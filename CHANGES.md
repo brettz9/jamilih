@@ -1,5 +1,11 @@
 # CHANGES for jamilih
 
+## 0.64.0
+
+- fix(types): use unknown where possible
+- fix(types): type fixes
+- chore: update devDeps. and lint
+
 ## 0.63.1
 
 - fix(types): allow `typeof globalThis` for `setWindow`
