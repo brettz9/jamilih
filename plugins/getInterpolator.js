@@ -1,5 +1,6 @@
 // The `performance` global is optional
 
+/* eslint-disable jsdoc/reject-any-type -- plugin args are user-defined */
 /**
  * @typedef {object} JamilihPluginWithArgs
  * @property {any[]} args
@@ -7,6 +8,7 @@
  * @property {() => {[key: string]: string}} dynamic
  * @property {import('../src/jml.js').JamilihPlugin} plugin
  */
+/* eslint-enable jsdoc/reject-any-type */
 
 /**
  * @todo We could use `import generateUUID from 'uuid/v4';` (but it needs
@@ -72,7 +74,7 @@ function getInterpolator () {
         switch (opts.$state) {
         case 'children':
         case 'attributeValue':
-          args.push(/** @type {{[key: string]: string}} */ (value)[this.name]);
+          args.push(/** @type {{[key: string]: string}} */ (value)[name]);
           return uuid;
         /*
         case 'fragmentChildren':

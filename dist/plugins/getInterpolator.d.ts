@@ -1,11 +1,10 @@
-export default getInterpolator;
 export type JamilihPluginWithArgs = {
     args: any[];
     uuid: string;
     dynamic: () => {
         [key: string]: string;
     };
-    plugin: import("../src/jml.js").JamilihPlugin;
+    plugin: import('../src/jml.js').JamilihPlugin;
 };
 /**
  * Use with `String.raw({raw: elementsAsString.split(uniqueID)}, ...args)`.
@@ -22,6 +21,7 @@ declare function getInterpolator(): {
     dynamic: (val: string) => {
         $_interpolator: string;
     };
-    plugin: import("../src/jml.js").JamilihPlugin;
+    plugin: import('../src/jml.js').JamilihPlugin;
 };
+export default getInterpolator;
 //# sourceMappingURL=getInterpolator.d.ts.map

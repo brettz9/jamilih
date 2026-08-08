@@ -514,7 +514,7 @@ describe('Jamilih - jml', function () {
     const div = jml('div', [
       ['?', 'ab><?', '?<>']
     ]);
-    expect(/** @type {Comment} */ (div.childNodes[0]).data).to.equal('?ab><? ?<>?');
+    expect(/** @type {Comment} */ (div.firstChild).data).to.equal('?ab><? ?<>?');
   });
 
   it('Bad document content', function () {
@@ -844,6 +844,7 @@ describe('Jamilih - jml', function () {
       // Todo: Add tests for array of map strings
       // @ts-expect-error Our signature usage should be compatible
       const map1 = new window[mapType]();
+      // @ts-expect-error -- dynamic property construction not typeable
       const map2 = new jml[mapType](); // jml.WeakMap, jml.Map
       const testObj1 = {test: 5};
       const testObj2 = {test: 7};
@@ -916,6 +917,7 @@ describe('Jamilih - jml', function () {
 
         // @ts-expect-error Signature should be ok
         const map1 = new window[mapType]();
+        // @ts-expect-error -- dynamic property construction not typeable
         const map2 = new jml[mapType]();
         const testObj1 = {test: 5};
         const testObj2 = {test: 7};
@@ -1475,7 +1477,6 @@ describe('Jamilih - jml', function () {
            * @returns {void}
            */
           test2 (arg1) {
-            // @ts-expect-error How to fix?
             this.test(arg1);
           }
         }]
@@ -1679,6 +1680,7 @@ describe('Jamilih - jml', function () {
          * @returns {string}
          */
         test (arg1) {
+          // @ts-expect-error -- this is the custom element at runtime, not the mixin literal
           return this.id + arg1;
         },
         /**

@@ -24,12 +24,25 @@ Other Todos:
 */
 
 /**
- * @typedef {Window & {DocumentFragment: any}} HTMLWindow
+ * @typedef {Window & {DocumentFragment: typeof DocumentFragment}} HTMLWindow
  */
 
 /**
- * @typedef {any} ArbitraryValue
+ * @typedef {unknown} ArbitraryValue
  */
+
+/**
+ * @typedef {unknown} StoredValue
+ */
+
+/* eslint-disable jsdoc/reject-any-type -- user-defined callback arguments */
+/**
+ * @typedef {any} UserArg
+ */
+/**
+ * @typedef {any} ElementExpando
+ */
+/* eslint-enable jsdoc/reject-any-type */
 
 /**
  * @typedef {number} Integer
@@ -511,13 +524,13 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {{[key: string]: string|number|boolean|((this: DefineMixin, ...args: any[]) => any)}} DefineMixin
+ * @typedef {{[key: string]: string|number|boolean|((this: ElementExpando, ...args: UserArg[]) => UserArg)}} DefineMixin
  */
 
 /**
  * @typedef {{
  *   new (): HTMLElement;
- *   prototype: HTMLElement & {[key: string]: any}
+ *   prototype: HTMLElement
  * }} DefineConstructor
  */
 
@@ -534,11 +547,11 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {{elem?: HTMLElement, [key: string]: any}} SymbolObject
+ * @typedef {{elem?: HTMLElement, [key: string]: unknown}} SymbolObject
  */
 
 /**
- * @typedef {[symbol|string, ((this: HTMLElement, ...args: any[]) => any)|SymbolObject]} SymbolArray
+ * @typedef {[symbol|string, ((this: HTMLElement, ...args: UserArg[]) => UserArg)|SymbolObject]} SymbolArray
  */
 
 /**
@@ -546,7 +559,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {[string, object]|string|{[key: string]: any}} PluginValue
+ * @typedef {[string, object]|string|object} PluginValue
  */
 
 /**
@@ -561,15 +574,15 @@ function _DOMfromJMLOrString (childNodeJML) {
 
 /**
  * @typedef {{
-*   [key: string]: string|number|((this: HTMLElement, ...args: any[]) => any)
+*   [key: string]: string|number|((this: HTMLElement, ...args: UserArg[]) => UserArg)
 * }} DataAttributeObject
 */
 
 /**
  * @typedef {{
- *   $data?: true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject|
+ *   $data?: true|string[]|Map<HTMLElement, UserArg>|WeakMap<HTMLElement, UserArg>|DataAttributeObject|
  *     [undefined, DataAttributeObject]|
- *     [Map<any, any>|WeakMap<any, any>|undefined, DataAttributeObject]
+ *     [Map<HTMLElement, UserArg>|WeakMap<HTMLElement, UserArg>|undefined, DataAttributeObject]
  * }} DataAttribute
  */
 
@@ -600,7 +613,7 @@ function _DOMfromJMLOrString (childNodeJML) {
 
 /**
  * @typedef {{
- *   $custom?: {[key: string]: any}
+ *   $custom?: {[key: string]: unknown}
  * }} CustomAttribute
  */
 
@@ -733,8 +746,8 @@ function _DOMfromJMLOrString (childNodeJML) {
 
 /**
  * @typedef {{
- *   root: [Map<HTMLElement,any>|WeakMap<HTMLElement,any>, any],
- *   [key: string]: [Map<HTMLElement,any>|WeakMap<HTMLElement,any>, any]
+ *   root: [Map<HTMLElement,UserArg>|WeakMap<HTMLElement,UserArg>, UserArg],
+ *   [key: string]: [Map<HTMLElement,UserArg>|WeakMap<HTMLElement,UserArg>, UserArg]
  * }} MapWithRoot
  */
 
@@ -746,7 +759,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @typedef {object} JamilihOptions
  * @property {TraversalState} [$state]
  * @property {JamilihPlugin[]} [$plugins]
- * @property {MapWithRoot|[Map<HTMLElement,any>|WeakMap<HTMLElement,any>, any]} [$map]
+ * @property {MapWithRoot|[Map<HTMLElement,UserArg>|WeakMap<HTMLElement,UserArg>, UserArg]} [$map]
  */
 
 /**
@@ -809,7 +822,7 @@ const jml = function jml (...args) {
     throw new Error('No document object');
   }
 
-  /** @type {(Document|DocumentFragment|HTMLElement) & {[key: string]: any}} */
+  /** @type {(Document|DocumentFragment|HTMLElement) & {[key: string]: ElementExpando}} */
   let elem = doc.createDocumentFragment();
   /**
    *
@@ -825,20 +838,16 @@ const jml = function jml (...args) {
     for (let [att, attVal] of Object.entries(atts)) {
       att = ATTR_MAP.has(att) ? String(ATTR_MAP.get(att)) : att;
 
-      /**
-       * @typedef {any} ElementExpando
-       */
-
       if (NULLABLES.has(att)) {
         attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */ (attVal), opts);
         if (!_isNullish(attVal)) {
-          /** @type {ElementExpando} */ (elem)[att] = attVal;
+          elem[att] = attVal;
         }
         continue;
       }
       if (ATTR_DOM.has(att)) {
         attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */ (attVal), opts);
-        /** @type {ElementExpando} */ (elem)[att] = attVal;
+        elem[att] = attVal;
         continue;
       }
       switch (att) {
@@ -1033,9 +1042,9 @@ const jml = function jml (...args) {
         }
         if (mixin) {
           Object.entries(mixin).forEach(([methodName, method]) => {
-            /** @type {DefineConstructor} */ (
+            Reflect.set(/** @type {DefineConstructor} */ (
               cnstrctr
-            ).prototype[methodName] = method;
+            ).prototype, methodName, method);
           });
         }
         // console.log('def', def, '::', typeof options === 'object' ? options : undefined);
@@ -1069,7 +1078,7 @@ const jml = function jml (...args) {
         }
         break;
       } case '$data': {
-        setMap(/** @type {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} */ (
+        setMap(/** @type {true|string[]|Map<HTMLElement, unknown>|WeakMap<HTMLElement, unknown>|DataAttributeObject} */ (
           attVal
         ));
         break;
@@ -1351,12 +1360,12 @@ const jml = function jml (...args) {
   const defaultMap = opts.$map && /** @type {MapWithRoot} */ (opts.$map).root;
 
   /**
-   * @param {true|string[]|Map<any, any>|WeakMap<any, any>|DataAttributeObject} dataVal
+   * @param {true|string[]|Map<HTMLElement, UserArg>|WeakMap<HTMLElement, UserArg>|DataAttributeObject|[Map<HTMLElement, UserArg>|WeakMap<HTMLElement, UserArg>|undefined, DataAttributeObject|UserArg]} dataVal
    * @returns {void}
    */
   const setMap = (dataVal) => {
     let map, obj;
-    const defMap = /** @type {[Map<HTMLElement, any> | WeakMap<HTMLElement, any>, any]} */ (defaultMap);
+    const defMap = /** @type {[Map<HTMLElement, UserArg> | WeakMap<HTMLElement, UserArg>, UserArg]} */ (defaultMap);
     // Boolean indicating use of default map and object
     if (dataVal === true) {
       [map, obj] = defMap;
@@ -1380,7 +1389,7 @@ const jml = function jml (...args) {
       map = defMap[0];
       obj = dataVal;
     }
-    /** @type {Map<HTMLElement, any> | WeakMap<HTMLElement, any>} */ (map).set(
+    /** @type {Map<HTMLElement, UserArg> | WeakMap<HTMLElement, UserArg>} */ (map).set(
       /** @type {HTMLElement} */
       (elem),
       obj
@@ -1393,7 +1402,7 @@ const jml = function jml (...args) {
     case 'null': // null always indicates a place-holder (only needed for last argument if want array returned)
       if (i === argc - 1) {
         // Casting needing unless changing `jml()` signature with overloads
-        return /** @type {ArbitraryValue} */ (nodes.length <= 1
+        return /** @type {UserArg} */ (nodes.length <= 1
           ? nodes[0]
           // eslint-disable-next-line unicorn/no-array-callback-reference
           : nodes.reduce(_fragReducer, doc.createDocumentFragment())); // nodes;
@@ -1604,7 +1613,7 @@ const jml = function jml (...args) {
   }
 
   // Casting needing unless changing `jml()` signature with overloads
-  return /** @type {ArbitraryValue} */ (ret);
+  return /** @type {UserArg} */ (ret);
 };
 
 /**
@@ -1709,7 +1718,7 @@ jml.toJML = function (nde, {
 
   /**
    * @todo Find more specific type than `any`
-   * @typedef {{[key: (number|string)]: any}} IndexableObject
+   * @typedef {{[key: (number|string)]: UserArg}} IndexableObject
    */
 
   const ret = /** @type {IndexableObject} */ ([]);
@@ -2142,11 +2151,12 @@ jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with
 
 /**
  * Element-aware wrapper for `Map`.
+ * @template V
  */
 class JamilihMap extends Map {
   /**
    * @param {?(string|HTMLElement)} element
-   * @returns {ArbitraryValue}
+   * @returns {V}
    */
   get (element) {
     const elem = typeof element === 'string' ? $(element) : element;
@@ -2154,8 +2164,8 @@ class JamilihMap extends Map {
   }
   /**
    * @param {string|HTMLElement} element
-   * @param {ArbitraryValue} value
-   * @returns {ArbitraryValue}
+   * @param {V} value
+   * @returns {UserArg}
    */
   set (element, value) {
     const elem = typeof element === 'string' ? $(element) : element;
@@ -2164,24 +2174,25 @@ class JamilihMap extends Map {
   /**
    * @param {string|HTMLElement} element
    * @param {string} methodName
-   * @param {...ArbitraryValue} args
-   * @returns {ArbitraryValue}
+   * @param {...UserArg} args
+   * @returns {StoredValue}
    */
   invoke (element, methodName, ...args) {
     const elem = typeof element === 'string' ? $(element) : element;
-    return this.get(elem)[methodName](elem, ...args);
+    return /** @type {UserArg} */ (this.get(elem))[methodName](elem, ...args);
   }
 }
 
 /**
  * Element-aware wrapper for `WeakMap`.
- * @extends {WeakMap<any>}
+ * @template V
  */
 class JamilihWeakMap extends WeakMap {
   /**
-   * @param {HTMLElement} element
-   * @returns {ArbitraryValue}
+   * @param {?(string|HTMLElement)} element
+   * @returns {V}
    */
+  // @ts-expect-error -- string selector extension violates WeakMap<object> key type
   get (element) {
     const elem = typeof element === 'string' ? $(element) : element;
     if (!elem) {
@@ -2190,10 +2201,11 @@ class JamilihWeakMap extends WeakMap {
     return super.get.call(this, elem);
   }
   /**
-   * @param {HTMLElement} element
-   * @param {ArbitraryValue} value
-   * @returns {ArbitraryValue}
+   * @param {?(string|HTMLElement)} element
+   * @param {V} value
+   * @returns {UserArg}
    */
+  // @ts-expect-error -- string selector extension violates WeakMap<object> key type
   set (element, value) {
     const elem = typeof element === 'string' ? $(element) : element;
     if (!elem) {
@@ -2204,15 +2216,15 @@ class JamilihWeakMap extends WeakMap {
   /**
    * @param {string|HTMLElement} element
    * @param {string} methodName
-   * @param {...ArbitraryValue} args
-   * @returns {ArbitraryValue}
+   * @param {...UserArg} args
+   * @returns {StoredValue}
    */
   invoke (element, methodName, ...args) {
     const elem = typeof element === 'string' ? $(element) : element;
     if (!elem) {
       throw new Error("Can't find the element");
     }
-    return this.get(elem)[methodName](elem, ...args);
+    return /** @type {UserArg} */ (this.get(elem))[methodName](elem, ...args);
   }
 }
 
@@ -2220,13 +2232,15 @@ jml.Map = JamilihMap;
 jml.WeakMap = JamilihWeakMap;
 
 /**
- * @typedef {[JamilihWeakMap|JamilihMap, HTMLElement]} MapAndElementArray
+ * @template V
+ * @typedef {[JamilihWeakMap<V>|JamilihMap<V>, HTMLElement]} MapAndElementArray
  */
 
 /**
- * @param {{[key: string]: any}} obj
+ * @template V
+ * @param {V} obj
  * @param {JamilihArrayPostOptions} args
- * @returns {MapAndElementArray}
+ * @returns {MapAndElementArray<V>}
  */
 jml.weak = function (obj, ...args) {
   const map = new JamilihWeakMap();
@@ -2235,9 +2249,10 @@ jml.weak = function (obj, ...args) {
 };
 
 /**
- * @param {ArbitraryValue} obj
+ * @template V
+ * @param {V} obj
  * @param {JamilihArrayPostOptions} args
- * @returns {MapAndElementArray}
+ * @returns {MapAndElementArray<V>}
  */
 jml.strong = function (obj, ...args) {
   const map = new JamilihMap();
@@ -2248,7 +2263,7 @@ jml.strong = function (obj, ...args) {
 /**
  * @param {string|HTMLElement} element If a string, will be interpreted as a selector
  * @param {symbol|string} sym If a string, will be used with `Symbol.for`
- * @returns {ArbitraryValue} The value associated with the symbol
+ * @returns {UserArg} The value associated with the symbol
  */
 jml.symbol = jml.sym = jml.for = function (element, sym) {
   const elem = typeof element === 'string' ? $(element) : element;
@@ -2258,16 +2273,16 @@ jml.symbol = jml.sym = jml.for = function (element, sym) {
 };
 
 /**
- * @typedef {((elem: HTMLElement, ...args: any[]) => void)|{[key: string]: (elem: HTMLElement, ...args: any[]) => void}} MapCommand
+ * @typedef {((elem: HTMLElement, ...args: UserArg[]) => void)|{[key: string]: (elem: HTMLElement, ...args: UserArg[]) => void}} MapCommand
  */
 
 /**
  * @param {?(string|HTMLElement)} elem If a string, will be interpreted as a selector
  * @param {symbol|string|Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} symOrMap If a string, will be used with `Symbol.for`
- * @param {string|any} methodName Can be `any` if the symbol or map directly
+ * @param {string|UserArg} methodName Can be `UserArg` if the symbol or map directly
  *   points to a function (it is then used as the first argument).
- * @param {ArbitraryValue[]} args
- * @returns {ArbitraryValue}
+ * @param {UserArg[]} args
+ * @returns {StoredValue}
  */
 jml.command = function (elem, symOrMap, methodName, ...args) {
   elem = typeof elem === 'string' ? $(elem) : elem;
@@ -2322,9 +2337,9 @@ jml.getWindow = () => {
 
 /**
  * Does not run Jamilih so can be further processed.
- * @param {ArbitraryValue[]} array
- * @param {ArbitraryValue} glu
- * @returns {ArbitraryValue[]}
+ * @param {UserArg[]} array
+ * @param {UserArg} glu
+ * @returns {UserArg[]}
  */
 function glue (array, glu) {
   return [...array].reduce((arr, item) => {

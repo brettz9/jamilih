@@ -181,11 +181,12 @@ describe('Jamilih - Other Methods', function () {
           /**
            * @param {Element} el
            * @param {string} arg1
-           * @this {{[key: string]: any}}
+           * @this {HTMLElement}
            * @returns {void}
            */
           test (el, arg1) {
             xmlTesting.matches(
+              // @ts-expect-error -- this is the $data object at runtime, not HTMLElement
               arg1 + ' ' + el.id + this.localVariable,
               'arg1 clickArea8',
               `Attached Jamilih${mapType === 'weak' ? 'Weak' : ''}Map $data method invoked by click listener with arguments and \`this\``
