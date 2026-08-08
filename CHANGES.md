@@ -1,5 +1,14 @@
 # CHANGES for jamilih
 
+## 0.65.0
+
+BREAKING CHANGE:
+- Default export is now dropped
+
+- feat: export `toXML` methods on the module namespace
+- refactor: drop default export
+- fix: JamilihWeakMap widen to string|object|symbol for compatibility with WeakKey
+
 ## 0.64.2
 
 - fix(types): type fixes

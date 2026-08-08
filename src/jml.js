@@ -1700,7 +1700,7 @@ export class DOMException extends Error {
 * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
 * version of such an object
 */
-jml.toJML = function (nde, {
+export const toJML = function (nde, {
   stringOutput = false,
   reportInvalidState = true,
   stripWhitespace = false
@@ -2033,33 +2033,36 @@ jml.toJML = function (nde, {
 
   return ret[0];
 };
+jml.toJML = toJML;
 
 /**
  * @param {string|HTMLElement} dom
  * @param {ToJmlConfig} [config]
  * @returns {string}
  */
-jml.toJMLString = function (dom, config) {
+export const toJMLString = function (dom, config) {
   return /** @type {string} */ (
-    jml.toJML(dom, Object.assign(config || {}, {stringOutput: true}))
+    toJML(dom, Object.assign(config || {}, {stringOutput: true}))
   );
 };
+jml.toJMLString = toJMLString;
 
 /**
  *
  * @param {JamilihArray} args
  * @returns {JamilihReturn}
  */
-jml.toDOM = function (...args) { // Alias for jml()
+export const toDOM = function (...args) { // Alias for jml()
   return jml(...args);
 };
+jml.toDOM = toDOM;
 
 /**
  *
  * @param {JamilihArray} args
  * @returns {string}
  */
-jml.toHTML = function (...args) { // Todo: Replace this with version of jml() that directly builds a string
+export const toHTML = function (...args) { // Todo: Replace this with version of jml() that directly builds a string
   const ret = jml(...args);
 
   switch (ret.nodeType) {
@@ -2097,7 +2100,7 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
   } case 11: { // DOCUMENT FRAGMENT
     const node = /** @type {DocumentFragment} */ (ret);
     return [...node.childNodes].map((childNode) => {
-      return jml.toHTML(/** @type {JamilihFirstArgument} */ (childNode));
+      return toHTML(/** @type {JamilihFirstArgument} */ (childNode));
     }).join('');
   } case 10: { // DOCUMENT TYPE
     const node = /** @type {DocumentType} */ (ret);
@@ -2115,22 +2118,24 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
     throw new Error('Unexpected node type');
   }
 };
+jml.toHTML = toHTML;
 
 /**
  *
  * @param {JamilihArray} args
  * @returns {string}
  */
-jml.toDOMString = function (...args) { // Alias for jml.toHTML for parity with jml.toJMLString
-  return jml.toHTML(...args);
+export const toDOMString = function (...args) { // Alias for jml.toHTML for parity with jml.toJMLString
+  return toHTML(...args);
 };
+jml.toDOMString = toDOMString;
 
 /**
  *
  * @param {JamilihArray} args
  * @returns {string}
  */
-jml.toXML = function (...args) {
+export const toXML = function (...args) {
   if (!win) {
     throw new Error('No window object set');
   }
@@ -2139,15 +2144,17 @@ jml.toXML = function (...args) {
     win
   ).XMLSerializer().serializeToString(ret);
 };
+jml.toXML = toXML;
 
 /**
  *
  * @param {JamilihArray} args
  * @returns {string}
  */
-jml.toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with jml.toJMLString
-  return jml.toXML(...args);
+export const toXMLDOMString = function (...args) { // Alias for jml.toXML for parity with jml.toJMLString
+  return toXML(...args);
 };
+jml.toXMLDOMString = toXMLDOMString;
 
 /**
  * Element-aware wrapper for `Map`.
@@ -2314,7 +2321,7 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
  * @param {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis|undefined} wind
  * @returns {void}
  */
-jml.setWindow = (wind) => {
+export const setWindow = (wind) => {
   win = wind;
   doc = win?.document;
   if (doc && doc.body) {
@@ -2322,16 +2329,18 @@ jml.setWindow = (wind) => {
     body = /** @type {HTMLBodyElement} */ (doc.body);
   }
 };
+jml.setWindow = setWindow;
 
 /**
  * @returns {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis}
  */
-jml.getWindow = () => {
+export const getWindow = () => {
   if (!win) {
     throw new Error('No window object set');
   }
   return win;
 };
+jml.getWindow = getWindow;
 
 /**
  * Does not run Jamilih so can be further processed.
@@ -2360,5 +2369,3 @@ if (doc && doc.body) {
 const nbsp = '\u{A0}'; // Very commonly needed in templates
 
 export {jml, $, $$, nbsp, body, glue};
-
-export default jml;

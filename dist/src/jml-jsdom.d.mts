@@ -1,4 +1,3 @@
-import _jml from './jml.js';
 export * from './jml.js';
-export default _jml;
+export { jml } from './jml.js';
 //# sourceMappingURL=jml-jsdom.d.ts.map

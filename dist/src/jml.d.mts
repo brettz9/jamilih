@@ -178,13 +178,13 @@ export type JamilihOptions = {
 export type ValueOf<T> = T[keyof T];
 declare function jml<T extends JamilihArray>(...args: T): T extends [keyof HTMLElementTagNameMap, any?, any?, any?] ? HTMLElementTagNameMap[T[0]] : JamilihReturn;
 declare namespace jml {
-    var toJML: (nde: string | HTMLElement | Node | Entity, { stringOutput, reportInvalidState, stripWhitespace }?: ToJmlConfig) => JamilihType | string;
-    var toJMLString: (dom: string | HTMLElement, config?: ToJmlConfig) => string;
-    var toDOM: (args_0: JamilihOptions | JamilihFirstArgument, args_1?: JamilihChildren | ShadowRoot | JamilihFirstArgument | JamilihAttributes | null | undefined, args_2?: string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null | undefined, ...args: (string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null)[]) => JamilihReturn;
-    var toHTML: (args_0: JamilihOptions | JamilihFirstArgument, args_1?: JamilihChildren | ShadowRoot | JamilihFirstArgument | JamilihAttributes | null | undefined, args_2?: string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null | undefined, ...args: (string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null)[]) => string;
-    var toDOMString: (args_0: JamilihOptions | JamilihFirstArgument, args_1?: JamilihChildren | ShadowRoot | JamilihFirstArgument | JamilihAttributes | null | undefined, args_2?: string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null | undefined, ...args: (string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null)[]) => string;
-    var toXML: (args_0: JamilihOptions | JamilihFirstArgument, args_1?: JamilihChildren | ShadowRoot | JamilihFirstArgument | JamilihAttributes | null | undefined, args_2?: string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null | undefined, ...args: (string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null)[]) => string;
-    var toXMLDOMString: (args_0: JamilihOptions | JamilihFirstArgument, args_1?: JamilihChildren | ShadowRoot | JamilihFirstArgument | JamilihAttributes | null | undefined, args_2?: string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null | undefined, ...args: (string | HTMLElement | JamilihChildren | ShadowRoot | JamilihAttributes | null)[]) => string;
+    export { toJML };
+    export { toJMLString };
+    export { toDOM };
+    export { toHTML };
+    export { toDOMString };
+    export { toXML };
+    export { toXMLDOMString };
     export { JamilihMap as Map };
     export { JamilihWeakMap as WeakMap };
     export var weak: <V>(obj: V, args_0: string | HTMLElement | ShadowRoot, args_1?: JamilihArray[] | HTMLElement | ShadowRoot | JamilihAttributes | null | undefined, ...args: (JamilihArray[] | HTMLElement | ShadowRoot | JamilihAttributes | null)[]) => MapAndElementArray<V>;
@@ -194,8 +194,8 @@ declare namespace jml {
     export var _a: (element: string | HTMLElement, sym: symbol | string) => UserArg;
     export { _a as for };
     export var command: (elem: (string | HTMLElement) | null, symOrMap: symbol | string | Map<HTMLElement, MapCommand> | WeakMap<HTMLElement, MapCommand>, methodName: string | UserArg, ...args: UserArg[]) => StoredValue;
-    export var setWindow: (wind: import('jsdom').DOMWindow | HTMLWindow | typeof globalThis | undefined) => void;
-    export var getWindow: () => import('jsdom').DOMWindow | HTMLWindow | typeof globalThis;
+    export { setWindow };
+    export { getWindow };
 }
 export type ToJmlConfig = {
     /**
@@ -278,6 +278,60 @@ export declare class DOMException extends Error {
 export type JamilihChildType = JamilihArray | JamilihDoctype | JamilihCDATANode | JamilihEntityReference | JamilihProcessingInstruction | JamilihComment | JamilihDocumentFragment;
 export type JamilihType = JamilihDoc | JamilihAttributeNode | JamilihChildType;
 /**
+ * @typedef {JamilihArray|JamilihDoctype|
+*    JamilihCDATANode|JamilihEntityReference|JamilihProcessingInstruction|
+*    JamilihComment|JamilihDocumentFragment} JamilihChildType
+ */
+/**
+ * @typedef {JamilihDoc|JamilihAttributeNode|JamilihChildType} JamilihType
+ */
+/**
+* Converts a DOM object or a string of HTML into a Jamilih object (or string).
+* @param {string|HTMLElement|Node|Entity} nde If a string, will parse as document
+* @param {ToJmlConfig} [config] Configuration object
+* @throws {TypeError}
+* @returns {JamilihType|string} Array containing the elements which represent
+* a Jamilih object, or, if `stringOutput` is true, it will be the stringified
+* version of such an object
+*/
+export declare const toJML: (nde: string | HTMLElement | Node | Entity, { stringOutput, reportInvalidState, stripWhitespace }?: ToJmlConfig) => JamilihType | string;
+/**
+ * @param {string|HTMLElement} dom
+ * @param {ToJmlConfig} [config]
+ * @returns {string}
+ */
+export declare const toJMLString: (dom: string | HTMLElement, config?: ToJmlConfig) => string;
+/**
+ *
+ * @param {JamilihArray} args
+ * @returns {JamilihReturn}
+ */
+export declare const toDOM: (...args: JamilihArray) => JamilihReturn;
+/**
+ *
+ * @param {JamilihArray} args
+ * @returns {string}
+ */
+export declare const toHTML: (...args: JamilihArray) => string;
+/**
+ *
+ * @param {JamilihArray} args
+ * @returns {string}
+ */
+export declare const toDOMString: (...args: JamilihArray) => string;
+/**
+ *
+ * @param {JamilihArray} args
+ * @returns {string}
+ */
+export declare const toXML: (...args: JamilihArray) => string;
+/**
+ *
+ * @param {JamilihArray} args
+ * @returns {string}
+ */
+export declare const toXMLDOMString: (...args: JamilihArray) => string;
+/**
  * Element-aware wrapper for `Map`.
  * @template V
  */
@@ -330,6 +384,17 @@ export type MapCommand = ((elem: HTMLElement, ...args: UserArg[]) => void) | {
     [key: string]: (elem: HTMLElement, ...args: UserArg[]) => void;
 };
 /**
+ * Expects properties `document`, `XMLSerializer`, and `DOMParser`.
+ * Also updates `body` with `document.body`.
+ * @param {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis|undefined} wind
+ * @returns {void}
+ */
+export declare const setWindow: (wind: import('jsdom').DOMWindow | HTMLWindow | typeof globalThis | undefined) => void;
+/**
+ * @returns {import('jsdom').DOMWindow|HTMLWindow|typeof globalThis}
+ */
+export declare const getWindow: () => import('jsdom').DOMWindow | HTMLWindow | typeof globalThis;
+/**
  * Does not run Jamilih so can be further processed.
  * @param {UserArg[]} array
  * @param {UserArg} glu
@@ -342,5 +407,4 @@ declare function glue(array: UserArg[], glu: UserArg): UserArg[];
 declare let body: HTMLBodyElement;
 declare const nbsp = "\u00A0";
 export { jml, $, $$, nbsp, body, glue };
-export default jml;
 //# sourceMappingURL=jml.d.ts.map
