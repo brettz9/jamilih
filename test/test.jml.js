@@ -18,9 +18,11 @@ import * as xmlTesting from './xmlTesting.js';
 
 import getInterpolator from '../plugins/getInterpolator.js';
 
+/* eslint-disable jsdoc/reject-any-type -- Bad type */
 /**
  * @typedef {any} BadArgument
  */
+/* eslint-enable jsdoc/reject-any-type -- Bad type */
 
 describe('Jamilih - jml', function () {
   beforeEach(() => {
@@ -159,13 +161,13 @@ describe('Jamilih - jml', function () {
     let div = /** @type {HTMLDivElement} */ (jml('div', {style: 'abc'}));
     expect(div.getAttribute('style')).to.equal('abc');
     div = /** @type {HTMLDivElement} */ (jml('div'));
-    expect(div.getAttribute('style')).to.equal(null);
+    expect(div.getAttribute('style')).to.be.null;
     div = /** @type {HTMLDivElement} */ (
       jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({
         style: undefined
       }))
     );
-    expect(div.getAttribute('style')).to.equal(null);
+    expect(div.getAttribute('style')).to.be.null;
 
     div = /** @type {HTMLDivElement} */ (jml('div'));
     expect(div.style.color).to.equal('');
@@ -318,6 +320,7 @@ describe('Jamilih - jml', function () {
 
     const ser = new XMLSerializer();
     xmlTesting.matches(
+      // eslint-disable-next-line unicorn/better-dom-traversing -- Not DOM
       ser.serializeToString(trsFragment.childNodes[0]) +
       ser.serializeToString(trsFragment.childNodes[1]),
       '<tr xmlns="http://www.w3.org/1999/xhtml"><td>row 1 cell 1</td><td>row 1 cell 2</td></tr><tr xmlns="http://www.w3.org/1999/xhtml" class="anotherRowSibling"><td>row 2 cell 1</td><td>row 2 cell 2</td></tr>',
@@ -409,7 +412,7 @@ describe('Jamilih - jml', function () {
     /**
      * @type {[string, string, string]}
      */
-    const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
+    const xlink = ['http://www.w3.org/1999/xlink', 'href', 'https://example.com'];
     const expected = document.createAttributeNS(
       'http://www.w3.org/1999/xlink', 'href'
     );
@@ -459,7 +462,7 @@ describe('Jamilih - jml', function () {
       (isIE ? '!--' : '') +
       '?customPIB att1="val 1" att2="val 2&quot;"?' +
       (isIE ? '--' : '') +
-      '>\u00A9\u04D2\u0AB3&amp;test &lt;CDATA&gt; content</div>',
+      '>\u{A9}\u{4D2}\u{AB3}&amp;test &lt;CDATA&gt; content</div>',
       'Single element with comment, processing instruction, entity, decimal and hex character references, and CDATA'
     );
   });
@@ -490,7 +493,6 @@ describe('Jamilih - jml', function () {
       ['!', 'a comment']
     ]);
     const comment = /** @type {Comment} */ (
-      // eslint-disable-next-line unicorn/prefer-at -- No `at`
       wrappedDoc.childNodes[wrappedDoc.childNodes.length - 1]
     );
     expect(comment.data).to.equal('a comment');
@@ -620,7 +622,7 @@ describe('Jamilih - jml', function () {
       childNodes: [
       ]
     }});
-    expect(doc5.childNodes.length).to.equal(0);
+    expect(doc5.childNodes).to.have.lengthOf(0);
 
     const doc6 = jml({$document: {
       body: [
@@ -1005,13 +1007,9 @@ describe('Jamilih - jml', function () {
           `Externally invoke on method with DOM retrieved element associated with normal ${mapType} (alongside a Jamilih${mapType}); using string array-based map and function`
         );
 
-        /**
-         * @typedef {any} MapSelector
-         */
-
-        expect(map2.get(/** @type {MapSelector} */ ('#input2'))).to.equal(testObj2);
-        map2.set(/** @type {MapSelector} */ ('#input2'), 'newVal');
-        expect(map2.get(/** @type {MapSelector} */ ('#input2'))).to.equal('newVal');
+        expect(map2.get('#input2')).to.equal(testObj2);
+        map2.set('#input2', 'newVal');
+        expect(map2.get('#input2')).to.equal('newVal');
       }
     );
   });
@@ -1666,7 +1664,7 @@ describe('Jamilih - jml', function () {
     }
   });
   it('$custom properties', () => {
-    const mySelect = /** @type {HTMLSelectElement & {test: (arg1: string) => string, test2: (arg1: string) => string}} */ (jml('select', {
+    const mySelect = /** @type {HTMLSelectElement & {id: string, test: (arg1: string) => string, test2: (arg1: string) => string}} */ (jml('select', {
       id: 'mySelect',
       $custom: {
         /**
@@ -1681,10 +1679,7 @@ describe('Jamilih - jml', function () {
          * @returns {string}
          */
         test (arg1) {
-          /**
-           * @typedef {any} CurrentThis
-           */
-          return /** @type {CurrentThis} */ (this).id + arg1;
+          return this.id + arg1;
         },
         /**
          * @param {string} arg1

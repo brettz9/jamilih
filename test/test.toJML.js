@@ -6,9 +6,11 @@ import {assert, expect} from 'chai';
 
 import {jml} from '../test-helpers/loadTests.js';
 
+/* eslint-disable jsdoc/reject-any-type -- Arbitrary */
 /**
  * @typedef {any} ArbitraryValue
  */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
 
 describe(
   'Jamilih - toJML',
@@ -67,7 +69,7 @@ describe(
       /**
        * @type {[string|null, string, string]}
        */
-      const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
+      const xlink = ['http://www.w3.org/1999/xlink', 'href', 'https://example.com'];
 
       /**
        * @type {import('../src/jml.js').JamilihAttributeNode}
@@ -77,20 +79,20 @@ describe(
       let result = jml.toJML(/** @type {Attr} */ ({
         namespaceURI: 'http://www.w3.org/1999/xlink',
         name: 'href',
-        value: 'http://example.com',
+        value: 'https://example.com',
         nodeType: 2
       }));
 
       assert.deepEqual(result, expected, 'Namespaced attribute node to Jamilih');
 
       expected = {$attribute: [
-        null, 'href', 'http://example.com'
+        null, 'href', 'https://example.com'
       ]};
 
       result = jml.toJML(/** @type {Attr} */ ({
         namespaceURI: null,
         name: 'href',
-        value: 'http://example.com',
+        value: 'https://example.com',
         nodeType: 2
       }));
       assert.deepEqual(result, expected, 'Non-namespaced attribute node to Jamilih');
@@ -98,7 +100,7 @@ describe(
       const mockExampleAttributeNodeNoNodeType = /** @type {unknown} */ ({
         namespaceURI: null,
         name: 'href',
-        value: 'http://example.com',
+        value: 'https://example.com',
         nodeType: undefined
       });
 
@@ -110,7 +112,7 @@ describe(
     /*
     // Todo: Commenting out until https://github.com/jsdom/jsdom/issues/1641
     it('attribute node', () => {
-      const xlink = ['http://www.w3.org/1999/xlink', 'href', 'http://example.com'];
+      const xlink = ['http://www.w3.org/1999/xlink', 'href', 'https://example.com'];
 
       let expected = {$attribute: xlink};
       let att = document.createAttributeNS(...xlink.slice(0, -1));
@@ -152,7 +154,7 @@ describe(
       const expected = {$document: {
         childNodes: [
           ['def', {
-            xmlns: 'http://example.com'
+            xmlns: 'https://example.com'
           }, [
             ['ggg', {
               xmlns: null
@@ -160,7 +162,7 @@ describe(
           ]]
         ]
       }};
-      const xml = document.implementation.createDocument('http://example.com', 'def', null);
+      const xml = document.implementation.createDocument('https://example.com', 'def', null);
       xml.documentElement.append(document.createElementNS(null, 'ggg'));
       const result = jml.toJML(xml);
       assert.deepEqual(result, expected, 'Namespaced XML Jamilih');
@@ -172,11 +174,11 @@ describe(
       const expected = {$document: {
         childNodes: [
           ['abc:def', {
-            'xmlns:abc': 'http://example.com'
+            'xmlns:abc': 'https://example.com'
           }]
         ]
       }};
-      const xml = document.implementation.createDocument('http://example.com', 'abc:def', null);
+      const xml = document.implementation.createDocument('https://example.com', 'abc:def', null);
       const result = jml.toJML(xml);
       assert.deepEqual(result, expected, 'Namespaced XML Jamilih');
     });
@@ -236,9 +238,11 @@ describe(
       assert.deepEqual(result, expected, 'Document fragment node to Jamilih');
     });
 
+    /* eslint-disable jsdoc/reject-any-type -- Bad type */
     /**
      * @typedef {any} BadType
      */
+    /* eslint-enable jsdoc/reject-any-type -- Bad type */
 
     it('bad types', () => {
       expect(() => {
@@ -257,7 +261,7 @@ describe(
 
     it('Bad text node', () => {
       const badText = /** @type {Text} */ ({
-        nodeValue: '\u0000',
+        nodeValue: '\u{0}',
         nodeType: 3
       });
       try {
@@ -360,7 +364,7 @@ describe(
 
     it('bad document type', () => {
       let badDoctype = /** @type {DocumentType} */ ({
-        publicId: '\u0000',
+        publicId: '\u{0}',
         nodeType: 10
       });
       try {
@@ -398,7 +402,7 @@ describe(
 
     it('with config (`stripWhitespace`)', () => {
       let expected = '';
-      let result = jml.toJML(document.createTextNode('    '), {
+      let result = jml.toJML(document.createTextNode(' '.repeat(4)), {
         stripWhitespace: true
       });
       assert.deepEqual(result, expected, 'Whitespace-stripped text node to Jamilih');

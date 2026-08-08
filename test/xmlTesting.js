@@ -2,7 +2,7 @@
 
 import {assert} from 'chai';
 
-const nbsp = '\u00A0';
+const nbsp = '\u{A0}';
 
 /**
  * @param {ArbitraryValue} val
@@ -47,9 +47,11 @@ const xmlAssert = (ok, msg) => {
   write(Boolean(ok), ` ${nbsp + msg}`);
 };
 
+/* eslint-disable jsdoc/reject-any-type -- Arbitrary */
 /**
  * @typedef {any} ArbitraryValue
  */
+/* eslint-enable jsdoc/reject-any-type -- Arbitrary */
 
 /**
  * @param {ArbitraryValue} item1
@@ -90,7 +92,6 @@ const matchesXMLStringWithinElement = (element, item2, msg) => {
  * @returns {void}
  */
 const matchesXMLStringOnElement = (element, item2, msg) => {
-  // eslint-disable-next-line unicorn/prefer-at -- No `at` method
   const lastInsert = element.childNodes[element.childNodes.length - 1];
   matchesXMLString(lastInsert, item2, msg);
 };

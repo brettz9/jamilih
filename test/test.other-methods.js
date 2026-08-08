@@ -207,11 +207,9 @@ describe('Jamilih - Other Methods', function () {
         'external test localValue 100',
         `Externally invoke Jamilih${mapType === 'weak' ? 'Weak' : ''}Map \`invoke\` method with arguments and \`this\``
       );
-      /**
-       * @typedef {any} MapSelector
-       */
+
       xmlTesting.matches(
-        myMap.get(/** @type {MapSelector} */ ('#mapTest')).localVar, // Test overridden `get` accepting selectors also
+        myMap.get('#mapTest').localVar, // Test overridden `get` accepting selectors also
         'localValue',
         `Externally retrieve Jamilih${mapType === 'weak' ? 'Weak' : ''}Map-associated element by selector`
       );
@@ -255,9 +253,9 @@ describe('Jamilih extras', function () {
   it('$$', function () {
     /** @type {HTMLBodyElement} */ (body).querySelector('#extraHolder')?.append(jml('br'), jml('br'));
     const brs = $$('br');
-    expect(brs.length).to.equal(2);
+    expect(brs).to.have.lengthOf(2);
   });
   it('nbsp', function () {
-    expect(nbsp).to.equal('\u00A0');
+    expect(nbsp).to.equal('\u{A0}');
   });
 });

@@ -49,6 +49,8 @@ export default [
       'n/no-missing-import': 'off',
       'no-multi-spaces': 'off',
       'no-alert': 'off',
+      'unicorn/no-this-outside-of-class': 'off',
+      'unicorn/no-top-level-assignment-in-function': 'off',
       'jsdoc/require-jsdoc': 'off'
     }
   },

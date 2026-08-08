@@ -1,8 +1,6 @@
-/* eslint-env node */
-
 import jsdom from 'jsdom';
 
-import {jml} from './jml.js';
+import jml from './jml.js';
 
 export * from './jml.js';
 

@@ -1,2 +1,7 @@
+allowBuilds:
+  es5-ext: false
+  unrs-resolver: false
 ignoredBuiltDependencies:
   - unrs-resolver
+minimumReleaseAgeExclude:
+  - eslint@10.8.1

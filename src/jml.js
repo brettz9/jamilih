@@ -1,6 +1,7 @@
-/* eslint-disable sonarjs/updated-loop-counter -- Ok */
 /* eslint-disable unicorn/prefer-global-this -- Easier */
+/* eslint-disable unicorn/no-break-in-nested-loop -- Performance to avoid function? */
 /* eslint-disable sonarjs/no-control-regex -- Intentional */
+/* eslint-disable unicorn/no-top-level-assignment-in-function -- Only need module level */
 /*
 Possible todos:
 0. Add XSLT to JML-string stylesheet (or even vice versa)
@@ -208,8 +209,9 @@ function _createSafeReference (type, prefix, arg) {
   }
   const elContainer = doc.createElement('div');
   // Todo: No workaround for XML?
-  // // eslint-disable-next-line no-unsanitized/property
+  // eslint-disable-next-line no-unsanitized/property
   elContainer.innerHTML = '&' + prefix + arg + ';';
+  // eslint-disable-next-line unicorn/prefer-dom-node-html-methods -- No Safari support
   return doc.createTextNode(elContainer.innerHTML);
 }
 
@@ -243,13 +245,12 @@ function _isNullish (o) {
 *   "document"|"processing-instruction"|"non-container node"}
 */
 function _getType (item) {
-  const type = typeof item;
-
   // Appease TS
   if (typeof item === 'string' || typeof item === 'undefined') {
     return 'string';
   }
 
+  const type = typeof item;
   switch (type) {
   case 'object':
     if (item === null) {
@@ -291,6 +292,14 @@ function _fragReducer (frag, node) {
 }
 
 /**
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeReplacer (str) {
+  return str.replaceAll('$', '$$$$');
+}
+
+/**
 * @private
 * @static
 * @param {Object<string, string>} xmlnsObj
@@ -303,10 +312,10 @@ function _replaceDefiner (xmlnsObj) {
    */
   return function (...n) {
     const n0 = n[0];
-    let retStr = xmlnsObj[''] ? ' xmlns="' + xmlnsObj[''] + '"' : n0; // Preserve XHTML
+    let retStr = xmlnsObj[''] ? ' xmlns="' + escapeReplacer(xmlnsObj['']) + '"' : n0; // Preserve XHTML
     for (const [ns, xmlnsVal] of Object.entries(xmlnsObj)) {
       if (ns !== '') {
-        retStr += ' xmlns:' + ns + '="' + xmlnsVal + '"';
+        retStr += ' xmlns:' + ns + '="' + escapeReplacer(xmlnsVal) + '"';
       }
     }
     return retStr;
@@ -479,7 +488,6 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @typedef {((this: HTMLElement, event?: Event) => void)} HandlerAttributeValue
  */
 
-/* eslint-disable jsdoc/valid-types -- jsdoc-type-pratt-parser Bug */
 /**
  * @typedef {{
  *   [key: string]: HandlerAttributeValue
@@ -512,7 +520,6 @@ function _DOMfromJMLOrString (childNodeJML) {
  *   prototype: HTMLElement & {[key: string]: any}
  * }} DefineConstructor
  */
-/* eslint-enable jsdoc/valid-types -- https://github.com/jsdoc-type-pratt-parser/jsdoc-type-pratt-parser/issues/131 */
 
 /**
  * @typedef {(this: HTMLElement) => void} DefineUserConstructor
@@ -584,14 +591,12 @@ function _DOMfromJMLOrString (childNodeJML) {
  * }} JamilihShadowRootAttribute
  */
 
-/* eslint-disable jsdoc/valid-types -- jsdoc-type-pratt-parser Bug */
 /**
  * @typedef {{
  *   is?: string|null,
  *   $define?: DefineObject
  * }} DefineAttribute
  */
-/* eslint-enable jsdoc/valid-types -- jsdoc-type-pratt-parser Bug */
 
 /**
  * @typedef {{
@@ -778,12 +783,10 @@ function getMatchingPlugin (opts, pluginName) {
   });
 }
 
-/* eslint-disable jsdoc/valid-types -- pratt parser bug  */
 /**
  * @template T
  * @typedef {T[keyof T]} ValueOf
  */
-/* eslint-enable jsdoc/valid-types -- pratt parser bug  */
 
 /* eslint-disable jsdoc/valid-types -- pratt parser bug  */
 /**
@@ -832,7 +835,8 @@ const jml = function jml (...args) {
           /** @type {ElementExpando} */ (elem)[att] = attVal;
         }
         continue;
-      } else if (ATTR_DOM.has(att)) {
+      }
+      if (ATTR_DOM.has(att)) {
         attVal = checkPluginValue(elem, att, /** @type {string|JamilihArray} */ (attVal), opts);
         /** @type {ElementExpando} */ (elem)[att] = attVal;
         continue;
@@ -1083,15 +1087,15 @@ const jml = function jml (...args) {
         break;
       } case '$document': {
         // Todo: Conditionally create XML document
-        const docNode = doc.implementation.createHTMLDocument();
         if (!attVal) {
           throw new Error('Bad attribute value');
         }
+        const docNode = doc.implementation.createHTMLDocument();
         const jamlihDoc = /** @type {JamilihDocument} */ (attVal);
         if (jamlihDoc.childNodes) {
           // Remove any extra nodes created by createHTMLDocument().
           const j = jamlihDoc.childNodes.length;
-          while (docNode.childNodes[j]) {
+          while (Object.hasOwn(docNode.childNodes, j)) {
             const cn = docNode.childNodes[j];
             cn.remove();
             // `j` should stay the same as removing will cause node to be present
@@ -1114,7 +1118,7 @@ const jml = function jml (...args) {
             if (jamlihDoc.title) {
               docNode.title = jamlihDoc.title; // Appends after meta
             }
-            if (jamlihDoc.head && head) {
+            if (head && jamlihDoc.head) {
               // each child of `head` is:
               //  (JamilihArray|TextNodeString|HTMLElement|Comment|ProcessingInstruction|
               //  Text|DocumentFragment|JamilihProcessingInstruction|JamilihDocumentFragment)
@@ -1128,7 +1132,7 @@ const jml = function jml (...args) {
               jamlihDoc.head.forEach(_appendJML(head));
             }
           }
-          if (jamlihDoc.body && body) {
+          if (body && jamlihDoc.body) {
             jamlihDoc.body.forEach(_appendJMLOrText(body));
           }
         }
@@ -1162,7 +1166,7 @@ const jml = function jml (...args) {
         break;
       } case '$on': { // Events
         // Allow for no-op by defaulting to `{}`
-        // eslint-disable-next-line prefer-const -- Ok as mixed
+        // eslint-disable-next-line prefer-const, unicorn/no-unreadable-for-of-expression -- Ok as mixed
         for (let [p2, val] of Object.entries(/** @type {OnAttributeObject} */ (attVal) || {})) {
           if (typeof val === 'function') {
             val = [val, false];
@@ -1191,9 +1195,11 @@ const jml = function jml (...args) {
           const pastInitialProp = startProp !== '';
           Object.keys(atVal).forEach((key) => {
             const value = atVal[key];
-            prop = pastInitialProp
-              ? startProp + key.replaceAll(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase)
-              : startProp + key.replaceAll(hyphenForCamelCase, _upperCase);
+            prop = startProp + (pastInitialProp
+              // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- Function
+              ? key.replaceAll(hyphenForCamelCase, _upperCase).replace(/^([a-z])/u, _upperCase)
+              // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- Function
+              : key.replaceAll(hyphenForCamelCase, _upperCase));
             if (value === null || typeof value !== 'object') {
               if (!_isNullish(value)) {
                 elem.dataset[prop] = value;
@@ -1212,7 +1218,7 @@ const jml = function jml (...args) {
       // Don't remove this `if` block (for sake of no-innerHTML build)
       case 'innerHTML':
         if (!_isNullish(attVal)) {
-          // // eslint-disable-next-line no-unsanitized/property
+          // eslint-disable-next-line no-unsanitized/property
           elem.innerHTML = attVal;
         }
         break;
@@ -1255,6 +1261,7 @@ const jml = function jml (...args) {
                   elem.style.cssFloat = styleVal;
                   elem.style.styleFloat = styleVal; // Harmless though we could make conditional on older IE instead
                 } else {
+                  // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- Function
                   elem.style[p2.replaceAll(hyphenForCamelCase, _upperCase)] = styleVal;
                 }
               }
@@ -1405,7 +1412,7 @@ const jml = function jml (...args) {
           const procValues = [];
           for (const [p, procInstVal] of Object.entries(val)) {
             procValues.push(
-              p + '=' + '"' +
+              p + '="' +
               // https://www.w3.org/TR/xml-stylesheet/#NT-PseudoAttValue
               procInstVal.replaceAll('"', '&quot;') +
               '"'
@@ -1464,11 +1471,9 @@ const jml = function jml (...args) {
           /* c8 ignore next 4 */
           elem = doc.createElementNS
             // Should create separate file for this
-            /* eslint-disable object-shorthand -- Casting */
             ? /** @type {HTMLElement} */ (doc.createElementNS(NS_HTML, elStr, {is: /** @type {string} */ (is)}))
             /* c8 ignore next 1 */
             : doc.createElement(elStr, {is: /** @type {string} */ (is)});
-          /* eslint-enable object-shorthand -- Casting */
         } else /* c8 ignore next */ if (doc.createElementNS) {
           elem = doc.createElementNS(NS_HTML, elStr);
         /* c8 ignore next 3 */
@@ -1495,7 +1500,7 @@ const jml = function jml (...args) {
         const xmlnsObj = /** @type {XmlnsAttributeObject} */ (atts);
         const replacer = xmlnsObj.xmlns && typeof xmlnsObj.xmlns === 'object'
           ? _replaceDefiner(xmlnsObj.xmlns)
-          : ' xmlns="' + xmlnsObj.xmlns + '"';
+          : ' xmlns="' + escapeReplacer(xmlnsObj.xmlns) + '"';
         // try {
         // Also fix DOMParser to work with text/html
         elem = nodes[nodes.length - 1] =
@@ -1508,8 +1513,9 @@ const jml = function jml (...args) {
             ).XMLSerializer().serializeToString(elem).
             // Mozilla adds XHTML namespace
               replace(
-                ' xmlns="' + NS_HTML + '"',
+                ' xmlns="' + escapeReplacer(NS_HTML) + '"',
                 // Needed to cast here, despite either overload working
+                // eslint-disable-next-line unicorn/no-unsafe-string-replacement -- Escaped
                 /** @type {string} */ (replacer)
               ),
             'application/xml'
@@ -1716,12 +1722,14 @@ jml.toJML = function (nde, {
    * @returns {void}
    */
   function invalidStateError (msg) { // These are probably only necessary if working with text/html
-    if (reportInvalidState) {
-      // INVALID_STATE_ERR per section 9.3 XHTML 5: http://www.w3.org/TR/html5/the-xhtml-syntax.html
-      const e = new DOMException(msg, 'INVALID_STATE_ERR');
-      e.code = 11;
-      throw e;
+    if (!reportInvalidState) {
+      return;
     }
+
+    // INVALID_STATE_ERR per section 9.3 XHTML 5: https://www.w3.org/TR/html5/the-xhtml-syntax.html
+    const e = new DOMException(msg, 'INVALID_STATE_ERR');
+    e.code = 11;
+    throw e;
   }
 
   /**
@@ -1807,11 +1815,15 @@ jml.toJML = function (nde, {
 
     namespaces = {...namespaces};
 
-    const xmlChars = /^([\u0009\u000A\u000D\u0020-\uD7FF\uE000-\uFFFD]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
+    const xmlChars = /^([\u{9}\u{A}\u{D}\u{20}-\u{D7FF}\u{E000}-\u{FFFD}]|[\uD800-\uDBFF][\uDC00-\uDFFF])*$/u; // eslint-disable-line no-control-regex
+
+    // eslint-disable-next-line prefer-destructuring -- TS
+    const nodeValue = /** @type {Node} */ (nodeOrEntity).nodeValue;
     if (
       [2, 3, 4, 7, 8].includes(type) &&
-      /** @type {Node} */ (nodeOrEntity).nodeValue &&
-      !xmlChars.test(/** @type {Node} */ (nodeOrEntity).nodeValue)
+      // eslint-disable-next-line unicorn/prefer-simple-condition-first -- Safer
+      nodeValue &&
+      !xmlChars.test(nodeValue)
     ) {
       invalidStateError('Node has bad XML character value');
     }
@@ -1904,6 +1916,7 @@ jml.toJML = function (nde, {
       break;
     } case 4: { // CDATA
       const node = /** @type {CDATASection} */ (nodeOrEntity);
+      // eslint-disable-next-line unicorn/no-useless-concat -- Safer if pasting
       if (node.nodeValue?.includes(']]' + '>')) {
         invalidStateError('CDATA cannot end with closing ]]>');
       }
@@ -1971,7 +1984,7 @@ jml.toJML = function (nde, {
 
       // Can create directly by doc.implementation.createDocumentType
       const start = {$DOCTYPE: {name: /** @type {DocumentType} */ (node).name}};
-      const pubIdChar = /^(\u0020|\u000D|\u000A|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
+      const pubIdChar = /^(\u{20}|\u{D}|\u{A}|[a-zA-Z0-9]|[-'()+,./:=?;!*#@$_%])*$/u; // eslint-disable-line no-control-regex
       if (!pubIdChar.test(/** @type {DocumentType} */ (node).publicId)) {
         invalidStateError('A publicId must have valid characters.');
       }
@@ -2055,11 +2068,13 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
   } case 3: { // TEXT
     // Fallthrough
   // } case 4: { // CDATA
+    // eslint-disable-next-line prefer-destructuring -- TS
+    const nodeValue = /** @type {Text|CDATASection} */ (ret).nodeValue;
     /* c8 ignore next 3 */
-    if (!ret.nodeValue) {
+    if (!nodeValue) {
       throw new TypeError('Unexpected null Text node');
     }
-    return /** @type {Text|CDATASection} */ (ret).nodeValue;
+    return nodeValue;
   // case 5: // Entity Reference Node
   //  No 6: Entity Node
   //  No 12: Notation Node
@@ -2068,7 +2083,6 @@ jml.toHTML = function (...args) { // Todo: Replace this with version of jml() th
     return `<?${node.target} ${node.data}?>`;
   // } case 8: { // Comment
   //   return `<!--${ret.nodeValue}-->`;
-  // eslint-disable-next-line sonarjs/no-fallthrough
   } case 9: { // Document
     // Fallthrough
   } case 11: { // DOCUMENT FRAGMENT
@@ -2330,7 +2344,7 @@ if (doc && doc.body) {
   body = /** @type {HTMLBodyElement} */ (doc.body);
 }
 
-const nbsp = '\u00A0'; // Very commonly needed in templates
+const nbsp = '\u{A0}'; // Very commonly needed in templates
 
 export {jml, $, $$, nbsp, body, glue};
 

@@ -15,7 +15,7 @@
  *   it may be troublesome to bundle and not strongly needed)
  * @returns {string}
  */
-function generateUUID () { //  Adapted from original: public domain/MIT: http://stackoverflow.com/a/8809472/271577
+function generateUUID () { //  Adapted from original: public domain/MIT: https://stackoverflow.com/a/8809472/271577
   let d = Date.now() +
   // use high-precision timer if available
   /* c8 ignore next 4 */
