@@ -1,6 +1,9 @@
 /* eslint-disable unicorn/prefer-global-this -- Easier */
 
-import {jml, $, $$, nbsp, body, glue} from '../src/jml-jsdom.js';
+import {jml as jmlImport, $, $$, nbsp, body, glue} from '../src/jml-jsdom.js';
+
+/** @type {typeof import('../src/jml.js').jml} */
+const jml = jmlImport;
 
 const win = /** @type {unknown} */ jml.getWindow();
 

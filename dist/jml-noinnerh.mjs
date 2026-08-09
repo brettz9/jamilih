@@ -810,14 +810,62 @@ function getMatchingPlugin(opts, pluginName) {
  */
 
 /**
+ * @template {JamilihArray} T
+ * @typedef {Extract<Extract<T[number], {$custom?: {[key: string]: unknown}}>['$custom'], object>} RawCustomFromJamilihArray
+ */
+
+/* eslint-disable jsdoc/valid-types -- Advanced TS conditional/infer syntax in JSDoc */
+/**
+ * @template {JamilihArray} T
+ * @typedef {T extends [infer K, ...ArbitraryValue[]]
+ *   ? (K extends keyof HTMLElementTagNameMap
+ *     ? HTMLElementTagNameMap[K]
+ *     : HTMLElement)
+ *   : HTMLElement} ElementFromJamilihArray
+ */
+
+/**
+ * @template A
+ * @template {HTMLElement} E
+ * @typedef {A extends {$custom: infer C}
+ *   ? (C extends object
+ *     ? Omit<A, '$custom'> & {$custom?: C & ThisType<E & C>}
+ *     : A)
+ *   : A} WithCustomThis
+ */
+
+/**
+ * @template {JamilihArray} T
+ * @template {HTMLElement} E
+ * @typedef {{[K in keyof T]: WithCustomThis<T[K], E>}} JamilihArrayWithCustomThis
+ */
+/* eslint-enable jsdoc/valid-types */
+
+/**
+ * @template {JamilihArray} T
+ * @typedef {(
+ *   RawCustomFromJamilihArray<T> extends never
+ *     ? object
+ *     : RawCustomFromJamilihArray<T>
+ * )} CustomFromJamilihArray
+ */
+
+/**
+ * @template U
+ * @template W
+ * @typedef {U extends void ? (ExpandoHTMLElement & W) : (U & W)} ResolvedElement
+ */
+
+/**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
  * @template {JamilihArray} T
- * @template {T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? (HTMLElementTagNameMap[T[0]] & ExpandoHTMLElement) : void} U
- * @template {U extends void ? ExpandoHTMLElement : U} V
- * @param {T} args
- * @returns {U extends void ? JamilihReturn : U}
+ * @template {T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? HTMLElementTagNameMap[T[0]] : void} U
+ * @template {ElementFromJamilihArray<T>} E
+ * @template {CustomFromJamilihArray<T>} W
+ * @param {JamilihArrayWithCustomThis<T, E>} args
+ * @returns {U extends void ? JamilihReturn : ResolvedElement<U, W>}
  * The newly created (and possibly already appended)
  *   element or array of elements
  */
@@ -1058,8 +1106,8 @@ const jml = function jml(...args) {
             if (!_isHTMLElement(elem)) {
               throw new TypeError('Element expected for `$symbol`');
             }
-            const symbolElem = /** @type {V} */elem;
-            const [symbol, func] = /** @type {SymbolArray<V>} */attVal;
+            const symbolElem = /** @type {ResolvedElement<U, W>} */elem;
+            const [symbol, func] = /** @type {SymbolArray<ResolvedElement<U, W>>} */attVal;
             if (typeof func === 'function') {
               const funcBound = func.bind(symbolElem);
               if (typeof symbol === 'string') {
@@ -1181,10 +1229,10 @@ const jml = function jml(...args) {
         case '$on':
           {
             // Events
-            const onElem = /** @type {V} */elem;
+            const onElem = /** @type {ResolvedElement<U, W>} */elem;
             // Allow for no-op by defaulting to `{}`
             // eslint-disable-next-line prefer-const, unicorn/no-unreadable-for-of-expression -- Ok as mixed
-            for (let [p2, val] of Object.entries(/** @type {OnAttributeObject<V>} */attVal || {})) {
+            for (let [p2, val] of Object.entries(/** @type {OnAttributeObject<ResolvedElement<U, W>>} */attVal || {})) {
               if (typeof val === 'function') {
                 val = [val, false];
               }
@@ -1402,7 +1450,7 @@ const jml = function jml(...args) {
         // null always indicates a place-holder (only needed for last argument if want array returned)
         if (i === argc - 1) {
           // Casting needing unless changing `jml()` signature with overloads
-          return /** @type {UserArg} */nodes.length <= 1 ? nodes[0]
+          return /** @type {U extends void ? JamilihReturn : ResolvedElement<U, W>} */nodes.length <= 1 ? nodes[0]
           // eslint-disable-next-line unicorn/no-array-callback-reference
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
         }
@@ -1616,7 +1664,7 @@ const jml = function jml(...args) {
   }
 
   // Casting needing unless changing `jml()` signature with overloads
-  return /** @type {UserArg} */ret;
+  return /** @type {U extends void ? JamilihReturn : ResolvedElement<U, W>} */ret;
 };
 
 /**

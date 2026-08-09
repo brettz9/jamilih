@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.68.0
+
+- feat(types): tighten jml element inference for $custom/$on/$symbol and remove any leakage
+
 ## 0.67.0
 
 - feat(types): have HTML element type propagate to $symbol and $on handlers

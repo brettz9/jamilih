@@ -831,6 +831,7 @@ in templates, and to my personal sensibilities, more clear in goal #8
 ### High priority to-dos
 
 1. Export typed `$i` for `<input>`, etc. and imports which assume the element exists
+1. Type propagation for `$define` (e.g., setting `this` to the element with custom properties)
 1. Namespaced elements and attributes and XML options (esp. SVG), using an
     options mode
 1. Implement a method building JML by string rather than DOM but create

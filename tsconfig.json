@@ -15,6 +15,6 @@
     "outDir": "dist",
     "skipLibCheck": true
   },
-  "include": ["src/**/*.js", "test/**/*.js"],
+  "include": ["src/**/*.js", "test/**/*.js", "test-helpers/**/*.js"],
   "exclude": ["node_modules"]
 }

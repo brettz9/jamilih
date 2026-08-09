@@ -49,6 +49,7 @@ describe('Jamilih - jml', function () {
       '<input xmlns="http://www.w3.org/1999/xhtml" />',
       'Single element argument element'
     );
+
     xmlTesting.matchesXMLString(
       jml('input', null),
       '<input xmlns="http://www.w3.org/1999/xhtml" />',
@@ -1696,7 +1697,7 @@ describe('Jamilih - jml', function () {
     }
   });
   it('$custom properties', () => {
-    const mySelect = /** @type {HTMLSelectElement & {id: string, test: (arg1: string) => string, test2: (arg1: string) => string}} */ (jml('select', {
+    const mySelect = jml('select', {
       id: 'mySelect',
       $custom: {
         /**
@@ -1711,7 +1712,6 @@ describe('Jamilih - jml', function () {
          * @returns {string}
          */
         test (arg1) {
-          // @ts-expect-error -- this is the custom element at runtime, not the mixin literal
           return this.id + arg1;
         },
         /**
@@ -1722,7 +1722,12 @@ describe('Jamilih - jml', function () {
           return this.test(arg1);
         }
       }
-    }, body));
+    }, body);
+
+    // Type assertion by usage: should be inferred as `HTMLSelectElement`.
+    mySelect.selectedIndex = 0;
+    // @ts-expect-error `mySelect` should not allow arbitrary unknown properties.
+    JSON.stringify(mySelect.missingProp);
 
     xmlTesting.matches(
       mySelect.test('Arg1'),
@@ -1735,7 +1740,6 @@ describe('Jamilih - jml', function () {
       'Invoke `$custom`-attached object with regular method with argument and `this` (calling another regular object method)'
     );
     xmlTesting.matches(
-      // @ts-expect-error Should be ok
       mySelect[Symbol.for('testCustom')]('Arg1'),
       'mySelectArg1',
       'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
