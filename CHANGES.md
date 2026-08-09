@@ -1,5 +1,16 @@
 # CHANGES for jamilih
 
+## 0.66.0
+
+- feat: add runtime guard in $symbol path to throw TypeError when target is not an element
+- fix: have JamilihMap#set and JamilihWeakMap#set return self; allow template on SymbolObject type and glue function
+- fix(types): tighten return types
+- fix(types): enforce HTMLElement this for symbol handlers and type bound symbol retrieval
+- fix(types): add strict SymbolMethod typing so authored symbol callbacks require this as HTMLElement
+- fix(types): introduce BoundSymbolMethod and SymbolResult to model jml.sym return values as bound callables or symbol objects
+- test: update symbol tests to annotate retrieved handlers as bound methods
+- chore: keep TypeScript, lint, and test suite passing
+
 ## 0.65.0
 
 BREAKING CHANGE:

@@ -84,11 +84,13 @@ export type DefineConstructor = {
 export type DefineUserConstructor = (this: HTMLElement) => void;
 export type DefineObjectArray = [DefineConstructor | DefineUserConstructor | DefineMixin, DefineOptions?] | [DefineConstructor | DefineUserConstructor, DefineMixin?, DefineOptions?];
 export type DefineObject = DefineObjectArray | DefineConstructor | DefineMixin | DefineUserConstructor;
-export type SymbolObject = {
+export type SymbolObject<T = ArbitraryValue> = T & {
     elem?: HTMLElement;
-    [key: string]: unknown;
 };
-export type SymbolArray = [symbol | string, ((this: HTMLElement, ...args: UserArg[]) => UserArg) | SymbolObject];
+export type SymbolMethod = (this: HTMLElement, ...args: UserArg[]) => UserArg;
+export type BoundSymbolMethod = (...args: UserArg[]) => UserArg;
+export type SymbolArray = [symbol | string, SymbolMethod | SymbolObject];
+export type SymbolResult = BoundSymbolMethod | SymbolObject | ArbitraryValue;
 export type NullableAttributeValue = null | undefined;
 export type PluginValue = [string, object] | string | object;
 export type JamilihAttValue = (string | NullableAttributeValue | BooleanAttribute | JamilihArray | JamilihShadowRootObject | StringifiableNumber | JamilihDocumentType | JamilihDocument | XmlnsAttributeValue | OnAttributeObject | HandlerAttributeValue | DefineObject | SymbolArray | PluginReference | PluginValue);
@@ -176,7 +178,7 @@ export type JamilihOptions = {
     $map?: MapWithRoot | [Map<HTMLElement, UserArg> | WeakMap<HTMLElement, UserArg>, UserArg];
 };
 export type ValueOf<T> = T[keyof T];
-declare function jml<T extends JamilihArray>(...args: T): T extends [keyof HTMLElementTagNameMap, any?, any?, any?] ? HTMLElementTagNameMap[T[0]] : JamilihReturn;
+declare function jml<T extends JamilihArray>(...args: T): T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? HTMLElementTagNameMap[T[0]] : JamilihReturn;
 declare namespace jml {
     export { toJML };
     export { toJMLString };
@@ -189,9 +191,9 @@ declare namespace jml {
     export { JamilihWeakMap as WeakMap };
     export var weak: <V>(obj: V, args_0: string | HTMLElement | ShadowRoot, args_1?: JamilihArray[] | HTMLElement | ShadowRoot | JamilihAttributes | null | undefined, ...args: (JamilihArray[] | HTMLElement | ShadowRoot | JamilihAttributes | null)[]) => MapAndElementArray<V>;
     export var strong: <V>(obj: V, args_0: string | HTMLElement | ShadowRoot, args_1?: JamilihArray[] | HTMLElement | ShadowRoot | JamilihAttributes | null | undefined, ...args: (JamilihArray[] | HTMLElement | ShadowRoot | JamilihAttributes | null)[]) => MapAndElementArray<V>;
-    export var symbol: (element: string | HTMLElement, sym: symbol | string) => UserArg;
-    export var sym: (element: string | HTMLElement, sym: symbol | string) => UserArg;
-    export var _a: (element: string | HTMLElement, sym: symbol | string) => UserArg;
+    export var symbol: (element: string | HTMLElement, sym: symbol | string) => SymbolResult;
+    export var sym: (element: string | HTMLElement, sym: symbol | string) => SymbolResult;
+    export var _a: (element: string | HTMLElement, sym: symbol | string) => SymbolResult;
     export { _a as for };
     export var command: (elem: (string | HTMLElement) | null, symOrMap: symbol | string | Map<HTMLElement, MapCommand> | WeakMap<HTMLElement, MapCommand>, methodName: string | UserArg, ...args: UserArg[]) => StoredValue;
     export { setWindow };
@@ -344,9 +346,9 @@ declare class JamilihMap<V> extends Map {
     /**
      * @param {string|HTMLElement} element
      * @param {V} value
-     * @returns {UserArg}
+     * @returns {this}
      */
-    set(element: string | HTMLElement, value: V): UserArg;
+    set(element: string | HTMLElement, value: V): this;
     /**
      * @param {string|HTMLElement} element
      * @param {string} methodName
@@ -368,9 +370,9 @@ declare class JamilihWeakMap<V> extends WeakMap {
     /**
      * @param {?(string|object|symbol)} element
      * @param {V} value
-     * @returns {UserArg}
+     * @returns {this}
      */
-    set(element: (string | object | symbol) | null, value: V): UserArg;
+    set(element: (string | object | symbol) | null, value: V): this;
     /**
      * @param {string|HTMLElement} element
      * @param {string} methodName
@@ -396,11 +398,12 @@ export declare const setWindow: (wind: import('jsdom').DOMWindow | HTMLWindow | 
 export declare const getWindow: () => import('jsdom').DOMWindow | HTMLWindow | typeof globalThis;
 /**
  * Does not run Jamilih so can be further processed.
- * @param {UserArg[]} array
- * @param {UserArg} glu
- * @returns {UserArg[]}
+ * @template T
+ * @param {T[]} array
+ * @param {T} glu
+ * @returns {T[]}
  */
-declare function glue(array: UserArg[], glu: UserArg): UserArg[];
+declare function glue<T>(array: T[], glu: T): T[];
 /**
  * @type {HTMLBodyElement}
  */

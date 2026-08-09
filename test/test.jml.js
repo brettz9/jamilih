@@ -1024,6 +1024,11 @@ describe('Jamilih - jml', function () {
       id: 'symInput1',
       $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
         'publicForSym1',
+        /**
+         * @this {HTMLInputElement}
+         * @param {string} arg1
+         * @returns {void}
+         */
         function (arg1) {
           xmlTesting.matches(
             this.id + ' ' + arg1,
@@ -1039,9 +1044,12 @@ describe('Jamilih - jml', function () {
       $on: {
         click () {
           // Can supply element or selector to `jml.sym` utility
-          jml.sym(/** @type {HTMLInputElement} */ (this.previousElementSibling), 'publicForSym1')('arg1');
-          jml.sym(/** @type {HTMLInputElement} */ ($('#symInput2')), privateSym)('arg2');
-          jml.sym('#symInput3', privateSym).test('arg3');
+          /** @type {import('../src/jml.js').BoundSymbolMethod} */
+          (jml.sym(/** @type {HTMLInputElement} */ (this.previousElementSibling), 'publicForSym1'))('arg1');
+          /** @type {import('../src/jml.js').BoundSymbolMethod} */
+          (jml.sym(/** @type {HTMLInputElement} */ ($('#symInput2')), privateSym))('arg2');
+          /** @type {import('../src/jml.js').SymbolObject<{test: import('../src/jml.js').BoundSymbolMethod}>} */
+          (jml.sym('#symInput3', privateSym)).test('arg3');
 
           // Or add symbol directly:
           // @ts-expect-error Should be useable
@@ -1052,6 +1060,18 @@ describe('Jamilih - jml', function () {
       }
     }));
 
+    /**
+     * @callback TestMethod
+     * @param {string} arg1
+     * @returns {void}
+     */
+
+    /**
+     * @callback PrivateTestMethod
+     * @param {string} arg1
+     * @returns {void}
+     */
+
     jml('div', [
       symInput1,
       divSymbolTest,
@@ -1059,6 +1079,7 @@ describe('Jamilih - jml', function () {
         id: 'symInput2',
         $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
           privateSym,
+          /** @type {PrivateTestMethod} */
           (arg1) => {
             // No `this` available as using arrow function, but would give element
             xmlTesting.matches(
@@ -1074,7 +1095,7 @@ describe('Jamilih - jml', function () {
         $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
           privateSym,
           /**
-           * @type {import('../src/jml.js').SymbolObject}
+           * @type {import('../src/jml.js').SymbolObject<{localValue: number}>}
            */
           ({
             localValue: 5,
@@ -1102,14 +1123,11 @@ describe('Jamilih - jml', function () {
         $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
           'publicForSym1',
           /**
-           * @type {import('../src/jml.js').SymbolObject}
+           * @type {import('../src/jml.js').SymbolObject<{localValue: number}>}
            */
           ({
             localValue: 5,
-            /**
-             * @param {string} arg1
-             * @returns {void}
-             */
+            /** @type {TestMethod} */
             test (arg1) {
               xmlTesting.matches(
                 this.localValue,
@@ -1129,15 +1147,18 @@ describe('Jamilih - jml', function () {
 
     // @ts-expect-error Symbol should be ok
     $('#symInput1')[Symbol.for('publicForSym1')]('arg1');
-    jml.sym(/** @type {HTMLElement} */ ($('#symInput1')), 'publicForSym1')('arg1');
-    jml.sym('#symInput1', 'publicForSym1')('arg1');
+    /** @type {import('../src/jml.js').BoundSymbolMethod} */
+    (jml.sym(/** @type {HTMLElement} */ ($('#symInput1')), 'publicForSym1'))('arg1');
+    /** @type {import('../src/jml.js').BoundSymbolMethod} */
+    (jml.sym('#symInput1', 'publicForSym1'))('arg1');
 
     // @ts-expect-error Symbol should be ok
     $('#symInput2')[privateSym]('arg2');
 
     // @ts-expect-error Symbol should be ok
     $('#symInput3')[privateSym].test('arg3');
-    jml.sym('#symInput3', privateSym).test('arg3');
+    /** @type {import('../src/jml.js').SymbolObject<{test: import('../src/jml.js').BoundSymbolMethod}>} */
+    (jml.sym('#symInput3', privateSym)).test('arg3');
     /** @type {HTMLElement} */ ($('#divSymbolTest')).dispatchEvent(
       new window.Event('click')
     );
@@ -1145,7 +1166,8 @@ describe('Jamilih - jml', function () {
     jml.command('#symInput3', privateSym, 'test', 'arg3');
     // @ts-expect-error Symbol should be ok
     $('#symInput4')[publicSym].test('arg4');
-    jml.sym('#symInput4', publicSym).test('arg4');
+    /** @type {import('../src/jml.js').SymbolObject<{test: TestMethod}>} */
+    (jml.sym('#symInput4', publicSym)).test('arg4');
     jml.command('#symInput4', publicSym, 'test', 'arg4');
   });
   it('Shadow DOM', () => {

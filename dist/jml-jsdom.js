@@ -226,6 +226,14 @@ function _isNullish(o) {
   return o === null || o === undefined;
 }
 
+/**
+ * @param {unknown} item
+ * @returns {item is HTMLElement}
+ */
+function _isHTMLElement(item) {
+  return Boolean(item && typeof item === 'object' && 'nodeType' in item && item.nodeType === 1);
+}
+
 // Todo: Make as public utility, but also return types for undefined, boolean, number, document, etc.
 /**
 * @private
@@ -524,11 +532,24 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {{elem?: HTMLElement, [key: string]: unknown}} SymbolObject
+ * @template [T=ArbitraryValue]
+ * @typedef {T & {elem?: HTMLElement}} SymbolObject
  */
 
 /**
- * @typedef {[symbol|string, ((this: HTMLElement, ...args: UserArg[]) => UserArg)|SymbolObject]} SymbolArray
+ * @typedef {(this: HTMLElement, ...args: UserArg[]) => UserArg} SymbolMethod
+ */
+
+/**
+ * @typedef {(...args: UserArg[]) => UserArg} BoundSymbolMethod
+ */
+
+/**
+ * @typedef {[symbol|string, SymbolMethod|SymbolObject]} SymbolArray
+ */
+
+/**
+ * @typedef {BoundSymbolMethod|SymbolObject|ArbitraryValue} SymbolResult
  */
 
 /**
@@ -781,20 +802,18 @@ function getMatchingPlugin(opts, pluginName) {
  * @typedef {T[keyof T]} ValueOf
  */
 
-/* eslint-disable jsdoc/valid-types -- pratt parser bug  */
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
  * @template {JamilihArray} T
  * @param {T} args
- * @returns {T extends [keyof HTMLElementTagNameMap, any?, any?, any?]
+ * @returns {T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?]
  *   ? HTMLElementTagNameMap[T[0]] : JamilihReturn}
  * The newly created (and possibly already appended)
  *   element or array of elements
  */
 const jml = function jml(...args) {
-  /* eslint-enable jsdoc/valid-types -- pratt parser bug  */
   if (!win) {
     throw new Error('No window object');
   }
@@ -1028,9 +1047,12 @@ const jml = function jml(...args) {
           }
         case '$symbol':
           {
+            if (!_isHTMLElement(elem)) {
+              throw new TypeError('Element expected for `$symbol`');
+            }
             const [symbol, func] = /** @type {SymbolArray} */attVal;
             if (typeof func === 'function') {
-              const funcBound = func.bind(/** @type {HTMLElement} */elem);
+              const funcBound = func.bind(elem);
               if (typeof symbol === 'string') {
                 // @ts-expect-error
                 elem[Symbol.for(symbol)] = funcBound;
@@ -1040,7 +1062,7 @@ const jml = function jml(...args) {
               }
             } else {
               const obj = func;
-              obj.elem = /** @type {HTMLElement} */elem;
+              obj.elem = elem;
               if (typeof symbol === 'string') {
                 // @ts-expect-error
                 elem[Symbol.for(symbol)] = obj;
@@ -2184,11 +2206,12 @@ class JamilihMap extends Map {
   /**
    * @param {string|HTMLElement} element
    * @param {V} value
-   * @returns {UserArg}
+   * @returns {this}
    */
   set(element, value) {
     const elem = typeof element === 'string' ? $(element) : element;
-    return super.set.call(this, elem, value);
+    super.set.call(this, elem, value);
+    return this;
   }
   /**
    * @param {string|HTMLElement} element
@@ -2221,14 +2244,15 @@ class JamilihWeakMap extends WeakMap {
   /**
    * @param {?(string|object|symbol)} element
    * @param {V} value
-   * @returns {UserArg}
+   * @returns {this}
    */
   set(element, value) {
     const elem = typeof element === 'string' ? $(element) : element;
     if (!elem) {
       throw new Error("Can't find the element");
     }
-    return super.set.call(this, /** @type {object} */elem, value);
+    super.set.call(this, /** @type {object} */elem, value);
+    return this;
   }
   /**
    * @param {string|HTMLElement} element
@@ -2283,7 +2307,7 @@ jml.strong = function (obj, ...args) {
 /**
  * @param {string|HTMLElement} element If a string, will be interpreted as a selector
  * @param {symbol|string} sym If a string, will be used with `Symbol.for`
- * @returns {UserArg} The value associated with the symbol
+ * @returns {SymbolResult} The value associated with the symbol
  */
 jml.symbol = jml.sym = jml.for = function (element, sym) {
   const elem = typeof element === 'string' ? $(element) : element;
@@ -2315,7 +2339,7 @@ jml.command = function (elem, symOrMap, methodName, ...args) {
     if (typeof func === 'function') {
       return func(methodName, ...args); // Already has `this` bound to `elem`
     }
-    return func[methodName](...args);
+    return /** @type {UserArg} */func[methodName](...args);
   }
   func = /** @type {Map<HTMLElement, MapCommand>|WeakMap<HTMLElement, MapCommand>} */symOrMap.get(elem);
   if (!func) {
@@ -2357,15 +2381,16 @@ jml.getWindow = getWindow;
 
 /**
  * Does not run Jamilih so can be further processed.
- * @param {UserArg[]} array
- * @param {UserArg} glu
- * @returns {UserArg[]}
+ * @template T
+ * @param {T[]} array
+ * @param {T} glu
+ * @returns {T[]}
  */
 function glue(array, glu) {
   return [...array].reduce((arr, item) => {
     arr.push(item, glu);
     return arr;
-  }, []).slice(0, -1);
+  }, /** @type {T[]} */[]).slice(0, -1);
 }
 
 /**
