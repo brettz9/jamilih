@@ -247,12 +247,12 @@ describe('Jamilih extras', function () {
     );
   });
   it('$', function () {
-    /** @type {HTMLBodyElement} */ (body).querySelector('#extraHolder')?.append(jml('br'), jml('br'));
+    body.querySelector('#extraHolder')?.append(jml('br'), jml('br'));
     const br = $('br');
     expect(br?.localName).to.equal('br');
   });
   it('$$', function () {
-    /** @type {HTMLBodyElement} */ (body).querySelector('#extraHolder')?.append(jml('br'), jml('br'));
+    body.querySelector('#extraHolder')?.append(jml('br'), jml('br'));
     const brs = $$('br');
     expect(brs).to.have.lengthOf(2);
   });

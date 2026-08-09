@@ -105,21 +105,21 @@ describe('Jamilih - jml', function () {
       }),
       '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
     );
-    let input = /** @type {HTMLInputElement} */ (jml('input', {
+    let input = jml('input', {
       checked: true
-    }));
+    });
     expect(input.checked).to.be.true;
-    input = /** @type {HTMLInputElement} */ (jml('input', {
+    input = jml('input', {
       readonly: true
-    }));
+    });
     expect(input.readOnly).to.be.true;
-    input = /** @type {HTMLInputElement} */ (jml('input', {
+    input = jml('input', {
       readOnly: true
-    }));
+    });
     expect(input.readOnly).to.be.true;
-    const option = /** @type {HTMLOptionElement} */ (jml('option', {
+    const option = jml('option', {
       selected: true
-    }));
+    });
     expect(option.selected).to.be.true;
     const custom = /** @type {HTMLElement} */ (jml('custom', {
       for: 'blah'
@@ -128,27 +128,27 @@ describe('Jamilih - jml', function () {
   });
 
   it('DOM properties', function () {
-    const a = /** @type {HTMLAnchorElement} */ (jml('a', {
+    const a = jml('a', {
       onclick () {
         // eslint-disable-next-line no-alert
         alert('boo!');
       }
     }, [
       'Test'
-    ]));
+    ]);
     expect(a.onclick).to.be.a('function');
   });
 
   it('test nullish properties', function () {
-    let option = /** @type {HTMLOptionElement} */ (jml('option', {
+    let option = jml('option', {
       title: 'Hello'
-    }));
+    });
     expect(option.title).to.equal('Hello');
 
-    option = /** @type {HTMLOptionElement} */ (jml('option'));
+    option = jml('option');
     expect(option.title).to.equal('');
 
-    option = /** @type {HTMLOptionElement} */ (jml('option', {title: null}));
+    option = jml('option', {title: null});
     expect(option.title).to.equal('');
 
     xmlTesting.matchesXMLString(
@@ -158,26 +158,25 @@ describe('Jamilih - jml', function () {
       '<div xmlns="http://www.w3.org/1999/xhtml"></div>'
     );
 
-    let div = /** @type {HTMLDivElement} */ (jml('div', {style: 'abc'}));
+    let div = jml('div', {style: 'abc'});
     expect(div.getAttribute('style')).to.equal('abc');
-    div = /** @type {HTMLDivElement} */ (jml('div'));
+    div = jml('div');
     expect(div.getAttribute('style')).to.be.null;
-    div = /** @type {HTMLDivElement} */ (
+    div =
       jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({
         style: undefined
-      }))
-    );
+      }));
     expect(div.getAttribute('style')).to.be.null;
 
-    div = /** @type {HTMLDivElement} */ (jml('div'));
+    div = jml('div');
     expect(div.style.color).to.equal('');
-    div = /** @type {HTMLDivElement} */ (jml('div', {style: {
+    div = jml('div', {style: {
       color: 'red'
-    }}));
+    }});
     expect(div.style.color).to.equal('red');
-    div = /** @type {HTMLDivElement} */ (jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({style: {
+    div = jml('div', /** @type {import('../src/jml.js').JamilihAttributes} */ ({style: {
       color: null
-    }})));
+    }}));
     expect(div.style.color).to.equal('');
   });
 
@@ -731,18 +730,18 @@ describe('Jamilih - jml', function () {
 
   it('Event listeners', () => {
     let str;
-    const input = /** @type {HTMLInputElement} */ (jml('input', {
+    const input = jml('input', {
       type: 'button',
       style: 'position:absolute; left: -1000px;',
       $on: {click: [function () {
         str = 'worked1';
       }, true]}
-    }, body));
+    }, body);
     input.click(); // IE won't activate unless the above element is appended to the DOM
 
     xmlTesting.matches(str, 'worked1', 'Single empty element with attributes and triggered click listener added to body');
 
-    const input2 = /** @type {HTMLInputElement} */ (jml('input', {
+    const input2 = jml('input', {
       style: 'position:absolute; left: -1000px;',
       $on: {
         click () {
@@ -752,7 +751,7 @@ describe('Jamilih - jml', function () {
           str = 'worked2';
         }, true]
       }
-    }, body)); // For focus (or select) event to work, we need to append to the document
+    }, body); // For focus (or select) event to work, we need to append to the document
 
     const ev = new window.Event('change');
     input2.dispatchEvent(ev);
@@ -1020,9 +1019,9 @@ describe('Jamilih - jml', function () {
     const publicSym = Symbol.for('publicForSym1');
     const privateSym = Symbol('Test symbol');
 
-    const symInput1 = /** @type {HTMLInputElement} */ (jml('input', {
+    const symInput1 = jml('input', {
       id: 'symInput1',
-      $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+      $symbol: [
         'publicForSym1',
         /**
          * @param {string} arg1
@@ -1035,10 +1034,10 @@ describe('Jamilih - jml', function () {
             'Public symbol-attached function with `this` and argument'
           );
         }
-      ])
-    }));
+      ]
+    });
 
-    const divSymbolTest = /** @type {HTMLInputElement} */ (jml('div', {
+    const divSymbolTest = jml('div', {
       id: 'divSymbolTest',
       $on: {
         click () {
@@ -1057,7 +1056,7 @@ describe('Jamilih - jml', function () {
           $('#symInput2')[privateSym]('arg2');
         }
       }
-    }));
+    });
 
     /**
      * @callback TestMethod
@@ -1076,7 +1075,7 @@ describe('Jamilih - jml', function () {
       divSymbolTest,
       ['input', {
         id: 'symInput2',
-        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+        $symbol: [
           privateSym,
           /** @type {PrivateTestMethod} */
           (arg1) => {
@@ -1087,11 +1086,11 @@ describe('Jamilih - jml', function () {
               'Private symbol-attached arrow function with argument'
             );
           }
-        ])
+        ]
       }],
       ['input', {
         id: 'symInput3',
-        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+        $symbol: [
           privateSym,
           /**
            * @type {import('../src/jml.js').SymbolObject<{localValue: number}>}
@@ -1115,11 +1114,11 @@ describe('Jamilih - jml', function () {
               );
             }
           })
-        ])
+        ]
       }],
       ['input', {
         id: 'symInput4',
-        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+        $symbol: [
           'publicForSym1',
           /**
            * @type {import('../src/jml.js').SymbolObject<{localValue: number}>}
@@ -1140,7 +1139,7 @@ describe('Jamilih - jml', function () {
               );
             }
           })
-        ])
+        ]
       }]
     ], body);
 
@@ -1171,12 +1170,12 @@ describe('Jamilih - jml', function () {
 
     assert.throws(() => {
       jml('', {
-        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+        $symbol: [
           'publicForSym1',
           function () {
             //
           }
-        ])
+        ]
       });
     }, TypeError, 'Element expected for `$symbol`');
   });
@@ -1231,7 +1230,7 @@ describe('Jamilih - jml', function () {
       }, null, 'Adding Shadow DOM (via `open`/no-attribute `template`) does not throw');
 
       assert.doesNotThrow(function () {
-        const template = /** @type {HTMLTemplateElement} */ (jml('template', [
+        const template = jml('template', [
           ['style', [`
             :host {color: red;}
             ::slotted(p) {color: blue;}
@@ -1239,7 +1238,7 @@ describe('Jamilih - jml', function () {
           ['slot', {name: 'h'}, ['NEED NAMED SLOT']],
           ['h2', ['Heading level 2']],
           ['slot', ['DEFAULT CONTENT HERE']]
-        ]));
+        ]);
         jml('section', {
           id: 'myElem',
           $shadow: {
