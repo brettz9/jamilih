@@ -5,6 +5,9 @@ export type ArbitraryValue = unknown;
 export type StoredValue = unknown;
 export type UserArg = any;
 export type ElementExpando = any;
+export type ExpandoHTMLElement = HTMLElement & {
+    [key: string]: ElementExpando;
+};
 export type Integer = number;
 export type PluginSettings = {
     element: Document | HTMLElement | DocumentFragment;
@@ -51,14 +54,14 @@ export type DatasetAttributeObject = {
 export type StyleAttributeValue = string | undefined | {
     [key: string]: string | null;
 };
-export type EventHandler = (this: HTMLElement, event: Event & {
-    target: HTMLElement;
+export type EventHandler<T extends HTMLElement = HTMLElement> = (this: T, event: Event & {
+    target: T;
 }) => void;
-export type OnAttributeObject = {
-    [key: string]: EventHandler | [EventHandler, boolean];
+export type OnAttributeObject<T extends HTMLElement = HTMLElement> = {
+    [key: string]: EventHandler<T> | [EventHandler<T>, boolean];
 };
-export type OnAttribute = {
-    $on?: OnAttributeObject | null;
+export type OnAttribute<T extends HTMLElement = HTMLElement> = {
+    $on?: OnAttributeObject<T> | null;
 };
 export type BooleanAttribute = boolean;
 export type HandlerAttributeValue = ((this: HTMLElement, event?: Event) => void);
@@ -84,12 +87,12 @@ export type DefineConstructor = {
 export type DefineUserConstructor = (this: HTMLElement) => void;
 export type DefineObjectArray = [DefineConstructor | DefineUserConstructor | DefineMixin, DefineOptions?] | [DefineConstructor | DefineUserConstructor, DefineMixin?, DefineOptions?];
 export type DefineObject = DefineObjectArray | DefineConstructor | DefineMixin | DefineUserConstructor;
-export type SymbolObject<T = ArbitraryValue> = T & {
-    elem?: HTMLElement;
+export type SymbolObject<T = ArbitraryValue, U extends HTMLElement = HTMLElement> = T & {
+    elem?: U;
 };
-export type SymbolMethod = (this: HTMLElement, ...args: UserArg[]) => UserArg;
+export type SymbolMethod<T extends HTMLElement = HTMLElement> = (this: T, ...args: UserArg[]) => UserArg;
 export type BoundSymbolMethod = (...args: UserArg[]) => UserArg;
-export type SymbolArray = [symbol | string, SymbolMethod | SymbolObject];
+export type SymbolArray<T extends HTMLElement = HTMLElement> = [symbol | string, SymbolMethod<T> | SymbolObject<ArbitraryValue, T>];
 export type SymbolResult = BoundSymbolMethod | SymbolObject | ArbitraryValue;
 export type NullableAttributeValue = null | undefined;
 export type PluginValue = [string, object] | string | object;
@@ -178,7 +181,7 @@ export type JamilihOptions = {
     $map?: MapWithRoot | [Map<HTMLElement, UserArg> | WeakMap<HTMLElement, UserArg>, UserArg];
 };
 export type ValueOf<T> = T[keyof T];
-declare function jml<T extends JamilihArray>(...args: T): T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? HTMLElementTagNameMap[T[0]] : JamilihReturn;
+declare function jml<T extends JamilihArray, U extends T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? (HTMLElementTagNameMap[T[0]] & ExpandoHTMLElement) : void, V extends U extends void ? ExpandoHTMLElement : U>(...args: T): U extends void ? JamilihReturn : U;
 declare namespace jml {
     export { toJML };
     export { toJMLString };

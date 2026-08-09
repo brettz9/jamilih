@@ -49,6 +49,10 @@ Other Todos:
 /* eslint-enable jsdoc/reject-any-type */
 
 /**
+ * @typedef {HTMLElement & {[key: string]: ElementExpando}} ExpandoHTMLElement
+ */
+
+/**
  * @typedef {number} Integer
  */
 
@@ -170,9 +174,10 @@ function _appendNode(parent, child) {
 /**
  * Attach event in a cross-browser fashion.
  * @static
- * @param {HTMLElement} el DOM element to which to attach the event
+ * @template {HTMLElement} T
+ * @param {T} el DOM element to which to attach the event
  * @param {string} type The DOM event (without 'on') to attach to the element
- * @param {(evt: Event & {target: HTMLElement}) => void} handler The event handler to attach to the element
+ * @param {(evt: Event & {target: T}) => void} handler The event handler to attach to the element
  * @param {boolean} [capturing] Whether or not the event should be
  *   capturing (W3C-browsers only); default is false; NOT IN USE
  * @returns {void}
@@ -463,18 +468,21 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {(this: HTMLElement, event: Event & {target: HTMLElement}) => void} EventHandler
+ * @template {HTMLElement} [T=HTMLElement]
+ * @typedef {(this: T, event: Event & {target: T}) => void} EventHandler
  */
 
 /**
+ * @template {HTMLElement} [T=HTMLElement]
  * @typedef {{
- *   [key: string]: EventHandler|[EventHandler, boolean]
+ *   [key: string]: EventHandler<T>|[EventHandler<T>, boolean]
  * }} OnAttributeObject
  */
 
 /**
+ * @template {HTMLElement} [T=HTMLElement]
  * @typedef {{
- *   $on?: OnAttributeObject|null
+ *   $on?: OnAttributeObject<T>|null
  * }} OnAttribute
  */
 
@@ -533,11 +541,13 @@ function _DOMfromJMLOrString (childNodeJML) {
 
 /**
  * @template [T=ArbitraryValue]
- * @typedef {T & {elem?: HTMLElement}} SymbolObject
+ * @template {HTMLElement} [U=HTMLElement]
+ * @typedef {T & {elem?: U}} SymbolObject
  */
 
 /**
- * @typedef {(this: HTMLElement, ...args: UserArg[]) => UserArg} SymbolMethod
+ * @template {HTMLElement} [T=HTMLElement]
+ * @typedef {(this: T, ...args: UserArg[]) => UserArg} SymbolMethod
  */
 
 /**
@@ -545,7 +555,8 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {[symbol|string, SymbolMethod|SymbolObject]} SymbolArray
+ * @template {HTMLElement} [T=HTMLElement]
+ * @typedef {[symbol|string, SymbolMethod<T>|SymbolObject<ArbitraryValue, T>]} SymbolArray
  */
 
 /**
@@ -807,9 +818,10 @@ function getMatchingPlugin(opts, pluginName) {
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
  * @template {JamilihArray} T
+ * @template {T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? (HTMLElementTagNameMap[T[0]] & ExpandoHTMLElement) : void} U
+ * @template {U extends void ? ExpandoHTMLElement : U} V
  * @param {T} args
- * @returns {T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?]
- *   ? HTMLElementTagNameMap[T[0]] : JamilihReturn}
+ * @returns {U extends void ? JamilihReturn : U}
  * The newly created (and possibly already appended)
  *   element or array of elements
  */
@@ -1050,9 +1062,10 @@ const jml = function jml(...args) {
             if (!_isHTMLElement(elem)) {
               throw new TypeError('Element expected for `$symbol`');
             }
-            const [symbol, func] = /** @type {SymbolArray} */attVal;
+            const symbolElem = /** @type {V} */elem;
+            const [symbol, func] = /** @type {SymbolArray<V>} */attVal;
             if (typeof func === 'function') {
-              const funcBound = func.bind(elem);
+              const funcBound = func.bind(symbolElem);
               if (typeof symbol === 'string') {
                 // @ts-expect-error
                 elem[Symbol.for(symbol)] = funcBound;
@@ -1062,7 +1075,7 @@ const jml = function jml(...args) {
               }
             } else {
               const obj = func;
-              obj.elem = elem;
+              obj.elem = symbolElem;
               if (typeof symbol === 'string') {
                 // @ts-expect-error
                 elem[Symbol.for(symbol)] = obj;
@@ -1172,16 +1185,17 @@ const jml = function jml(...args) {
         case '$on':
           {
             // Events
+            const onElem = /** @type {V} */elem;
             // Allow for no-op by defaulting to `{}`
             // eslint-disable-next-line prefer-const, unicorn/no-unreadable-for-of-expression -- Ok as mixed
-            for (let [p2, val] of Object.entries(/** @type {OnAttributeObject} */attVal || {})) {
+            for (let [p2, val] of Object.entries(/** @type {OnAttributeObject<V>} */attVal || {})) {
               if (typeof val === 'function') {
                 val = [val, false];
               }
               if (typeof val[0] !== 'function') {
                 throw new TypeError(`Expect a function for \`$on\`; args: ${JSON.stringify(args)}`);
               }
-              _addEvent(/** @type {HTMLElement} */elem, p2, val[0], val[1]); // element, event name, handler, capturing
+              _addEvent(onElem, p2, val[0], val[1]); // element, event name, handler, capturing
             }
             break;
           }
