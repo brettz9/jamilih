@@ -1025,7 +1025,6 @@ describe('Jamilih - jml', function () {
       $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
         'publicForSym1',
         /**
-         * @this {HTMLInputElement}
          * @param {string} arg1
          * @returns {void}
          */
@@ -1169,6 +1168,17 @@ describe('Jamilih - jml', function () {
     /** @type {import('../src/jml.js').SymbolObject<{test: TestMethod}>} */
     (jml.sym('#symInput4', publicSym)).test('arg4');
     jml.command('#symInput4', publicSym, 'test', 'arg4');
+
+    assert.throws(() => {
+      jml('', {
+        $symbol: /** @type {import('../src/jml.js').SymbolArray} */ ([
+          'publicForSym1',
+          function () {
+            //
+          }
+        ])
+      });
+    }, TypeError, 'Element expected for `$symbol`');
   });
   it('Shadow DOM', () => {
     if (!body.attachShadow) {
