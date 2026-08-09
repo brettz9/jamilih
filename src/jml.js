@@ -194,9 +194,10 @@ function _appendNode (parent, child) {
 /**
  * Attach event in a cross-browser fashion.
  * @static
- * @param {HTMLElement} el DOM element to which to attach the event
+ * @template {HTMLElement} T
+ * @param {T} el DOM element to which to attach the event
  * @param {string} type The DOM event (without 'on') to attach to the element
- * @param {(evt: Event & {target: HTMLElement}) => void} handler The event handler to attach to the element
+ * @param {(evt: Event & {target: T}) => void} handler The event handler to attach to the element
  * @param {boolean} [capturing] Whether or not the event should be
  *   capturing (W3C-browsers only); default is false; NOT IN USE
  * @returns {void}
@@ -495,18 +496,21 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {(this: HTMLElement, event: Event & {target: HTMLElement}) => void} EventHandler
+ * @template {HTMLElement} [T=HTMLElement]
+ * @typedef {(this: T, event: Event & {target: T}) => void} EventHandler
  */
 
 /**
+ * @template {HTMLElement} [T=HTMLElement]
  * @typedef {{
- *   [key: string]: EventHandler|[EventHandler, boolean]
+ *   [key: string]: EventHandler<T>|[EventHandler<T>, boolean]
  * }} OnAttributeObject
  */
 
 /**
+ * @template {HTMLElement} [T=HTMLElement]
  * @typedef {{
- *   $on?: OnAttributeObject|null
+ *   $on?: OnAttributeObject<T>|null
  * }} OnAttribute
  */
 
@@ -1210,16 +1214,17 @@ const jml = function jml (...args) {
         nodes[nodes.length] = node;
         break;
       } case '$on': { // Events
+        const onElem = /** @type {V} */ (elem);
         // Allow for no-op by defaulting to `{}`
         // eslint-disable-next-line prefer-const, unicorn/no-unreadable-for-of-expression -- Ok as mixed
-        for (let [p2, val] of Object.entries(/** @type {OnAttributeObject} */ (attVal) || {})) {
+        for (let [p2, val] of Object.entries(/** @type {OnAttributeObject<V>} */ (attVal) || {})) {
           if (typeof val === 'function') {
             val = [val, false];
           }
           if (typeof val[0] !== 'function') {
             throw new TypeError(`Expect a function for \`$on\`; args: ${JSON.stringify(args)}`);
           }
-          _addEvent(/** @type {HTMLElement} */ (elem), p2, val[0], val[1]); // element, event name, handler, capturing
+          _addEvent(onElem, p2, val[0], val[1]); // element, event name, handler, capturing
         }
         break;
       } case 'className': case 'class':

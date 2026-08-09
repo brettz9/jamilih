@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.67.0
+
+- feat(types): have HTML element type propagate to $symbol and $on handlers
+
 ## 0.66.0
 
 - feat: add runtime guard in $symbol path to throw TypeError when target is not an element
