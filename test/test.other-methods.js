@@ -197,7 +197,7 @@ describe('Jamilih - Other Methods', function () {
             myMap.invoke(this, 'test', 'arg1');
           }
         }}]
-      ], /** @type {HTMLBodyElement} */ (body));
+      ], body);
       xmlTesting.matches(
         myMap.invoke(elem, 'myMethod', 'external test'),
         'external test localValue 100',
@@ -242,9 +242,7 @@ describe('Jamilih extras', function () {
     if (div) {
       div.remove();
     }
-    div = /** @type {HTMLDivElement} */ (
-      jml('div', {id: 'extraHolder'}, /** @type {HTMLBodyElement} */ (body))
-    );
+    div = jml('div', {id: 'extraHolder'}, body);
   });
   it('$', function () {
     body.querySelector('#extraHolder')?.append(jml('br'), jml('br'));

@@ -1,5 +1,10 @@
 # CHANGES for jamilih
 
+## 0.68.1
+
+- fix(types): accept mapped array-form children without losing outer element or $custom inference
+- fix(types): infer unknown string tag names as HTMLElement
+
 ## 0.68.0
 
 - feat(types): tighten jml element inference for $custom/$on/$symbol and remove any leakage

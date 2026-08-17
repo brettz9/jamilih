@@ -33,8 +33,8 @@ declare const $: (sel: string) => HTMLElement | null;
 declare const $$: (sel: string) => HTMLElement[];
 export type ChildrenToJMLCallback = (childNodeJML: JamilihArray | JamilihChildType | string, i: Integer) => void;
 export type JamilihFirstArg = JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode | JamilihOptions | ElementName | HTMLElement | JamilihDocumentFragment;
-export type JamilihAppender = (childJML: JamilihArray | JamilihFirstArg | Node | TextNodeString) => void;
-export type appender = (childJML: JamilihArray | JamilihFirstArg | Node | TextNodeString) => void;
+export type JamilihAppender = (childJML: JamilihArray | JamilihArrayLike | JamilihFirstArg | Node | TextNodeString) => void;
+export type appender = (childJML: JamilihArray | JamilihArrayLike | JamilihFirstArg | Node | TextNodeString) => void;
 export type JamilihReturn = HTMLElement | DocumentFragment | Comment | Attr | Text | Document | DocumentType | ProcessingInstruction | CDATASection;
 export type TemplateJamilihArray = [(JamilihAttributes | JamilihArray | JamilihArray[] | HTMLElement), ...(JamilihArray | JamilihArray[] | HTMLElement)[]];
 export type ShadowRootJamilihArrayContainer = (JamilihArray | HTMLElement)[];
@@ -157,8 +157,9 @@ export type TextNodeString = string | number;
 export type PluginReference = {
     [key: string]: string;
 };
-export type JamilihChildren = (JamilihArray | TextNodeString | HTMLElement | Comment | ProcessingInstruction | Text | DocumentFragment | JamilihProcessingInstruction | JamilihDocumentFragment | PluginReference)[];
 export type JamilihFirstArgument = Document | ElementName | HTMLElement | DocumentFragment | JamilihDocumentFragment | JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode;
+export type JamilihArrayLike = (JamilihFirstArg | JamilihAttributes | JamilihArrayLike | TextNodeString | ShadowRoot | null)[];
+export type JamilihChildren = (JamilihArray | JamilihArrayLike | TextNodeString | HTMLElement | Comment | ProcessingInstruction | Text | DocumentFragment | JamilihProcessingInstruction | JamilihDocumentFragment | PluginReference)[];
 export type JamilihArray = [
     JamilihOptions | JamilihFirstArgument,
     (JamilihFirstArgument | JamilihAttributes | JamilihChildren | HTMLElement | ShadowRoot | null)?,
@@ -197,7 +198,7 @@ export type JamilihArrayWithCustomThis<T extends JamilihArray, E extends HTMLEle
 };
 export type CustomFromJamilihArray<T extends JamilihArray> = (RawCustomFromJamilihArray<T> extends never ? object : RawCustomFromJamilihArray<T>);
 export type ResolvedElement<U, W> = U extends void ? (ExpandoHTMLElement & W) : (U & W);
-declare function jml<T extends JamilihArray, U extends T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? HTMLElementTagNameMap[T[0]] : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
+declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
 declare namespace jml {
     export { toJML };
     export { toJMLString };

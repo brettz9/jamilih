@@ -386,7 +386,7 @@ function _childrenToJML (node) {
 
 /**
 * @callback JamilihAppender
-* @param {JamilihArray|JamilihFirstArg|Node|TextNodeString} childJML
+* @param {JamilihArray|JamilihArrayLike|JamilihFirstArg|Node|TextNodeString} childJML
 * @returns {void}
 */
 
@@ -402,7 +402,7 @@ function _appendJML (node) {
       throw new TypeError('Unexpected text string/number in the head');
     }
     if (Array.isArray(childJML)) {
-      node.append(jml(...childJML));
+      node.append(jml(...(/** @type {JamilihArray} */ (childJML))));
     } else if (typeof childJML === 'object' && 'nodeType' in childJML) {
       node.append(childJML);
     } else {
@@ -413,7 +413,7 @@ function _appendJML (node) {
 
 /**
 * @callback appender
-* @param {JamilihArray|JamilihFirstArg|Node|TextNodeString} childJML
+* @param {JamilihArray|JamilihArrayLike|JamilihFirstArg|Node|TextNodeString} childJML
 * @returns {void}
 */
 
@@ -428,7 +428,7 @@ function _appendJMLOrText (node) {
     if (typeof childJML === 'string' || typeof childJML === 'number') {
       node.append(String(childJML));
     } else if (Array.isArray(childJML)) {
-      node.append(jml(...childJML));
+      node.append(jml(...(/** @type {JamilihArray} */ (childJML))));
     } else if (typeof childJML === 'object' && 'nodeType' in childJML) {
       node.append(childJML);
     } else {
@@ -723,21 +723,30 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {(
- *   JamilihArray|TextNodeString|HTMLElement|Comment|ProcessingInstruction|
- *   Text|DocumentFragment|JamilihProcessingInstruction|JamilihDocumentFragment|
- *   PluginReference
- * )[]} JamilihChildren
- */
-
-// Todo: DocumentType, Comment, ProcessingInstruction, Text
-// Todo: JamilihCDATANode, JamilihComment, JamilihProcessingInstruction
-/**
  * @typedef {Document|ElementName|HTMLElement|DocumentFragment|
  *   JamilihDocumentFragment|JamilihDoc|JamilihDoctype|JamilihTextNode|
  *   JamilihAttributeNode} JamilihFirstArgument
  */
 
+/**
+ * Array-form Jamilih input whose tuple positions were widened by operations
+ * such as `Array#map`.
+ * @typedef {(
+ *   JamilihFirstArg|JamilihAttributes|JamilihArrayLike|TextNodeString|
+ *   ShadowRoot|null
+ * )[]} JamilihArrayLike
+ */
+
+/**
+ * @typedef {(
+ *   JamilihArray|JamilihArrayLike|TextNodeString|HTMLElement|Comment|
+ *   ProcessingInstruction|Text|DocumentFragment|JamilihProcessingInstruction|
+ *   JamilihDocumentFragment|PluginReference
+ * )[]} JamilihChildren
+ */
+
+// Todo: DocumentType, Comment, ProcessingInstruction, Text
+// Todo: JamilihCDATANode, JamilihComment, JamilihProcessingInstruction
 /**
  * This would be clearer with overrides, but using as typedef.
  *
@@ -885,12 +894,13 @@ function getMatchingPlugin (opts, pluginName) {
  * @typedef {U extends void ? (ExpandoHTMLElement & W) : (U & W)} ResolvedElement
  */
 
+/* eslint-disable jsdoc/valid-types -- Advanced TS conditional/infer syntax in JSDoc */
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
  * @template {JamilihArray} T
- * @template {T extends [keyof HTMLElementTagNameMap, ArbitraryValue?, ArbitraryValue?, ArbitraryValue?] ? HTMLElementTagNameMap[T[0]] : void} U
+ * @template {T extends [infer K, ...ArbitraryValue[]] ? (K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void} U
  * @template {ElementFromJamilihArray<T>} E
  * @template {CustomFromJamilihArray<T>} W
  * @param {JamilihArrayWithCustomThis<T, E>} args
@@ -898,6 +908,7 @@ function getMatchingPlugin (opts, pluginName) {
  * The newly created (and possibly already appended)
  *   element or array of elements
  */
+/* eslint-enable jsdoc/valid-types */
 const jml = function jml (...args) {
   if (!win) {
     throw new Error('No window object');
@@ -1672,7 +1683,8 @@ const jml = function jml (...args) {
           }
           if (Array.isArray(childContent)) { // Arrays representing child elements
             opts.$state = 'children';
-            _appendNode(elem, jml(opts, ...childContent));
+            const childArgs = /** @type {JamilihArray} */ ([opts, ...childContent]);
+            _appendNode(elem, jml(...childArgs));
           } else if ('#' in childContent) { // Fragment
             opts.$state = 'fragmentChildren';
             _appendNode(elem, jml(opts, childContent['#']));

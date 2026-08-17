@@ -122,9 +122,9 @@ describe('Jamilih - jml', function () {
       selected: true
     });
     expect(option.selected).to.be.true;
-    const custom = /** @type {HTMLElement} */ (jml('custom', {
+    const custom = jml('custom', {
       for: 'blah'
-    }));
+    });
     expect(custom.getAttribute('for')).to.equal('blah');
   });
 
@@ -237,9 +237,7 @@ describe('Jamilih - jml', function () {
       '<div xmlns="http://www.w3.org/1999/xhtml" class="myClass">text1<p>Some inner text</p>text3</div>',
       'Single element with attribute containing two next node children separated by an element child'
     );
-    const table = /** @type {HTMLTableElement} */ (
-      jml('table', {style: 'position:absolute; left: -1000px;'}, body)
-    );
+    const table = jml('table', {style: 'position:absolute; left: -1000px;'}, body);
     /* const firstTr = */
     jml(
       'tr', [
@@ -264,7 +262,7 @@ describe('Jamilih - jml', function () {
   });
   it('Namespace declarations', () => {
     xmlTesting.matches(
-      /** @type {HTMLElement} */ (jml('abc', {xmlns: 'def'})).namespaceURI,
+      jml('abc', {xmlns: 'def'}).namespaceURI,
       'def',
       'Single unknown element with non-HTML default namespace declaration'
     );
@@ -288,9 +286,9 @@ describe('Jamilih - jml', function () {
     );
 
     xmlTesting.matches(
-      /** @type {HTMLElement} */ (
-        jml('abc', {xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}})
-      ).namespaceURI,
+      jml('abc', {
+        xmlns: {prefix1: 'def', prefix2: 'ghi', '': 'newdefault'}
+      }).namespaceURI,
       'newdefault',
       'Single element with non-HTML default namespace declaration and prefixed declarations (confirming namespaceURI)'
     );
@@ -1743,6 +1741,29 @@ describe('Jamilih - jml', function () {
       mySelect[Symbol.for('testCustom')]('Arg1'),
       'mySelectArg1',
       'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
+    );
+  });
+  it('allows mapped Jamilih children without tuple assertions', () => {
+    const optionLabels = ['One', 'Two'];
+    const select = jml('select', {$custom: {
+      getSelectedIndex () {
+        return this.selectedIndex;
+      }
+    }}, [
+      ...optionLabels.map((label) => ['option', {value: label}, [label]])
+    ]);
+
+    // Type assertion by usage: the outer tag should still infer the element.
+    select.selectedIndex = 1;
+    xmlTesting.matches(
+      select.selectedOptions[0].value,
+      'Two',
+      'Mapped child arrays retain outer element inference'
+    );
+    xmlTesting.matches(
+      select.getSelectedIndex(),
+      1,
+      'Mapped child arrays retain custom method inference'
     );
   });
   it('$plugins', () => {
