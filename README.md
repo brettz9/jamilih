@@ -110,14 +110,32 @@ import {jml, $, $$, nbsp, body} from 'jamilih';
 If not compiling:
 
 ```js
-import {jml, $, $$, nbsp, body} from './node_modules/jamilih/dist/jml-es.js';
+import {jml, $, $$, nbsp, body} from './node_modules/jamilih/dist/jml.mjs';
 ```
 
 For backward compatibility, a default export is provided, but this is now deprecated:
 
 ```js
-import jml from './node_modules/jamilih/dist/jml-es.js';
+import jml from './node_modules/jamilih/dist/jml.mjs';
 ```
+
+## Security
+
+Jamilih does not sanitize attribute values. In the standard build, an
+`innerHTML` property in the attributes object is assigned directly to the DOM
+element. Treat such values as an XSS sink: only use trusted or appropriately
+sanitized HTML, and prefer child strings or text nodes for untrusted text.
+
+The typed no-`innerHTML` build removes Jamilih's `innerHTML` assignment path:
+
+```js
+import {jml} from 'jamilih/dist/jml-noinnerh.js';
+```
+
+CommonJS consumers can use the same package subpath with `require`. For a
+direct browser ESM path, use `dist/jml-noinnerh.mjs`; for a global browser
+script, use `dist/jml-noinnerh.js`. This build reduces exposure to this
+specific sink, but it is not a general sanitizer for arbitrary Jamilih input.
 
 ## Node installation and usage
 
@@ -291,7 +309,7 @@ Comments, processing instructions, entities, decimal and hexadecimal
 character references, CDATA sections...
 
 Note that the last three types, relying as they do on `innerHTML`,
-will not work properly in the `innerHTML` build (they will use
+will not work properly in the no-`innerHTML` build (they will use
 `textContent` instead).
 
 ```js
@@ -733,9 +751,10 @@ or some recurring item, without the need for a special `map` or `reduce`.
             templates as they can be set with a variable, and if falsey (including `undefined`),
             they will be unset (rather than would be the case with `setAttribute` which would
             always set them if present).
-         1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`,
-            `defaultValue`, `style` (Note that `innerHTML` won't work on the
-            "no innerHTML" build.)
+        1. The following are also set as properties: `class`, `for`, `innerHTML`, `value`,
+          `defaultValue`, `style`. The standard build assigns `innerHTML`
+          directly, so its value must be trusted or appropriately sanitized;
+          it is unavailable in the no-`innerHTML` build.
         1. `className` and `htmlFor` are also provided to avoid the need for quoting the reserved
             keywords `class` and `for`.
         1. `on` followed by any string will be set as a property (for events).
@@ -884,7 +903,7 @@ requires a *Nix type of OS to build.
 1. Run `pnpm rollup`
 1. See the results in the `dist` folder
 
-Note to browser add-on reviewers, the `dist/jml-es-noinnerh.js` file is the
-one copied into the add-on (it strips out `innerHTML` capabilities for
-security reasons and for simplification of the review process). The only
-actual source file used in that file should be `src/jml.js`.
+Note to browser add-on reviewers, use `dist/jml-noinnerh.mjs` for ES modules or
+`dist/jml-noinnerh.js` for a global script. These builds strip out `innerHTML`
+capabilities for security reasons and to simplify the review process. Their
+only actual source file should be `src/jml.js`.

@@ -6,6 +6,8 @@
 - fix(types): reject malformed mapped child arrays statically and at runtime
 - fix: prevent `$custom` from replacing an element's prototype
 - fix(types): infer `$define` method `this`, supplied element types, and return intersections
+- fix(types): publish declarations for no-`innerHTML` entry points
+- docs: document the `innerHTML` trust requirement and safer builds
 
 ## 0.68.1
 

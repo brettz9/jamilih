@@ -77,8 +77,26 @@
         "default": "./dist/jml.js"
       }
     },
-    "./dist/jml-noinnerh.js": "./dist/jml-noinnerh.js",
-    "./dist/jml-noinnerh.mjs": "./dist/jml-noinnerh.mjs",
+    "./dist/jml-noinnerh.js": {
+      "import": {
+        "types": "./dist/src/jml.d.mts",
+        "default": "./dist/jml-noinnerh.mjs"
+      },
+      "require": {
+        "types": "./dist/src/jml.d.ts",
+        "default": "./dist/jml-noinnerh.js"
+      }
+    },
+    "./dist/jml-noinnerh.mjs": {
+      "import": {
+        "types": "./dist/src/jml.d.mts",
+        "default": "./dist/jml-noinnerh.mjs"
+      },
+      "require": {
+        "types": "./dist/src/jml.d.ts",
+        "default": "./dist/jml-noinnerh.js"
+      }
+    },
     "./dist/getInterpolator.js": {
       "import": {
         "types": "./dist/plugins/getInterpolator.d.mts",
@@ -95,6 +113,22 @@
     "url": "https://github.com/brettz9/jamilih"
   },
   "homepage": "https://github.com/brettz9/jamilih",
+  "typesVersions": {
+    "*": {
+      "dist/getInterpolator.js": [
+        "dist/plugins/getInterpolator.d.ts"
+      ],
+      "dist/jml.js": [
+        "dist/src/jml.d.ts"
+      ],
+      "dist/jml-noinnerh.js": [
+        "dist/src/jml.d.ts"
+      ],
+      "dist/jml-noinnerh.mjs": [
+        "dist/src/jml.d.mts"
+      ]
+    }
+  },
   "keywords": [
     "json",
     "javascript",
