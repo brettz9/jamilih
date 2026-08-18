@@ -18,6 +18,10 @@ import * as xmlTesting from './xmlTesting.js';
 
 import getInterpolator from '../plugins/getInterpolator.js';
 
+/**
+ * @typedef {import('../src/jml.js').DefineUserConstructor} DefineUserConstructor
+ */
+
 /* eslint-disable jsdoc/reject-any-type -- Bad type */
 /**
  * @typedef {any} BadArgument
@@ -1443,18 +1447,31 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myEl = /** @type {HTMLElement & {test: () => string}} */ (jml('my-el', {
+      const myEl = jml('my-el', {
         id: 'myEl',
         $define: {
           test () {
-            return this.id;
+            // @ts-expect-error `$define` method `this` has no unknown members.
+            JSON.stringify(this.missingDefineProperty);
+            return this.id + this.suffix;
+          }
+        },
+        $custom: {
+          suffix: '!',
+          testCustom () {
+            return this.test();
           }
         }
-      }, body));
+      }, body);
       xmlTesting.matches(
         myEl.test(),
-        'myEl',
+        'myEl!',
         'Custom element object method with `this`'
+      );
+      xmlTesting.matches(
+        myEl.testCustom(),
+        'myEl!',
+        '`$custom` and `$define` methods share the returned element type'
       );
 
       let constructorSetVar2;
@@ -1490,19 +1507,29 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar4;
-      const myel4 = /** @type {HTMLElement & {test: (arg1: string) => void, test2: (arg1: string) => void}} */ (jml('my-el4', {
+      /** @type {DefineUserConstructor} */
+      const myEl4Constructor = function () {
+        constructorSetVar4 = this.id;
+      };
+      const myel4 = jml('my-el4', {
         id: 'myEl4',
-        $define: /** @type {[import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin]} */ ([function () {
-          constructorSetVar4 = this.id;
-        }, {
+        $define: [myEl4Constructor, {
+          /**
+           * @param {string} arg1
+           * @returns {void}
+           */
           test (arg1) {
             xmlTesting.matches(this.id + arg1, 'myEl4arg1', 'Custom element with array of constructor and object method invoked with `this` and argument');
           },
+          /**
+           * @param {string} arg1
+           * @returns {void}
+           */
           test2 (arg1) {
-            /** @type {{test: (arg1: string) => void}} */ (this).test(arg1);
+            this.test(arg1);
           }
-        }])
-      }, body));
+        }]
+      }, body);
       xmlTesting.matches(
         constructorSetVar4,
         'myEl4',
@@ -1512,7 +1539,7 @@ describe('Jamilih - jml', function () {
       myel4.test2('arg1');
 
       let constructorSetVar5;
-      const myel5 = /** @type {HTMLElement & {test: (arg1: string) => void, test2: (arg1: string) => void}} */ (jml('my-el5', {
+      const myel5 = jml('my-el5', {
         id: 'myEl5',
         $define: [class extends /** @type {import('jsdom').DOMWindow} */ (
           win
@@ -1522,6 +1549,10 @@ describe('Jamilih - jml', function () {
             constructorSetVar5 = this.id;
           }
         }, {
+          /**
+           * @param {string} arg1
+           * @returns {void}
+           */
           test (arg1) {
             xmlTesting.matches(this.id + arg1, 'myEl5arg1', 'Custom element with array of class-based constructor and object method invoked with `this` and argument');
           },
@@ -1533,7 +1564,7 @@ describe('Jamilih - jml', function () {
             this.test(arg1);
           }
         }]
-      }, body));
+      }, body);
       xmlTesting.matches(
         constructorSetVar5,
         'myEl5',
@@ -1548,21 +1579,23 @@ describe('Jamilih - jml', function () {
     } else {
       // Todo: If customized built-in elements implemented, ensure testing
       //  `$define: [constructor, prototype, {extends: '<nativeElem>'}]`
-      const myButton2 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
+      const myButton2 = jml('button', {
         id: 'myButton2',
         is: 'fancy-button2',
         $define: {
           test () {
+            this.disabled = true;
             return this.id;
           }
         }
-      }, body));
+      }, body);
       xmlTesting.matches(
         myButton2.test(),
         'myButton2'
       );
+      expect(myButton2.disabled).to.be.true;
 
-      const myButton3 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
+      const myButton3 = jml('button', {
         id: 'myButton3',
         $define: {
           test () {
@@ -1570,7 +1603,7 @@ describe('Jamilih - jml', function () {
           }
         },
         is: 'fancy-button2'
-      }, body));
+      }, body);
       xmlTesting.matches(
         myButton3.test(),
         'myButton3'
@@ -1592,28 +1625,32 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myButton4 = /** @type {HTMLElement & {test: () => string}} */ (jml('x-button', {
+      const myButton4 = jml('x-button', {
         id: 'myButton4',
-        $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
+        $define: [{
           test () {
+            // @ts-expect-error Supplied element `this` has no unknown members.
+            JSON.stringify(this.missingDefineProperty);
+            this.disabled = true;
             return this.id;
           }
-        }, window.HTMLButtonElement])
-      }, body));
+        }, window.HTMLButtonElement]
+      }, body);
       xmlTesting.matches(
         myButton4.test(),
         'myButton4'
       );
+      myButton4.disabled = false;
 
-      const myButton5 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
+      const myButton5 = jml('button', {
         id: 'myButton5',
         is: 'x-buttony',
-        $define: /** @type {import('../src/jml.js').DefineObjectArray} */ ([{
+        $define: [{
           test () {
             return this.id;
           }
-        }, 'button'])
-      }, body));
+        }, 'button']
+      }, body);
       xmlTesting.matches(
         myButton5.test(),
         'myButton5'
@@ -1624,62 +1661,66 @@ describe('Jamilih - jml', function () {
     if (!window.customElements) {
       xmlTesting.skip("SKIPPING: ENVIRONMENT DOESN'T SUPPORT CUSTOM ELEMENT DEFINITIONS");
     } else {
-      const myButton6 = /** @type {HTMLElement & {test: () => string}} */ (jml('x-buttona', {
+      const myButton6 = jml('x-buttona', {
         id: 'myButton6',
         $define: [{
           test () {
             return this.id;
           }
         }]
-      }, body));
+      }, body);
       xmlTesting.matches(
         myButton6.test(),
         'myButton6'
       );
 
-      const myButton7 = /** @type {HTMLElement & {test: () => string}} */ (jml('x-buttonb', {
+      const myButton7 = jml('x-buttonb', {
         id: 'myButton7',
         $define: [{
           test () {
             return this.id;
           }
         }]
-      }, body));
+      }, body);
       xmlTesting.matches(
         myButton7.test(),
         'myButton7'
       );
 
-      const myButton8 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
+      const myButton8 = jml('button', {
         id: 'myButton8',
         is: 'x-button2',
         $define: [{
           test () {
+            this.disabled = true;
             return this.id;
           }
         }, {extends: 'button'}]
-      }, body));
+      }, body);
       xmlTesting.matches(
         myButton8.test(),
         'myButton8'
       );
+      expect(myButton8.disabled).to.be.true;
 
       let constructorSetVar6;
-      const myButton9 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
+      /** @type {DefineUserConstructor} */
+      const myButton9Constructor = function () {
+        constructorSetVar6 = this.id;
+      };
+      const myButton9 = jml('button', {
         id: 'myButton9',
         is: 'x-button3',
-        $define: /** @type {[import('../src/jml.js').DefineConstructor|import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin?, import('../src/jml.js').DefineOptions?]} */ ([
-          function () {
-            constructorSetVar6 = this.id;
-          },
+        $define: [
+          myButton9Constructor,
           {
             test () {
               return this.id;
             }
           },
           {extends: 'button'}
-        ])
-      }, body));
+        ]
+      }, body);
       xmlTesting.matches(
         constructorSetVar6,
         'myButton9',
@@ -1691,21 +1732,23 @@ describe('Jamilih - jml', function () {
       );
 
       let constructorSetVar7;
-      const myButton10 = /** @type {HTMLButtonElement & {test: () => string}} */ (jml('button', {
+      /** @type {DefineUserConstructor} */
+      const myButton10Constructor = function () {
+        constructorSetVar7 = this.id;
+      };
+      const myButton10 = jml('button', {
         id: 'myButton10',
         is: 'x-button4',
-        $define: /** @type {[import('../src/jml.js').DefineConstructor|import('../src/jml.js').DefineUserConstructor, import('../src/jml.js').DefineMixin?, import('../src/jml.js').DefineOptions?]} */ ([
-          function () {
-            constructorSetVar7 = this.id;
-          },
+        $define: [
+          myButton10Constructor,
           {
             test () {
               return this.id;
             }
           },
           'button'
-        ])
-      }, body));
+        ]
+      }, body);
       xmlTesting.matches(
         constructorSetVar7,
         'myButton10',

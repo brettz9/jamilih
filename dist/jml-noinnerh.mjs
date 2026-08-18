@@ -513,7 +513,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {{[key: string]: string|number|boolean|((this: ElementExpando, ...args: UserArg[]) => UserArg)}} DefineMixin
+ * @typedef {{[key: string]: unknown}} DefineMixin
  */
 
 /**
@@ -528,7 +528,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {[DefineConstructor|DefineUserConstructor|DefineMixin, DefineOptions?]|[DefineConstructor|DefineUserConstructor, DefineMixin?, DefineOptions?]} DefineObjectArray
+ * @typedef {[DefineConstructor|DefineUserConstructor|DefineMixin, DefineOptions?]|[DefineMixin, DefineConstructor]|[DefineConstructor|DefineUserConstructor, DefineMixin?, DefineOptions?]} DefineObjectArray
  */
 
 /**
@@ -824,6 +824,63 @@ function getMatchingPlugin(opts, pluginName) {
  */
 
 /**
+ * @template M
+ * @typedef {M extends object
+ *   ? string extends keyof M
+ *     ? object
+ *     : M
+ *   : object} SpecificDefineMixin
+ */
+
+/**
+ * @template D
+ * @typedef {D extends [infer First, infer Second, ...ArbitraryValue[]]
+ *   ? (First extends DefineMixin
+ *     ? SpecificDefineMixin<First>
+ *     : Second extends DefineMixin
+ *       ? SpecificDefineMixin<Second>
+ *       : object)
+ *   : D extends [infer First]
+ *     ? First extends DefineMixin
+ *       ? SpecificDefineMixin<First>
+ *       : object
+ *   : D extends DefineMixin
+ *     ? SpecificDefineMixin<D>
+ *     : object} DefineMixinFromValue
+ */
+
+/**
+ * @template {JamilihArray} T
+ * @typedef {T[number] extends infer Item
+ *   ? Item extends {$define: infer D}
+ *     ? DefineMixinFromValue<D>
+ *     : never
+ *   : never} RawDefineMixinFromJamilihArray
+ */
+
+/**
+ * @template D
+ * @typedef {D extends [infer First, infer Second, ...ArbitraryValue[]]
+ *   ? First extends DefineConstructor
+ *     ? First['prototype']
+ *     : Second extends DefineConstructor
+ *       ? Second['prototype']
+ *       : never
+ *   : D extends DefineConstructor
+ *     ? D['prototype']
+ *     : never} ElementFromDefineValue
+ */
+
+/**
+ * @template {JamilihArray} T
+ * @typedef {T[number] extends infer Item
+ *   ? Item extends {$define: infer D}
+ *     ? ElementFromDefineValue<D>
+ *     : never
+ *   : never} ElementFromJamilihDefine
+ */
+
+/**
  * @template {JamilihArray} T
  * @typedef {Extract<T[number], {xmlns: unknown}> extends never ? false : true} HasXmlnsFromJamilihArray
  */
@@ -833,26 +890,75 @@ function getMatchingPlugin(opts, pluginName) {
  * @typedef {T extends [infer K, ...ArbitraryValue[]]
  *   ? (HasXmlnsFromJamilihArray<T> extends true
  *     ? Element
- *     : K extends keyof HTMLElementTagNameMap
- *     ? HTMLElementTagNameMap[K]
- *     : HTMLElement)
+ *     : ElementFromJamilihDefine<T> extends never
+ *       ? K extends keyof HTMLElementTagNameMap
+ *         ? HTMLElementTagNameMap[K]
+ *         : HTMLElement
+ *       : ElementFromJamilihDefine<T>)
  *   : Element} ElementFromJamilihArray
  */
 
 /**
  * @template A
  * @template {Element} E
+ * @template X
  * @typedef {A extends {$custom: infer C}
  *   ? (C extends object
- *     ? Omit<A, '$custom'> & {$custom?: C & ThisType<E & C>}
+ *     ? Omit<A, '$custom'> & {$custom?: C & ThisType<E & C & X>}
  *     : A)
  *   : A} WithCustomThis
  */
 
 /**
+ * @template D
+ * @template {Element} E
+ * @template X
+ * @typedef {D extends [infer First, infer Second, ...infer Rest]
+ *   ? (First extends DefineMixin
+ *     ? [First & ThisType<E & First & X>, Second, ...Rest]
+ *     : Second extends DefineMixin
+ *       ? [First, Second & ThisType<E & Second & X>, ...Rest]
+ *       : D)
+ *   : D extends [infer First]
+ *     ? First extends DefineMixin
+ *       ? [First & ThisType<E & First & X>]
+ *       : D
+ *   : D extends DefineMixin
+ *     ? D & ThisType<E & D & X>
+ *     : D} WithDefineThisValue
+ */
+
+/**
+ * @template A
+ * @template {Element} E
+ * @template X
+ * @typedef {A extends {$define: infer D}
+ *   ? Omit<A, '$define'> & {$define?: WithDefineThisValue<D, E, X>}
+ *   : A} WithDefineThis
+ */
+
+/**
+ * @template A
+ * @typedef {A extends {$custom: infer C}
+ *   ? C extends object ? C : object
+ *   : object} CustomFromJamilihItem
+ */
+
+/**
+ * @template A
+ * @typedef {A extends {$define: infer D}
+ *   ? DefineMixinFromValue<D>
+ *   : object} DefineMixinFromJamilihItem
+ */
+
+/**
  * @template {JamilihArray} T
  * @template {Element} E
- * @typedef {{[K in keyof T]: WithCustomThis<T[K], E>}} JamilihArrayWithCustomThis
+ * @typedef {{[K in keyof T]: WithCustomThis<
+ *   WithDefineThis<T[K], E, CustomFromJamilihItem<T[K]>>,
+ *   E,
+ *   DefineMixinFromJamilihItem<T[K]>
+ * >}} JamilihArrayWithCustomThis
  */
 
 /**
@@ -884,6 +990,15 @@ function getMatchingPlugin(opts, pluginName) {
  */
 
 /**
+ * @template {JamilihArray} T
+ * @typedef {(
+ *   RawDefineMixinFromJamilihArray<T> extends never
+ *     ? object
+ *     : RawDefineMixinFromJamilihArray<T>
+ * )} DefineMixinFromJamilihArray
+ */
+
+/**
  * @template U
  * @template W
  * @typedef {U extends void ? (ExpandoHTMLElement & W) : (U & W)} ResolvedElement
@@ -894,11 +1009,12 @@ function getMatchingPlugin(opts, pluginName) {
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
  * @template {JamilihArray} T
- * @template {T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void} U
+ * @template {T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : ElementFromJamilihDefine<T> extends never ? K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void : ElementFromJamilihDefine<T>) : void} U
  * @template {ElementFromJamilihArray<T>} E
  * @template {CustomFromJamilihArray<T>} W
+ * @template {DefineMixinFromJamilihArray<T>} D
  * @param {JamilihArrayWithCustomThis<T, E> & ValidateJamilihArrayLikes<T>} args
- * @returns {U extends void ? JamilihReturn : ResolvedElement<U, W>}
+ * @returns {U extends void ? JamilihReturn : ResolvedElement<U, W & D>}
  * The newly created (and possibly already appended)
  *   element or array of elements
  */
@@ -1092,7 +1208,8 @@ const jml = function jml(...args) {
             const defineObj = /** @type {DefineObject} */attVal;
             if (Array.isArray(defineObj)) {
               if (defineObj.length <= 2) {
-                [cnstrctr, options] = defineObj;
+                [cnstrctr] = defineObj;
+                options = /** @type {DefineOptions|undefined} */defineObj[1];
                 if (typeof options === 'string') {
                   // Todo: Allow creating a definition without using it;
                   //  that may be the only reason to have a string here which
@@ -1487,7 +1604,7 @@ const jml = function jml(...args) {
         // null always indicates a place-holder (only needed for last argument if want array returned)
         if (i === argc - 1) {
           // Casting needing unless changing `jml()` signature with overloads
-          return /** @type {U extends void ? JamilihReturn : ResolvedElement<U, W>} */nodes.length <= 1 ? nodes[0]
+          return /** @type {U extends void ? JamilihReturn : ResolvedElement<U, W & D>} */nodes.length <= 1 ? nodes[0]
           // eslint-disable-next-line unicorn/no-array-callback-reference
           : nodes.reduce(_fragReducer, doc.createDocumentFragment()); // nodes;
         }
@@ -1713,7 +1830,7 @@ const jml = function jml(...args) {
   }
 
   // Casting needing unless changing `jml()` signature with overloads
-  return /** @type {U extends void ? JamilihReturn : ResolvedElement<U, W>} */ret;
+  return /** @type {U extends void ? JamilihReturn : ResolvedElement<U, W & D>} */ret;
 };
 
 /**

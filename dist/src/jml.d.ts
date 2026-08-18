@@ -78,14 +78,14 @@ export type DefineOptions = string | {
     extends?: string;
 };
 export type DefineMixin = {
-    [key: string]: string | number | boolean | ((this: ElementExpando, ...args: UserArg[]) => UserArg);
+    [key: string]: unknown;
 };
 export type DefineConstructor = {
     new (): HTMLElement;
     prototype: HTMLElement;
 };
 export type DefineUserConstructor = (this: HTMLElement) => void;
-export type DefineObjectArray = [DefineConstructor | DefineUserConstructor | DefineMixin, DefineOptions?] | [DefineConstructor | DefineUserConstructor, DefineMixin?, DefineOptions?];
+export type DefineObjectArray = [DefineConstructor | DefineUserConstructor | DefineMixin, DefineOptions?] | [DefineMixin, DefineConstructor] | [DefineConstructor | DefineUserConstructor, DefineMixin?, DefineOptions?];
 export type DefineObject = DefineObjectArray | DefineConstructor | DefineMixin | DefineUserConstructor;
 export type SymbolObject<T = ArbitraryValue, U extends HTMLElement = HTMLElement> = T & {
     elem?: U;
@@ -187,17 +187,38 @@ export type RawCustomFromJamilihArray<T extends JamilihArray> = Extract<Extract<
         [key: string]: unknown;
     };
 }>['$custom'], object>;
+export type SpecificDefineMixin<M> = M extends object ? string extends keyof M ? object : M : object;
+export type DefineMixinFromValue<D> = D extends [infer First, infer Second, ...ArbitraryValue[]] ? (First extends DefineMixin ? SpecificDefineMixin<First> : Second extends DefineMixin ? SpecificDefineMixin<Second> : object) : D extends [infer First] ? First extends DefineMixin ? SpecificDefineMixin<First> : object : D extends DefineMixin ? SpecificDefineMixin<D> : object;
+export type RawDefineMixinFromJamilihArray<T extends JamilihArray> = T[number] extends infer Item ? Item extends {
+    $define: infer D;
+} ? DefineMixinFromValue<D> : never : never;
+export type ElementFromDefineValue<D> = D extends [infer First, infer Second, ...ArbitraryValue[]] ? First extends DefineConstructor ? First['prototype'] : Second extends DefineConstructor ? Second['prototype'] : never : D extends DefineConstructor ? D['prototype'] : never;
+export type ElementFromJamilihDefine<T extends JamilihArray> = T[number] extends infer Item ? Item extends {
+    $define: infer D;
+} ? ElementFromDefineValue<D> : never : never;
 export type HasXmlnsFromJamilihArray<T extends JamilihArray> = Extract<T[number], {
     xmlns: unknown;
 }> extends never ? false : true;
-export type ElementFromJamilihArray<T extends JamilihArray> = T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement) : Element;
-export type WithCustomThis<A, E extends Element> = A extends {
+export type ElementFromJamilihArray<T extends JamilihArray> = T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : ElementFromJamilihDefine<T> extends never ? K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement : ElementFromJamilihDefine<T>) : Element;
+export type WithCustomThis<A, E extends Element, X> = A extends {
     $custom: infer C;
 } ? (C extends object ? Omit<A, '$custom'> & {
-    $custom?: C & ThisType<E & C>;
+    $custom?: C & ThisType<E & C & X>;
 } : A) : A;
+export type WithDefineThisValue<D, E extends Element, X> = D extends [infer First, infer Second, ...infer Rest] ? (First extends DefineMixin ? [First & ThisType<E & First & X>, Second, ...Rest] : Second extends DefineMixin ? [First, Second & ThisType<E & Second & X>, ...Rest] : D) : D extends [infer First] ? First extends DefineMixin ? [First & ThisType<E & First & X>] : D : D extends DefineMixin ? D & ThisType<E & D & X> : D;
+export type WithDefineThis<A, E extends Element, X> = A extends {
+    $define: infer D;
+} ? Omit<A, '$define'> & {
+    $define?: WithDefineThisValue<D, E, X>;
+} : A;
+export type CustomFromJamilihItem<A> = A extends {
+    $custom: infer C;
+} ? C extends object ? C : object : object;
+export type DefineMixinFromJamilihItem<A> = A extends {
+    $define: infer D;
+} ? DefineMixinFromValue<D> : object;
 export type JamilihArrayWithCustomThis<T extends JamilihArray, E extends Element> = {
-    [K in keyof T]: WithCustomThis<T[K], E>;
+    [K in keyof T]: WithCustomThis<WithDefineThis<T[K], E, CustomFromJamilihItem<T[K]>>, E, DefineMixinFromJamilihItem<T[K]>>;
 };
 export type ValidateJamilihArrayLike<A> = A extends (infer Item)[] ? (Extract<Item, JamilihFirstArg> extends never ? never : A) : A;
 export type ValidateJamilihChildContainer<A> = A extends (infer Child)[] ? A & (Child extends unknown[] ? ValidateJamilihArrayLike<Child> : Child)[] : A;
@@ -205,8 +226,9 @@ export type ValidateJamilihArrayLikes<T extends JamilihArray> = {
     [K in keyof T]: ValidateJamilihChildContainer<T[K]>;
 };
 export type CustomFromJamilihArray<T extends JamilihArray> = (RawCustomFromJamilihArray<T> extends never ? object : RawCustomFromJamilihArray<T>);
+export type DefineMixinFromJamilihArray<T extends JamilihArray> = (RawDefineMixinFromJamilihArray<T> extends never ? object : RawDefineMixinFromJamilihArray<T>);
 export type ResolvedElement<U, W> = U extends void ? (ExpandoHTMLElement & W) : (U & W);
-declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E> & ValidateJamilihArrayLikes<T>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
+declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : ElementFromJamilihDefine<T> extends never ? K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void : ElementFromJamilihDefine<T>) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>, D extends DefineMixinFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E> & ValidateJamilihArrayLikes<T>): U extends void ? JamilihReturn : ResolvedElement<U, W & D>;
 declare namespace jml {
     export { toJML };
     export { toJMLString };

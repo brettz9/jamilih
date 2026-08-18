@@ -5,6 +5,7 @@
 - fix(types): infer `xmlns`-created nodes as `Element`
 - fix(types): reject malformed mapped child arrays statically and at runtime
 - fix: prevent `$custom` from replacing an element's prototype
+- fix(types): infer `$define` method `this`, supplied element types, and return intersections
 
 ## 0.68.1
 
