@@ -199,9 +199,14 @@ export type WithCustomThis<A, E extends Element> = A extends {
 export type JamilihArrayWithCustomThis<T extends JamilihArray, E extends Element> = {
     [K in keyof T]: WithCustomThis<T[K], E>;
 };
+export type ValidateJamilihArrayLike<A> = A extends (infer Item)[] ? (Extract<Item, JamilihFirstArg> extends never ? never : A) : A;
+export type ValidateJamilihChildContainer<A> = A extends (infer Child)[] ? A & (Child extends unknown[] ? ValidateJamilihArrayLike<Child> : Child)[] : A;
+export type ValidateJamilihArrayLikes<T extends JamilihArray> = {
+    [K in keyof T]: ValidateJamilihChildContainer<T[K]>;
+};
 export type CustomFromJamilihArray<T extends JamilihArray> = (RawCustomFromJamilihArray<T> extends never ? object : RawCustomFromJamilihArray<T>);
 export type ResolvedElement<U, W> = U extends void ? (ExpandoHTMLElement & W) : (U & W);
-declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
+declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E> & ValidateJamilihArrayLikes<T>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
 declare namespace jml {
     export { toJML };
     export { toJMLString };

@@ -862,6 +862,25 @@
    */
 
   /**
+   * @template A
+   * @typedef {A extends (infer Item)[]
+   *   ? (Extract<Item, JamilihFirstArg> extends never ? never : A)
+   *   : A} ValidateJamilihArrayLike
+   */
+
+  /**
+   * @template A
+   * @typedef {A extends (infer Child)[]
+   *   ? A & (Child extends unknown[] ? ValidateJamilihArrayLike<Child> : Child)[]
+   *   : A} ValidateJamilihChildContainer
+   */
+
+  /**
+   * @template {JamilihArray} T
+   * @typedef {{[K in keyof T]: ValidateJamilihChildContainer<T[K]>}} ValidateJamilihArrayLikes
+   */
+
+  /**
    * @template {JamilihArray} T
    * @typedef {(
    *   RawCustomFromJamilihArray<T> extends never
@@ -884,7 +903,7 @@
    * @template {T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void} U
    * @template {ElementFromJamilihArray<T>} E
    * @template {CustomFromJamilihArray<T>} W
-   * @param {JamilihArrayWithCustomThis<T, E>} args
+   * @param {JamilihArrayWithCustomThis<T, E> & ValidateJamilihArrayLikes<T>} args
    * @returns {U extends void ? JamilihReturn : ResolvedElement<U, W>}
    * The newly created (and possibly already appended)
    *   element or array of elements
@@ -1642,12 +1661,19 @@
             // Arrays or arrays of arrays indicate child nodes
             const child = /** @type {JamilihChildren} */arg;
             const cl = child.length;
+            /**
+             * @param {number} childIndex
+             * @returns {TypeError}
+             */
+            const getBadChildrenError = childIndex => {
+              return new TypeError(`Bad children (parent array: ${JSON.stringify(args)}; index ${childIndex} of child: ${JSON.stringify(child)})`);
+            };
             for (let j = 0; j < cl; j++) {
               // Go through children array container to handle elements
               const childContent = child[j];
               const childContentType = typeof childContent;
               if (childContent === null || _isNullish(childContent)) {
-                throw new TypeError(`Bad children (parent array: ${JSON.stringify(args)}; index ${j} of child: ${JSON.stringify(child)})`);
+                throw getBadChildrenError(j);
               }
               switch (childContentType) {
                 // Todo: determine whether null or function should have special handling or be converted to text
@@ -1659,10 +1685,14 @@
                 default:
                   // bigint, symbol, function
                   if (typeof childContent !== 'object') {
-                    throw new TypeError(`Bad children (parent array: ${JSON.stringify(args)}; index ${j} of child: ${JSON.stringify(child)})`);
+                    throw getBadChildrenError(j);
                   }
                   if (Array.isArray(childContent)) {
                     // Arrays representing child elements
+                    const childHeadType = typeof childContent[0];
+                    if (childContent.length === 0 || childHeadType !== 'string' && childHeadType !== 'object' || childContent[0] === null) {
+                      throw getBadChildrenError(j);
+                    }
                     opts.$state = 'children';
                     const childArgs = /** @type {JamilihArray} */[opts, ...childContent];
                     _appendNode(elem, jml(...childArgs));

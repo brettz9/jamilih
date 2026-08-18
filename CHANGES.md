@@ -3,6 +3,7 @@
 ## ?
 
 - fix(types): infer `xmlns`-created nodes as `Element`
+- fix(types): reject malformed mapped child arrays statically and at runtime
 
 ## 0.68.1
 

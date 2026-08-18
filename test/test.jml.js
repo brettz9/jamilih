@@ -733,6 +733,22 @@ describe('Jamilih - jml', function () {
       ]);
     }).to.throw(TypeError, 'Bad children (parent array: ["div",[null]]; index 0 of child: [null])');
   });
+  it('throws consistently with malformed mapped child arrays', () => {
+    expect(() => {
+      // @ts-expect-error Empty arrays cannot represent a Jamilih child node.
+      jml('div', {}, [[]]);
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",{},[[]]]; index 0 of child: [[]])');
+
+    expect(() => {
+      // @ts-expect-error A number cannot head a Jamilih child node.
+      jml('div', {}, [[1, 2]]);
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",{},[[1,2]]]; index 0 of child: [[1,2]])');
+
+    expect(() => {
+      // @ts-expect-error Null cannot head a Jamilih child node.
+      jml('div', {}, [[null]]);
+    }).to.throw(TypeError, 'Bad children (parent array: ["div",{},[[null]]]; index 0 of child: [[null]])');
+  });
 
   it('Event listeners', () => {
     let str;
