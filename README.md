@@ -1,4 +1,3 @@
-[![Build Status](https://img.shields.io/travis/brettz9/jamilih.svg)](https://travis-ci.org/brettz9/jamilih)
 [![Dependencies](https://img.shields.io/david/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih)
 [![devDependencies](https://img.shields.io/david/dev/brettz9/jamilih.svg)](https://david-dm.org/brettz9/jamilih?type=dev)
 [![npm](https://img.shields.io/npm/v/jamilih.svg)](https://www.npmjs.com/package/jamilih)
