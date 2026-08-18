@@ -1,6 +1,6 @@
 # CHANGES for jamilih
 
-## ?
+## 0.69.0
 
 - fix(types): infer `xmlns`-created nodes as `Element`
 - fix(types): reject malformed mapped child arrays statically and at runtime
