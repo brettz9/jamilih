@@ -1766,6 +1766,35 @@ describe('Jamilih - jml', function () {
       'Invoke `$custom`-attached object with symbol-attached method with argument and `this`'
     );
   });
+  it('rejects prototype replacement through `$custom`', () => {
+    const originalPrototype = Object.getPrototypeOf(
+      document.createElement('div')
+    );
+
+    expect(() => {
+      jml('div', {
+        $custom: JSON.parse('{"__proto__":{"compromised":true}}')
+      });
+    }).to.throw(TypeError, '`$custom` may not define `__proto__`');
+
+    const callableCustom = function () {
+      return undefined;
+    };
+    Object.defineProperty(callableCustom, '__proto__', {
+      enumerable: true,
+      value: {compromised: true}
+    });
+    expect(() => {
+      // @ts-expect-error Runtime callers can bypass the `$custom` object type.
+      jml('div', {
+        $custom: callableCustom
+      });
+    }).to.throw(TypeError, '`$custom` may not define `__proto__`');
+
+    expect(Object.getPrototypeOf(document.createElement('div'))).to.equal(
+      originalPrototype
+    );
+  });
   it('allows mapped Jamilih children without tuple assertions', () => {
     const optionLabels = ['One', 'Two'];
     const select = jml('select', {$custom: {

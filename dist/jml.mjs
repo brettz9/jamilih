@@ -1019,6 +1019,9 @@ const jml = function jml(...args) {
           }
         case '$custom':
           {
+            if (attVal !== null && (typeof attVal === 'object' || typeof attVal === 'function') && Object.prototype.propertyIsEnumerable.call(attVal, '__proto__')) {
+              throw new TypeError('`$custom` may not define `__proto__`');
+            }
             Object.assign(elem, attVal);
             break;
           }
