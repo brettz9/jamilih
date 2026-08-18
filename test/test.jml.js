@@ -1778,8 +1778,8 @@ describe('Jamilih - jml', function () {
           value
         }}) {
           const val = /**
-          * @type {import('../src/jml.js').JamilihAttValue & {blueAndRed: boolean}}
-          */ (value);
+                       * @type {import('../src/jml.js').JamilihAttValue & {blueAndRed: boolean}}
+                       */ (value);
           // console.log('vvv', value, '::', element, '::', name);
           // Add code here to modify the element
           // element.setAttribute(name, value);

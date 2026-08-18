@@ -208,13 +208,13 @@ function _addEvent (el, type, handler, capturing) {
 }
 
 /**
-* Creates a text node of the result of resolving an entity or character reference.
-* @param {'entity'|'decimal'|'hexadecimal'} type Type of reference
-* @param {string} prefix Text to prefix immediately after the "&"
-* @param {string} arg The body of the reference
-* @throws {TypeError}
-* @returns {Text} The text node of the resolved reference
-*/
+ * Creates a text node of the result of resolving an entity or character reference.
+ * @param {'entity'|'decimal'|'hexadecimal'} type Type of reference
+ * @param {string} prefix Text to prefix immediately after the "&"
+ * @param {string} arg The body of the reference
+ * @throws {TypeError}
+ * @returns {Text} The text node of the resolved reference
+ */
 function _createSafeReference (type, prefix, arg) {
   /* c8 ignore next 3 */
   if (!doc) {
@@ -234,10 +234,10 @@ function _createSafeReference (type, prefix, arg) {
 }
 
 /**
-* @param {string} n0 Whole expression match (including "-")
-* @param {string} n1 Lower-case letter match
-* @returns {string} Uppercased letter
-*/
+ * @param {string} n0 Whole expression match (including "-")
+ * @param {string} n1 Lower-case letter match
+ * @returns {string} Uppercased letter
+ */
 function _upperCase (n0, n1) {
   return n1.toUpperCase();
 }
@@ -266,15 +266,15 @@ function _isHTMLElement (item) {
 
 // Todo: Make as public utility, but also return types for undefined, boolean, number, document, etc.
 /**
-* @private
-* @static
-* @param {string|JamilihAttributes|JamilihArray|JamilihChildren|
-*   JamilihDocumentFragment|JamilihAttributeNode|
-*   JamilihOptions|HTMLElement|Document|DocumentFragment|null|undefined} item
-* @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|
-*   "symbol"|"bigint"|"function"|"number"|"boolean"|"undefined"|
-*   "document"|"processing-instruction"|"non-container node"}
-*/
+ * @private
+ * @static
+ * @param {string|JamilihAttributes|JamilihArray|JamilihChildren|
+ *   JamilihDocumentFragment|JamilihAttributeNode|
+ *   JamilihOptions|HTMLElement|Document|DocumentFragment|null|undefined} item
+ * @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|
+ *   "symbol"|"bigint"|"function"|"number"|"boolean"|"undefined"|
+ *   "document"|"processing-instruction"|"non-container node"}
+ */
 function _getType (item) {
   // Appease TS
   if (typeof item === 'string' || typeof item === 'undefined') {
@@ -311,12 +311,12 @@ function _getType (item) {
 }
 
 /**
-* @private
-* @static
-* @param {DocumentFragment} frag
-* @param {Node} node
-* @returns {DocumentFragment}
-*/
+ * @private
+ * @static
+ * @param {DocumentFragment} frag
+ * @param {Node} node
+ * @returns {DocumentFragment}
+ */
 function _fragReducer (frag, node) {
   frag.append(node);
   return frag;
@@ -331,11 +331,11 @@ function escapeReplacer (str) {
 }
 
 /**
-* @private
-* @static
-* @param {Object<string, string>} xmlnsObj
-* @returns {(...n: string[]) => string}
-*/
+ * @private
+ * @static
+ * @param {Object<string, string>} xmlnsObj
+ * @returns {(...n: string[]) => string}
+ */
 function _replaceDefiner (xmlnsObj) {
   /**
    * @param {string[]} n
@@ -379,23 +379,23 @@ function _childrenToJML (node) {
 /**
  * Keep this in sync with `JamilihArray`'s first argument (minus `Document`).
  * @typedef {JamilihDoc|JamilihDoctype|JamilihTextNode|
-*   JamilihAttributeNode|JamilihOptions|ElementName|HTMLElement|
-*   JamilihDocumentFragment
-* } JamilihFirstArg
-*/
+ *   JamilihAttributeNode|JamilihOptions|ElementName|HTMLElement|
+ *   JamilihDocumentFragment
+ * } JamilihFirstArg
+ */
 
 /**
-* @callback JamilihAppender
-* @param {JamilihArray|JamilihArrayLike|JamilihFirstArg|Node|TextNodeString} childJML
-* @returns {void}
-*/
+ * @callback JamilihAppender
+ * @param {JamilihArray|JamilihArrayLike|JamilihFirstArg|Node|TextNodeString} childJML
+ * @returns {void}
+ */
 
 /**
-* @private
-* @static
-* @param {ParentNode} node
-* @returns {JamilihAppender}
-*/
+ * @private
+ * @static
+ * @param {ParentNode} node
+ * @returns {JamilihAppender}
+ */
 function _appendJML (node) {
   return function (childJML) {
     if (typeof childJML === 'string' || typeof childJML === 'number') {
@@ -412,17 +412,17 @@ function _appendJML (node) {
 }
 
 /**
-* @callback appender
-* @param {JamilihArray|JamilihArrayLike|JamilihFirstArg|Node|TextNodeString} childJML
-* @returns {void}
-*/
+ * @callback appender
+ * @param {JamilihArray|JamilihArrayLike|JamilihFirstArg|Node|TextNodeString} childJML
+ * @returns {void}
+ */
 
 /**
-* @private
-* @static
-* @param {ParentNode} node
-* @returns {appender}
-*/
+ * @private
+ * @static
+ * @param {ParentNode} node
+ * @returns {appender}
+ */
 function _appendJMLOrText (node) {
   return function (childJML) {
     if (typeof childJML === 'string' || typeof childJML === 'number') {
@@ -438,9 +438,9 @@ function _appendJMLOrText (node) {
 }
 
 /**
-* @private
-* @static
-*/
+ * @private
+ * @static
+ */
 /*
 function _DOMfromJMLOrString (childNodeJML) {
   if (typeof childNodeJML === 'string') {
@@ -451,9 +451,9 @@ function _DOMfromJMLOrString (childNodeJML) {
 */
 
 /**
-* @typedef {HTMLElement|DocumentFragment|Comment|Attr|
-*    Text|Document|DocumentType|ProcessingInstruction|CDATASection} JamilihReturn
-*/
+ * @typedef {HTMLElement|DocumentFragment|Comment|Attr|
+ *    Text|Document|DocumentType|ProcessingInstruction|CDATASection} JamilihReturn
+ */
 // 'string|JamilihOptions|JamilihDocumentFragment|JamilihAttributes|(string|JamilihArray)[]
 
 /**
@@ -470,11 +470,11 @@ function _DOMfromJMLOrString (childNodeJML) {
 
 /**
  * @typedef {{
-*   open?: boolean|ShadowRootJamilihArrayContainer,
-*   closed?: boolean|ShadowRootJamilihArrayContainer,
-*   template?: string|HTMLTemplateElement|TemplateJamilihArray,
-*   content?: ShadowRootJamilihArrayContainer|DocumentFragment
-* }} JamilihShadowRootObject
+ *   open?: boolean|ShadowRootJamilihArrayContainer,
+ *   closed?: boolean|ShadowRootJamilihArrayContainer,
+ *   template?: string|HTMLTemplateElement|TemplateJamilihArray,
+ *   content?: ShadowRootJamilihArrayContainer|DocumentFragment
+ * }} JamilihShadowRootObject
  */
 
 /**
@@ -611,9 +611,9 @@ function _DOMfromJMLOrString (childNodeJML) {
 
 /**
  * @typedef {{
-*   [key: string]: string|number|((this: HTMLElement, ...args: UserArg[]) => UserArg)
-* }} DataAttributeObject
-*/
+ *   [key: string]: string|number|((this: HTMLElement, ...args: UserArg[]) => UserArg)
+ * }} DataAttributeObject
+ */
 
 /**
  * @typedef {{
@@ -852,7 +852,6 @@ function getMatchingPlugin (opts, pluginName) {
  * @typedef {Extract<Extract<T[number], {$custom?: {[key: string]: unknown}}>['$custom'], object>} RawCustomFromJamilihArray
  */
 
-/* eslint-disable jsdoc/valid-types -- Advanced TS conditional/infer syntax in JSDoc */
 /**
  * @template {JamilihArray} T
  * @typedef {T extends [infer K, ...ArbitraryValue[]]
@@ -877,7 +876,6 @@ function getMatchingPlugin (opts, pluginName) {
  * @template {HTMLElement} E
  * @typedef {{[K in keyof T]: WithCustomThis<T[K], E>}} JamilihArrayWithCustomThis
  */
-/* eslint-enable jsdoc/valid-types */
 
 /**
  * @template {JamilihArray} T
@@ -894,7 +892,7 @@ function getMatchingPlugin (opts, pluginName) {
  * @typedef {U extends void ? (ExpandoHTMLElement & W) : (U & W)} ResolvedElement
  */
 
-/* eslint-disable jsdoc/valid-types -- Advanced TS conditional/infer syntax in JSDoc */
+
 /**
  * Creates an XHTML or HTML element (XHTML is preferred, but only in browsers
  * that support); any element after element can be omitted, and any subsequent
@@ -908,7 +906,7 @@ function getMatchingPlugin (opts, pluginName) {
  * The newly created (and possibly already appended)
  *   element or array of elements
  */
-/* eslint-enable jsdoc/valid-types */
+
 const jml = function jml (...args) {
   if (!win) {
     throw new Error('No window object');
@@ -1784,8 +1782,8 @@ export class DOMException extends Error {
 
 /**
  * @typedef {JamilihArray|JamilihDoctype|
-*    JamilihCDATANode|JamilihEntityReference|JamilihProcessingInstruction|
-*    JamilihComment|JamilihDocumentFragment} JamilihChildType
+ *    JamilihCDATANode|JamilihEntityReference|JamilihProcessingInstruction|
+ *    JamilihComment|JamilihDocumentFragment} JamilihChildType
  */
 
 /**
@@ -1793,14 +1791,14 @@ export class DOMException extends Error {
  */
 
 /**
-* Converts a DOM object or a string of HTML into a Jamilih object (or string).
-* @param {string|HTMLElement|Node|Entity} nde If a string, will parse as document
-* @param {ToJmlConfig} [config] Configuration object
-* @throws {TypeError}
-* @returns {JamilihType|string} Array containing the elements which represent
-* a Jamilih object, or, if `stringOutput` is true, it will be the stringified
-* version of such an object
-*/
+ * Converts a DOM object or a string of HTML into a Jamilih object (or string).
+ * @param {string|HTMLElement|Node|Entity} nde If a string, will parse as document
+ * @param {ToJmlConfig} [config] Configuration object
+ * @throws {TypeError}
+ * @returns {JamilihType|string} Array containing the elements which represent
+ * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
+ * version of such an object
+ */
 export const toJML = function (nde, {
   stringOutput = false,
   reportInvalidState = true,

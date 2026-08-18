@@ -301,21 +301,21 @@ export type JamilihChildType = JamilihArray | JamilihDoctype | JamilihCDATANode 
 export type JamilihType = JamilihDoc | JamilihAttributeNode | JamilihChildType;
 /**
  * @typedef {JamilihArray|JamilihDoctype|
-*    JamilihCDATANode|JamilihEntityReference|JamilihProcessingInstruction|
-*    JamilihComment|JamilihDocumentFragment} JamilihChildType
+ *    JamilihCDATANode|JamilihEntityReference|JamilihProcessingInstruction|
+ *    JamilihComment|JamilihDocumentFragment} JamilihChildType
  */
 /**
  * @typedef {JamilihDoc|JamilihAttributeNode|JamilihChildType} JamilihType
  */
 /**
-* Converts a DOM object or a string of HTML into a Jamilih object (or string).
-* @param {string|HTMLElement|Node|Entity} nde If a string, will parse as document
-* @param {ToJmlConfig} [config] Configuration object
-* @throws {TypeError}
-* @returns {JamilihType|string} Array containing the elements which represent
-* a Jamilih object, or, if `stringOutput` is true, it will be the stringified
-* version of such an object
-*/
+ * Converts a DOM object or a string of HTML into a Jamilih object (or string).
+ * @param {string|HTMLElement|Node|Entity} nde If a string, will parse as document
+ * @param {ToJmlConfig} [config] Configuration object
+ * @throws {TypeError}
+ * @returns {JamilihType|string} Array containing the elements which represent
+ * a Jamilih object, or, if `stringOutput` is true, it will be the stringified
+ * version of such an object
+ */
 export declare const toJML: (nde: string | HTMLElement | Node | Entity, { stringOutput, reportInvalidState, stripWhitespace }?: ToJmlConfig) => JamilihType | string;
 /**
  * @param {string|HTMLElement} dom

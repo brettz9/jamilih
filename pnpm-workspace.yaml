@@ -5,7 +5,7 @@ ignoredBuiltDependencies:
   - unrs-resolver
 minimumReleaseAgeExclude:
   - eslint@10.8.1
-  - '@es-joy/jsdoccomment@0.93.2'
-  - eslint-config-ash-nazg@42.2.0
-  - eslint-plugin-jsdoc@64.0.2
-  - jsdoc-type-pratt-parser@9.0.1
+  - '@es-joy/jsdoccomment@0.93.2 || 0.95.1'
+  - eslint-config-ash-nazg@42.2.0 || 42.5.0
+  - eslint-plugin-jsdoc@64.0.2 || 64.2.1
+  - jsdoc-type-pratt-parser@9.0.1 || 9.1.2
