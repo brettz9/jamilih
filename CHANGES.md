@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## ?
+
+- fix(types): infer `xmlns`-created nodes as `Element`
+
 ## 0.68.1
 
 - fix(types): accept mapped array-form children without losing outer element or $custom inference

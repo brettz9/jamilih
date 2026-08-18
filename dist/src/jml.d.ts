@@ -187,18 +187,21 @@ export type RawCustomFromJamilihArray<T extends JamilihArray> = Extract<Extract<
         [key: string]: unknown;
     };
 }>['$custom'], object>;
-export type ElementFromJamilihArray<T extends JamilihArray> = T extends [infer K, ...ArbitraryValue[]] ? (K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement) : HTMLElement;
-export type WithCustomThis<A, E extends HTMLElement> = A extends {
+export type HasXmlnsFromJamilihArray<T extends JamilihArray> = Extract<T[number], {
+    xmlns: unknown;
+}> extends never ? false : true;
+export type ElementFromJamilihArray<T extends JamilihArray> = T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : HTMLElement) : Element;
+export type WithCustomThis<A, E extends Element> = A extends {
     $custom: infer C;
 } ? (C extends object ? Omit<A, '$custom'> & {
     $custom?: C & ThisType<E & C>;
 } : A) : A;
-export type JamilihArrayWithCustomThis<T extends JamilihArray, E extends HTMLElement> = {
+export type JamilihArrayWithCustomThis<T extends JamilihArray, E extends Element> = {
     [K in keyof T]: WithCustomThis<T[K], E>;
 };
 export type CustomFromJamilihArray<T extends JamilihArray> = (RawCustomFromJamilihArray<T> extends never ? object : RawCustomFromJamilihArray<T>);
 export type ResolvedElement<U, W> = U extends void ? (ExpandoHTMLElement & W) : (U & W);
-declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
+declare function jml<T extends JamilihArray, U extends T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void, E extends ElementFromJamilihArray<T>, W extends CustomFromJamilihArray<T>>(...args: JamilihArrayWithCustomThis<T, E>): U extends void ? JamilihReturn : ResolvedElement<U, W>;
 declare namespace jml {
     export { toJML };
     export { toJMLString };

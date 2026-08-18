@@ -825,16 +825,23 @@ function getMatchingPlugin(opts, pluginName) {
 
 /**
  * @template {JamilihArray} T
+ * @typedef {Extract<T[number], {xmlns: unknown}> extends never ? false : true} HasXmlnsFromJamilihArray
+ */
+
+/**
+ * @template {JamilihArray} T
  * @typedef {T extends [infer K, ...ArbitraryValue[]]
- *   ? (K extends keyof HTMLElementTagNameMap
+ *   ? (HasXmlnsFromJamilihArray<T> extends true
+ *     ? Element
+ *     : K extends keyof HTMLElementTagNameMap
  *     ? HTMLElementTagNameMap[K]
  *     : HTMLElement)
- *   : HTMLElement} ElementFromJamilihArray
+ *   : Element} ElementFromJamilihArray
  */
 
 /**
  * @template A
- * @template {HTMLElement} E
+ * @template {Element} E
  * @typedef {A extends {$custom: infer C}
  *   ? (C extends object
  *     ? Omit<A, '$custom'> & {$custom?: C & ThisType<E & C>}
@@ -844,7 +851,7 @@ function getMatchingPlugin(opts, pluginName) {
 
 /**
  * @template {JamilihArray} T
- * @template {HTMLElement} E
+ * @template {Element} E
  * @typedef {{[K in keyof T]: WithCustomThis<T[K], E>}} JamilihArrayWithCustomThis
  */
 
@@ -868,7 +875,7 @@ function getMatchingPlugin(opts, pluginName) {
  * that support); any element after element can be omitted, and any subsequent
  * type or types added afterwards.
  * @template {JamilihArray} T
- * @template {T extends [infer K, ...ArbitraryValue[]] ? (K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void} U
+ * @template {T extends [infer K, ...ArbitraryValue[]] ? (HasXmlnsFromJamilihArray<T> extends true ? Element : K extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[K] : K extends string ? HTMLElement : void) : void} U
  * @template {ElementFromJamilihArray<T>} E
  * @template {CustomFromJamilihArray<T>} W
  * @param {JamilihArrayWithCustomThis<T, E>} args

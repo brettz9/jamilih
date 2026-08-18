@@ -261,11 +261,18 @@ describe('Jamilih - jml', function () {
     xmlTesting.matches(body, jml(body), 'Wrapping single pre-existing DOM element');
   });
   it('Namespace declarations', () => {
+    const namespacedUnknown = jml('abc', {xmlns: 'def'});
     xmlTesting.matches(
-      jml('abc', {xmlns: 'def'}).namespaceURI,
+      namespacedUnknown.namespaceURI,
       'def',
       'Single unknown element with non-HTML default namespace declaration'
     );
+    // @ts-expect-error XML namespace reparsing returns Element, not HTMLElement.
+    JSON.stringify(namespacedUnknown.style);
+
+    const namespacedKnown = jml('div', {xmlns: 'def'});
+    // @ts-expect-error Known tag names also become generic XML Elements.
+    JSON.stringify(namespacedKnown.style);
 
     xmlTesting.matchesXMLString(
       jml('abc', {
