@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.69.0",
+  "version": "0.69.1",
   "type": "module",
   "author": {
     "name": "Brett Zamir",
@@ -159,8 +159,8 @@
     "chai": "^6.2.2",
     "chokidar-cli": "^3.0.0",
     "coveradge": "^0.8.2",
-    "eslint": "^10.8.1",
-    "eslint-config-ash-nazg": "^42.5.0",
+    "eslint": "^10.9.1",
+    "eslint-config-ash-nazg": "^43.1.6",
     "http-server": "^14.1.1",
     "jsdoc": "^4.0.5",
     "jsdom": "30.0.1",
@@ -169,7 +169,7 @@
     "mocha-badge-generator": "^0.11.0",
     "mocha-multi-reporters": "^1.5.1",
     "open-cli": "^9.0.0",
-    "rollup": "4.62.4",
+    "rollup": "4.63.1",
     "rollup-plugin-re": "^1.0.7",
     "typescript": "^7.0.2"
   }

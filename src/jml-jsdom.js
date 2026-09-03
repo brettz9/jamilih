@@ -1,4 +1,4 @@
-import jsdom from 'jsdom';
+import {JSDOM} from 'jsdom';
 
 import {setWindow} from './jml.js';
 
@@ -9,8 +9,6 @@ export {jml} from './jml.js';
 // Ignore else
 /* c8 ignore next */
 if (typeof process !== 'undefined') {
-  const {JSDOM} = jsdom;
-
   const win = new JSDOM('').window;
 
   setWindow(win);

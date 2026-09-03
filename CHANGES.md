@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.69.1
+
+- fix(node): issue with jsdom import
+
 ## 0.69.0
 
 - fix(types): infer `xmlns`-created nodes as `Element`

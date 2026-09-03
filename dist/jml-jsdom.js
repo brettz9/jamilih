@@ -2636,10 +2636,7 @@ const nbsp = '\u{A0}'; // Very commonly needed in templates
 // Ignore else
 /* c8 ignore next */
 if (typeof process !== 'undefined') {
-  const {
-    JSDOM
-  } = jsdom;
-  const win = new JSDOM('').window;
+  const win = new jsdom.JSDOM('').window;
   setWindow(win);
 }
 

@@ -1,4 +1,4 @@
-import jsdom from 'jsdom';
+import { JSDOM } from 'jsdom';
 
 /* eslint-disable unicorn/prefer-global-this -- Easier */
 /* eslint-disable unicorn/no-break-in-nested-loop -- Performance to avoid function? */
@@ -2634,9 +2634,6 @@ const nbsp = '\u{A0}'; // Very commonly needed in templates
 // Ignore else
 /* c8 ignore next */
 if (typeof process !== 'undefined') {
-  const {
-    JSDOM
-  } = jsdom;
   const win = new JSDOM('').window;
   setWindow(win);
 }
