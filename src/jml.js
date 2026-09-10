@@ -1469,8 +1469,8 @@ const jml = function jml (...args) {
         };
         recurse(/** @type {DatasetAttributeObject} */ (attVal), '');
         break;
-        // Todo: Disable this by default unless configuration explicitly allows (for security)
       }
+      // Todo: Disable this by default unless configuration explicitly allows (for security)
       // #if IS_REMOVE
       // Don't remove this `if` block (for sake of no-innerHTML build)
       case 'innerHTML':
