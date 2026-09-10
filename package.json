@@ -43,7 +43,7 @@
     "exclude": [
       "test",
       "test-helpers",
-      ".mocharc.js"
+      ".mocharc.cjs"
     ],
     "reporter": [
       "text",
