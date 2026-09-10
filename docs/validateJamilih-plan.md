@@ -244,7 +244,16 @@ to keep it dependency-free.
 `BAD_CUSTOM_PROTO`, `NON_JSON_VALUE`, `NON_JSON_CONSTRUCT`,
 `DOM_NODE_NOT_ALLOWED`, `INNERHTML_NOT_ALLOWED`, `OPTIONS_OBJECT_NOT_ALLOWED`,
 `DISALLOWED_OPTION`, `UNKNOWN_MAGIC_PROPERTY`, `MISPLACED_OPTIONS_OBJECT`,
-`RESERVED_OPTION`, `OPTION_CONFLICT`, `UNKNOWN_TYPE`.
+`ATTRIBUTES_BEFORE_ELEMENT`, `RESERVED_OPTION`, `OPTION_CONFLICT`,
+`UNKNOWN_TYPE`.
+
+`ATTRIBUTES_BEFORE_ELEMENT` &mdash; a plain (non-`$`) key sits on a
+first-argument object with no element to receive it: either a bare object that
+is neither an options object nor a node-producing first-arg object
+(`#` / `$text` / `$document` / `$DOCTYPE` / `$attribute`) nor purely
+`$`-prefixed, or a genuine attribute mixed onto a real options object
+(`[{$Map: [...], id: 'x'}, 'div']`). Mirrors the matching `jml()` throws added
+in §6d.
 
 `DISALLOWED_OPTION` vs `UNKNOWN_MAGIC_PROPERTY` &mdash; the discriminator is
 *whether the key is a Jamilih builtin*, not its position:
@@ -402,7 +411,7 @@ Auto-picked by the `test/test.*.js` mocha glob.
 
 ## 6. Companion **breaking** change to Jamilih core (prerequisite)
 
-Three changes to `src/jml.js`, shipping together in 0.70.0.
+Four changes to `src/jml.js`, shipping together in 0.70.0.
 
 ### 6a. Rename the `$map` option to `$Map`
 
@@ -502,6 +511,42 @@ legitimate use. Ship with 0.70.0.
 Tests: `jml({$state: 'children'}, 'div')` and `jml('div', {$mode: 'svg'})`
 throw `TypeError`; normal nested traversal (internal `$state` propagation)
 still works; `getInterpolator` plugin still sees correct `opts.$state`.
+
+### 6d. Throw on a genuine attribute supplied before an element
+
+A plain object in first-argument position that is *not* an options object may
+legitimately be only a node-producing first-arg object (`#`, `$text`,
+`$document`, `$DOCTYPE`, `$attribute`) or a purely `$`-prefixed object
+(templating-dialect magic Jamilih skips, per §6b). A genuine attribute there
+(`{id: 'x'}`, `{class: 'y'}`, ...) has no element to attach to. Today the
+outcome is inconsistent depending on the key: `setAttribute`-backed keys
+(`id`, `href`) throw a cryptic `elem.setAttribute is not a function` on the
+auto fragment; property-backed keys (`class` / `className`, `innerHTML`) are
+**silently dropped** as fragment expandos; `dataset` throws a different
+cryptic error.
+
+Change, in both first-argument paths of `jml()`:
+
+- *Options-detected branch* (object has `$plugins` / `$Map`): after the §6c
+  `$mode` / `$state` checks, if any own key is **not** `$`-prefixed &rarr;
+  `throw new TypeError('Attributes may not be supplied before an element; ...')`.
+  Unknown `$`-prefixed keys there (e.g. `$if`) stay ignored, per §6b.
+- *`else` branch* (unbranded plain object, `_getType(args[0]) === 'object' &&
+  !internalOpts.has(args[0])`):
+  - own `$mode` / `$state` &rarr; the §6c throws (caught here too, not only
+    when the object is options-detected);
+  - carries a `FIRST_ARG_NODE_KEYS` member (`#` / `$text` / `$document` /
+    `$DOCTYPE` / `$attribute`) &rarr; leave `argStart = 0`, processed in place;
+  - empty or every key `$`-prefixed &rarr; `argStart = 1` (skip it);
+  - otherwise &rarr; the same throw.
+
+So `jml({id: 'x'}, 'div')` **and** `jml({$Map: [m, o], id: 'x'}, 'div')` both
+throw. `validateJamilih` mirrors this: `validateStructure` for the bare-object
+case, `validateOptionsObject` for a non-`$` key on a detected options object,
+both emitting `ATTRIBUTES_BEFORE_ELEMENT` (see §4).
+
+Breaking only for code that (nonsensically) relied on attributes-before-an-
+element being silently ignored. Ship with 0.70.0.
 
 ## 7. Resolved decisions
 

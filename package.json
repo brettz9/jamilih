@@ -1,6 +1,6 @@
 {
   "name": "jamilih",
-  "version": "0.69.1",
+  "version": "0.70.0",
   "type": "module",
   "author": {
     "name": "Brett Zamir",
@@ -20,7 +20,7 @@
     "eslint": "eslint .",
     "rollup": "rollup -c",
     "build": "rm -Rf dist && mkdir dist && echo '{\"type\": \"commonjs\"}' > dist/package.json && npm run rollup && tsc -p tsconfig-build.json && npm run copy-dts",
-    "copy-dts": "cp dist/src/jml.d.ts dist/src/jml.d.mts && cp dist/src/jml-jsdom.d.ts dist/src/jml-jsdom.d.mts && cp dist/plugins/getInterpolator.d.ts dist/plugins/getInterpolator.d.mts",
+    "copy-dts": "cp src/jamilih-dialect.d.ts dist/src/jamilih-dialect.d.ts && cp src/jamilih-dialect.d.ts dist/src/jamilih-dialect.d.mts && node -e \"const fs=require('fs'),f='dist/src/jml.d.ts',r='/// <reference path=\\\"./jamilih-dialect.d.ts\\\" />\\n',c=fs.readFileSync(f,'utf8');fs.writeFileSync(f,c.startsWith(r)?c:r+c)\" && cp dist/src/jml.d.ts dist/src/jml.d.mts && cp dist/src/jml-jsdom.d.ts dist/src/jml-jsdom.d.mts && cp dist/plugins/getInterpolator.d.ts dist/plugins/getInterpolator.d.mts && cp dist/src/validateJamilih.d.ts dist/src/validateJamilih.d.mts",
     "browser-test": "npm run build && open-cli http://localhost:8091/test/ && npm run start",
     "mocha": "mocha --require test-helpers/loadTests.js test/test.*.js --reporter-options configFile=mocha-multi-reporters.json",
     "c8": "rm -Rf .nyc_output && rm -Rf coverage && rm -Rf node_modules/.cache && c8 npm run mocha ; npm run coverage-badge",
@@ -111,6 +111,16 @@
         "types": "./dist/plugins/getInterpolator.d.ts",
         "default": "./dist/getInterpolator.js"
       }
+    },
+    "./dist/validateJamilih.js": {
+      "import": {
+        "types": "./dist/src/validateJamilih.d.mts",
+        "default": "./dist/validateJamilih.mjs"
+      },
+      "require": {
+        "types": "./dist/src/validateJamilih.d.ts",
+        "default": "./dist/validateJamilih.js"
+      }
     }
   },
   "repository": {
@@ -131,6 +141,9 @@
       ],
       "dist/jml-noinnerh.mjs": [
         "dist/src/jml.d.mts"
+      ],
+      "dist/validateJamilih.js": [
+        "dist/src/validateJamilih.d.ts"
       ]
     }
   },

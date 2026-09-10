@@ -728,7 +728,28 @@ or some recurring item, without the need for a special `map` or `reduce`.
             to return a sole text node; otherwise, text nodes are created with simple strings belonging to an element's
             children array).
         1. A property beginning with `$` has a special purpose and if it begins with `$_`,
-            it is a plugin.
+            it is a plugin. The `$` namespace is *shared*: base Jamilih recognizes the
+            names it defines (see below) and silently ignores any other `$`-prefixed
+            property, so a templating dialect layered on Jamilih may define its own
+            (`$if`, `$forEach`, ...). Jamilih currently reserves, as options on the
+            leading options object, `$plugins` and `$Map` (plus the internal-only
+            `$state` and the not-yet-implemented `$mode`, both of which throw if
+            author-supplied); and, as pseudo-attributes / first-argument object keys,
+            `$on`, `$symbol`, `$custom`, `$define`, `$data`, `$shadow`, `$attribute`,
+            `$text`, `$document`, and `$DOCTYPE` (with `#` for a fragment and the `$_`
+            prefix for plugins). For TypeScript, a dialect registers the keys it adds
+            by augmenting the global `JamilihDialectProperties` interface, after which
+            they type-check on a leading Jamilih object and as bare `$`-only children
+            (an unregistered `$`-key stays a compile error):
+
+            ```ts
+            declare global {
+              interface JamilihDialectProperties {
+                $if?: unknown;
+                $forEach?: unknown;
+              }
+            }
+            ```
         1. A property `$document` set to an object with properties `childNodes`. In place of `childNodes`, one may
             instead add to any of the array properties, `head` and `body`. One may also add a string `title` property in which case, a `<head>` will be automatically created, with a `<meta charset="utf-8"/>` element (as expected by HTML5) and a `<title>` element, and any additionally supplied `head` array items appended to that `<head>`. If `head`,
             `body`, or `title` are supplied, an empty "html" DOCTYPE will be auto-created (as expected by HTML5) as well as an
@@ -790,6 +811,38 @@ or some recurring item, without the need for a special `map` or `reduce`.
 
 A tentative [JSON Schema](https://json-schema.org/) is available
 [here](jamilih.jsonschema).
+
+## Validation
+
+`validateJamilih(structure, options?)` checks a single-array Jamilih structure
+without building anything (it needs no `window`/`document` and never calls
+`jml()`). It returns `{valid: boolean, errors: {code, message, path}[]}`, where
+`path` is a JSON-pointer-like location such as `"/2/0/1"`.
+
+```js
+import {validateJamilih} from 'jamilih';
+// or the lean, jsdom-free entry point:
+// import {validateJamilih} from 'jamilih/dist/validateJamilih.js';
+// or `jml.validateJamilih(...)`
+
+const result = validateJamilih(['div', {id: 'x'}, [['span', ['hi']]]]);
+if (!result.valid) {
+  throw new Error(JSON.stringify(result.errors));
+}
+```
+
+It always checks structural well-formedness (the same grammar `jml()` accepts).
+`options` add policy on top:
+
+| Option | Default | Effect |
+|---|---|---|
+| `format` | `"javascript"` | `"json"` also requires every value to be losslessly JSON round-trippable (no functions, symbols, `undefined`, `NaN`/`Infinity`, `Map`/`WeakMap`, DOM nodes, or non-plain objects), which rules out `$on`/`$symbol`/`$define`/`$data` and forces `allowDOM` off. |
+| `allowInnerHTML` | `true` | When `false`, an `innerHTML` attribute key is rejected (mirrors the `jml-noinnerh` build). |
+| `allowDOM` | `true` | When `false` (forced when `format` is `"json"`), raw DOM nodes anywhere are rejected. |
+| `allowableOptions` | `["$plugins", "$Map"]` | Whitelist of extensible `$`-prefixed properties accepted wherever `$` magic is read. The sentinel `"default"` expands to the builtin option keys and `"any"` / `"*"` permits any unknown `$`-key; passing the option otherwise *replaces* the defaults. `[]` forbids a leading options object entirely. Lets a templating dialect validate its own keys, e.g. `{allowableOptions: ["$if", "$forEach"]}`. |
+| `failFast` | `false` | Stop at the first error instead of collecting all of them. |
+
+`isValidJamilih(structure, options?)` is a boolean wrapper.
 
 ## Design Rationale
 

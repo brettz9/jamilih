@@ -754,6 +754,92 @@ describe('Jamilih - jml', function () {
     }).to.throw(TypeError, 'Bad children (parent array: ["div",{},[[null]]]; index 0 of child: [[null]])');
   });
 
+  it('ignores unrecognized `$`-prefixed attribute keys (templating-dialect composability)', () => {
+    const div = jml('div', {$if: ['x'], id: 'realAttr'});
+    assert.isFalse(div.hasAttribute('$if'), 'no bogus `$if` attribute set');
+    assert.equal(div.getAttribute('id'), 'realAttr', 'sibling real attributes still applied');
+  });
+
+  it('treats a `$`-only object child as a no-op', () => {
+    const wrapped = jml('div', [
+      ['span', ['kept']],
+      [{$if: ['$cond', ['b', ['shown']]]}]
+    ]);
+    assert.equal(wrapped.childNodes.length, 1, 'the `$if` child produced nothing');
+    assert.equal(wrapped.firstChild?.textContent, 'kept');
+
+    const bare = jml('div', [
+      {$forEach: ['$..x', ['i']]}
+    ]);
+    assert.equal(bare.childNodes.length, 0, 'bare `$`-only object child is dropped');
+  });
+
+  it('a `$`-key not registered on `JamilihDialectProperties` is a type error', () => {
+    // `$if` / `$forEach` are registered in `test/jamilih-dialect-augment.d.ts`;
+    //   `$unregistered` is not, so the types reject it even though the runtime
+    //   (6b) tolerates it as a no-op.
+    const leading = /** @type {HTMLElement} */ (jml(
+      // @ts-expect-error unregistered dialect key on a leading object
+      {$unregistered: 1},
+      'div', {id: 'kept'}
+    ));
+    assert.equal(leading.getAttribute('id'), 'kept');
+
+    // @ts-expect-error unregistered dialect key as a bare `$`-only child
+    const withChild = /** @type {HTMLElement} */ (jml('div', [{$unregistered: 1}]));
+    assert.equal(withChild.childNodes.length, 0);
+  });
+
+  it('rejects a genuine attribute on a leading object', () => {
+    expect(() => {
+      jml(/** @type {BadArgument} */ ({id: 'x'}), 'div');
+    }).to.throw(TypeError, 'Attributes may not be supplied before an element');
+    // Previously a silent no-op (set as an expando on the auto fragment).
+    expect(() => {
+      jml(/** @type {BadArgument} */ ({className: 'x'}), 'div');
+    }).to.throw(TypeError, 'Attributes may not be supplied before an element');
+    // ...also when mixed onto a genuine options object.
+    expect(() => {
+      jml({$Map: [new Map(), {}], id: 'x'}, 'div');
+    }).to.throw(TypeError, 'Attributes may not be supplied before an element');
+    // A dialect-only object is skipped, not an error.
+    const div = /** @type {HTMLElement} */ (
+      jml({$if: ['ignored']}, 'div', {id: 'kept'})
+    );
+    assert.equal(div.nodeName.toLowerCase(), 'div');
+    assert.equal(div.getAttribute('id'), 'kept');
+    // An empty leading object is skipped too.
+    expect(() => {
+      jml({}, 'div');
+    }).to.not.throw();
+  });
+
+  it('throws on author-supplied `$state`', () => {
+    expect(() => {
+      jml({$state: 'children'}, 'div');
+    }).to.throw(TypeError, '`$state` is set internally by Jamilih and may not be supplied');
+    // Detected as an options object (via `$plugins`), so the check runs at
+    //   options detection rather than in `_checkAtts`.
+    expect(() => {
+      jml({$plugins: [], $state: 'root'}, 'div');
+    }).to.throw(TypeError, '`$state` is set internally by Jamilih and may not be supplied');
+    expect(() => {
+      jml('div', {$state: 'element'});
+    }).to.throw(TypeError, '`$state` is set internally by Jamilih and may not be supplied');
+  });
+
+  it('throws on author-supplied `$mode`', () => {
+    expect(() => {
+      jml(/** @type {BadArgument} */ ({$mode: 'svg'}), 'div');
+    }).to.throw(TypeError, '`$mode` is reserved for future use and not yet implemented');
+    expect(() => {
+      jml({$plugins: [], $mode: 'svg'}, 'div');
+    }).to.throw(TypeError, '`$mode` is reserved for future use and not yet implemented');
+    expect(() => {
+      jml('div', {$mode: 'svg'});
+    }).to.throw(TypeError, '`$mode` is reserved for future use and not yet implemented');
+  });
+
   it('Event listeners', () => {
     let str;
     const input = jml('input', {
@@ -865,7 +951,7 @@ describe('Jamilih - jml', function () {
     const mapType = /** @type {"Map"|"WeakMap"} */ (mpType);
 
     it('Maps (' + mapType + ')', () => {
-      // Todo: Let `$map` accept an array of map-object arrays (and add tests)
+      // Todo: Let `$Map` accept an array of map-object arrays (and add tests)
       // Todo: Add tests for array of map strings
       // @ts-expect-error Our signature usage should be compatible
       const map1 = new window[mapType]();
@@ -882,7 +968,7 @@ describe('Jamilih - jml', function () {
       const testFunc = function (arg1) {
         return this.id + ' ok ' + arg1;
       };
-      const el = jml({$map: [map1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
+      const el = jml({$Map: [map1, testObj1]}, 'div', {id: 'mapAttributeTest'}, [
         ['input', {id: 'input1', $data: true}, ['Test']],
         ['input', {id: 'input2', $data: [map2, testObj2]}],
         ['input', {id: 'input3', $data: map1}],
@@ -937,7 +1023,7 @@ describe('Jamilih - jml', function () {
         ? ' (WeakMap)'
         : ''),
       () => {
-        // Todo: Let `$map` accept an array of map-object arrays (and add tests)
+        // Todo: Let `$Map` accept an array of map-object arrays (and add tests)
         // Todo: Add tests for array of map strings
 
         // @ts-expect-error Signature should be ok
@@ -967,7 +1053,7 @@ describe('Jamilih - jml', function () {
           return this.id + ' ok ' + arg1;
         };
         const el = jml({
-          $map: {
+          $Map: {
             root: [map1, testObj1],
             map1: [map1, testObj1],
             map2: [map2, testObj2],

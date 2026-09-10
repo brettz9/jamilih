@@ -1,5 +1,29 @@
 # CHANGES for jamilih
 
+## 0.70.0
+
+- **BREAKING**: rename the `$map` option to `$Map`
+- **BREAKING**: `jml()` now throws on an author-supplied `$state` (previously a
+    silent no-op that could corrupt root detection) or `$mode` (reserved for a
+    future SVG/XML mode)
+- **BREAKING**: `jml()` now throws on a genuine attribute supplied before an
+    element (e.g. `jml({id: 'x'}, 'div')`); previously `setAttribute`-backed
+    keys threw cryptically and property-backed keys such as `class` were
+    silently dropped
+- feat: `jml()` ignores unrecognized `$`-prefixed properties instead of
+    throwing, so templating dialects layered on Jamilih can define their own
+    (`$if`, `$forEach`, ...); a purely `$`-prefixed object in first-argument
+    position is skipped
+- feat: add `validateJamilih` structural/policy validator (its own
+    `jamilih/dist/validateJamilih.js` entry point, re-exported from the main
+    module and as `jml.validateJamilih`)
+- feat(types): a templating dialect registers the `$`-prefixed properties it
+    adds by augmenting the global `JamilihDialectProperties` interface (see
+    `src/jamilih-dialect.d.ts`); those keys then type-check on a leading
+    Jamilih object and as a bare `$`-only child, while an unregistered `$`-key
+    (or any non-`$` attribute) before an element stays a compile error
+- chore: update devDeps.
+
 ## 0.69.1
 
 - fix(node): issue with jsdom import

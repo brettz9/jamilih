@@ -23,6 +23,9 @@ Other Todos:
 0. Redo browser testing of jml
 */
 
+import {possibleOptions} from './possibleOptions.js';
+import {validateJamilih} from './validateJamilih.js';
+
 /**
  * @typedef {Window & {DocumentFragment: typeof DocumentFragment}} HTMLWindow
  */
@@ -81,12 +84,13 @@ let doc = (typeof document !== 'undefined' && document) || win?.document;
 
 // STATIC PROPERTIES
 
-const possibleOptions = [
-  '$plugins',
-  // '$mode', // Todo (SVG/XML)
-  // '$state', // Used internally
-  '$map' // Add any other options here
-];
+/**
+ * Brands `opts` objects that `jml()` created or adopted internally, so a
+ * user-supplied `$state` (which would corrupt root detection) can be told
+ * apart from the internal traversal marker of the same name.
+ * @type {WeakSet<object>}
+ */
+const internalOpts = new WeakSet();
 
 const NS_HTML = 'http://www.w3.org/1999/xhtml',
   hyphenForCamelCase = /-([a-z])/gu;
@@ -270,7 +274,8 @@ function _isHTMLElement (item) {
  * @static
  * @param {string|JamilihAttributes|JamilihArray|JamilihChildren|
  *   JamilihDocumentFragment|JamilihAttributeNode|
- *   JamilihOptions|HTMLElement|Document|DocumentFragment|null|undefined} item
+ *   JamilihOptions|JamilihDialectObject|HTMLElement|Document|DocumentFragment|
+ *   null|undefined} item
  * @returns {"string"|"null"|"array"|"element"|"fragment"|"object"|
  *   "symbol"|"bigint"|"function"|"number"|"boolean"|"undefined"|
  *   "document"|"processing-instruction"|"non-container node"}
@@ -377,10 +382,21 @@ function _childrenToJML (node) {
 }
 
 /**
+ * The `$`-prefixed properties a templating dialect has registered on the
+ * globally augmentable {@link JamilihDialectProperties} interface (see
+ * `src/jamilih-dialect.d.ts`). This is the escape hatch that lets those keys
+ * appear on a leading Jamilih object and as a bare `$`-only child; a `$`-key
+ * that has not been registered (and any non-`$` attribute) stays a type
+ * error. Resolves to `never` until the interface is augmented, so it adds
+ * nothing to a union in the default (strict) case.
+ * @typedef {[keyof JamilihDialectProperties] extends [never] ? never : Partial<JamilihDialectProperties>} JamilihDialectObject
+ */
+
+/**
  * Keep this in sync with `JamilihArray`'s first argument (minus `Document`).
  * @typedef {JamilihDoc|JamilihDoctype|JamilihTextNode|
- *   JamilihAttributeNode|JamilihOptions|ElementName|HTMLElement|
- *   JamilihDocumentFragment
+ *   JamilihAttributeNode|JamilihOptions|JamilihDialectObject|ElementName|
+ *   HTMLElement|JamilihDocumentFragment
  * } JamilihFirstArg
  */
 
@@ -723,6 +739,9 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
+ * `JamilihDialectObject` is deliberately absent: this type is reused for the
+ * attributes position, where every recognized `$`-magic key must keep its
+ * specific value type.
  * @typedef {Document|ElementName|HTMLElement|DocumentFragment|
  *   JamilihDocumentFragment|JamilihDoc|JamilihDoctype|JamilihTextNode|
  *   JamilihAttributeNode} JamilihFirstArgument
@@ -741,7 +760,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * @typedef {(
  *   JamilihArray|JamilihArrayLike|TextNodeString|HTMLElement|Comment|
  *   ProcessingInstruction|Text|DocumentFragment|JamilihProcessingInstruction|
- *   JamilihDocumentFragment|PluginReference
+ *   JamilihDocumentFragment|PluginReference|JamilihDialectObject
  * )[]} JamilihChildren
  */
 
@@ -767,7 +786,7 @@ function _DOMfromJMLOrString (childNodeJML) {
  * The sixth last optional argument is null, used to indicate an array of elements
  *   should be returned.
  * @typedef {[
- *   JamilihOptions|JamilihFirstArgument,
+ *   JamilihOptions|JamilihFirstArgument|JamilihDialectObject,
  *   (JamilihFirstArgument|
  *     JamilihAttributes|
  *     JamilihChildren|
@@ -802,10 +821,17 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @typedef {object} JamilihOptions
- * @property {TraversalState} [$state]
- * @property {JamilihPlugin[]} [$plugins]
- * @property {MapWithRoot|[Map<HTMLElement,UserArg>|WeakMap<HTMLElement,UserArg>, UserArg]} [$map]
+ * The optional leading object. `$state` is internal and `$mode` is reserved
+ * (both throw when author-supplied). A templating dialect's own `$`-keys are
+ * accepted here only after they are registered on the globally augmentable
+ * {@link JamilihDialectProperties} interface (see `src/jamilih-dialect.d.ts`);
+ * an unregistered `$`-key — and any genuine non-`$` attribute — stays a
+ * compile error.
+ * @typedef {{
+ *   $state?: TraversalState,
+ *   $plugins?: JamilihPlugin[],
+ *   $Map?: MapWithRoot|[Map<HTMLElement,UserArg>|WeakMap<HTMLElement,UserArg>, UserArg]
+ * }} JamilihOptions
  */
 
 /**
@@ -1159,8 +1185,13 @@ const jml = function jml (...args) {
         }
         break;
       } case '$state': {
-        // Handled internally
+        // Handled internally; only valid on a jml-created `opts` object
+        if (!internalOpts.has(atts)) {
+          throw new TypeError(`\`$state\` is set internally by Jamilih and may not be supplied; args: ${JSON.stringify(args)}`);
+        }
         break;
+      } case '$mode': {
+        throw new TypeError(`\`$mode\` is reserved for future use and not yet implemented; args: ${JSON.stringify(args)}`);
       } case 'is': { // Currently only in Chrome
         // Handled during element creation
         break;
@@ -1470,9 +1501,12 @@ const jml = function jml (...args) {
         recurse(/** @type {DatasetAttributeObject} */ (attVal), '');
         break;
       }
-      // Todo: Disable this by default unless configuration explicitly allows (for security)
       // #if IS_REMOVE
       // Don't remove this `if` block (for sake of no-innerHTML build)
+      // Security: this assigns `innerHTML` directly, so its value must be
+      //   trusted or sanitized by the caller. The `jamilih` package also
+      //   publishes a `jml-noinnerh` build with this sink removed, and
+      //   `validateJamilih({allowInnerHTML: false})` rejects the key.
       case 'innerHTML':
         if (!_isNullish(attVal)) {
           // eslint-disable-next-line no-unsanitized/property
@@ -1548,6 +1582,13 @@ const jml = function jml (...args) {
           });
           break;
         }
+        if (att.startsWith('$')) {
+          // Unrecognized `$`-prefixed key: reserved for templating dialects
+          //   layered on Jamilih (and for future Jamilih use); base Jamilih
+          //   ignores it rather than attempting `setAttribute` (which would
+          //   throw on the invalid `$` name character).
+          break;
+        }
         attVal = checkPluginValue(elem, att, /** @type {string} */ (attVal), opts);
         elem.setAttribute(att, attVal);
         break;
@@ -1573,13 +1614,30 @@ const jml = function jml (...args) {
     Object.keys(args[0]).some((key) => possibleOptions.includes(key))
   ) {
     opts = /** @type {JamilihOptions} */ (args[0]);
+    if (!internalOpts.has(opts)) {
+      // `$mode` is reserved for a future SVG/XML mode and does nothing yet;
+      //   `$state` is set internally and would corrupt root detection.
+      if (Object.hasOwn(opts, '$mode')) {
+        throw new TypeError(`\`$mode\` is reserved for future use and not yet implemented; args: ${JSON.stringify(args)}`);
+      }
+      if (Object.hasOwn(opts, '$state')) {
+        throw new TypeError(`\`$state\` is set internally by Jamilih and may not be supplied; args: ${JSON.stringify(args)}`);
+      }
+      // The options object may carry only `$`-prefixed keys (recognized
+      //   options or dialect magic Jamilih ignores); a plain key is a
+      //   misplaced attribute with no element to receive it.
+      if (Object.keys(opts).some((k) => !k.startsWith('$'))) {
+        throw new TypeError(`Attributes may not be supplied before an element; args: ${JSON.stringify(args)}`);
+      }
+      internalOpts.add(opts);
+    }
     if (opts.$state === undefined) {
       isRoot = true;
       opts.$state = 'root';
     }
-    if (Array.isArray(opts.$map)) {
-      opts.$map = {
-        root: opts.$map
+    if (Array.isArray(opts.$Map)) {
+      opts.$Map = {
+        root: opts.$Map
       };
     }
     if ('$plugins' in opts) {
@@ -1603,9 +1661,35 @@ const jml = function jml (...args) {
     opts = {
       $state: undefined
     };
+    internalOpts.add(opts);
+    // A user-supplied plain object in first-argument position that is *not*
+    //   an options object (handled above). It may only be a node-producing
+    //   first-arg object (`#`, `$text`, `$document`, `$DOCTYPE`, `$attribute`)
+    //   or a purely `$`-prefixed object (dialect magic Jamilih skips); a
+    //   genuine attribute there has no element to attach to.
+    const leading = /** @type {Record<string, unknown>} */ (args[0]);
+    if (_getType(args[0]) === 'object' && !internalOpts.has(leading)) {
+      if (Object.hasOwn(leading, '$mode')) {
+        throw new TypeError(`\`$mode\` is reserved for future use and not yet implemented; args: ${JSON.stringify(args)}`);
+      }
+      if (Object.hasOwn(leading, '$state')) {
+        throw new TypeError(`\`$state\` is set internally by Jamilih and may not be supplied; args: ${JSON.stringify(args)}`);
+      }
+      const leadingKeys = Object.keys(leading);
+      const firstArgNodeObject = leadingKeys.some((k) => {
+        return ['#', '$text', '$document', '$DOCTYPE', '$attribute'].includes(k);
+      });
+      if (!firstArgNodeObject) {
+        if (leadingKeys.every((k) => k.startsWith('$'))) {
+          argStart = 1;
+        } else {
+          throw new TypeError(`Attributes may not be supplied before an element; args: ${JSON.stringify(args)}`);
+        }
+      }
+    }
   }
   const argc = args.length;
-  const defaultMap = opts.$map && /** @type {MapWithRoot} */ (opts.$map).root;
+  const defaultMap = opts.$Map && /** @type {MapWithRoot} */ (opts.$Map).root;
 
   /**
    * @param {true|string[]|Map<HTMLElement, UserArg>|WeakMap<HTMLElement, UserArg>|DataAttributeObject|[Map<HTMLElement, UserArg>|WeakMap<HTMLElement, UserArg>|undefined, DataAttributeObject|UserArg]} dataVal
@@ -1621,7 +1705,7 @@ const jml = function jml (...args) {
       // Array of strings mapping to default
       if (typeof dataVal[0] === 'string') {
         dataVal.forEach((dVal) => {
-          setMap(/** @type {MapWithRoot} */ (opts.$map)[dVal]);
+          setMap(/** @type {MapWithRoot} */ (opts.$Map)[dVal]);
         });
         return;
         // Array of Map and non-map data object
@@ -1855,6 +1939,18 @@ const jml = function jml (...args) {
               newChildContent = /** @type {string} */ (
                 checkPluginValue(elem, null, childContent, opts, 'children')
               );
+              const pluginClaimed = newChildContent !== undefined && /** @type {unknown} */ (newChildContent) !== childContent;
+              const childKeys = Object.keys(childContent);
+              if (
+                // No plugin claimed the object, and every key is `$`-prefixed
+                //   magic Jamilih does not know: treat as a no-op
+                //   (templating-dialect placeholder).
+                !pluginClaimed &&
+                childKeys.length > 0 &&
+                childKeys.every((k) => k.startsWith('$'))
+              ) {
+                break;
+              }
             }
             _appendNode(elem, /** @type {string|HTMLElement|DocumentFragment|Comment} */ (
               newChildContent || childContent
@@ -1870,7 +1966,7 @@ const jml = function jml (...args) {
     }
   }
   const ret = nodes[0] || elem;
-  if (isRoot && opts.$map && /** @type {MapWithRoot} */ (opts.$map).root) {
+  if (isRoot && opts.$Map && /** @type {MapWithRoot} */ (opts.$Map).root) {
     setMap(true);
   }
 
@@ -2513,7 +2609,7 @@ jml.WeakMap = JamilihWeakMap;
  */
 jml.weak = function (obj, ...args) {
   const map = new JamilihWeakMap();
-  const elem = jml({$map: [map, obj]}, ...args);
+  const elem = jml({$Map: [map, obj]}, ...args);
   return [map, /** @type {HTMLElement} */ (elem)];
 };
 
@@ -2525,7 +2621,7 @@ jml.weak = function (obj, ...args) {
  */
 jml.strong = function (obj, ...args) {
   const map = new JamilihMap();
-  const elem = jml({$map: [map, obj]}, ...args);
+  const elem = jml({$Map: [map, obj]}, ...args);
   return [map, /** @type {HTMLElement} */ (elem)];
 };
 
@@ -2606,6 +2702,8 @@ export const getWindow = () => {
 };
 jml.getWindow = getWindow;
 
+jml.validateJamilih = validateJamilih;
+
 /**
  * Does not run Jamilih so can be further processed.
  * @template T
@@ -2633,4 +2731,5 @@ if (doc && doc.body) {
 
 const nbsp = '\u{A0}'; // Very commonly needed in templates
 
-export {jml, $, $$, nbsp, body, glue};
+export {jml, $, $$, nbsp, body, glue, validateJamilih};
+export {isValidJamilih} from './validateJamilih.js';

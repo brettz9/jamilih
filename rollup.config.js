@@ -146,4 +146,31 @@ export default [{
       exclude: 'node_modules/**'
     })
   ]
+}, {
+  input: 'src/validateJamilih.js',
+  output: {
+    file: 'dist/validateJamilih.js',
+    format: 'umd',
+    name: 'validateJamilih',
+    exports: 'named'
+  },
+  plugins: [
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**'
+    })
+  ]
+}, {
+  input: 'src/validateJamilih.js',
+  output: {
+    file: 'dist/validateJamilih.mjs',
+    format: 'esm',
+    exports: 'named'
+  },
+  plugins: [
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**'
+    })
+  ]
 }];

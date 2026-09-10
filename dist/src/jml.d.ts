@@ -1,3 +1,5 @@
+/// <reference path="./jamilih-dialect.d.ts" />
+import { validateJamilih } from './validateJamilih.js';
 export type HTMLWindow = Window & {
     DocumentFragment: typeof DocumentFragment;
 };
@@ -32,7 +34,8 @@ declare const $: (sel: string) => HTMLElement | null;
  */
 declare const $$: (sel: string) => HTMLElement[];
 export type ChildrenToJMLCallback = (childNodeJML: JamilihArray | JamilihChildType | string, i: Integer) => void;
-export type JamilihFirstArg = JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode | JamilihOptions | ElementName | HTMLElement | JamilihDocumentFragment;
+export type JamilihDialectObject = [keyof JamilihDialectProperties] extends [never] ? never : Partial<JamilihDialectProperties>;
+export type JamilihFirstArg = JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode | JamilihOptions | JamilihDialectObject | ElementName | HTMLElement | JamilihDocumentFragment;
 export type JamilihAppender = (childJML: JamilihArray | JamilihArrayLike | JamilihFirstArg | Node | TextNodeString) => void;
 export type appender = (childJML: JamilihArray | JamilihArrayLike | JamilihFirstArg | Node | TextNodeString) => void;
 export type JamilihReturn = HTMLElement | DocumentFragment | Comment | Attr | Text | Document | DocumentType | ProcessingInstruction | CDATASection;
@@ -159,9 +162,9 @@ export type PluginReference = {
 };
 export type JamilihFirstArgument = Document | ElementName | HTMLElement | DocumentFragment | JamilihDocumentFragment | JamilihDoc | JamilihDoctype | JamilihTextNode | JamilihAttributeNode;
 export type JamilihArrayLike = (JamilihFirstArg | JamilihAttributes | JamilihArrayLike | TextNodeString | ShadowRoot | null)[];
-export type JamilihChildren = (JamilihArray | JamilihArrayLike | TextNodeString | HTMLElement | Comment | ProcessingInstruction | Text | DocumentFragment | JamilihProcessingInstruction | JamilihDocumentFragment | PluginReference)[];
+export type JamilihChildren = (JamilihArray | JamilihArrayLike | TextNodeString | HTMLElement | Comment | ProcessingInstruction | Text | DocumentFragment | JamilihProcessingInstruction | JamilihDocumentFragment | PluginReference | JamilihDialectObject)[];
 export type JamilihArray = [
-    JamilihOptions | JamilihFirstArgument,
+    JamilihOptions | JamilihFirstArgument | JamilihDialectObject,
     (JamilihFirstArgument | JamilihAttributes | JamilihChildren | HTMLElement | ShadowRoot | null)?,
     (JamilihAttributes | JamilihChildren | HTMLElement | ShadowRoot | ElementName | null)?,
     ...(JamilihAttributes | JamilihChildren | HTMLElement | ShadowRoot | ElementName | null)[]
@@ -179,7 +182,7 @@ export type TraversalState = "root" | "attributeValue" | "element" | "fragment" 
 export type JamilihOptions = {
     $state?: TraversalState;
     $plugins?: JamilihPlugin[];
-    $map?: MapWithRoot | [Map<HTMLElement, UserArg> | WeakMap<HTMLElement, UserArg>, UserArg];
+    $Map?: MapWithRoot | [Map<HTMLElement, UserArg> | WeakMap<HTMLElement, UserArg>, UserArg];
 };
 export type ValueOf<T> = T[keyof T];
 export type RawCustomFromJamilihArray<T extends JamilihArray> = Extract<Extract<T[number], {
@@ -248,6 +251,7 @@ declare namespace jml {
     export var command: (elem: (string | HTMLElement) | null, symOrMap: symbol | string | Map<HTMLElement, MapCommand> | WeakMap<HTMLElement, MapCommand>, methodName: string | UserArg, ...args: UserArg[]) => StoredValue;
     export { setWindow };
     export { getWindow };
+    export { validateJamilih };
 }
 export type ToJmlConfig = {
     /**
@@ -459,5 +463,6 @@ declare function glue<T>(array: T[], glu: T): T[];
  */
 declare let body: HTMLBodyElement;
 declare const nbsp = "\u00A0";
-export { jml, $, $$, nbsp, body, glue };
+export { jml, $, $$, nbsp, body, glue, validateJamilih };
+export { isValidJamilih } from './validateJamilih.js';
 //# sourceMappingURL=jml.d.ts.map
