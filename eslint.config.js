@@ -4,6 +4,7 @@ export default [
   {
     ignores: [
       'dist',
+      'docs',
       'docs/jsdoc',
       'coverage',
       'ignore',
