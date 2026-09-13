@@ -63,12 +63,8 @@ export type EventHandler<T extends HTMLElement = HTMLElement> = (this: T, event:
 export type OnAttributeObject<T extends HTMLElement = HTMLElement> = {
     [key: string]: EventHandler<T> | [EventHandler<T>, boolean];
 };
-export type LooseEventHandler = (event: Event) => void;
-export type LooseOnAttributeObject = {
-    [key: string]: LooseEventHandler | [LooseEventHandler, boolean];
-};
-export type OnAttribute = {
-    $on?: LooseOnAttributeObject | null;
+export type OnAttribute<T extends HTMLElement = HTMLElement> = {
+    $on?: OnAttributeObject<T> | null;
 };
 export type BooleanAttribute = boolean;
 export type HandlerAttributeValue = ((this: HTMLElement, event?: Event) => void);
@@ -224,13 +220,8 @@ export type CustomFromJamilihItem<A> = A extends {
 export type DefineMixinFromJamilihItem<A> = A extends {
     $define: infer D;
 } ? DefineMixinFromValue<D> : object;
-export type WithOnThis<A, E extends Element> = A extends {
-    $on: infer O;
-} ? (O extends object ? Omit<A, '$on'> & {
-    $on?: O & ThisType<E>;
-} : A) : A;
 export type JamilihArrayWithCustomThis<T extends JamilihArray, E extends Element> = {
-    [K in keyof T]: WithOnThis<WithCustomThis<WithDefineThis<T[K], E, CustomFromJamilihItem<T[K]>>, E, DefineMixinFromJamilihItem<T[K]>>, E>;
+    [K in keyof T]: WithCustomThis<WithDefineThis<T[K], E, CustomFromJamilihItem<T[K]>>, E, DefineMixinFromJamilihItem<T[K]>>;
 };
 export type ValidateJamilihArrayLike<A> = A extends (infer Item)[] ? (Extract<Item, JamilihFirstArg> extends never ? never : A) : A;
 export type ValidateJamilihChildContainer<A> = A extends (infer Child)[] ? A & (Child extends unknown[] ? ValidateJamilihArrayLike<Child> : Child)[] : A;
