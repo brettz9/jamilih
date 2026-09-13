@@ -1269,9 +1269,25 @@ function _DOMfromJMLOrString (childNodeJML) {
  */
 
 /**
- * @template {HTMLElement} [T=HTMLElement]
+ * No `this` parameter, so as not to compete, in the flat `JamilihAttributes`
+ * shape used e.g. for children specified within a `JamilihArray`, with the
+ * more precise `this` that `WithOnThis` infers for the top-level element
+ * of a `jml()` call (via the `JamilihArrayWithCustomThis` side of the
+ * intersected `args` parameter type). Handlers on non-top-level (children)
+ * elements should add an explicit `@this` JSDoc tag, as is already the
+ * convention for `$data`/`$custom` methods.
+ * @typedef {(event: Event) => void} LooseEventHandler
+ */
+
+/**
  * @typedef {{
- *   $on?: OnAttributeObject<T>|null
+ *   [key: string]: LooseEventHandler|[LooseEventHandler, boolean]
+ * }} LooseOnAttributeObject
+ */
+
+/**
+ * @typedef {{
+ *   $on?: LooseOnAttributeObject|null
  * }} OnAttribute
  */
 
@@ -1755,13 +1771,23 @@ function getMatchingPlugin(opts, pluginName) {
  */
 
 /**
+ * @template A
+ * @template {Element} E
+ * @typedef {A extends {$on: infer O}
+ *   ? (O extends object
+ *     ? Omit<A, '$on'> & {$on?: O & ThisType<E>}
+ *     : A)
+ *   : A} WithOnThis
+ */
+
+/**
  * @template {JamilihArray} T
  * @template {Element} E
- * @typedef {{[K in keyof T]: WithCustomThis<
+ * @typedef {{[K in keyof T]: WithOnThis<WithCustomThis<
  *   WithDefineThis<T[K], E, CustomFromJamilihItem<T[K]>>,
  *   E,
  *   DefineMixinFromJamilihItem<T[K]>
- * >}} JamilihArrayWithCustomThis
+ * >, E>}} JamilihArrayWithCustomThis
  */
 
 /**

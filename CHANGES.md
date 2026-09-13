@@ -1,5 +1,9 @@
 # CHANGES for jamilih
 
+## 0.70.1
+
+- fix: Let `this` type within `$on` handlers accurately reflect main element type (but due to TS limitation, this doesn't work with children)
+
 ## 0.70.0
 
 - **BREAKING**: rename the `$map` option to `$Map`

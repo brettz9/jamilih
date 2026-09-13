@@ -166,6 +166,10 @@ describe('Jamilih - Other Methods', function () {
         }
       }, 'div', {id: 'mapTest'}, [
         ['input', {value: '100', $on: {
+          /**
+           * @this {HTMLInputElement}
+           * @returns {void}
+           */
           input () {
             xmlTesting.matches(
               myMap.invoke(/** @type {HTMLDivElement} */ (
@@ -193,6 +197,10 @@ describe('Jamilih - Other Methods', function () {
             );
           }
         }, $on: {
+          /**
+           * @this {HTMLElement}
+           * @returns {void}
+           */
           click () {
             myMap.invoke(this, 'test', 'arg1');
           }
